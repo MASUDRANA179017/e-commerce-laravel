@@ -1121,7 +1121,7 @@ document.addEventListener("DOMContentLoaded", function() {
         const editBtn = $('#editProductBtn');
         
         // Set edit button URL
-        editBtn.attr('href', `/admin/product-create?edit=${productId}`);
+        editBtn.attr('href', `/admin/create-product?edit=${productId}`);
         
         // Show loading state
         container.html(`
