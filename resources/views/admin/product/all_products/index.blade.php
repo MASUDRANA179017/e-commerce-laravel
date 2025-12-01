@@ -859,7 +859,7 @@
                                         <button type="button" class="action-btn action-btn-view btn-view-product" data-product-id="{{ $p->id }}" title="View Product">
                                             <i class="fas fa-eye"></i>
                                         </button>
-                                        <a href="{{ route('admin.product-create.index', ['edit' => $p->id]) }}" class="action-btn action-btn-edit" title="Edit Product">
+                                        <a href="{{ route('admin.product.edit', $p->id) }}" class="action-btn action-btn-edit" title="Edit Product">
                                             <i class="fas fa-edit"></i>
                                         </a>
                                         <form action="{{ route('admin.product.destroy', $p->id) }}" method="POST" class="d-inline delete-form">
@@ -1121,7 +1121,7 @@ document.addEventListener("DOMContentLoaded", function() {
         const editBtn = $('#editProductBtn');
         
         // Set edit button URL
-        editBtn.attr('href', `/admin/create-product?edit=${productId}`);
+        editBtn.attr('href', `/admin/product/${productId}/edit`);
         
         // Show loading state
         container.html(`
