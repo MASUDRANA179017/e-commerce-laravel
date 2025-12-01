@@ -1,6 +1,31 @@
 @extends('layouts.frontend')
 
-@section('title', ($product->title ?? $product->name ?? 'Product Details') . ' - GrowUp E-Commerce')
+@section('title', ($product->title ?? 'Product Details') . ' - GrowUp E-Commerce')
+
+@php
+    // Get product images
+    $productImages = collect();
+    if ($product->images && $product->images->count() > 0) {
+        $productImages = $product->images->sortByDesc('is_cover');
+    }
+    $mainImage = $productImages->first();
+    
+    // Get price
+    $price = $product->price ?? 0;
+    $salePrice = $product->sale_price ?? null;
+    $isOnSale = $salePrice && $salePrice < $price;
+    $discountPercent = $isOnSale && $price > 0 ? round((($price - $salePrice) / $price) * 100) : 0;
+    $effectivePrice = $isOnSale ? $salePrice : $price;
+    
+    // Get stock
+    $stockQty = $product->stock_quantity ?? 0;
+    $inStock = $stockQty > 0 || ($product->allow_backorder ?? false);
+    
+    // Get category
+    $category = $product->categories && $product->categories->count() > 0 
+        ? $product->categories->first() 
+        : null;
+@endphp
 
 @section('content')
 <!-- Breadcrumb Section -->
@@ -10,10 +35,14 @@
             <ol class="breadcrumb mb-0">
                 <li class="breadcrumb-item"><a href="{{ route('home') }}">Home</a></li>
                 <li class="breadcrumb-item"><a href="{{ route('shop.index') }}">Shop</a></li>
-                @if($product->categories && $product->categories->count() > 0)
-                    <li class="breadcrumb-item"><a href="{{ route('shop.index', ['category' => $product->categories->first()->name]) }}">{{ $product->categories->first()->name }}</a></li>
+                @if($category)
+                    <li class="breadcrumb-item">
+                        <a href="{{ route('shop.index', ['category' => $category->slug ?? $category->name]) }}">
+                            {{ $category->name }}
+                        </a>
+                    </li>
                 @endif
-                <li class="breadcrumb-item active" aria-current="page">{{ $product->title ?? $product->name ?? 'Product' }}</li>
+                <li class="breadcrumb-item active" aria-current="page">{{ $product->title }}</li>
             </ol>
         </nav>
     </div>
@@ -24,36 +53,58 @@
     <div class="container">
         <div class="row">
             <!-- Product Images -->
-            <div class="col-12 col-lg-5 mb-4 mb-lg-0">
+            <div class="col-12 col-lg-6 mb-4 mb-lg-0">
                 <div class="product-images">
                     <!-- Main Image -->
-                    <div class="main-image mb-3 position-relative overflow-hidden rounded-4" style="background: #f8f9fa;">
-                        @if(isset($product->images) && $product->images->count() > 0)
-                            <img src="{{ asset('storage/' . $product->images->first()->image) }}" alt="{{ $product->title ?? 'Product' }}" class="img-fluid w-100" id="mainProductImage" style="max-height: 500px; object-fit: contain;">
-                        @elseif($product->coverImage)
-                            <img src="{{ asset('storage/' . $product->coverImage->image) }}" alt="{{ $product->title ?? 'Product' }}" class="img-fluid w-100" id="mainProductImage" style="max-height: 500px; object-fit: contain;">
+                    <div class="main-image mb-3 position-relative overflow-hidden rounded-4 bg-light" style="min-height: 450px;">
+                        @if($mainImage)
+                            <img src="{{ asset('storage/' . ($mainImage->path ?? $mainImage->image)) }}" 
+                                 alt="{{ $product->title }}" 
+                                 class="img-fluid w-100" 
+                                 id="mainProductImage" 
+                                 style="max-height: 500px; object-fit: contain;"
+                                 onerror="this.src='https://via.placeholder.com/500x500?text=No+Image'">
                         @else
-                            <img src="https://via.placeholder.com/500x500?text=No+Image" alt="{{ $product->title ?? 'Product' }}" class="img-fluid w-100" id="mainProductImage" style="max-height: 500px; object-fit: contain;">
+                            <img src="https://via.placeholder.com/500x500?text=No+Image" 
+                                 alt="{{ $product->title }}" 
+                                 class="img-fluid w-100" 
+                                 id="mainProductImage" 
+                                 style="max-height: 500px; object-fit: contain;">
                         @endif
                         
                         <!-- Badges -->
-                        <div class="position-absolute top-0 start-0 p-3">
+                        <div class="position-absolute top-0 start-0 p-3 d-flex flex-column gap-2">
                             @if($product->created_at && $product->created_at->diffInDays(now()) < 30)
-                                <span class="badge bg-primary me-1">New</span>
+                                <span class="badge bg-primary px-3 py-2">New</span>
                             @endif
-                            @if(isset($product->sale_price) && $product->sale_price && $product->sale_price < $product->price)
-                                @php $discountPercent = round((($product->price - $product->sale_price) / $product->price) * 100); @endphp
-                                <span class="badge bg-danger">-{{ $discountPercent }}% OFF</span>
+                            @if($isOnSale)
+                                <span class="badge bg-danger px-3 py-2">-{{ $discountPercent }}% OFF</span>
+                            @endif
+                            @if($product->featured)
+                                <span class="badge bg-warning text-dark px-3 py-2">Featured</span>
                             @endif
                         </div>
+
+                        <!-- Zoom Icon -->
+                        <button class="btn btn-light btn-sm rounded-circle position-absolute bottom-0 end-0 m-3 shadow" 
+                                data-bs-toggle="modal" 
+                                data-bs-target="#imageZoomModal">
+                            <i class="fa-solid fa-search-plus"></i>
+                        </button>
                     </div>
                     
                     <!-- Thumbnail Gallery -->
-                    @if(isset($product->images) && $product->images->count() > 1)
-                    <div class="thumbnail-gallery d-flex gap-2 flex-wrap">
-                        @foreach($product->images as $index => $image)
-                        <div class="thumbnail-item {{ $index == 0 ? 'active' : '' }}" style="width: 80px; height: 80px; cursor: pointer; border: 2px solid {{ $index == 0 ? '#0496ff' : '#eee' }}; border-radius: 8px; overflow: hidden;">
-                            <img src="{{ asset('storage/' . $image->image) }}" alt="{{ $product->title ?? 'Product' }}" class="img-fluid w-100 h-100" style="object-fit: cover;" onclick="changeMainImage(this, '{{ asset('storage/' . $image->image) }}')">
+                    @if($productImages->count() > 1)
+                    <div class="thumbnail-gallery d-flex gap-2 flex-wrap justify-content-center">
+                        @foreach($productImages as $index => $image)
+                        <div class="thumbnail-item {{ $index == 0 ? 'active' : '' }}" 
+                             style="width: 80px; height: 80px; cursor: pointer; border: 2px solid {{ $index == 0 ? '#0496ff' : '#eee' }}; border-radius: 10px; overflow: hidden; transition: all 0.3s;">
+                            <img src="{{ asset('storage/' . ($image->path ?? $image->image)) }}" 
+                                 alt="{{ $product->title }}" 
+                                 class="img-fluid w-100 h-100" 
+                                 style="object-fit: cover;" 
+                                 onclick="changeMainImage(this, '{{ asset('storage/' . ($image->path ?? $image->image)) }}')"
+                                 onerror="this.src='https://via.placeholder.com/80?text=No+Image'">
                         </div>
                         @endforeach
                     </div>
@@ -62,79 +113,111 @@
             </div>
 
             <!-- Product Info -->
-            <div class="col-12 col-lg-7">
-                <div class="product-info" data-aos="fade-up">
+            <div class="col-12 col-lg-6">
+                <div class="product-info ps-lg-4" data-aos="fade-up">
+                    <!-- Brand -->
+                    @if($product->brand)
+                    <a href="{{ route('shop.index', ['brand' => $product->brand->slug ?? $product->brand->name]) }}" 
+                       class="text-primary text-decoration-none fw-medium mb-2 d-inline-block">
+                        {{ $product->brand->name }}
+                    </a>
+                    @endif
+
                     <!-- Product Title -->
-                    <h1 class="product-title mb-3" style="font-size: 32px; font-weight: 700;">{{ $product->title ?? $product->name ?? 'Product Name' }}</h1>
+                    <h1 class="product-title mb-3" style="font-size: 32px; font-weight: 700; color: #1a1a2e;">
+                        {{ $product->title }}
+                    </h1>
                     
-                    <!-- Rating -->
-                    <div class="product-rating d-flex align-items-center gap-3 mb-3">
+                    <!-- Rating & Stock -->
+                    <div class="product-rating d-flex align-items-center flex-wrap gap-3 mb-3">
                         <div class="stars">
                             @for($i = 1; $i <= 5; $i++)
-                                <i class="fa-{{ $i <= ($product->average_rating ?? 4) ? 'solid' : 'regular' }} fa-star text-warning"></i>
+                                <i class="fa-solid fa-star {{ $i <= 4 ? 'text-warning' : 'text-muted' }}"></i>
                             @endfor
+                            <span class="text-muted ms-2">(0 Reviews)</span>
                         </div>
-                        <span class="text-muted">({{ $product->reviews_count ?? 0 }} Reviews)</span>
-                        <span class="text-success"><i class="fa-solid fa-check-circle"></i> In Stock</span>
+                        <span class="border-start ps-3">
+                            @if($inStock)
+                                <i class="fa-solid fa-check-circle text-success me-1"></i>
+                                <span class="text-success fw-medium">In Stock</span>
+                                @if($stockQty > 0 && $stockQty <= 10)
+                                    <small class="text-warning ms-1">(Only {{ $stockQty }} left)</small>
+                                @endif
+                            @else
+                                <i class="fa-solid fa-times-circle text-danger me-1"></i>
+                                <span class="text-danger fw-medium">Out of Stock</span>
+                            @endif
+                        </span>
                     </div>
 
                     <!-- Price -->
-                    <div class="product-price mb-4">
-                        @php
-                            $price = 0;
-                            $salePrice = null;
-                            $stock = 0;
-                            if ($product->variants && $product->variants->count() > 0) {
-                                $variant = $product->variants->first();
-                                $price = $variant->price ?? 0;
-                                $salePrice = $variant->sale_price ?? null;
-                                $stock = $product->variants->sum('stock') ?? 0;
-                            } elseif (isset($product->price)) {
-                                $price = $product->price;
-                                $salePrice = $product->sale_price ?? null;
-                                $stock = $product->stock ?? 0;
-                            }
-                        @endphp
-                        @if($salePrice && $salePrice < $price)
-                            <span class="current-price text-danger" style="font-size: 36px; font-weight: 700;">${{ number_format($salePrice, 2) }}</span>
-                            <span class="original-price text-muted text-decoration-line-through ms-2" style="font-size: 24px;">${{ number_format($price, 2) }}</span>
-                            <span class="badge bg-danger ms-2">Save ${{ number_format($price - $salePrice, 2) }}</span>
+                    <div class="product-price mb-4 p-3 bg-light rounded-3">
+                        @if($isOnSale)
+                            <span class="current-price text-danger" style="font-size: 36px; font-weight: 700;">
+                                ৳{{ number_format($salePrice, 0) }}
+                            </span>
+                            <span class="original-price text-muted text-decoration-line-through ms-2" style="font-size: 22px;">
+                                ৳{{ number_format($price, 0) }}
+                            </span>
+                            <span class="badge bg-danger ms-2 fs-6">
+                                Save ৳{{ number_format($price - $salePrice, 0) }}
+                            </span>
                         @else
-                            <span class="current-price" style="font-size: 36px; font-weight: 700; color: #0496ff;">${{ number_format($price, 2) }}</span>
+                            <span class="current-price" style="font-size: 36px; font-weight: 700; color: #0496ff;">
+                                ৳{{ number_format($price, 0) }}
+                            </span>
                         @endif
                     </div>
 
                     <!-- Short Description -->
+                    @if($product->short_desc)
                     <div class="product-description mb-4">
-                        <p class="text-muted">{{ $product->short_desc ?? $product->short_description ?? 'No description available.' }}</p>
+                        <p class="text-muted mb-0">{{ $product->short_desc }}</p>
                     </div>
+                    @endif
 
                     <!-- Product Meta -->
-                    <div class="product-meta mb-4 p-3 bg-light rounded">
-                        <div class="row">
-                            <div class="col-6 mb-2">
-                                <strong>SKU:</strong> <span class="text-muted">{{ $product->slug ?? 'N/A' }}</span>
-                            </div>
-                            <div class="col-6 mb-2">
-                                <strong>Category:</strong> 
-                                @if($product->categories && $product->categories->count() > 0)
-                                    <a href="{{ route('shop.index', ['category' => $product->categories->first()->name]) }}">{{ $product->categories->first()->name }}</a>
-                                @else
-                                    <span class="text-muted">Uncategorized</span>
-                                @endif
-                            </div>
-                            <div class="col-6 mb-2">
-                                <strong>Brand:</strong> <span class="text-muted">{{ $product->brand->name ?? 'N/A' }}</span>
-                            </div>
-                            <div class="col-6 mb-2">
-                                <strong>Availability:</strong> 
-                                @if($stock > 0)
-                                    <span class="text-success">{{ $stock }} in stock</span>
-                                @else
-                                    <span class="text-danger">Out of stock</span>
-                                @endif
-                            </div>
-                        </div>
+                    <div class="product-meta mb-4">
+                        <table class="table table-sm mb-0">
+                            <tr>
+                                <td class="text-muted" width="120"><i class="fa-solid fa-barcode me-2"></i>SKU</td>
+                                <td class="fw-medium">{{ $product->sku ?? $product->slug }}</td>
+                            </tr>
+                            <tr>
+                                <td class="text-muted"><i class="fa-solid fa-folder me-2"></i>Category</td>
+                                <td>
+                                    @if($category)
+                                        <a href="{{ route('shop.index', ['category' => $category->slug ?? $category->name]) }}" class="text-primary">
+                                            {{ $category->name }}
+                                        </a>
+                                    @else
+                                        <span class="text-muted">Uncategorized</span>
+                                    @endif
+                                </td>
+                            </tr>
+                            @if($product->brand)
+                            <tr>
+                                <td class="text-muted"><i class="fa-solid fa-tag me-2"></i>Brand</td>
+                                <td>
+                                    <a href="{{ route('shop.index', ['brand' => $product->brand->slug ?? $product->brand->name]) }}" class="text-primary">
+                                        {{ $product->brand->name }}
+                                    </a>
+                                </td>
+                            </tr>
+                            @endif
+                            <tr>
+                                <td class="text-muted"><i class="fa-solid fa-box me-2"></i>Stock</td>
+                                <td>
+                                    @if($stockQty > 0)
+                                        <span class="text-success fw-medium">{{ $stockQty }} available</span>
+                                    @elseif($product->allow_backorder)
+                                        <span class="text-warning">Available on backorder</span>
+                                    @else
+                                        <span class="text-danger">Out of stock</span>
+                                    @endif
+                                </td>
+                            </tr>
+                        </table>
                     </div>
 
                     <!-- Add to Cart Form -->
@@ -145,11 +228,12 @@
                         <!-- Quantity Selector -->
                         <div class="quantity-selector d-flex align-items-center gap-3 mb-4">
                             <label class="mb-0 fw-bold">Quantity:</label>
-                            <div class="input-group" style="width: 140px;">
+                            <div class="input-group" style="width: 150px;">
                                 <button type="button" class="btn btn-outline-secondary" onclick="decreaseQty()">
                                     <i class="fa-solid fa-minus"></i>
                                 </button>
-                                <input type="number" name="quantity" id="quantity" class="form-control text-center" value="1" min="1" max="{{ $stock > 0 ? $stock : 99 }}">
+                                <input type="number" name="quantity" id="quantity" class="form-control text-center fw-bold" 
+                                       value="1" min="1" max="{{ $stockQty > 0 ? $stockQty : 99 }}" readonly>
                                 <button type="button" class="btn btn-outline-secondary" onclick="increaseQty()">
                                     <i class="fa-solid fa-plus"></i>
                                 </button>
@@ -158,10 +242,10 @@
 
                         <!-- Action Buttons -->
                         <div class="action-buttons d-flex flex-wrap gap-3 mb-4">
-                            <button type="submit" class="btn btn-success btn-lg px-5" {{ $stock <= 0 ? 'disabled' : '' }}>
-                                <i class="fa-solid fa-shopping-cart me-2"></i> Add to Cart
+                            <button type="submit" class="btn btn-primary btn-lg px-5 flex-grow-1" {{ !$inStock ? 'disabled' : '' }} style="background: linear-gradient(135deg, #0496ff 0%, #0380d9 100%); border: none;">
+                                <i class="fa-solid fa-cart-plus me-2"></i> Add to Cart
                             </button>
-                            <button type="button" class="btn btn-primary btn-lg px-5 buy-now-btn" {{ $stock <= 0 ? 'disabled' : '' }}>
+                            <button type="button" class="btn btn-success btn-lg px-4 buy-now-btn" {{ !$inStock ? 'disabled' : '' }}>
                                 <i class="fa-solid fa-bolt me-2"></i> Buy Now
                             </button>
                             <button type="button" class="btn btn-outline-danger btn-lg add-to-wishlist" data-product-id="{{ $product->id }}">
@@ -170,20 +254,38 @@
                         </div>
                     </form>
 
+                    <!-- Delivery Info -->
+                    <div class="delivery-info p-3 bg-light rounded-3 mb-4">
+                        <div class="d-flex align-items-center mb-2">
+                            <i class="fa-solid fa-truck text-primary me-3 fs-5"></i>
+                            <div>
+                                <strong>Free Delivery</strong>
+                                <small class="d-block text-muted">On orders over ৳5,000</small>
+                            </div>
+                        </div>
+                        <div class="d-flex align-items-center">
+                            <i class="fa-solid fa-rotate-left text-primary me-3 fs-5"></i>
+                            <div>
+                                <strong>Easy Returns</strong>
+                                <small class="d-block text-muted">30 days return policy</small>
+                            </div>
+                        </div>
+                    </div>
+
                     <!-- Social Share -->
                     <div class="social-share pt-3 border-top">
                         <strong class="me-3">Share:</strong>
                         <a href="https://www.facebook.com/sharer/sharer.php?u={{ urlencode(request()->url()) }}" target="_blank" class="btn btn-sm btn-outline-primary me-2">
                             <i class="fab fa-facebook-f"></i>
                         </a>
-                        <a href="https://twitter.com/intent/tweet?url={{ urlencode(request()->url()) }}&text={{ urlencode($product->title ?? '') }}" target="_blank" class="btn btn-sm btn-outline-info me-2">
+                        <a href="https://twitter.com/intent/tweet?url={{ urlencode(request()->url()) }}&text={{ urlencode($product->title) }}" target="_blank" class="btn btn-sm btn-outline-info me-2">
                             <i class="fab fa-twitter"></i>
                         </a>
-                        <a href="https://wa.me/?text={{ urlencode(($product->title ?? '') . ' ' . request()->url()) }}" target="_blank" class="btn btn-sm btn-outline-success me-2">
+                        <a href="https://wa.me/?text={{ urlencode($product->title . ' - ৳' . number_format($effectivePrice, 0) . ' ' . request()->url()) }}" target="_blank" class="btn btn-sm btn-outline-success me-2">
                             <i class="fab fa-whatsapp"></i>
                         </a>
-                        <a href="https://pinterest.com/pin/create/button/?url={{ urlencode(request()->url()) }}&description={{ urlencode($product->title ?? '') }}" target="_blank" class="btn btn-sm btn-outline-danger">
-                            <i class="fab fa-pinterest"></i>
+                        <a href="mailto:?subject={{ urlencode($product->title) }}&body={{ urlencode('Check out this product: ' . request()->url()) }}" class="btn btn-sm btn-outline-secondary">
+                            <i class="fa-solid fa-envelope"></i>
                         </a>
                     </div>
                 </div>
@@ -195,8 +297,8 @@
 <!-- Product Tabs Section -->
 <section class="product-tabs py-5 bg-light">
     <div class="container">
-        <div class="card shadow-sm border-0">
-            <div class="card-header bg-white">
+        <div class="card shadow-sm border-0 rounded-4">
+            <div class="card-header bg-white rounded-top-4">
                 <ul class="nav nav-tabs card-header-tabs" id="productTabs" role="tablist">
                     <li class="nav-item" role="presentation">
                         <button class="nav-link active" id="description-tab" data-bs-toggle="tab" data-bs-target="#description" type="button" role="tab">
@@ -210,17 +312,24 @@
                     </li>
                     <li class="nav-item" role="presentation">
                         <button class="nav-link" id="reviews-tab" data-bs-toggle="tab" data-bs-target="#reviews" type="button" role="tab">
-                            <i class="fa-solid fa-star me-2"></i>Reviews ({{ $product->reviews_count ?? 0 }})
+                            <i class="fa-solid fa-star me-2"></i>Reviews (0)
                         </button>
                     </li>
                 </ul>
             </div>
-            <div class="card-body">
+            <div class="card-body p-4">
                 <div class="tab-content" id="productTabsContent">
                     <!-- Description Tab -->
                     <div class="tab-pane fade show active" id="description" role="tabpanel">
                         <div class="product-description">
-                            {!! $product->description ?? '<p>No description available for this product.</p>' !!}
+                            @if($product->short_desc)
+                                <p class="lead">{{ $product->short_desc }}</p>
+                            @endif
+                            @if($product->description ?? false)
+                                {!! $product->description !!}
+                            @else
+                                <p class="text-muted">No detailed description available for this product.</p>
+                            @endif
                         </div>
                     </div>
                     
@@ -228,48 +337,27 @@
                     <div class="tab-pane fade" id="specifications" role="tabpanel">
                         <table class="table table-striped">
                             <tbody>
-                                <tr><th width="200">SKU</th><td>{{ $product->slug ?? 'N/A' }}</td></tr>
-                                <tr><th>Category</th><td>{{ $product->categories && $product->categories->count() > 0 ? $product->categories->first()->name : 'N/A' }}</td></tr>
-                                <tr><th>Brand</th><td>{{ $product->brand->name ?? 'N/A' }}</td></tr>
-                                @if($product->weight ?? false)
-                                <tr><th>Weight</th><td>{{ $product->weight }} kg</td></tr>
+                                <tr><th width="200">SKU</th><td>{{ $product->sku ?? $product->slug }}</td></tr>
+                                <tr><th>Product Name</th><td>{{ $product->title }}</td></tr>
+                                @if($category)
+                                <tr><th>Category</th><td>{{ $category->name }}</td></tr>
                                 @endif
-                                @if($product->dimensions ?? false)
-                                <tr><th>Dimensions</th><td>{{ $product->dimensions }}</td></tr>
+                                @if($product->brand)
+                                <tr><th>Brand</th><td>{{ $product->brand->name }}</td></tr>
                                 @endif
+                                <tr><th>Status</th><td><span class="badge bg-{{ $product->status == 'Active' ? 'success' : 'secondary' }}">{{ $product->status }}</span></td></tr>
+                                <tr><th>Stock</th><td>{{ $stockQty }} units</td></tr>
                             </tbody>
                         </table>
                     </div>
                     
                     <!-- Reviews Tab -->
                     <div class="tab-pane fade" id="reviews" role="tabpanel">
-                        @if(isset($product->reviews) && $product->reviews->count() > 0)
-                            @foreach($product->reviews as $review)
-                            <div class="review-item mb-4 pb-4 border-bottom">
-                                <div class="d-flex justify-content-between mb-2">
-                                    <div class="d-flex align-items-center">
-                                        <img src="https://via.placeholder.com/50" alt="{{ $review->user->name ?? 'User' }}" class="rounded-circle me-3">
-                                        <div>
-                                            <h6 class="mb-0">{{ $review->user->name ?? 'Anonymous' }}</h6>
-                                            <div class="stars">
-                                                @for($i = 1; $i <= 5; $i++)
-                                                    <i class="fa-{{ $i <= $review->rating ? 'solid' : 'regular' }} fa-star text-warning small"></i>
-                                                @endfor
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <small class="text-muted">{{ $review->created_at->diffForHumans() }}</small>
-                                </div>
-                                <p class="mb-0">{{ $review->comment }}</p>
-                            </div>
-                            @endforeach
-                        @else
-                            <p class="text-muted">No reviews yet. Be the first to review this product!</p>
-                        @endif
+                        <p class="text-muted">No reviews yet. Be the first to review this product!</p>
 
                         @auth
                         <div class="write-review mt-4 pt-4 border-top">
-                            <h5 class="mb-3">Write a Review</h5>
+                            <h5 class="mb-3"><i class="fa-solid fa-pen me-2"></i>Write a Review</h5>
                             <form action="{{ route('product.review', $product->id) }}" method="POST">
                                 @csrf
                                 <div class="mb-3">
@@ -283,14 +371,19 @@
                                 </div>
                                 <div class="mb-3">
                                     <label class="form-label">Your Review *</label>
-                                    <textarea name="comment" class="form-control" rows="4" required placeholder="Write your review here..."></textarea>
+                                    <textarea name="comment" class="form-control" rows="4" required placeholder="Share your experience with this product..."></textarea>
                                 </div>
-                                <button type="submit" class="btn btn-primary">Submit Review</button>
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fa-solid fa-paper-plane me-2"></i>Submit Review
+                                </button>
                             </form>
                         </div>
                         @else
-                        <div class="mt-4 pt-4 border-top">
-                            <p><a href="{{ route('login') }}">Login</a> to write a review.</p>
+                        <div class="mt-4 pt-4 border-top text-center">
+                            <p class="mb-3">Please login to write a review.</p>
+                            <a href="{{ route('login') }}" class="btn btn-outline-primary">
+                                <i class="fa-solid fa-sign-in-alt me-2"></i>Login to Review
+                            </a>
                         </div>
                         @endauth
                     </div>
@@ -318,6 +411,24 @@
     </div>
 </section>
 @endif
+
+<!-- Image Zoom Modal -->
+<div class="modal fade" id="imageZoomModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-centered">
+        <div class="modal-content bg-transparent border-0">
+            <div class="modal-body text-center p-0">
+                <button type="button" class="btn-close btn-close-white position-absolute top-0 end-0 m-3" data-bs-dismiss="modal" aria-label="Close"></button>
+                @if($mainImage)
+                    <img src="{{ asset('storage/' . ($mainImage->path ?? $mainImage->image)) }}" 
+                         alt="{{ $product->title }}" 
+                         class="img-fluid rounded-3"
+                         style="max-height: 90vh;"
+                         id="zoomedImage">
+                @endif
+            </div>
+        </div>
+    </div>
+</div>
 @endsection
 
 @push('styles')
@@ -335,6 +446,7 @@
         font-size: 24px;
         color: #ddd;
         padding: 0 5px;
+        transition: color 0.2s;
     }
     .rating-stars label:hover,
     .rating-stars label:hover ~ label,
@@ -342,8 +454,43 @@
         color: #ffc107;
     }
     
+    .thumbnail-item {
+        transition: all 0.3s ease;
+    }
+    .thumbnail-item:hover {
+        border-color: #0496ff !important;
+        transform: translateY(-2px);
+    }
     .thumbnail-item.active {
         border-color: #0496ff !important;
+    }
+    
+    .product-title {
+        line-height: 1.3;
+    }
+    
+    .nav-tabs .nav-link {
+        color: #666;
+        border: none;
+        padding: 15px 25px;
+        font-weight: 500;
+    }
+    .nav-tabs .nav-link.active {
+        color: #0496ff;
+        border-bottom: 3px solid #0496ff;
+        background: transparent;
+    }
+    .nav-tabs .nav-link:hover {
+        color: #0496ff;
+        border-color: transparent;
+    }
+    
+    .quantity-selector .form-control {
+        border-left: none;
+        border-right: none;
+    }
+    .quantity-selector .btn {
+        z-index: 1;
     }
 </style>
 @endpush
@@ -352,6 +499,7 @@
 <script>
     function changeMainImage(element, src) {
         document.getElementById('mainProductImage').src = src;
+        document.getElementById('zoomedImage').src = src;
         document.querySelectorAll('.thumbnail-item').forEach(item => {
             item.classList.remove('active');
             item.style.borderColor = '#eee';
@@ -387,4 +535,3 @@
     });
 </script>
 @endpush
-

@@ -3,8 +3,8 @@
 namespace App\Http\Controllers\Frontend;
 
 use App\Http\Controllers\Controller;
-use App\Models\Product;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class CartController extends Controller
 {
@@ -16,7 +16,7 @@ class CartController extends Controller
         $cartItems = session()->get('cart', []);
         $subtotal = $this->calculateSubtotal($cartItems);
         $discount = session()->get('discount', 0);
-        $shipping = $subtotal >= 50 ? 0 : 5; // Free shipping over $50
+        $shipping = $subtotal >= 5000 ? 0 : 100; // Free shipping over ৳5000
         $total = $subtotal - $discount + $shipping;
 
         // Convert cart items to collection for easier handling
@@ -40,11 +40,28 @@ class CartController extends Controller
             'quantity' => 'sometimes|integer|min:1',
         ]);
 
-        $product = Product::with('images')->findOrFail($request->product_id);
-        $quantity = $request->quantity ?? 1;
+        // Get product with image
+        $product = DB::table('products')
+            ->leftJoin('product_images', function ($join) {
+                $join->on('products.id', '=', 'product_images.product_id')
+                    ->where('product_images.is_cover', true);
+            })
+            ->where('products.id', $request->product_id)
+            ->select('products.*', 'product_images.path as cover_image')
+            ->first();
 
+        if (!$product) {
+            return response()->json(['success' => false, 'message' => 'Product not found'], 404);
+        }
+
+        $quantity = $request->quantity ?? 1;
         $cart = session()->get('cart', []);
         $rowId = 'product_' . $product->id;
+
+        // Determine price
+        $price = $product->sale_price && $product->sale_price < $product->price 
+            ? $product->sale_price 
+            : $product->price;
 
         // Check if product already in cart
         if (isset($cart[$rowId])) {
@@ -52,13 +69,15 @@ class CartController extends Controller
         } else {
             $cart[$rowId] = [
                 'id' => $product->id,
-                'name' => $product->name,
-                'price' => $product->sale_price ?? $product->price,
+                'name' => $product->title,
+                'price' => $price ?? 0,
+                'original_price' => $product->price ?? 0,
                 'qty' => $quantity,
                 'options' => [
-                    'image' => $product->images->first()->image ?? 'product/default.png',
+                    'image' => $product->cover_image ?? null,
                     'slug' => $product->slug ?? $product->id,
                     'variant' => $request->variant ?? null,
+                    'sku' => $product->sku ?? null,
                 ]
             ];
         }
@@ -74,7 +93,8 @@ class CartController extends Controller
             return response()->json([
                 'success' => true,
                 'message' => 'Product added to cart!',
-                'cartCount' => count($cart),
+                'cartCount' => array_sum(array_column($cart, 'qty')),
+                'cartTotal' => $this->calculateSubtotal($cart),
             ]);
         }
 
@@ -97,10 +117,20 @@ class CartController extends Controller
             session()->put('cart', $cart);
         }
 
+        $subtotal = $this->calculateSubtotal($cart);
+        $discount = session()->get('discount', 0);
+        $shipping = $subtotal >= 5000 ? 0 : 100;
+        $total = $subtotal - $discount + $shipping;
+
         if ($request->ajax()) {
             return response()->json([
                 'success' => true,
                 'message' => 'Cart updated!',
+                'cartCount' => array_sum(array_column($cart, 'qty')),
+                'subtotal' => $subtotal,
+                'shipping' => $shipping,
+                'total' => $total,
+                'itemTotal' => isset($cart[$rowId]) ? $cart[$rowId]['price'] * $cart[$rowId]['qty'] : 0,
             ]);
         }
 
@@ -110,13 +140,29 @@ class CartController extends Controller
     /**
      * Remove item from cart
      */
-    public function remove($rowId)
+    public function remove(Request $request, $rowId)
     {
         $cart = session()->get('cart', []);
 
         if (isset($cart[$rowId])) {
             unset($cart[$rowId]);
             session()->put('cart', $cart);
+        }
+
+        if ($request->ajax()) {
+            $subtotal = $this->calculateSubtotal($cart);
+            $discount = session()->get('discount', 0);
+            $shipping = $subtotal >= 5000 ? 0 : 100;
+            $total = $subtotal - $discount + $shipping;
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Item removed from cart!',
+                'cartCount' => array_sum(array_column($cart, 'qty')),
+                'subtotal' => $subtotal,
+                'shipping' => $shipping,
+                'total' => $total,
+            ]);
         }
 
         return back()->with('success', 'Item removed from cart!');
@@ -143,11 +189,12 @@ class CartController extends Controller
             'coupon_code' => 'required|string',
         ]);
 
-        // Simple coupon logic - you can extend this
+        // Simple coupon logic - you can extend this with database lookup
         $validCoupons = [
             'SAVE10' => 10,
             'SAVE20' => 20,
             'WELCOME' => 15,
+            'FIRST50' => 50,
         ];
 
         $code = strtoupper($request->coupon_code);
@@ -155,15 +202,44 @@ class CartController extends Controller
         if (isset($validCoupons[$code])) {
             $cart = session()->get('cart', []);
             $subtotal = $this->calculateSubtotal($cart);
-            $discount = ($subtotal * $validCoupons[$code]) / 100;
+            $discountPercent = $validCoupons[$code];
+            $discount = ($subtotal * $discountPercent) / 100;
 
             session()->put('discount', $discount);
             session()->put('coupon_code', $code);
 
-            return back()->with('success', "Coupon applied! You saved \${$discount}");
+            if ($request->ajax()) {
+                $shipping = $subtotal >= 5000 ? 0 : 100;
+                return response()->json([
+                    'success' => true,
+                    'message' => "Coupon applied! {$discountPercent}% off",
+                    'discount' => $discount,
+                    'total' => $subtotal - $discount + $shipping,
+                ]);
+            }
+
+            return back()->with('success', "Coupon applied! You saved ৳{$discount}");
+        }
+
+        if ($request->ajax()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Invalid coupon code!',
+            ], 400);
         }
 
         return back()->with('error', 'Invalid coupon code!');
+    }
+
+    /**
+     * Get cart count (for AJAX header update)
+     */
+    public function count()
+    {
+        $cart = session()->get('cart', []);
+        return response()->json([
+            'count' => array_sum(array_column($cart, 'qty')),
+        ]);
     }
 
     /**
@@ -173,9 +249,8 @@ class CartController extends Controller
     {
         $subtotal = 0;
         foreach ($cartItems as $item) {
-            $subtotal += $item['price'] * $item['qty'];
+            $subtotal += ($item['price'] ?? 0) * ($item['qty'] ?? 1);
         }
         return $subtotal;
     }
 }
-

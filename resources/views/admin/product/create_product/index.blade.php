@@ -86,6 +86,30 @@
                                         <input type="hidden" id="productId" value="{{ $product->id }}">
                                     @endif
 
+                                    <!-- Price Fields -->
+                                    <div class="col-md-4">
+                                        <label class="form-label">Regular Price <span class="req">*</span></label>
+                                        <div class="input-group">
+                                            <span class="input-group-text">৳</span>
+                                            <input id="regularPrice" type="number" step="0.01" min="0" class="form-control" placeholder="0.00"
+                                                value="{{ isset($product) && $product && isset($product->price) ? $product->price : '' }}">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="form-label">Sale Price</label>
+                                        <div class="input-group">
+                                            <span class="input-group-text">৳</span>
+                                            <input id="salePrice" type="number" step="0.01" min="0" class="form-control" placeholder="0.00"
+                                                value="{{ isset($product) && $product && isset($product->sale_price) ? $product->sale_price : '' }}">
+                                        </div>
+                                        <div class="form-text">Leave empty if no sale</div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="form-label">Stock Quantity</label>
+                                        <input id="stockQuantity" type="number" min="0" class="form-control" placeholder="0"
+                                            value="{{ isset($product) && $product && isset($product->stock_quantity) ? $product->stock_quantity : '' }}">
+                                    </div>
+
                                     <!-- Multi-category assign -->
                                     <div class="col-12">
                                         <label class="form-label">Categories <span class="req">*</span></label>
@@ -820,21 +844,26 @@
 
           // structured data (no files)
           const payload = {
+              product_id: base.product_id || null, // For update
               title: base.title,
               slug: base.slug,
-              brand_id: base.brand || null,
+              sku: $('#skuSingle')?.value || null,
+              brand_id: base.brand_id || null,
+              price: parseFloat($('#regularPrice')?.value) || 0,
+              sale_price: parseFloat($('#salePrice')?.value) || null,
+              stock_quantity: parseInt($('#stockQuantity')?.value) || 0,
               status: base.status,
-              short_desc: $('#shortDesc')?.value || '',
+              short_desc: base.short_desc || '',
               featured: !!base.featured,
-              allow_backorder: $('#allowBackorder')?.checked || false,
-              variant_wise_image: !!base.variantWiseImage,
+              allow_backorder: !!base.allow_backorder,
+              variant_wise_image: !!base.variant_wise_image,
 
               categories: base.categories, // all assigned
-              primary_category: base.primaryCategory, // single
+              primary_category: base.primary_category, // single
 
-              attribute_set_id: base.attrSet || null,
+              attribute_set_id: base.attribute_set_id || null,
               media_rule_id: base.mediaRule || null,
-              variant_rule_id: base.variantRule || null,
+              variant_rule_id: base.variant_rule_id || null,
 
               attributes: attrsObjectToArray(base.attributes),
               variants: normalizeVariants(), // includes map+options+sku
@@ -1338,17 +1367,24 @@
               map: JSON.parse(tr.dataset.variant || '[]'),
               sku: tr.querySelector('.v-sku')?.value.trim() || ''
           }));
+          
+          // Get product_id if editing
+          const productIdEl = $('#productId');
+          const productId = productIdEl ? productIdEl.value : null;
+          
           return {
+              product_id: productId, // Include for update
               title: $('#title')?.value.trim() || '',
               slug: $('#slug')?.value.trim() || slugify($('#title')?.value || ''),
-              brand: $('#brand')?.value || '',
+              brand_id: $('#brand')?.value || null,
+              short_desc: $('#shortDesc')?.value.trim() || '',
               categories: [...selectedCats],
-              primaryCategory: primaryCat || '',
-              attrSet: $('#attrSet')?.value || null,
+              primary_category: primaryCat || '',
+              attribute_set_id: $('#attrSet')?.value || null,
               mediaRule: $('#mediaRule')?.value || null,
-              variantRule: $('#variantRule')?.value || null,
+              variant_rule_id: $('#variantRule')?.value || null,
               attributes: attrsPayload,
-              variantWiseImage: $('#variantWiseImage')?.checked || false,
+              variant_wise_image: $('#variantWiseImage')?.checked || false,
               variants,
               sizeChart: $('#sizeChart')?.value || null,
               seo: {
@@ -1357,6 +1393,7 @@
                   keys: $('#metaKeys')?.value || ''
               },
               featured: $('#isFeatured')?.checked || false,
+              allow_backorder: $('#allowBackorder')?.checked || false,
               visible: $('#visible')?.checked || true,
               status: $('#status')?.value || 'Draft'
           };

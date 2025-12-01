@@ -77,7 +77,7 @@
                                         </div>
                                     </td>
                                     <td>
-                                        <span class="fw-bold">${{ number_format($item->price, 2) }}</span>
+                                        <span class="fw-bold">৳{{ number_format($item->price, 2) }}</span>
                                     </td>
                                     <td>
                                         <div class="quantity-control d-flex align-items-center">
@@ -91,7 +91,7 @@
                                         </div>
                                     </td>
                                     <td>
-                                        <span class="fw-bold text-primary item-subtotal">${{ number_format($item->price * $item->qty, 2) }}</span>
+                                        <span class="fw-bold text-primary item-subtotal">৳{{ number_format($item->price * $item->qty, 2) }}</span>
                                     </td>
                                     <td>
                                         <form action="{{ route('cart.remove', $item->rowId) }}" method="POST" class="d-inline">
@@ -141,13 +141,13 @@
                     
                     <div class="summary-item d-flex justify-content-between mb-3">
                         <span class="text-muted">Subtotal</span>
-                        <span class="fw-bold">${{ number_format($subtotal ?? 0, 2) }}</span>
+                        <span class="fw-bold">৳{{ number_format($subtotal ?? 0, 2) }}</span>
                     </div>
                     
                     @if(($discount ?? 0) > 0)
                     <div class="summary-item d-flex justify-content-between mb-3 text-success">
                         <span>Discount</span>
-                        <span class="fw-bold">-${{ number_format($discount, 2) }}</span>
+                        <span class="fw-bold">-৳{{ number_format($discount, 2) }}</span>
                     </div>
                     @endif
                     
@@ -155,7 +155,7 @@
                         <span class="text-muted">Shipping</span>
                         <span class="fw-bold">
                             @if(($shipping ?? 0) > 0)
-                                ${{ number_format($shipping, 2) }}
+                                ৳{{ number_format($shipping, 2) }}
                             @else
                                 <span class="text-success">Free</span>
                             @endif
@@ -166,7 +166,7 @@
                     
                     <div class="summary-total d-flex justify-content-between mb-4">
                         <span class="fw-bold fs-5">Total</span>
-                        <span class="fw-bold fs-4 text-primary">${{ number_format($total ?? 0, 2) }}</span>
+                        <span class="fw-bold fs-4 text-primary">৳{{ number_format($total ?? 0, 2) }}</span>
                     </div>
                     
                     <a href="{{ route('checkout.index') }}" class="btn btn-primary w-100 py-3 mb-3">

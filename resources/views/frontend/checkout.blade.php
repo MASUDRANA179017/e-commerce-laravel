@@ -168,7 +168,7 @@
                                     @endif
                                 </div>
                                 <div class="item-price">
-                                    <span class="fw-bold">${{ number_format($item->price * $item->qty, 2) }}</span>
+                                    <span class="fw-bold">৳{{ number_format($item->price * $item->qty, 2) }}</span>
                                 </div>
                             </div>
                             @endforeach
@@ -178,22 +178,22 @@
                         <div class="order-totals">
                             <div class="d-flex justify-content-between mb-2">
                                 <span class="text-muted">Subtotal</span>
-                                <span>${{ number_format($subtotal ?? 0, 2) }}</span>
+                                <span>৳{{ number_format($subtotal ?? 0, 2) }}</span>
                             </div>
                             @if(($discount ?? 0) > 0)
                             <div class="d-flex justify-content-between mb-2 text-success">
                                 <span>Discount</span>
-                                <span>-${{ number_format($discount, 2) }}</span>
+                                <span>-৳{{ number_format($discount, 2) }}</span>
                             </div>
                             @endif
                             <div class="d-flex justify-content-between mb-2">
                                 <span class="text-muted">Shipping</span>
-                                <span>{{ ($shipping ?? 0) > 0 ? '$' . number_format($shipping, 2) : 'Free' }}</span>
+                                <span>{{ ($shipping ?? 0) > 0 ? '৳' . number_format($shipping, 2) : 'Free' }}</span>
                             </div>
                             <hr>
                             <div class="d-flex justify-content-between mb-4">
                                 <span class="fw-bold fs-5">Total</span>
-                                <span class="fw-bold fs-4 text-primary">${{ number_format($total ?? 0, 2) }}</span>
+                                <span class="fw-bold fs-4 text-primary">৳{{ number_format($total ?? 0, 2) }}</span>
                             </div>
                         </div>
                         

@@ -919,63 +919,176 @@
             this.classList.remove('active');
         });
         
-        // Add to Cart AJAX
-        document.querySelectorAll('.add-to-cart').forEach(function(btn) {
-            btn.addEventListener('click', function(e) {
-                e.preventDefault();
-                var productId = this.dataset.productId;
+        // Toast Notification Function
+        function showToast(type, message) {
+            // Remove existing toasts
+            document.querySelectorAll('.toast-notification').forEach(t => t.remove());
+            
+            const toast = document.createElement('div');
+            toast.className = `toast-notification toast-${type}`;
+            toast.innerHTML = `
+                <i class="fa-solid fa-${type === 'success' ? 'check-circle' : 'exclamation-circle'} me-2"></i>
+                <span>${message}</span>
+            `;
+            document.body.appendChild(toast);
+            
+            setTimeout(() => toast.classList.add('show'), 100);
+            setTimeout(() => {
+                toast.classList.remove('show');
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+        
+        // Add to Cart AJAX (using event delegation for dynamic elements)
+        document.addEventListener('click', function(e) {
+            const btn = e.target.closest('.add-to-cart');
+            if (!btn) return;
+            
+            e.preventDefault();
+            e.stopPropagation();
+            
+            const productId = btn.dataset.productId;
+            if (!productId) return;
+            
+            // Disable button temporarily
+            btn.disabled = true;
+            const originalHtml = btn.innerHTML;
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
+            
+            fetch('/cart/add', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify({
+                    product_id: productId,
+                    quantity: 1
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                btn.disabled = false;
+                btn.innerHTML = originalHtml;
                 
-                fetch('/cart/add', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
-                    },
-                    body: JSON.stringify({
-                        product_id: productId,
-                        quantity: 1
-                    })
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        // Update cart count
-                        document.querySelector('.cart-count').textContent = data.cartCount;
-                        // Show success message
-                        alert('Product added to cart!');
-                    }
-                })
-                .catch(error => console.error('Error:', error));
+                if (data.success) {
+                    // Update cart count in header
+                    document.querySelectorAll('.cart-count').forEach(el => {
+                        el.textContent = data.cartCount;
+                    });
+                    showToast('success', data.message || 'Product added to cart!');
+                } else {
+                    showToast('error', data.message || 'Failed to add product to cart');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                btn.disabled = false;
+                btn.innerHTML = originalHtml;
+                showToast('error', 'Something went wrong. Please try again.');
             });
         });
         
-        // Add to Wishlist
-        document.querySelectorAll('.add-to-wishlist').forEach(function(btn) {
-            btn.addEventListener('click', function(e) {
-                e.preventDefault();
-                var productId = this.dataset.productId;
+        // Add to Wishlist AJAX (using event delegation for dynamic elements)
+        document.addEventListener('click', function(e) {
+            const btn = e.target.closest('.add-to-wishlist');
+            if (!btn) return;
+            
+            e.preventDefault();
+            e.stopPropagation();
+            
+            const productId = btn.dataset.productId;
+            if (!productId) return;
+            
+            // Disable button temporarily
+            btn.disabled = true;
+            const icon = btn.querySelector('i');
+            const originalClass = icon ? icon.className : '';
+            if (icon) icon.className = 'fa-solid fa-spinner fa-spin';
+            
+            fetch('/wishlist/add', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify({
+                    product_id: productId
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                btn.disabled = false;
                 
-                fetch('/wishlist/add', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
-                    },
-                    body: JSON.stringify({
-                        product_id: productId
-                    })
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        this.classList.add('active');
-                        alert('Product added to wishlist!');
+                if (data.success) {
+                    if (data.added) {
+                        // Added to wishlist - fill heart
+                        if (icon) icon.className = 'fa-solid fa-heart';
+                        btn.classList.add('active', 'text-danger');
+                    } else {
+                        // Removed from wishlist - empty heart
+                        if (icon) icon.className = 'fa-regular fa-heart';
+                        btn.classList.remove('active', 'text-danger');
                     }
-                })
-                .catch(error => console.error('Error:', error));
+                    showToast('success', data.message);
+                } else {
+                    if (icon) icon.className = originalClass;
+                    showToast('error', data.message || 'Failed to update wishlist');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                btn.disabled = false;
+                if (icon) icon.className = originalClass;
+                showToast('error', 'Something went wrong. Please try again.');
             });
         });
     </script>
+    
+    <!-- Toast Notification Styles -->
+    <style>
+        .toast-notification {
+            position: fixed;
+            top: 100px;
+            right: 20px;
+            padding: 15px 25px;
+            background: #fff;
+            border-radius: 10px;
+            box-shadow: 0 5px 25px rgba(0,0,0,0.15);
+            z-index: 99999;
+            transform: translateX(120%);
+            transition: transform 0.3s ease;
+            display: flex;
+            align-items: center;
+            font-weight: 500;
+        }
+        .toast-notification.show {
+            transform: translateX(0);
+        }
+        .toast-success {
+            border-left: 4px solid #28a745;
+        }
+        .toast-success i {
+            color: #28a745;
+        }
+        .toast-error {
+            border-left: 4px solid #dc3545;
+        }
+        .toast-error i {
+            color: #dc3545;
+        }
+        
+        .add-to-wishlist.active,
+        .add-to-wishlist.text-danger {
+            color: #dc3545 !important;
+        }
+        .add-to-wishlist.active i,
+        .add-to-wishlist.text-danger i {
+            color: #dc3545 !important;
+        }
+    </style>
     
     @stack('scripts')
 </body>

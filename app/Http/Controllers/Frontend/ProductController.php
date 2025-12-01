@@ -17,8 +17,23 @@ class ProductController extends Controller
         $product = Product::where('slug', $slug)
             ->orWhere('id', $slug)
             ->with(['images', 'categories', 'brand', 'variants'])
-            ->where('status', 'active')
-            ->firstOrFail();
+            ->where('status', 'Active')
+            ->first();
+
+        // If not found with 'Active', try 'active' (case insensitive)
+        if (!$product) {
+            $product = Product::where(function($q) use ($slug) {
+                    $q->where('slug', $slug)->orWhere('id', $slug);
+                })
+                ->whereRaw('LOWER(status) = ?', ['active'])
+                ->with(['images', 'categories', 'brand', 'variants'])
+                ->first();
+        }
+
+        // If still not found, abort
+        if (!$product) {
+            abort(404, 'Product not found');
+        }
 
         // Get related products from same category
         $relatedProducts = collect();
@@ -29,10 +44,27 @@ class ProductController extends Controller
                     $q->whereIn('product_categories.id', $categoryIds);
                 })
                 ->where('id', '!=', $product->id)
-                ->where('status', 'active')
-                ->with(['images', 'categories', 'variants'])
+                ->where(function($q) {
+                    $q->where('status', 'Active')
+                      ->orWhereRaw('LOWER(status) = ?', ['active']);
+                })
+                ->with(['images', 'brand'])
+                ->inRandomOrder()
                 ->limit(4)
                 ->get();
+            }
+
+            // If no related products from category, get random products
+            if ($relatedProducts->isEmpty()) {
+                $relatedProducts = Product::where('id', '!=', $product->id)
+                    ->where(function($q) {
+                        $q->where('status', 'Active')
+                          ->orWhereRaw('LOWER(status) = ?', ['active']);
+                    })
+                    ->with(['images', 'brand'])
+                    ->inRandomOrder()
+                    ->limit(4)
+                    ->get();
             }
         } catch (\Exception $e) {
             // If query fails, use empty collection
@@ -77,7 +109,7 @@ class ProductController extends Controller
                 $message = 'Thank you for your review!';
             }
         } else {
-            $message = 'Reviews feature is not available yet.';
+            $message = 'Thank you for your feedback! Reviews feature coming soon.';
         }
 
         return back()->with('success', $message);

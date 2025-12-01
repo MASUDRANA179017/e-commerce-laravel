@@ -88,15 +88,23 @@
                         </button>
                         
                         <!-- Wishlist Icon -->
-                        <a href="#" class="icon-btn position-relative" style="width: 42px; height: 42px; border: none; background: #f5f5f5; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #333; font-size: 16px; text-decoration: none; transition: all 0.3s;">
+                        @php
+                            $wishlistCount = count(session()->get('wishlist', []));
+                            $cartCount = 0;
+                            $cart = session()->get('cart', []);
+                            foreach ($cart as $item) {
+                                $cartCount += $item['qty'] ?? 1;
+                            }
+                        @endphp
+                        <a href="{{ route('wishlist.index') }}" class="icon-btn position-relative" style="width: 42px; height: 42px; border: none; background: #f5f5f5; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #333; font-size: 16px; text-decoration: none; transition: all 0.3s;" title="My Wishlist">
                             <i class="fa-regular fa-heart"></i>
-                            <span class="badge-count" style="position: absolute; top: -5px; right: -5px; width: 20px; height: 20px; background: #dc3545; color: #fff; border-radius: 50%; font-size: 10px; display: flex; align-items: center; justify-content: center; font-weight: 600;">0</span>
+                            <span class="badge-count wishlist-count" style="position: absolute; top: -5px; right: -5px; width: 20px; height: 20px; background: #dc3545; color: #fff; border-radius: 50%; font-size: 10px; display: flex; align-items: center; justify-content: center; font-weight: 600;">{{ $wishlistCount }}</span>
                         </a>
                         
                         <!-- Cart Icon -->
-                        <button class="icon-btn position-relative open-cart" style="width: 42px; height: 42px; border: none; background: #0496ff; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 16px; cursor: pointer; transition: all 0.3s;">
+                        <button class="icon-btn position-relative open-cart" style="width: 42px; height: 42px; border: none; background: #0496ff; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 16px; cursor: pointer; transition: all 0.3s;" title="Shopping Cart">
                             <i class="fa-solid fa-shopping-bag"></i>
-                            <span class="badge-count cart-count" style="position: absolute; top: -5px; right: -5px; width: 20px; height: 20px; background: #dc3545; color: #fff; border-radius: 50%; font-size: 10px; display: flex; align-items: center; justify-content: center; font-weight: 600;">0</span>
+                            <span class="badge-count cart-count" style="position: absolute; top: -5px; right: -5px; width: 20px; height: 20px; background: #dc3545; color: #fff; border-radius: 50%; font-size: 10px; display: flex; align-items: center; justify-content: center; font-weight: 600;">{{ $cartCount }}</span>
                         </button>
                         
                         <!-- User Icon (Desktop) -->

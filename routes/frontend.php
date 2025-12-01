@@ -4,6 +4,7 @@ use App\Http\Controllers\Frontend\HomeController;
 use App\Http\Controllers\Frontend\ShopController;
 use App\Http\Controllers\Frontend\ProductController;
 use App\Http\Controllers\Frontend\CartController;
+use App\Http\Controllers\Frontend\WishlistController;
 use App\Http\Controllers\Frontend\CheckoutController;
 use App\Http\Controllers\Frontend\ContactController;
 use Illuminate\Support\Facades\Route;
@@ -37,6 +38,17 @@ Route::prefix('cart')->name('cart.')->group(function () {
     Route::delete('/remove/{rowId}', [CartController::class, 'remove'])->name('remove');
     Route::delete('/clear', [CartController::class, 'clear'])->name('clear');
     Route::post('/coupon', [CartController::class, 'applyCoupon'])->name('coupon');
+    Route::get('/count', [CartController::class, 'count'])->name('count');
+});
+
+// Wishlist Routes
+Route::prefix('wishlist')->name('wishlist.')->group(function () {
+    Route::get('/', [WishlistController::class, 'index'])->name('index');
+    Route::post('/add', [WishlistController::class, 'add'])->name('add');
+    Route::delete('/remove/{productId}', [WishlistController::class, 'remove'])->name('remove');
+    Route::delete('/clear', [WishlistController::class, 'clear'])->name('clear');
+    Route::get('/count', [WishlistController::class, 'count'])->name('count');
+    Route::post('/move-to-cart/{productId}', [WishlistController::class, 'moveToCart'])->name('moveToCart');
 });
 
 // Checkout Routes (requires auth)

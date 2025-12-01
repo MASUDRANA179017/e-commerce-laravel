@@ -73,10 +73,10 @@
                             @endif
                             <div class="row g-2 mb-3">
                                 <div class="col-6">
-                                    <input type="number" name="min_price" class="form-control" placeholder="Min $" value="{{ request('min_price') }}">
+                                    <input type="number" name="min_price" class="form-control" placeholder="Min ৳" value="{{ request('min_price') }}">
                                 </div>
                                 <div class="col-6">
-                                    <input type="number" name="max_price" class="form-control" placeholder="Max $" value="{{ request('max_price') }}">
+                                    <input type="number" name="max_price" class="form-control" placeholder="Max ৳" value="{{ request('max_price') }}">
                                 </div>
                             </div>
                             <button type="submit" class="btn btn-primary w-100">Apply Filter</button>
@@ -155,7 +155,7 @@
                         @endif
                         @if(request('min_price') || request('max_price'))
                             <a href="{{ route('shop.index', array_merge(request()->except(['min_price', 'max_price']))) }}" class="badge bg-primary me-2">
-                                Price: ${{ request('min_price', 0) }} - ${{ request('max_price', '∞') }} <i class="fa-solid fa-times ms-1"></i>
+                                Price: ৳{{ request('min_price', 0) }} - ৳{{ request('max_price', '∞') }} <i class="fa-solid fa-times ms-1"></i>
                             </a>
                         @endif
                         <a href="{{ route('shop.index') }}" class="badge bg-danger">Clear All</a>

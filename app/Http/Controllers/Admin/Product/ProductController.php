@@ -198,22 +198,31 @@ class ProductController extends Controller
     }
 
     /**
-     * 🧾 Store Product
+     * 🧾 Store/Update Product
      */
     public function store(Request $request)
     {
         $payload = json_decode($request->input('data', '{}'), true);
         Log::info($payload);
 
-        return DB::transaction(function () use ($request, $payload) {
+        // Check if this is an update (product_id provided)
+        $existingProductId = $payload['product_id'] ?? $request->input('product_id') ?? null;
+        $isUpdate = !empty($existingProductId);
+
+        return DB::transaction(function () use ($request, $payload, $existingProductId, $isUpdate) {
             $slug = $payload['slug'] ?? Str::slug($payload['title'] ?? (string) Str::uuid());
-            $productId = DB::table('products')->insertGetId([
+            
+            $productData = [
                 'brand_id' => $payload['brand_id'] ?? null,
                 'attribute_set_id' => $payload['attribute_set_id'] ?? null,
                 'variant_rule_id' => $payload['variant_rule_id'] ?? null,
                 'title' => $payload['title'] ?? '',
                 'slug' => $slug,
+                'sku' => $payload['sku'] ?? null,
                 'short_desc' => $payload['short_desc'] ?? null,
+                'price' => $payload['price'] ?? 0,
+                'sale_price' => $payload['sale_price'] ?? null,
+                'stock_quantity' => $payload['stock_quantity'] ?? 0,
                 'status' => $payload['status'] ?? 'Draft',
                 'featured' => (bool) ($payload['featured'] ?? false),
                 'allow_backorder' => (bool) ($payload['allow_backorder'] ?? false),
@@ -221,9 +230,30 @@ class ProductController extends Controller
                 'seo_title' => $payload['seo']['title'] ?? null,
                 'seo_desc' => $payload['seo']['desc'] ?? null,
                 'seo_keys' => $payload['seo']['keys'] ?? null,
-                'created_at' => now(),
                 'updated_at' => now(),
-            ]);
+            ];
+
+            if ($isUpdate) {
+                // Update existing product
+                DB::table('products')->where('id', $existingProductId)->update($productData);
+                $productId = $existingProductId;
+                
+                // Clear existing category mappings for update
+                DB::table('product_category_map')->where('product_id', $productId)->delete();
+                
+                // Clear existing attributes for update
+                DB::table('product_attribute_terms')->where('product_id', $productId)->delete();
+                
+                // Clear existing variants for update (optional - you may want to keep them)
+                // DB::table('product_variant_options')->whereIn('variant_id', 
+                //     DB::table('product_variants')->where('product_id', $productId)->pluck('id')
+                // )->delete();
+                // DB::table('product_variants')->where('product_id', $productId)->delete();
+            } else {
+                // Create new product
+                $productData['created_at'] = now();
+                $productId = DB::table('products')->insertGetId($productData);
+            }
 
             // 🔗 Category mapping
             $catPaths = $payload['categories'] ?? [];
@@ -261,17 +291,25 @@ class ProductController extends Controller
             $galleryFiles = $request->file('gallery');
             $galleryFiles = is_array($galleryFiles) ? $galleryFiles : ($galleryFiles ? [$galleryFiles] : []);
             $coverIdx = (int) $request->input('gallery_cover_index', 0);
-            $sort = 0;
+            
+            // Only process images if new files are uploaded
+            if (count($galleryFiles) > 0) {
+                // Get current max sort order for existing images
+                $maxSort = DB::table('product_images')
+                    ->where('product_id', $productId)
+                    ->max('sort_order') ?? -1;
+                $sort = $maxSort + 1;
 
-            foreach ($galleryFiles as $idx => $file) {
-                if (!($file instanceof \Illuminate\Http\UploadedFile) || !$file->isValid()) continue;
-                $path = $file->store('product/images', 'public');
-                DB::table('product_images')->insert([
-                    'product_id' => $productId,
-                    'path' => $path,
-                    'is_cover' => (int) ((string) $idx === (string) $coverIdx),
-                    'sort_order' => $sort++,
-                ]);
+                foreach ($galleryFiles as $idx => $file) {
+                    if (!($file instanceof \Illuminate\Http\UploadedFile) || !$file->isValid()) continue;
+                    $path = $file->store('product/images', 'public');
+                    DB::table('product_images')->insert([
+                        'product_id' => $productId,
+                        'path' => $path,
+                        'is_cover' => (!$isUpdate && (string) $idx === (string) $coverIdx) ? 1 : 0,
+                        'sort_order' => $sort++,
+                    ]);
+                }
             }
 
             // ⚙️ Attributes
@@ -329,7 +367,12 @@ class ProductController extends Controller
                 }
             }
 
-            return response()->json(['ok' => true, 'product_id' => $productId], 201);
+            return response()->json([
+                'ok' => true, 
+                'product_id' => $productId,
+                'message' => $isUpdate ? 'Product updated successfully!' : 'Product created successfully!',
+                'is_update' => $isUpdate
+            ], $isUpdate ? 200 : 201);
         });
     }
 
