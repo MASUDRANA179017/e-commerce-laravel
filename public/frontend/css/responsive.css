@@ -1,0 +1,382 @@
+/*
+|--------------------------------------------------------------------------
+| GrowUp E-Commerce - Responsive CSS
+|--------------------------------------------------------------------------
+*/
+
+/* ===== Extra Large Devices (desktops, 1200px and up) ===== */
+@media (min-width: 1200px) {
+    .container {
+        max-width: 1140px;
+    }
+}
+
+/* ===== Large Devices (desktops, 992px and up) ===== */
+@media (min-width: 992px) and (max-width: 1199.98px) {
+    .navbar__list {
+        gap: 25px;
+    }
+    
+    .title-animation {
+        font-size: 36px;
+    }
+}
+
+/* ===== Medium Devices (tablets, 768px and up) ===== */
+@media (min-width: 768px) and (max-width: 991.98px) {
+    .topbar {
+        display: none !important;
+    }
+    
+    .navbar__menu {
+        display: none !important;
+    }
+    
+    .title-animation {
+        font-size: 32px;
+    }
+    
+    .common-banner__content h2 {
+        font-size: 32px;
+    }
+    
+    .banner-two__slider-single {
+        height: 400px;
+    }
+    
+    .feature-six-wrapper {
+        padding: 20px;
+    }
+    
+    .shop__sidebar {
+        position: relative;
+        top: 0;
+        margin-bottom: 30px;
+    }
+}
+
+/* ===== Small Devices (landscape phones, 576px and up) ===== */
+@media (min-width: 576px) and (max-width: 767.98px) {
+    .topbar {
+        display: none !important;
+    }
+    
+    .navbar__menu {
+        display: none !important;
+    }
+    
+    .title-animation {
+        font-size: 28px;
+    }
+    
+    .common-banner {
+        padding: 50px 0;
+    }
+    
+    .common-banner__content h2 {
+        font-size: 28px;
+    }
+    
+    .banner-two__slider-single {
+        height: 350px;
+    }
+    
+    .banner-two__slider-single h1 {
+        font-size: 32px !important;
+    }
+    
+    .feature-six-wrapper {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .feature-six-icon {
+        margin-bottom: 15px;
+    }
+    
+    .shop__sidebar {
+        position: relative;
+        top: 0;
+        margin-bottom: 30px;
+    }
+    
+    .cart-table {
+        font-size: 14px;
+    }
+    
+    .cart-item-image {
+        width: 60px !important;
+        height: 60px !important;
+    }
+}
+
+/* ===== Extra Small Devices (portrait phones, less than 576px) ===== */
+@media (max-width: 575.98px) {
+    .topbar {
+        display: none !important;
+    }
+    
+    .navbar__menu {
+        display: none !important;
+    }
+    
+    .navbar-logo img {
+        height: 40px !important;
+    }
+    
+    .contact-btn {
+        display: none !important;
+    }
+    
+    .title-animation {
+        font-size: 24px;
+    }
+    
+    .sub-title-main {
+        font-size: 12px;
+    }
+    
+    .common-banner {
+        padding: 40px 0;
+    }
+    
+    .common-banner__content h2 {
+        font-size: 24px;
+    }
+    
+    .banner-two__slider-single {
+        height: 300px;
+    }
+    
+    .banner-two__slider-single h1 {
+        font-size: 26px !important;
+    }
+    
+    .banner-two__slider-single p {
+        font-size: 14px !important;
+    }
+    
+    .apece-primary-button {
+        padding: 12px 25px;
+        font-size: 14px;
+    }
+    
+    .feature-six-wrapper {
+        flex-direction: column;
+        text-align: center;
+        padding: 20px 15px;
+    }
+    
+    .feature-six-icon {
+        margin-bottom: 15px;
+    }
+    
+    .feature-six-icon span {
+        width: 60px;
+        height: 60px;
+        font-size: 24px;
+    }
+    
+    .feature-six-content h4 {
+        font-size: 16px;
+    }
+    
+    .feature-six-content p {
+        font-size: 13px;
+    }
+    
+    /* Shop Page */
+    .shop__sidebar {
+        position: relative;
+        top: 0;
+        margin-bottom: 30px;
+    }
+    
+    .shop-sidebar-widget {
+        padding: 20px;
+    }
+    
+    .shop__content-intro {
+        flex-direction: column;
+        gap: 15px;
+    }
+    
+    .shop-intro__right {
+        width: 100%;
+        justify-content: space-between;
+    }
+    
+    /* Product Card */
+    .property-single-boxarea {
+        margin-bottom: 20px;
+    }
+    
+    .property-list-img-area img {
+        height: 200px;
+    }
+    
+    .property-single-content {
+        padding: 15px;
+    }
+    
+    .property-single-content h4 {
+        font-size: 16px;
+    }
+    
+    .btn-area1 {
+        padding: 10px 15px;
+        flex-wrap: wrap;
+    }
+    
+    /* Cart Page */
+    .cart-table th,
+    .cart-table td {
+        padding: 10px;
+        font-size: 13px;
+    }
+    
+    .cart-item-image {
+        width: 50px !important;
+        height: 50px !important;
+    }
+    
+    .quantity-control {
+        transform: scale(0.9);
+    }
+    
+    .cart-actions {
+        flex-direction: column;
+        gap: 15px;
+    }
+    
+    .cart-actions .btn {
+        width: 100%;
+    }
+    
+    /* Checkout Page */
+    .order-summary {
+        position: relative !important;
+        top: 0 !important;
+    }
+    
+    /* Product Details */
+    .product-info h1 {
+        font-size: 24px !important;
+    }
+    
+    .product-price .current-price {
+        font-size: 28px !important;
+    }
+    
+    .action-buttons {
+        flex-direction: column;
+    }
+    
+    .action-buttons .btn {
+        width: 100%;
+    }
+    
+    .thumbnail-gallery {
+        justify-content: center;
+    }
+    
+    /* Footer */
+    .footer-area {
+        padding: 50px 0 20px;
+    }
+    
+    .footer-widget {
+        text-align: center;
+        margin-bottom: 30px;
+    }
+    
+    .footer-widget h5::after {
+        left: 50%;
+        transform: translateX(-50%);
+    }
+    
+    .footer-area .social {
+        justify-content: center;
+    }
+    
+    .footer-contact li {
+        justify-content: center;
+    }
+    
+    /* Contact Page */
+    .contact-card {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .contact-card .icon-box {
+        margin: 0 auto 15px;
+    }
+    
+    /* About Page */
+    .experience-badge {
+        right: 0 !important;
+        bottom: -20px !important;
+    }
+    
+    .stats-section h2 {
+        font-size: 36px !important;
+    }
+}
+
+/* ===== Print Styles ===== */
+@media print {
+    .header,
+    .footer-area,
+    .mobile-menu,
+    .search-popup,
+    .sidebar-cart,
+    .topbar {
+        display: none !important;
+    }
+    
+    body {
+        font-size: 12pt;
+    }
+    
+    a {
+        text-decoration: none;
+        color: #000;
+    }
+    
+    .btn {
+        display: none;
+    }
+}
+
+/* ===== High Resolution Screens ===== */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+    /* Retina optimizations if needed */
+}
+
+/* ===== Dark Mode Support (optional) ===== */
+@media (prefers-color-scheme: dark) {
+    /* Add dark mode styles here if needed */
+}
+
+/* ===== Reduced Motion ===== */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+}
+
+/* ===== Hover States for Touch Devices ===== */
+@media (hover: none) {
+    .btn:hover,
+    .feature-six-wrapper:hover,
+    .property-single-boxarea:hover {
+        transform: none;
+    }
+}
+

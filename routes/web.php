@@ -5,16 +5,16 @@ use Illuminate\Support\Facades\Artisan;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\business_settings\BusinessCatalogController;
 use App\Http\Controllers\TermsConditionController;
-use App\Http\Controllers\Admin\ContactController;
+use App\Http\Controllers\Admin\ContactController as AdminContactController;
 use App\Http\Controllers\Admin\SupportTicketController;
 use App\Http\Controllers\Admin\UnitController;
 
-
-
-
-Route::get('/', function () {
-    return view('welcome');
-});
+/*
+|--------------------------------------------------------------------------
+| Frontend Routes (E-commerce Storefront)
+|--------------------------------------------------------------------------
+*/
+require __DIR__.'/frontend.php';
 
 Route::get('/dashboard', function () {
     return view('dashboard');
@@ -51,12 +51,8 @@ route::get('/business-setup', [BusinessCatalogController::class, 'business_setup
 
 
 // Admin routes for contact-us
-Route::get('/admin/contact', [ContactController::class, 'index'])->name('admin.contact');
-Route::post('/admin/contact', [ContactController::class, 'store'])->name('admin.contact.store');
-
-// Frontend routes - for contact-us
-Route::get('/contact', [ContactController::class, 'index'])->name('contact');
-Route::post('/contact', [ContactController::class, 'store'])->name('contact.store');
+Route::get('/admin/contact', [AdminContactController::class, 'index'])->name('admin.contact');
+Route::post('/admin/contact', [AdminContactController::class, 'store'])->name('admin.contact.store');
 
 //support ticket
 
