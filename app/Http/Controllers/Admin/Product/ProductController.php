@@ -379,10 +379,9 @@ class ProductController extends Controller
      */
     public function getProductDetails($id)
     {
-        // Fetch product with brand and unit
+        // Fetch product with brand
         $product = DB::table('products')
             ->leftJoin('brands', 'products.brand_id', '=', 'brands.id')
-            ->leftJoin('units', 'products.unit_id', '=', 'units.id')
             ->leftJoin('product_category_map as pcm', function ($join) {
                 $join->on('products.id', '=', 'pcm.product_id')
                     ->where('pcm.is_primary', true);
@@ -392,7 +391,6 @@ class ProductController extends Controller
             ->select(
                 'products.*',
                 'brands.name as brand_name',
-                'units.name as unit_name',
                 'pc.name as category_name'
             )
             ->first();
