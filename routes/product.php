@@ -56,6 +56,7 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
 
     Route::get('/product/{id}/images', [ProductController::class, 'getImages'])->name('product.images');
     Route::get('/product/{id}/variants', [ProductController::class, 'getVariants'])->name('product.variants');
+    Route::get('/product/{id}/details', [ProductController::class, 'getProductDetails'])->name('product.details');
 
 });
 

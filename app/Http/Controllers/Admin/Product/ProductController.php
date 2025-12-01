@@ -374,7 +374,70 @@ class ProductController extends Controller
         return response()->json(['variants' => $formatted]);
     }
 
+    /**
+     * 📋 Get Product Details (for modal)
+     */
+    public function getProductDetails($id)
+    {
+        // Fetch product with brand and unit
+        $product = DB::table('products')
+            ->leftJoin('brands', 'products.brand_id', '=', 'brands.id')
+            ->leftJoin('units', 'products.unit_id', '=', 'units.id')
+            ->leftJoin('product_category_map as pcm', function ($join) {
+                $join->on('products.id', '=', 'pcm.product_id')
+                    ->where('pcm.is_primary', true);
+            })
+            ->leftJoin('product_categories as pc', 'pcm.category_id', '=', 'pc.id')
+            ->where('products.id', $id)
+            ->select(
+                'products.*',
+                'brands.name as brand_name',
+                'units.name as unit_name',
+                'pc.name as category_name'
+            )
+            ->first();
 
+        if (!$product) {
+            return response()->json(['success' => false, 'message' => 'Product not found'], 404);
+        }
+
+        // Fetch images
+        $images = DB::table('product_images')
+            ->where('product_id', $id)
+            ->orderByDesc('is_cover')
+            ->orderBy('sort_order', 'asc')
+            ->get(['id', 'path', 'is_cover'])
+            ->map(fn($img) => [
+                'id' => $img->id,
+                'url' => asset('storage/' . $img->path),
+                'is_cover' => $img->is_cover,
+            ]);
+
+        // Fetch variants with options
+        $variants = \App\Models\ProductVariant::with(['options.attribute', 'options.term'])
+            ->where('product_id', $id)
+            ->get()
+            ->map(function ($variant) {
+                $combination = $variant->options->map(function ($opt) {
+                    return "{$opt->attribute->name}: {$opt->term->name}";
+                })->join(' | ');
+
+                return [
+                    'id' => $variant->id,
+                    'name' => $combination ?: 'Default',
+                    'sku' => $variant->sku,
+                    'price' => $variant->price ?? null,
+                    'stock' => $variant->stock ?? null,
+                ];
+            });
+
+        return response()->json([
+            'success' => true,
+            'product' => $product,
+            'images' => $images,
+            'variants' => $variants,
+        ]);
+    }
 }
 
 
