@@ -27,7 +27,6 @@ class RoleController extends Controller
                     }
                     $btn = '<div class="action-btn-group">';
                     $btn .= '<a href="javascript:void(0)" class="action-btn-success me-1 edit-role" data-id="' . $row->id . '" title="Edit"><i class="bx bxs-edit"></i></a>';
-                    // $btn .= '<a href="javascript:void(0)" class="action-btn-info me-1" onclick="switchToPermissionsTab(\'' . $row->id . '\')" title="Manage Permissions"><i class="bx bx-list-check"></i></a>';
                     $btn .= '<a href="javascript:void(0)" class="action-btn-danger delete-role" data-id="' . $row->id . '" title="Delete"><i class="bx bxs-trash"></i></a>';
                     $btn .= '</div>';
                     return $btn;
@@ -35,6 +34,9 @@ class RoleController extends Controller
                 ->rawColumns(['users_count', 'action'])
                 ->make(true);
         }
+        
+        // Return the user management view with roles tab active
+        return redirect()->route('admin.users.index')->with('activeTab', 'gs-2');
     }
 
     public function store(Request $request)

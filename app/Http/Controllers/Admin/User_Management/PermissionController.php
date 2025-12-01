@@ -12,22 +12,28 @@ class PermissionController extends Controller
 {
     public function index(Request $request)
     {
-        // Get all permissions and group them by a "module"
-        $allPermissions = Permission::all()->groupBy(function ($permission) {
-            // Assumes permission names are like "users.view", "roles.create"
-            return explode('.', $permission->name)[0];
-        });
+        // If AJAX request, return JSON data
+        if ($request->ajax() || $request->wantsJson()) {
+            // Get all permissions and group them by a "module"
+            $allPermissions = Permission::all()->groupBy(function ($permission) {
+                // Assumes permission names are like "users.view", "roles.create"
+                return explode('.', $permission->name)[0];
+            });
 
-        $rolePermissions = [];
-        if ($request->has('role_id')) {
-            $role = Role::findOrFail($request->role_id);
-            $rolePermissions = $role->permissions->pluck('name')->toArray();
+            $rolePermissions = [];
+            if ($request->has('role_id')) {
+                $role = Role::findOrFail($request->role_id);
+                $rolePermissions = $role->permissions->pluck('name')->toArray();
+            }
+
+            return response()->json([
+                'all_permissions' => $allPermissions,
+                'role_permissions' => $rolePermissions,
+            ]);
         }
-
-        return response()->json([
-            'all_permissions' => $allPermissions,
-            'role_permissions' => $rolePermissions,
-        ]);
+        
+        // Return the user management view with permissions tab active
+        return redirect()->route('admin.users.index')->with('activeTab', 'gs-3');
     }
 
 public function assignPermissions(Request $request, Role $role)

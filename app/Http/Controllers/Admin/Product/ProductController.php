@@ -31,7 +31,7 @@ class ProductController extends Controller
      */
     public function allProducts(Request $request)
     {
-        // ✅ Base Query (with joins)
+        // Base Query (with joins)
         $query = DB::table('products')
             ->join('brands', 'products.brand_id', '=', 'brands.id')
             ->leftJoin('product_category_map as pcm', function ($join) {
@@ -53,7 +53,7 @@ class ProductController extends Controller
             )
             ->orderBy('products.created_at', 'desc');
 
-        // ✅ If AJAX request → return DataTable JSON
+        // If AJAX request → return DataTable JSON
         if ($request->ajax()) {
             return DataTables::of($query)
                 ->addIndexColumn()
@@ -91,7 +91,7 @@ class ProductController extends Controller
                 ->make(true);
         }
 
-        // ✅ Otherwise → send to Blade for @forelse
+        // Otherwise → send to Blade for @forelse
         $products = $query->get();
         return view('admin.product.all_products.index', compact('products'));
     }
