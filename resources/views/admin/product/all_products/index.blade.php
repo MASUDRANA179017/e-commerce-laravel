@@ -1219,11 +1219,11 @@ document.addEventListener("DOMContentLoaded", function() {
                                 <div class="product-meta-grid">
                                     <div class="product-meta-item">
                                         <div class="product-meta-label">Stock Quantity</div>
-                                        <div class="product-meta-value">${p.stock_quantity || 0} units</div>
+                                        <div class="product-meta-value">${p.stock_quantity || p.quantity || 0} units</div>
                                     </div>
                                     <div class="product-meta-item">
-                                        <div class="product-meta-label">Unit</div>
-                                        <div class="product-meta-value">${p.unit_name || 'Piece'}</div>
+                                        <div class="product-meta-label">Status</div>
+                                        <div class="product-meta-value">${p.status ? p.status.charAt(0).toUpperCase() + p.status.slice(1) : 'Draft'}</div>
                                     </div>
                                     <div class="product-meta-item">
                                         <div class="product-meta-label">Created</div>
