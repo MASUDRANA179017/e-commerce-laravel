@@ -67,7 +67,7 @@
 
 <body class="boxed-size">
 
-    @include('layouts.include.sidebar')
+    @include('layouts.include.sidebar-blade')
 
     <div class="container-fluid">
         <div class="main-content d-flex flex-column">
