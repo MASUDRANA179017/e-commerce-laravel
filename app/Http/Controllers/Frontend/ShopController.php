@@ -16,43 +16,69 @@ class ShopController extends Controller
      */
     public function index(Request $request)
     {
-        // Get all categories for sidebar
+        // Get total count of all active products
+        $totalProducts = Product::where('status', 'Active')->count();
+
+        // Get all categories with active product counts using raw query for reliability
         $categories = collect();
         try {
             $categories = ProductCategory::whereNull('parent_id')
-                ->withCount('products')
                 ->orderBy('name')
-                ->get();
+                ->get()
+                ->map(function ($category) {
+                    // Count products using raw query for reliability
+                    $category->products_count = DB::table('product_category_map')
+                        ->join('products', 'product_category_map.product_id', '=', 'products.id')
+                        ->where('product_category_map.category_id', $category->id)
+                        ->where('products.status', 'Active')
+                        ->count();
+                    
+                    // Generate slug if not exists
+                    if (empty($category->slug)) {
+                        $category->slug = \Str::slug($category->name);
+                    }
+                    
+                    return $category;
+                });
         } catch (\Exception $e) {
-            try {
-                $categories = ProductCategory::whereNull('parent_id')
-                    ->orderBy('name')
-                    ->get();
-            } catch (\Exception $e2) {
-                // Use empty collection
-            }
+            // Use empty collection
         }
 
-        // Get brands for filter
+        // Get brands for filter with product counts
         $brands = collect();
         try {
             $brands = Brand::where('status', 'active')
                 ->orderBy('name')
-                ->get();
+                ->get()
+                ->map(function ($brand) {
+                    $brand->products_count = Product::where('status', 'Active')
+                        ->where('brand_id', $brand->id)
+                        ->count();
+                    
+                    if (empty($brand->slug)) {
+                        $brand->slug = \Str::slug($brand->name);
+                    }
+                    
+                    return $brand;
+                })
+                ->filter(function ($brand) {
+                    return $brand->products_count > 0;
+                });
         } catch (\Exception $e) {
             // Use empty collection
         }
 
         // Build products query
         $query = Product::where('status', 'Active')
-            ->with(['images', 'brand']);
+            ->with(['images', 'brand', 'categories']);
 
         // Filter by category
         if ($request->filled('category')) {
             $categorySlug = $request->category;
             $query->whereHas('categories', function ($q) use ($categorySlug) {
                 $q->where('slug', $categorySlug)
-                    ->orWhere('name', 'like', "%{$categorySlug}%");
+                    ->orWhere('name', $categorySlug)
+                    ->orWhereRaw("LOWER(REPLACE(name, ' ', '-')) = ?", [strtolower($categorySlug)]);
             });
         }
 
@@ -142,6 +168,6 @@ class ShopController extends Controller
             ->selectRaw('MIN(COALESCE(sale_price, price)) as min_price, MAX(price) as max_price')
             ->first();
 
-        return view('frontend.shop', compact('products', 'categories', 'brands', 'priceRange'));
+        return view('frontend.shop', compact('products', 'categories', 'brands', 'priceRange', 'totalProducts'));
     }
 }

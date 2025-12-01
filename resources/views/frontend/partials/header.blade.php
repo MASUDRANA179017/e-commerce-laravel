@@ -107,38 +107,6 @@
                             <span class="badge-count cart-count" style="position: absolute; top: -5px; right: -5px; width: 20px; height: 20px; background: #dc3545; color: #fff; border-radius: 50%; font-size: 10px; display: flex; align-items: center; justify-content: center; font-weight: 600;">{{ $cartCount }}</span>
                         </button>
                         
-                        <!-- User Icon (Desktop) -->
-                        @auth
-                        <div class="user-dropdown position-relative d-none d-lg-block">
-                            <button class="icon-btn user-btn d-flex align-items-center gap-2" style="border: none; background: #f5f5f5; border-radius: 50px; padding: 5px 15px 5px 5px; cursor: pointer; transition: all 0.3s;">
-                                <div style="width: 32px; height: 32px; background: linear-gradient(135deg, #0496ff 0%, #0380d9 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 14px;">
-                                    <i class="fa-solid fa-user"></i>
-                                </div>
-                                <span style="font-size: 13px; font-weight: 500; color: #333;">{{ Str::limit(Auth::user()->name ?? 'User', 10) }}</span>
-                                <i class="fa-solid fa-chevron-down" style="font-size: 10px; color: #666;"></i>
-                            </button>
-                            <ul class="user-dropdown-menu" style="position: absolute; top: 100%; right: 0; background: #fff; min-width: 200px; padding: 15px 0; border-radius: 10px; box-shadow: 0 10px 40px rgba(0,0,0,0.1); opacity: 0; visibility: hidden; transform: translateY(10px); transition: all 0.3s; list-style: none; margin-top: 10px; z-index: 100;">
-                                <li>
-                                    <a href="{{ route('dashboard') }}" class="d-flex align-items-center" style="padding: 10px 20px; color: #666; text-decoration: none; font-size: 14px; transition: all 0.3s;">
-                                        <i class="fa-solid fa-tachometer-alt me-2" style="color: #0496ff;"></i> Dashboard
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="{{ route('profile.edit') }}" class="d-flex align-items-center" style="padding: 10px 20px; color: #666; text-decoration: none; font-size: 14px; transition: all 0.3s;">
-                                        <i class="fa-solid fa-user-cog me-2" style="color: #0496ff;"></i> My Profile
-                                    </a>
-                                </li>
-                                <li style="border-top: 1px solid #eee; margin-top: 10px; padding-top: 10px;">
-                                    <form method="POST" action="{{ route('logout') }}">
-                                        @csrf
-                                        <button type="submit" class="d-flex align-items-center w-100" style="padding: 10px 20px; color: #dc3545; background: none; border: none; font-size: 14px; cursor: pointer; transition: all 0.3s;">
-                                            <i class="fa-solid fa-sign-out-alt me-2"></i> Logout
-                                        </button>
-                                    </form>
-                                </li>
-                            </ul>
-                        </div>
-                        @endauth
                         
                         <!-- Mobile Menu Toggle -->
                         <button class="mobile-menu-toggle d-xl-none" style="width: 42px; height: 42px; border: none; background: #1a1a2e; border-radius: 10px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 5px; cursor: pointer; transition: all 0.3s;">

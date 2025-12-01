@@ -16,15 +16,34 @@ class HomeController extends Controller
      */
     public function index()
     {
-        // Get categories for display
+        // Get categories with active product counts
         $categories = collect();
         try {
             $categories = ProductCategory::whereNull('parent_id')
+                ->withCount(['products' => function ($query) {
+                    $query->where('status', 'Active');
+                }])
                 ->orderBy('order')
                 ->limit(8)
                 ->get();
         } catch (\Exception $e) {
-            // If query fails, use empty collection
+            // Fallback: manually count products
+            try {
+                $categories = ProductCategory::whereNull('parent_id')
+                    ->orderBy('order')
+                    ->limit(8)
+                    ->get()
+                    ->map(function ($category) {
+                        $category->products_count = DB::table('product_category_map')
+                            ->join('products', 'product_category_map.product_id', '=', 'products.id')
+                            ->where('product_category_map.category_id', $category->id)
+                            ->where('products.status', 'Active')
+                            ->count();
+                        return $category;
+                    });
+            } catch (\Exception $e2) {
+                // Use empty collection
+            }
         }
 
         // Get featured products
