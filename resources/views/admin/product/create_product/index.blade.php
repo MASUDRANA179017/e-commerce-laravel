@@ -1,13 +1,19 @@
 @extends('layouts.master')
-@section('title', 'Dashboard')
+@section('title', isset($isEdit) && $isEdit ? 'Edit Product' : 'Create Product')
 @section('content')
     @include('admin.product.partials.create-product.create-product-css')
 
     <div class="container-fluid my-3">
         <div class="d-flex justify-content-between align-items-center mb-2">
             <div>
-                <h3 class="mb-0">Create Product</h3>
-                <div class="small-muted">Category কনফিগ, Media Rule ও Variant Rule অনুযায়ী ফর্ম ডাইনামিক হবে</div>
+                <h3 class="mb-0">{{ isset($isEdit) && $isEdit ? 'Edit Product' : 'Create Product' }}</h3>
+                <div class="small-muted">
+                    @if(isset($isEdit) && $isEdit)
+                        Edit product details, media, attributes and variants
+                    @else
+                        Category কনফিগ, Media Rule ও Variant Rule অনুযায়ী ফর্ম ডাইনামিক হবে
+                    @endif
+                </div>
             </div>
             <div class="d-flex gap-2">
                 <button type="button" class="btn btn-outline-secondary" id="btnSaveDraft"><i class="bx bx-save me-1"></i>Save
@@ -59,7 +65,7 @@
                                     <div class="col-12">
                                         <label class="form-label">Product Title <span class="req">*</span></label>
                                         <input id="title" class="form-control" placeholder="e.g., Basic Tee for Men"
-                                            required>
+                                            value="{{ isset($product) && $product ? $product->title : '' }}" required>
                                         <div class="form-text">Slug auto-generate হবে (নিচে এডিট করতে পারবেন)</div>
                                     </div>
                                     <div class="col-md-6">
@@ -67,14 +73,18 @@
                                         <select id="brand" class="form-select">
                                             <option value="">— None —</option>
                                             @foreach ($brands as $brand)
-                                                <option value="{{ $brand->id }}">{{ $brand->name }}</option>
+                                                <option value="{{ $brand->id }}" {{ isset($product) && $product && $product->brand_id == $brand->id ? 'selected' : '' }}>{{ $brand->name }}</option>
                                             @endforeach
                                         </select>
                                     </div>
                                     <div class="col-md-6">
                                         <label class="form-label">SKU (Single)</label>
-                                        <input id="skuSingle" class="form-control" placeholder="AUTO or custom">
+                                        <input id="skuSingle" class="form-control" placeholder="AUTO or custom"
+                                            value="{{ isset($product) && $product && isset($product->sku) ? $product->sku : '' }}">
                                     </div>
+                                    @if(isset($product) && $product)
+                                        <input type="hidden" id="productId" value="{{ $product->id }}">
+                                    @endif
 
                                     <!-- Multi-category assign -->
                                     <div class="col-12">
@@ -115,14 +125,14 @@
                                     <div class="col-md-4">
                                         <label class="form-label">Status</label>
                                         <select id="status" class="form-select">
-                                            <option>Draft</option>
-                                            <option>Active</option>
-                                            <option>Archived</option>
+                                            <option value="draft" {{ isset($product) && $product && strtolower($product->status) == 'draft' ? 'selected' : '' }}>Draft</option>
+                                            <option value="active" {{ isset($product) && $product && strtolower($product->status) == 'active' ? 'selected' : '' }}>Active</option>
+                                            <option value="archived" {{ isset($product) && $product && strtolower($product->status) == 'archived' ? 'selected' : '' }}>Archived</option>
                                         </select>
                                     </div>
                                     <div class="col-12">
                                         <label class="form-label">Short Description</label>
-                                        <textarea id="shortDesc" class="form-control" rows="2"></textarea>
+                                        <textarea id="shortDesc" class="form-control" rows="2">{{ isset($product) && $product ? $product->short_desc : '' }}</textarea>
                                     </div>
                                 </div>
                             </div>
@@ -159,7 +169,8 @@
                                 </div>
                                 <div>
                                     <label class="form-label">Slug</label>
-                                    <input id="slug" class="form-control" placeholder="auto-from-title">
+                                    <input id="slug" class="form-control" placeholder="auto-from-title"
+                                        value="{{ isset($product) && $product ? $product->slug : '' }}">
                                     <div class="small-muted">URL key (unique)</div>
                                 </div>
                             </div>
@@ -170,11 +181,13 @@
                             </div>
                             <div class="panel-body">
                                 <div class="form-check form-switch mb-2">
-                                    <input class="form-check-input" type="checkbox" id="isFeatured"><label
+                                    <input class="form-check-input" type="checkbox" id="isFeatured"
+                                        {{ isset($product) && $product && $product->featured ? 'checked' : '' }}><label
                                         class="form-check-label" for="isFeatured">Featured Product</label>
                                 </div>
                                 <div class="form-check form-switch mb-2">
-                                    <input class="form-check-input" type="checkbox" id="allowBackorder"><label
+                                    <input class="form-check-input" type="checkbox" id="allowBackorder"
+                                        {{ isset($product) && $product && $product->allow_backorder ? 'checked' : '' }}><label
                                         class="form-check-label" for="allowBackorder">Allow Backorder</label>
                                 </div>
                             </div>
@@ -1394,6 +1407,62 @@
           }
       }
       init();
+
+      // Load existing product data when editing
+      @if(isset($isEdit) && $isEdit && isset($product) && $product)
+      (function loadEditData() {
+          // Pre-select attribute set if exists
+          @if(isset($product->attribute_set_id) && $product->attribute_set_id)
+          setTimeout(() => {
+              const setSel = document.getElementById('attrSet');
+              if (setSel) {
+                  setSel.value = '{{ $product->attribute_set_id }}';
+                  setSel.dispatchEvent(new Event('change'));
+              }
+          }, 500);
+          @endif
+
+          // Pre-select variant rule if exists
+          @if(isset($product->variant_rule_id) && $product->variant_rule_id)
+          setTimeout(() => {
+              const varRuleSel = document.getElementById('variantRule');
+              if (varRuleSel) {
+                  varRuleSel.value = '{{ $product->variant_rule_id }}';
+                  varRuleSel.dispatchEvent(new Event('change'));
+              }
+          }, 800);
+          @endif
+
+          // Load existing images into gallery
+          @if(isset($productImages) && count($productImages) > 0)
+          const existingImages = @json($productImages);
+          const galleryEl = document.getElementById('gallery');
+          if (galleryEl && existingImages.length > 0) {
+              existingImages.forEach((img, index) => {
+                  const imgUrl = '/storage/' + img.path;
+                  const div = document.createElement('div');
+                  div.className = 'gallery-item' + (img.is_cover ? ' is-cover' : '');
+                  div.dataset.imageId = img.id;
+                  div.innerHTML = `
+                      <img src="${imgUrl}" alt="Product Image">
+                      <div class="gallery-actions">
+                          <button type="button" class="btn btn-sm btn-light" onclick="setCover(this)" title="Set as cover">
+                              <i class="bx bx-star"></i>
+                          </button>
+                          <button type="button" class="btn btn-sm btn-danger" onclick="removeImage(this)" title="Remove">
+                              <i class="bx bx-trash"></i>
+                          </button>
+                      </div>
+                      ${img.is_cover ? '<span class="cover-badge">Cover</span>' : ''}
+                  `;
+                  galleryEl.appendChild(div);
+              });
+          }
+          @endif
+
+          console.log('Edit mode: Product ID = {{ $product->id }}');
+      })();
+      @endif
 
   })();
 </script>

@@ -15,7 +15,7 @@ class ProductController extends Controller
     /**
      * 🧱 Product Create Page
      */
-    public function index()
+    public function create()
     {
         $brands = Brand::orderBy('name')->get();
         $bootstrap = ['primaryCategory' => null];
@@ -23,7 +23,81 @@ class ProductController extends Controller
         return view('admin.product.create_product.index', [
             'brands' => $brands,
             'PRODUCT_BOOTSTRAP' => $bootstrap,
+            'product' => null,
+            'productImages' => [],
+            'productVariants' => [],
+            'isEdit' => false,
         ]);
+    }
+
+    /**
+     * ✏️ Product Edit Page
+     */
+    public function edit($id)
+    {
+        $brands = Brand::orderBy('name')->get();
+        $bootstrap = ['primaryCategory' => null];
+        
+        // Get product with brand
+        $product = DB::table('products')
+            ->leftJoin('brands', 'products.brand_id', '=', 'brands.id')
+            ->leftJoin('product_category_map as pcm', function ($join) {
+                $join->on('products.id', '=', 'pcm.product_id')
+                    ->where('pcm.is_primary', true);
+            })
+            ->leftJoin('product_categories as pc', 'pcm.category_id', '=', 'pc.id')
+            ->where('products.id', $id)
+            ->select(
+                'products.*',
+                'brands.name as brand_name',
+                'pc.name as category_name',
+                'pc.id as category_id'
+            )
+            ->first();
+
+        if (!$product) {
+            return redirect()->route('admin.product.all')->with('error', 'Product not found');
+        }
+
+        // Get product images
+        $productImages = DB::table('product_images')
+            ->where('product_id', $id)
+            ->orderByDesc('is_cover')
+            ->orderBy('sort_order')
+            ->get();
+
+        // Get product variants
+        $productVariants = DB::table('product_variants')
+            ->where('product_id', $id)
+            ->get();
+
+        $bootstrap['primaryCategory'] = $product->category_id;
+
+        return view('admin.product.create_product.index', [
+            'brands' => $brands,
+            'PRODUCT_BOOTSTRAP' => $bootstrap,
+            'product' => $product,
+            'productImages' => $productImages,
+            'productVariants' => $productVariants,
+            'isEdit' => true,
+        ]);
+    }
+
+    /**
+     * 🔄 Update Product
+     */
+    public function update(Request $request, $id)
+    {
+        // Check if product exists
+        $product = DB::table('products')->where('id', $id)->first();
+        if (!$product) {
+            return response()->json(['success' => false, 'message' => 'Product not found'], 404);
+        }
+
+        // Update logic will be handled by the existing store method
+        // For now, redirect to the store method with product ID
+        $request->merge(['product_id' => $id]);
+        return $this->store($request);
     }
 
     /**

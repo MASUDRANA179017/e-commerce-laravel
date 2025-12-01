@@ -28,9 +28,17 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
     |--------------------------------------------------------------------------
     */
     Route::prefix('create-product')->name('product-create.')->controller(ProductController::class)->group(function () {
-        Route::get('/', 'index')->name('index');
+        Route::get('/', 'create')->name('index');
         Route::post('/store', 'store')->name('store');
     });
+
+    /*
+    |--------------------------------------------------------------------------
+    | Edit Product Routes
+    |--------------------------------------------------------------------------
+    */
+    Route::get('/product/{id}/edit', [ProductController::class, 'edit'])->name('product.edit');
+    Route::put('/product/{id}/update', [ProductController::class, 'update'])->name('product.update');
 
 
     /*
