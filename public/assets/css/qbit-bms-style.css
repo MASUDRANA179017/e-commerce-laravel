@@ -1,0 +1,4091 @@
+
+
+
+
+
+
+/* ==========================================================================
+                            TOP COUNTER CSS
+========================================================================== */
+.h-1px {
+    height: 1px !important;
+}
+.h-2px {
+    height: 2px !important;
+}
+.h-3px {
+    height: 3px !important;
+}
+.h-4px {
+    height: 4px !important;
+}
+.h-5px {
+    height: 5px !important;
+}
+.h-6px {
+    height: 6px !important;
+}
+.h-7px {
+    height: 7px !important;
+}
+.h-8px {
+    height: 8px !important;
+}
+.h-9px {
+    height: 9px !important;
+}
+.h-10px {
+    height: 10px !important;
+}
+.h-11px {
+    height: 11px !important;
+}
+.h-12px {
+    height: 12px !important;
+}
+.h-13px {
+    height: 13px !important;
+}
+.h-14px {
+    height: 14px !important;
+}
+.h-15px {
+    height: 15px !important;
+}
+.h-16px {
+    height: 16px !important;
+}
+.h-17px {
+    height: 17px !important;
+}
+.h-18px {
+    height: 18px !important;
+}
+.h-19px {
+    height: 19px !important;
+}
+.h-20px {
+    height: 20px !important;
+}
+.h-21px {
+    height: 21px !important;
+}
+.h-22px {
+    height: 22px !important;
+}
+.h-23px {
+    height: 23px !important;
+}
+.h-24px {
+    height: 24px !important;
+}
+.h-25px {
+    height: 25px !important;
+}
+.h-26px {
+    height: 26px !important;
+}
+.h-27px {
+    height: 27px !important;
+}
+.h-28px {
+    height: 28px !important;
+}
+.h-29px {
+    height: 29px !important;
+}
+.h-30px {
+    height: 30px !important;
+}
+.h-31px {
+    height: 31px !important;
+}
+.h-32px {
+    height: 32px !important;
+}
+.h-33px {
+    height: 33px !important;
+}
+.h-34px {
+    height: 34px !important;
+}
+.h-35px {
+    height: 35px !important;
+}
+.h-36px {
+    height: 36px !important;
+}
+.h-37px {
+    height: 37px !important;
+}
+.h-38px {
+    height: 38px !important;
+}
+.h-39px {
+    height: 39px !important;
+}
+.h-40px {
+    height: 40px !important;
+}
+.h-41px {
+    height: 41px !important;
+}
+.h-42px {
+    height: 42px !important;
+}
+.h-43px {
+    height: 43px !important;
+}
+.h-44px {
+    height: 44px !important;
+}
+.h-45px {
+    height: 45px !important;
+}
+.h-46px {
+    height: 46px !important;
+}
+.h-47px {
+    height: 47px !important;
+}
+.h-48px {
+    height: 48px !important;
+}
+.h-49px {
+    height: 49px !important;
+}
+.h-50px {
+    height: 50px !important;
+}
+.h-51px {
+    height: 51px !important;
+}
+.h-52px {
+    height: 52px !important;
+}
+.h-53px {
+    height: 53px !important;
+}
+.h-54px {
+    height: 54px !important;
+}
+.h-55px {
+    height: 55px !important;
+}
+.h-56px {
+    height: 56px !important;
+}
+.h-57px {
+    height: 57px !important;
+}
+.h-58px {
+    height: 58px !important;
+}
+.h-59px {
+    height: 59px !important;
+}
+.h-60px {
+    height: 60px !important;
+}
+.h-61px {
+    height: 61px !important;
+}
+.h-62px {
+    height: 62px !important;
+}
+.h-63px {
+    height: 63px !important;
+}
+.h-64px {
+    height: 64px !important;
+}
+.h-65px {
+    height: 65px !important;
+}
+.h-66px {
+    height: 66px !important;
+}
+.h-67px {
+    height: 67px !important;
+}
+.h-68px {
+    height: 68px !important;
+}
+.h-69px {
+    height: 69px !important;
+}
+.h-70px {
+    height: 70px !important;
+}
+.h-71px {
+    height: 71px !important;
+}
+.h-72px {
+    height: 72px !important;
+}
+.h-73px {
+    height: 73px !important;
+}
+.h-74px {
+    height: 74px !important;
+}
+.h-75px {
+    height: 75px !important;
+}
+.h-76px {
+    height: 76px !important;
+}
+.h-77px {
+    height: 77px !important;
+}
+.h-78px {
+    height: 78px !important;
+}
+.h-79px {
+    height: 79px !important;
+}
+.h-80px {
+    height: 80px !important;
+}
+.h-81px {
+    height: 81px !important;
+}
+.h-82px {
+    height: 82px !important;
+}
+.h-83px {
+    height: 83px !important;
+}
+.h-84px {
+    height: 84px !important;
+}
+.h-85px {
+    height: 85px !important;
+}
+.h-86px {
+    height: 86px !important;
+}
+.h-87px {
+    height: 87px !important;
+}
+.h-88px {
+    height: 88px !important;
+}
+.h-89px {
+    height: 89px !important;
+}
+.h-90px {
+    height: 90px !important;
+}
+.h-91px {
+    height: 91px !important;
+}
+.h-92px {
+    height: 92px !important;
+}
+.h-93px {
+    height: 93px !important;
+}
+.h-94px {
+    height: 94px !important;
+}
+.h-95px {
+    height: 95px !important;
+}
+.h-96px {
+    height: 96px !important;
+}
+.h-97px {
+    height: 97px !important;
+}
+.h-98px {
+    height: 98px !important;
+}
+.h-99px {
+    height: 99px !important;
+}
+.h-100px {
+    height: 100px !important;
+}
+.h-105px {
+    height: 105px !important;
+}
+.h-110px {
+    height: 110px !important;
+}
+.h-115px {
+    height: 115px !important;
+}
+.h-120px {
+    height: 120px !important;
+}
+.h-125px {
+    height: 125px !important;
+}
+.h-130px {
+    height: 130px !important;
+}
+.h-135px {
+    height: 135px !important;
+}
+.h-140px {
+    height: 140px !important;
+}
+.h-145px {
+    height: 145px !important;
+}
+.h-150px {
+    height: 150px !important;
+}
+.h-155px {
+    height: 155px !important;
+}
+.h-160px {
+    height: 160px !important;
+}
+.h-165px {
+    height: 165px !important;
+}
+.h-170px {
+    height: 170px !important;
+}
+.h-175px {
+    height: 175px !important;
+}
+.h-180px {
+    height: 180px !important;
+}
+.h-185px {
+    height: 185px !important;
+}
+.h-190px {
+    height: 190px !important;
+}
+.h-195px {
+    height: 195px !important;
+}
+.h-200px {
+    height: 200px !important;
+}
+.h-205px {
+    height: 205px !important;
+}
+.h-210px {
+    height: 210px !important;
+}
+.h-215px {
+    height: 215px !important;
+}
+.h-220px {
+    height: 220px !important;
+}
+.h-225px {
+    height: 225px !important;
+}
+.h-230px {
+    height: 230px !important;
+}
+.h-235px {
+    height: 235px !important;
+}
+.h-240px {
+    height: 240px !important;
+}
+.h-245px {
+    height: 245px !important;
+}
+.h-250px {
+    height: 250px !important;
+}
+.h-255px {
+    height: 255px !important;
+}
+.h-260px {
+    height: 260px !important;
+}
+.h-265px {
+    height: 265px !important;
+}
+.h-270px {
+    height: 270px !important;
+}
+.h-275px {
+    height: 275px !important;
+}
+.h-280px {
+    height: 280px !important;
+}
+.h-285px {
+    height: 285px !important;
+}
+.h-290px {
+    height: 290px !important;
+}
+.h-295px {
+    height: 295px !important;
+}
+.h-300px {
+    height: 300px !important;
+}
+.h-305px {
+    height: 305px !important;
+}
+.h-310px {
+    height: 310px !important;
+}
+.h-315px {
+    height: 315px !important;
+}
+.h-320px {
+    height: 320px !important;
+}
+.h-325px {
+    height: 325px !important;
+}
+.h-330px {
+    height: 330px !important;
+}
+.h-335px {
+    height: 335px !important;
+}
+.h-340px {
+    height: 340px !important;
+}
+.h-345px {
+    height: 345px !important;
+}
+.h-350px {
+    height: 350px !important;
+}
+.h-355px {
+    height: 355px !important;
+}
+.h-360px {
+    height: 360px !important;
+}
+.h-365px {
+    height: 365px !important;
+}
+.h-370px {
+    height: 370px !important;
+}
+.h-375px {
+    height: 375px !important;
+}
+.h-380px {
+    height: 380px !important;
+}
+.h-385px {
+    height: 385px !important;
+}
+.h-390px {
+    height: 390px !important;
+}
+.h-395px {
+    height: 395px !important;
+}
+.h-400px {
+    height: 400px !important;
+}
+.h-405px {
+    height: 405px !important;
+}
+.h-410px {
+    height: 410px !important;
+}
+.h-415px {
+    height: 415px !important;
+}
+.h-420px {
+    height: 420px !important;
+}
+.h-425px {
+    height: 425px !important;
+}
+.h-430px {
+    height: 430px !important;
+}
+.h-435px {
+    height: 435px !important;
+}
+.h-440px {
+    height: 440px !important;
+}
+.h-445px {
+    height: 445px !important;
+}
+.h-450px {
+    height: 450px !important;
+}
+.h-455px {
+    height: 455px !important;
+}
+.h-460px {
+    height: 460px !important;
+}
+.h-465px {
+    height: 465px !important;
+}
+.h-470px {
+    height: 470px !important;
+}
+.h-475px {
+    height: 475px !important;
+}
+.h-480px {
+    height: 480px !important;
+}
+.h-485px {
+    height: 485px !important;
+}
+.h-490px {
+    height: 490px !important;
+}
+.h-495px {
+    height: 495px !important;
+}
+.h-500px {
+    height: 500px !important;
+}
+.h-505px {
+    height: 505px !important;
+}
+.h-510px {
+    height: 510px !important;
+}
+.h-515px {
+    height: 515px !important;
+}
+.h-520px {
+    height: 520px !important;
+}
+.h-525px {
+    height: 525px !important;
+}
+.h-530px {
+    height: 530px !important;
+}
+.h-535px {
+    height: 535px !important;
+}
+.h-540px {
+    height: 540px !important;
+}
+.h-545px {
+    height: 545px !important;
+}
+.h-550px {
+    height: 550px !important;
+}
+.h-555px {
+    height: 555px !important;
+}
+.h-560px {
+    height: 560px !important;
+}
+.h-565px {
+    height: 565px !important;
+}
+.h-570px {
+    height: 570px !important;
+}
+.h-575px {
+    height: 575px !important;
+}
+.h-580px {
+    height: 580px !important;
+}
+.h-585px {
+    height: 585px !important;
+}
+.h-590px {
+    height: 590px !important;
+}
+.h-595px {
+    height: 595px !important;
+}
+.h-600px {
+    height: 600px !important;
+}
+.h-605px {
+    height: 605px !important;
+}
+.h-610px {
+    height: 610px !important;
+}
+.h-615px {
+    height: 615px !important;
+}
+.h-620px {
+    height: 620px !important;
+}
+.h-625px {
+    height: 625px !important;
+}
+.h-630px {
+    height: 630px !important;
+}
+.h-635px {
+    height: 635px !important;
+}
+.h-640px {
+    height: 640px !important;
+}
+.h-645px {
+    height: 645px !important;
+}
+.h-650px {
+    height: 650px !important;
+}
+.h-655px {
+    height: 655px !important;
+}
+.h-660px {
+    height: 660px !important;
+}
+.h-665px {
+    height: 665px !important;
+}
+.h-670px {
+    height: 670px !important;
+}
+.h-675px {
+    height: 675px !important;
+}
+.h-680px {
+    height: 680px !important;
+}
+.h-685px {
+    height: 685px !important;
+}
+.h-690px {
+    height: 690px !important;
+}
+.h-695px {
+    height: 695px !important;
+}
+.h-700px {
+    height: 700px !important;
+}
+.h-705px {
+    height: 705px !important;
+}
+.h-710px {
+    height: 710px !important;
+}
+.h-715px {
+    height: 715px !important;
+}
+.h-720px {
+    height: 720px !important;
+}
+.h-725px {
+    height: 725px !important;
+}
+.h-730px {
+    height: 730px !important;
+}
+.h-735px {
+    height: 735px !important;
+}
+.h-740px {
+    height: 740px !important;
+}
+.h-745px {
+    height: 745px !important;
+}
+.h-750px {
+    height: 750px !important;
+}
+.h-755px {
+    height: 755px !important;
+}
+.h-760px {
+    height: 760px !important;
+}
+.h-765px {
+    height: 765px !important;
+}
+.h-770px {
+    height: 770px !important;
+}
+.h-775px {
+    height: 775px !important;
+}
+.h-780px {
+    height: 780px !important;
+}
+.h-785px {
+    height: 785px !important;
+}
+.h-790px {
+    height: 790px !important;
+}
+.h-795px {
+    height: 795px !important;
+}
+.h-800px {
+    height: 800px !important;
+}
+.h-805px {
+    height: 805px !important;
+}
+.h-810px {
+    height: 810px !important;
+}
+.h-815px {
+    height: 815px !important;
+}
+.h-820px {
+    height: 820px !important;
+}
+.h-825px {
+    height: 825px !important;
+}
+.h-830px {
+    height: 830px !important;
+}
+.h-835px {
+    height: 835px !important;
+}
+.h-840px {
+    height: 840px !important;
+}
+.h-845px {
+    height: 845px !important;
+}
+.h-850px {
+    height: 850px !important;
+}
+.h-855px {
+    height: 855px !important;
+}
+.h-860px {
+    height: 860px !important;
+}
+.h-865px {
+    height: 865px !important;
+}
+.h-870px {
+    height: 870px !important;
+}
+.h-875px {
+    height: 875px !important;
+}
+.h-880px {
+    height: 880px !important;
+}
+.h-885px {
+    height: 885px !important;
+}
+.h-890px {
+    height: 890px !important;
+}
+.h-895px {
+    height: 895px !important;
+}
+.h-900px {
+    height: 900px !important;
+}
+.h-905px {
+    height: 905px !important;
+}
+.h-910px {
+    height: 910px !important;
+}
+.h-915px {
+    height: 915px !important;
+}
+.h-920px {
+    height: 920px !important;
+}
+.h-925px {
+    height: 925px !important;
+}
+.h-930px {
+    height: 930px !important;
+}
+.h-935px {
+    height: 935px !important;
+}
+.h-940px {
+    height: 940px !important;
+}
+.h-945px {
+    height: 945px !important;
+}
+.h-950px {
+    height: 950px !important;
+}
+.h-955px {
+    height: 955px !important;
+}
+.h-960px {
+    height: 960px !important;
+}
+.h-965px {
+    height: 965px !important;
+}
+.h-970px {
+    height: 970px !important;
+}
+.h-975px {
+    height: 975px !important;
+}
+.h-980px {
+    height: 980px !important;
+}
+.h-985px {
+    height: 985px !important;
+}
+.h-990px {
+    height: 990px !important;
+}
+.h-995px {
+    height: 995px !important;
+}
+.h-1000px {
+    height: 1000px !important;
+}
+
+/* ==========================================================================
+                            TOP COUNTER CSS
+========================================================================== */
+
+/*EXTRA Width CSS*/
+.w-auto {
+    width: auto !important;
+}
+.w-0 {
+    width: 0 !important;
+}
+.w-fit-content {
+    width: fit-content !important;
+}
+.w-min-content {
+    width: min-content !important;
+}
+.w-max-content {
+    width: max-content !important;
+}
+/*EXTRA Width CSS*/
+
+/*EXTRA Height CSS*/
+.h-auto {
+    height: auto !important;
+}
+.h-fit-content {
+    height: fit-content !important;
+}
+.h-min-content {
+    height: min-content !important;
+}
+.h-max-content {
+    height: max-content !important;
+}
+.h-100vh {
+    height: 100vh !important;
+}
+.h-50vh {
+    height: 50vh !important;
+}
+.h-0 {
+    height: 0 !important;
+}
+/*EXTRA Height CSS*/
+
+
+/* ==========================================================================
+                            TOP COUNTER CSS
+========================================================================== */
+
+/*Width PIXEL CSS*/
+.w-5px { 
+    width: 5px !important; 
+}
+.w-6px { 
+    width: 6px !important; 
+}
+.w-7px { 
+    width: 7px !important; 
+}
+.w-8px { 
+    width: 8px !important; 
+}
+.w-9px { 
+    width: 9px !important; 
+}
+.w-10px { 
+    width: 10px !important; 
+}
+.w-11px { 
+    width: 11px !important; 
+}
+.w-12px { 
+    width: 12px !important; 
+}
+.w-13px { 
+    width: 13px !important; 
+}
+.w-14px { 
+    width: 14px !important; 
+}
+.w-15px { 
+    width: 15px !important; 
+}
+.w-16px { 
+    width: 16px !important; 
+}
+.w-17px { 
+    width: 17px !important; 
+}
+.w-18px { 
+    width: 18px !important; 
+}
+.w-19px { 
+    width: 19px !important; 
+}
+.w-20px { 
+    width: 20px !important; 
+}
+.w-21px { 
+    width: 21px !important; 
+}
+.w-22px { 
+    width: 22px !important; 
+}
+.w-23px { 
+    width: 23px !important; 
+}
+.w-24px { 
+    width: 24px !important; 
+}
+.w-25px { 
+    width: 25px !important; 
+}
+.w-26px { 
+    width: 26px !important; 
+}
+.w-27px { 
+    width: 27px !important; 
+}
+.w-28px { 
+    width: 28px !important; 
+}
+.w-29px { 
+    width: 29px !important; 
+}
+.w-30px { 
+    width: 30px !important; 
+}
+.w-31px { 
+    width: 31px !important; 
+}
+.w-32px { 
+    width: 32px !important; 
+}
+.w-33px { 
+    width: 33px !important; 
+}
+.w-34px { 
+    width: 34px !important; 
+}
+.w-35px { 
+    width: 35px !important; 
+}
+.w-36px { 
+    width: 36px !important; 
+}
+.w-37px { 
+    width: 37px !important; 
+}
+.w-38px { 
+    width: 38px !important; 
+}
+.w-39px { 
+    width: 39px !important; 
+}
+.w-40px { 
+    width: 40px !important; 
+}
+.w-41px { 
+    width: 41px !important; 
+}
+.w-42px { 
+    width: 42px !important; 
+}
+.w-43px { 
+    width: 43px !important; 
+}
+.w-44px { 
+    width: 44px !important; 
+}
+.w-45px { 
+    width: 45px !important; 
+}
+.w-46px { 
+    width: 46px !important; 
+}
+.w-47px { 
+    width: 47px !important; 
+}
+.w-48px { 
+    width: 48px !important; 
+}
+.w-49px { 
+    width: 49px !important; 
+}
+.w-50px { 
+    width: 50px !important; 
+}
+.w-51px { 
+    width: 51px !important; 
+}
+.w-52px { 
+    width: 52px !important; 
+}
+.w-53px { 
+    width: 53px !important; 
+}
+.w-54px { 
+    width: 54px !important; 
+}
+.w-55px { 
+    width: 55px !important; 
+}
+.w-56px { 
+    width: 56px !important; 
+}
+.w-57px { 
+    width: 57px !important; 
+}
+.w-58px { 
+    width: 58px !important; 
+}
+.w-59px { 
+    width: 59px !important; 
+}
+.w-60px { 
+    width: 60px !important; 
+}
+.w-61px { 
+    width: 61px !important; 
+}
+.w-62px { 
+    width: 62px !important; 
+}
+.w-63px { 
+    width: 63px !important; 
+}
+.w-64px { 
+    width: 64px !important; 
+}
+.w-65px { 
+    width: 65px !important; 
+}
+.w-66px { 
+    width: 66px !important; 
+}
+.w-67px { 
+    width: 67px !important; 
+}
+.w-68px { 
+    width: 68px !important; 
+}
+.w-69px { 
+    width: 69px !important; 
+}
+.w-70px { 
+    width: 70px !important; 
+}
+.w-71px { 
+    width: 71px !important; 
+}
+.w-72px { 
+    width: 72px !important; 
+}
+.w-73px { 
+    width: 73px !important; 
+}
+.w-74px { 
+    width: 74px !important; 
+}
+.w-75px { 
+    width: 75px !important; 
+}
+.w-76px { 
+    width: 76px !important; 
+}
+.w-77px { 
+    width: 77px !important; 
+}
+.w-78px { 
+    width: 78px !important; 
+}
+.w-79px { 
+    width: 79px !important; 
+}
+.w-80px { 
+    width: 80px !important; 
+}
+.w-81px { 
+    width: 81px !important; 
+}
+.w-82px { 
+    width: 82px !important; 
+}
+.w-83px { 
+    width: 83px !important; 
+}
+.w-84px { 
+    width: 84px !important; 
+}
+.w-85px { 
+    width: 85px !important; 
+}
+.w-86px { 
+    width: 86px !important; 
+}
+.w-87px { 
+    width: 87px !important; 
+}
+.w-88px { 
+    width: 88px !important; 
+}
+.w-89px { 
+    width: 89px !important; 
+}
+.w-90px { 
+    width: 90px !important; 
+}
+.w-91px { 
+    width: 91px !important; 
+}
+.w-92px { 
+    width: 92px !important; 
+}
+.w-93px { 
+    width: 93px !important; 
+}
+.w-94px { 
+    width: 94px !important; 
+}
+.w-95px { 
+    width: 95px !important; 
+}
+.w-96px { 
+    width: 96px !important; 
+}
+.w-97px { 
+    width: 97px !important; 
+}
+.w-98px { 
+    width: 98px !important; 
+}
+.w-99px { 
+    width: 99px !important; 
+}
+.w-100px { 
+    width: 100px !important; 
+}
+.w-100px {
+    width: 100px !important;
+}
+.w-105px {
+    width: 105px !important;
+}
+.w-110px {
+    width: 110px !important;
+}
+.w-115px {
+    width: 115px !important;
+}
+.w-120px {
+    width: 120px !important;
+}
+.w-125px {
+    width: 125px !important;
+}
+.w-130px {
+    width: 130px !important;
+}
+.w-135px {
+    width: 135px !important;
+}
+.w-140px {
+    width: 140px !important;
+}
+.w-145px {
+    width: 145px !important;
+}
+.w-150px {
+    width: 150px !important;
+}
+.w-155px {
+    width: 155px !important;
+}
+.w-160px {
+    width: 160px !important;
+}
+.w-165px {
+    width: 165px !important;
+}
+.w-170px {
+    width: 170px !important;
+}
+.w-175px {
+    width: 175px !important;
+}
+.w-180px {
+    width: 180px !important;
+}
+.w-185px {
+    width: 185px !important;
+}
+.w-190px {
+    width: 190px !important;
+}
+.w-195px {
+    width: 195px !important;
+}
+.w-200px {
+    width: 200px !important;
+}
+.w-205px {
+    width: 205px !important;
+}
+.w-210px {
+    width: 210px !important;
+}
+.w-215px {
+    width: 215px !important;
+}
+.w-220px {
+    width: 220px !important;
+}
+.w-225px {
+    width: 225px !important;
+}
+.w-230px {
+    width: 230px !important;
+}
+.w-235px {
+    width: 235px !important;
+}
+.w-240px {
+    width: 240px !important;
+}
+.w-245px {
+    width: 245px !important;
+}
+.w-250px {
+    width: 250px !important;
+}
+.w-255px {
+    width: 255px !important;
+}
+.w-260px {
+    width: 260px !important;
+}
+.w-265px {
+    width: 265px !important;
+}
+.w-270px {
+    width: 270px !important;
+}
+.w-275px {
+    width: 275px !important;
+}
+.w-280px {
+    width: 280px !important;
+}
+.w-285px {
+    width: 285px !important;
+}
+.w-290px {
+    width: 290px !important;
+}
+.w-295px {
+    width: 295px !important;
+}
+.w-300px {
+    width: 300px !important;
+}
+.w-305px {
+    width: 305px !important;
+}
+.w-310px {
+    width: 310px !important;
+}
+.w-315px {
+    width: 315px !important;
+}
+.w-320px {
+    width: 320px !important;
+}
+.w-325px {
+    width: 325px !important;
+}
+.w-330px {
+    width: 330px !important;
+}
+.w-335px {
+    width: 335px !important;
+}
+.w-340px {
+    width: 340px !important;
+}
+.w-345px {
+    width: 345px !important;
+}
+.w-350px {
+    width: 350px !important;
+}
+.w-355px {
+    width: 355px !important;
+}
+.w-360px {
+    width: 360px !important;
+}
+.w-365px {
+    width: 365px !important;
+}
+.w-370px {
+    width: 370px !important;
+}
+.w-375px {
+    width: 375px !important;
+}
+.w-380px {
+    width: 380px !important;
+}
+.w-385px {
+    width: 385px !important;
+}
+.w-390px {
+    width: 390px !important;
+}
+.w-395px {
+    width: 395px !important;
+}
+.w-400px {
+    width: 400px !important;
+}
+.w-405px {
+    width: 405px !important;
+}
+.w-410px {
+    width: 410px !important;
+}
+.w-415px {
+    width: 415px !important;
+}
+.w-420px {
+    width: 420px !important;
+}
+.w-425px {
+    width: 425px !important;
+}
+.w-430px {
+    width: 430px !important;
+}
+.w-435px {
+    width: 435px !important;
+}
+.w-440px {
+    width: 440px !important;
+}
+.w-445px {
+    width: 445px !important;
+}
+.w-450px {
+    width: 450px !important;
+}
+.w-455px {
+    width: 455px !important;
+}
+.w-460px {
+    width: 460px !important;
+}
+.w-465px {
+    width: 465px !important;
+}
+.w-470px {
+    width: 470px !important;
+}
+.w-475px {
+    width: 475px !important;
+}
+.w-480px {
+    width: 480px !important;
+}
+.w-485px {
+    width: 485px !important;
+}
+.w-490px {
+    width: 490px !important;
+}
+.w-495px {
+    width: 495px !important;
+}
+.w-500px {
+    width: 500px !important;
+}
+.w-505px {
+    width: 505px !important;
+}
+.w-510px {
+    width: 510px !important;
+}
+.w-515px {
+    width: 515px !important;
+}
+.w-520px {
+    width: 520px !important;
+}
+.w-525px {
+    width: 525px !important;
+}
+.w-530px {
+    width: 530px !important;
+}
+.w-535px {
+    width: 535px !important;
+}
+.w-540px {
+    width: 540px !important;
+}
+.w-545px {
+    width: 545px !important;
+}
+.w-550px {
+    width: 550px !important;
+}
+.w-555px {
+    width: 555px !important;
+}
+.w-560px {
+    width: 560px !important;
+}
+.w-565px {
+    width: 565px !important;
+}
+.w-570px {
+    width: 570px !important;
+}
+.w-575px {
+    width: 575px !important;
+}
+.w-580px {
+    width: 580px !important;
+}
+.w-585px {
+    width: 585px !important;
+}
+.w-590px {
+    width: 590px !important;
+}
+.w-595px {
+    width: 595px !important;
+}
+.w-600px {
+    width: 600px !important;
+}
+.w-605px {
+    width: 605px !important;
+}
+.w-610px {
+    width: 610px !important;
+}
+.w-615px {
+    width: 615px !important;
+}
+.w-620px {
+    width: 620px !important;
+}
+.w-625px {
+    width: 625px !important;
+}
+.w-630px {
+    width: 630px !important;
+}
+.w-635px {
+    width: 635px !important;
+}
+.w-640px {
+    width: 640px !important;
+}
+.w-645px {
+    width: 645px !important;
+}
+.w-650px {
+    width: 650px !important;
+}
+.w-655px {
+    width: 655px !important;
+}
+.w-660px {
+    width: 660px !important;
+}
+.w-665px {
+    width: 665px !important;
+}
+.w-670px {
+    width: 670px !important;
+}
+.w-675px {
+    width: 675px !important;
+}
+.w-680px {
+    width: 680px !important;
+}
+.w-685px {
+    width: 685px !important;
+}
+.w-690px {
+    width: 690px !important;
+}
+.w-695px {
+    width: 695px !important;
+}
+.w-700px {
+    width: 700px !important;
+}
+.w-705px {
+    width: 705px !important;
+}
+.w-710px {
+    width: 710px !important;
+}
+.w-715px {
+    width: 715px !important;
+}
+.w-720px {
+    width: 720px !important;
+}
+.w-725px {
+    width: 725px !important;
+}
+.w-730px {
+    width: 730px !important;
+}
+.w-735px {
+    width: 735px !important;
+}
+.w-740px {
+    width: 740px !important;
+}
+.w-745px {
+    width: 745px !important;
+}
+.w-750px {
+    width: 750px !important;
+}
+.w-755px {
+    width: 755px !important;
+}
+.w-760px {
+    width: 760px !important;
+}
+.w-765px {
+    width: 765px !important;
+}
+.w-770px {
+    width: 770px !important;
+}
+.w-775px {
+    width: 775px !important;
+}
+.w-780px {
+    width: 780px !important;
+}
+.w-785px {
+    width: 785px !important;
+}
+.w-790px {
+    width: 790px !important;
+}
+.w-795px {
+    width: 795px !important;
+}
+.w-800px {
+    width: 800px !important;
+}
+.w-805px {
+    width: 805px !important;
+}
+.w-810px {
+    width: 810px !important;
+}
+.w-815px {
+    width: 815px !important;
+}
+.w-820px {
+    width: 820px !important;
+}
+.w-825px {
+    width: 825px !important;
+}
+.w-830px {
+    width: 830px !important;
+}
+.w-835px {
+    width: 835px !important;
+}
+.w-840px {
+    width: 840px !important;
+}
+.w-845px {
+    width: 845px !important;
+}
+.w-850px {
+    width: 850px !important;
+}
+.w-855px {
+    width: 855px !important;
+}
+.w-860px {
+    width: 860px !important;
+}
+.w-865px {
+    width: 865px !important;
+}
+.w-870px {
+    width: 870px !important;
+}
+.w-875px {
+    width: 875px !important;
+}
+.w-880px {
+    width: 880px !important;
+}
+.w-885px {
+    width: 885px !important;
+}
+.w-890px {
+    width: 890px !important;
+}
+.w-895px {
+    width: 895px !important;
+}
+.w-900px {
+    width: 900px !important;
+}
+.w-905px {
+    width: 905px !important;
+}
+.w-910px {
+    width: 910px !important;
+}
+.w-915px {
+    width: 915px !important;
+}
+.w-920px {
+    width: 920px !important;
+}
+.w-925px {
+    width: 925px !important;
+}
+.w-930px {
+    width: 930px !important;
+}
+.w-935px {
+    width: 935px !important;
+}
+.w-940px {
+    width: 940px !important;
+}
+.w-945px {
+    width: 945px !important;
+}
+.w-950px {
+    width: 950px !important;
+}
+.w-955px {
+    width: 955px !important;
+}
+.w-960px {
+    width: 960px !important;
+}
+.w-965px {
+    width: 965px !important;
+}
+.w-970px {
+    width: 970px !important;
+}
+.w-975px {
+    width: 975px !important;
+}
+.w-980px {
+    width: 980px !important;
+}
+.w-985px {
+    width: 985px !important;
+}
+.w-990px {
+    width: 990px !important;
+}
+.w-995px {
+    width: 995px !important;
+}
+.w-1000px {
+    width: 1000px !important;
+}
+
+/* ==========================================================================
+                            TOP COUNTER CSS
+========================================================================== */
+
+/* ==========================================================================
+                            TOP COUNTER CSS
+========================================================================== */
+
+.h-5 {
+    height: 5% !important;
+}
+.h-6 {
+    height: 6% !important;
+}
+.h-7 {
+    height: 7% !important;
+}
+.h-8 {
+    height: 8% !important;
+}
+.h-9 {
+    height: 9% !important;
+}
+.h-10 {
+    height: 10% !important;
+}
+.h-11 {
+    height: 11% !important;
+}
+.h-12 {
+    height: 12% !important;
+}
+.h-13 {
+    height: 13% !important;
+}
+.h-14 {
+    height: 14% !important;
+}
+.h-15 {
+    height: 15% !important;
+}
+.h-16 {
+    height: 16% !important;
+}
+.h-17 {
+    height: 17% !important;
+}
+.h-18 {
+    height: 18% !important;
+}
+.h-19 {
+    height: 19% !important;
+}
+.h-20 {
+    height: 20% !important;
+}
+.h-21 {
+    height: 21% !important;
+}
+.h-22 {
+    height: 22% !important;
+}
+.h-23 {
+    height: 23% !important;
+}
+.h-24 {
+    height: 24% !important;
+}
+.h-25 {
+    height: 25% !important;
+}
+.h-26 {
+    height: 26% !important;
+}
+.h-27 {
+    height: 27% !important;
+}
+.h-28 {
+    height: 28% !important;
+}
+.h-29 {
+    height: 29% !important;
+}
+.h-30 {
+    height: 30% !important;
+}
+.h-31 {
+    height: 31% !important;
+}
+.h-32 {
+    height: 32% !important;
+}
+.h-33 {
+    height: 33% !important;
+}
+.h-34 {
+    height: 34% !important;
+}
+.h-35 {
+    height: 35% !important;
+}
+.h-36 {
+    height: 36% !important;
+}
+.h-37 {
+    height: 37% !important;
+}
+.h-38 {
+    height: 38% !important;
+}
+.h-39 {
+    height: 39% !important;
+}
+.h-40 {
+    height: 40% !important;
+}
+.h-41 {
+    height: 41% !important;
+}
+.h-42 {
+    height: 42% !important;
+}
+.h-43 {
+    height: 43% !important;
+}
+.h-44 {
+    height: 44% !important;
+}
+.h-45 {
+    height: 45% !important;
+}
+.h-46 {
+    height: 46% !important;
+}
+.h-47 {
+    height: 47% !important;
+}
+.h-48 {
+    height: 48% !important;
+}
+.h-49 {
+    height: 49% !important;
+}
+.h-50 {
+    height: 50% !important;
+}
+.h-51 {
+    height: 51% !important;
+}
+.h-52 {
+    height: 52% !important;
+}
+.h-53 {
+    height: 53% !important;
+}
+.h-54 {
+    height: 54% !important;
+}
+.h-55 {
+    height: 55% !important;
+}
+.h-56 {
+    height: 56% !important;
+}
+.h-57 {
+    height: 57% !important;
+}
+.h-58 {
+    height: 58% !important;
+}
+.h-59 {
+    height: 59% !important;
+}
+.h-60 {
+    height: 60% !important;
+}
+.h-61 {
+    height: 61% !important;
+}
+.h-62 {
+    height: 62% !important;
+}
+.h-63 {
+    height: 63% !important;
+}
+.h-64 {
+    height: 64% !important;
+}
+.h-65 {
+    height: 65% !important;
+}
+.h-66 {
+    height: 66% !important;
+}
+.h-67 {
+    height: 67% !important;
+}
+.h-68 {
+    height: 68% !important;
+}
+.h-69 {
+    height: 69% !important;
+}
+.h-70 {
+    height: 70% !important;
+}
+.h-71 {
+    height: 71% !important;
+}
+.h-72 {
+    height: 72% !important;
+}
+.h-73 {
+    height: 73% !important;
+}
+.h-74 {
+    height: 74% !important;
+}
+.h-75 {
+    height: 75% !important;
+}
+.h-76 {
+    height: 76% !important;
+}
+.h-77 {
+    height: 77% !important;
+}
+.h-78 {
+    height: 78% !important;
+}
+.h-79 {
+    height: 79% !important;
+}
+.h-80 {
+    height: 80% !important;
+}
+.h-81 {
+    height: 81% !important;
+}
+.h-82 {
+    height: 82% !important;
+}
+.h-83 {
+    height: 83% !important;
+}
+.h-84 {
+    height: 84% !important;
+}
+.h-85 {
+    height: 85% !important;
+}
+.h-86 {
+    height: 86% !important;
+}
+.h-87 {
+    height: 87% !important;
+}
+.h-88 {
+    height: 88% !important;
+}
+.h-89 {
+    height: 89% !important;
+}
+.h-90 {
+    height: 90% !important;
+}
+.h-91 {
+    height: 91% !important;
+}
+.h-92 {
+    height: 92% !important;
+}
+.h-93 {
+    height: 93% !important;
+}
+.h-94 {
+    height: 94% !important;
+}
+.h-95 {
+    height: 95% !important;
+}
+.h-96 {
+    height: 96% !important;
+}
+.h-97 {
+    height: 97% !important;
+}
+.h-98 {
+    height: 98% !important;
+}
+.h-99 {
+    height: 99% !important;
+}
+.h-100 {
+    height: 100% !important;
+}
+
+/* ==========================================================================
+                            TOP COUNTER CSS
+========================================================================== */
+
+/* ==========================================================================
+                            TOP COUNTER CSS
+========================================================================== */
+
+.w-5 {
+    width: 5% !important;
+}
+.w-6 {
+    width: 6% !important;
+}
+.w-7 {
+    width: 7% !important;
+}
+.w-8 {
+    width: 8% !important;
+}
+.w-9 {
+    width: 9% !important;
+}
+.w-10 {
+    width: 10% !important;
+}
+.w-11 {
+    width: 11% !important;
+}
+.w-12 {
+    width: 12% !important;
+}
+.w-13 {
+    width: 13% !important;
+}
+.w-14 {
+    width: 14% !important;
+}
+.w-15 {
+    width: 15% !important;
+}
+.w-16 {
+    width: 16% !important;
+}
+.w-17 {
+    width: 17% !important;
+}
+.w-18 {
+    width: 18% !important;
+}
+.w-19 {
+    width: 19% !important;
+}
+.w-20 {
+    width: 20% !important;
+}
+.w-21 {
+    width: 21% !important;
+}
+.w-22 {
+    width: 22% !important;
+}
+.w-23 {
+    width: 23% !important;
+}
+.w-24 {
+    width: 24% !important;
+}
+.w-25 {
+    width: 25% !important;
+}
+.w-26 {
+    width: 26% !important;
+}
+.w-27 {
+    width: 27% !important;
+}
+.w-28 {
+    width: 28% !important;
+}
+.w-29 {
+    width: 29% !important;
+}
+.w-30 {
+    width: 30% !important;
+}
+.w-31 {
+    width: 31% !important;
+}
+.w-32 {
+    width: 32% !important;
+}
+.w-33 {
+    width: 33% !important;
+}
+.w-34 {
+    width: 34% !important;
+}
+.w-35 {
+    width: 35% !important;
+}
+.w-36 {
+    width: 36% !important;
+}
+.w-37 {
+    width: 37% !important;
+}
+.w-38 {
+    width: 38% !important;
+}
+.w-39 {
+    width: 39% !important;
+}
+.w-40 {
+    width: 40% !important;
+}
+.w-41 {
+    width: 41% !important;
+}
+.w-42 {
+    width: 42% !important;
+}
+.w-43 {
+    width: 43% !important;
+}
+.w-44 {
+    width: 44% !important;
+}
+.w-45 {
+    width: 45% !important;
+}
+.w-46 {
+    width: 46% !important;
+}
+.w-47 {
+    width: 47% !important;
+}
+.w-48 {
+    width: 48% !important;
+}
+.w-49 {
+    width: 49% !important;
+}
+.w-50 {
+    width: 50% !important;
+}
+.w-51 {
+    width: 51% !important;
+}
+.w-52 {
+    width: 52% !important;
+}
+.w-53 {
+    width: 53% !important;
+}
+.w-54 {
+    width: 54% !important;
+}
+.w-55 {
+    width: 55% !important;
+}
+.w-56 {
+    width: 56% !important;
+}
+.w-57 {
+    width: 57% !important;
+}
+.w-58 {
+    width: 58% !important;
+}
+.w-59 {
+    width: 59% !important;
+}
+.w-60 {
+    width: 60% !important;
+}
+.w-61 {
+    width: 61% !important;
+}
+.w-62 {
+    width: 62% !important;
+}
+.w-63 {
+    width: 63% !important;
+}
+.w-64 {
+    width: 64% !important;
+}
+.w-65 {
+    width: 65% !important;
+}
+.w-66 {
+    width: 66% !important;
+}
+.w-67 {
+    width: 67% !important;
+}
+.w-68 {
+    width: 68% !important;
+}
+.w-69 {
+    width: 69% !important;
+}
+.w-70 {
+    width: 70% !important;
+}
+.w-71 {
+    width: 71% !important;
+}
+.w-72 {
+    width: 72% !important;
+}
+.w-73 {
+    width: 73% !important;
+}
+.w-74 {
+    width: 74% !important;
+}
+.w-75 {
+    width: 75% !important;
+}
+.w-76 {
+    width: 76% !important;
+}
+.w-77 {
+    width: 77% !important;
+}
+.w-78 {
+    width: 78% !important;
+}
+.w-79 {
+    width: 79% !important;
+}
+.w-80 {
+    width: 80% !important;
+}
+.w-81 {
+    width: 81% !important;
+}
+.w-82 {
+    width: 82% !important;
+}
+.w-83 {
+    width: 83% !important;
+}
+.w-84 {
+    width: 84% !important;
+}
+.w-85 {
+    width: 85% !important;
+}
+.w-86 {
+    width: 86% !important;
+}
+.w-87 {
+    width: 87% !important;
+}
+.w-88 {
+    width: 88% !important;
+}
+.w-89 {
+    width: 89% !important;
+}
+.w-90 {
+    width: 90% !important;
+}
+.w-91 {
+    width: 91% !important;
+}
+.w-92 {
+    width: 92% !important;
+}
+.w-93 {
+    width: 93% !important;
+}
+.w-94 {
+    width: 94% !important;
+}
+.w-95 {
+    width: 95% !important;
+}
+.w-96 {
+    width: 96% !important;
+}
+.w-97 {
+    width: 97% !important;
+}
+.w-98 {
+    width: 98% !important;
+}
+.w-99 {
+    width: 99% !important;
+}
+.w-100 {
+    width: 100% !important;
+}
+
+/* ==========================================================================
+                            TOP COUNTER CSS
+========================================================================== */
+
+/* ==========================================================================
+                            TOP COUNTER CSS
+========================================================================== */
+
+/*CUSTOM (Font SIZE) CSS*/
+.fs-5 {
+    font-size: 5px !important;
+}
+.fs-6 {
+    font-size: 6px !important;
+}
+.fs-7 {
+    font-size: 7px !important;
+}
+.fs-8 {
+    font-size: 8px !important;
+}
+.fs-9 {
+    font-size: 9px !important;
+}
+.fs-10 {
+    font-size: 10px !important;
+}
+.fs-11 {
+    font-size: 11px !important;
+}
+.fs-12 {
+    font-size: 12px !important;
+}
+.fs-13 {
+    font-size: 13px !important;
+}
+.fs-14 {
+    font-size: 14px !important;
+}
+.fs-15 {
+    font-size: 15px !important;
+}
+.fs-16 {
+    font-size: 16px !important;
+}
+.fs-17 {
+    font-size: 17px !important;
+}
+.fs-18 {
+    font-size: 18px !important;
+}
+.fs-19 {
+    font-size: 19px !important;
+}
+.fs-20 {
+    font-size: 20px !important;
+}
+.fs-21 {
+    font-size: 21px !important;
+}
+.fs-22 {
+    font-size: 22px !important;
+}
+.fs-23 {
+    font-size: 23px !important;
+}
+.fs-24 {
+    font-size: 24px !important;
+}
+.fs-25 {
+    font-size: 25px !important;
+}
+.fs-26 {
+    font-size: 26px !important;
+}
+.fs-27 {
+    font-size: 27px !important;
+}
+.fs-28 {
+    font-size: 28px !important;
+}
+.fs-29 {
+    font-size: 29px !important;
+}
+.fs-30 {
+    font-size: 30px !important;
+}
+.fs-31 {
+    font-size: 31px !important;
+}
+.fs-32 {
+    font-size: 32px !important;
+}
+.fs-33 {
+    font-size: 33px !important;
+}
+.fs-34 {
+    font-size: 34px !important;
+}
+.fs-35 {
+    font-size: 35px !important;
+}
+.fs-36 {
+    font-size: 36px !important;
+}
+.fs-37 {
+    font-size: 37px !important;
+}
+.fs-38 {
+    font-size: 38px !important;
+}
+.fs-39 {
+    font-size: 39px !important;
+}
+.fs-40 {
+    font-size: 40px !important;
+}
+.fs-41 {
+    font-size: 41px !important;
+}
+.fs-42 {
+    font-size: 42px !important;
+}
+.fs-43 {
+    font-size: 43px !important;
+}
+.fs-44 {
+    font-size: 44px !important;
+}
+.fs-45 {
+    font-size: 45px !important;
+}
+.fs-46 {
+    font-size: 46px !important;
+}
+.fs-47 {
+    font-size: 47px !important;
+}
+.fs-48 {
+    font-size: 48px !important;
+}
+.fs-49 {
+    font-size: 49px !important;
+}
+.fs-50 {
+    font-size: 50px !important;
+}
+.fs-51 {
+    font-size: 51px !important;
+}
+.fs-52 {
+    font-size: 52px !important;
+}
+.fs-53 {
+    font-size: 53px !important;
+}
+.fs-54 {
+    font-size: 54px !important;
+}
+.fs-55 {
+    font-size: 55px !important;
+}
+.fs-56 {
+    font-size: 56px !important;
+}
+.fs-57 {
+    font-size: 57px !important;
+}
+.fs-58 {
+    font-size: 58px !important;
+}
+.fs-59 {
+    font-size: 59px !important;
+}
+.fs-60 {
+    font-size: 60px !important;
+}
+.fs-61 {
+    font-size: 61px !important;
+}
+.fs-62 {
+    font-size: 62px !important;
+}
+.fs-63 {
+    font-size: 63px !important;
+}
+.fs-64 {
+    font-size: 64px !important;
+}
+.fs-65 {
+    font-size: 65px !important;
+}
+.fs-66 {
+    font-size: 66px !important;
+}
+.fs-67 {
+    font-size: 67px !important;
+}
+.fs-68 {
+    font-size: 68px !important;
+}
+.fs-69 {
+    font-size: 69px !important;
+}
+.fs-70 {
+    font-size: 70px !important;
+}
+.fs-71 {
+    font-size: 71px !important;
+}
+.fs-72 {
+    font-size: 72px !important;
+}
+.fs-73 {
+    font-size: 73px !important;
+}
+.fs-74 {
+    font-size: 74px !important;
+}
+.fs-75 {
+    font-size: 75px !important;
+}
+.fs-76 {
+    font-size: 76px !important;
+}
+.fs-77 {
+    font-size: 77px !important;
+}
+.fs-78 {
+    font-size: 78px !important;
+}
+.fs-79 {
+    font-size: 79px !important;
+}
+.fs-80 {
+    font-size: 80px !important;
+}
+.fs-81 {
+    font-size: 81px !important;
+}
+.fs-82 {
+    font-size: 82px !important;
+}
+.fs-83 {
+    font-size: 83px !important;
+}
+.fs-84 {
+    font-size: 84px !important;
+}
+.fs-85 {
+    font-size: 85px !important;
+}
+.fs-86 {
+    font-size: 86px !important;
+}
+.fs-87 {
+    font-size: 87px !important;
+}
+.fs-88 {
+    font-size: 88px !important;
+}
+.fs-89 {
+    font-size: 89px !important;
+}
+.fs-90 {
+    font-size: 90px !important;
+}
+.fs-91 {
+    font-size: 91px !important;
+}
+.fs-92 {
+    font-size: 92px !important;
+}
+.fs-93 {
+    font-size: 93px !important;
+}
+.fs-94 {
+    font-size: 94px !important;
+}
+.fs-95 {
+    font-size: 95px !important;
+}
+.fs-96 {
+    font-size: 96px !important;
+}
+.fs-97 {
+    font-size: 97px !important;
+}
+.fs-98 {
+    font-size: 98px !important;
+}
+.fs-99 {
+    font-size: 99px !important;
+}
+.fs-100 {
+    font-size: 100px !important;
+}
+/*CUSTOM (Font SIZE) CSS*/
+
+
+/*CUSTOM (Font WEIGHT) CSS*/
+.fw-100 {
+    font-weight: 100!important;
+}
+.fw-200 {
+    font-weight: 200!important;
+}
+.fw-300 {
+    font-weight: 300!important;
+}
+.fw-400 {
+    font-weight: 400!important;
+}
+.fw-500 {
+    font-weight: 500!important;
+}
+.fw-600 {
+    font-weight: 600!important;
+}
+.fw-700 {
+    font-weight: 700!important;
+}
+.fw-800 {
+    font-weight: 800!important;
+}
+.fw-900 {
+    font-weight: 900!important;
+}
+/*CUSTOM (Font WEIGHT) CSS*/
+/*Custom Line Height CSS*/
+.lh-0 {
+    line-height: 0 !important;
+}
+.lh-10 {
+    line-height: 10px !important;
+}
+.lh-11 {
+    line-height: 11px !important;
+}
+.lh-12 {
+    line-height: 12px !important;
+}
+.lh-13 {
+    line-height: 13px !important;
+}
+.lh-14 {
+    line-height: 14px !important;
+}
+.lh-15 {
+    line-height: 15px !important;
+}
+.lh-16 {
+    line-height: 16px !important;
+}
+.lh-17 {
+    line-height: 17px !important;
+}
+.lh-18 {
+    line-height: 18px !important;
+}
+.lh-19 {
+    line-height: 19px !important;
+}
+.lh-20 {
+    line-height: 20px !important;
+}
+.lh-21 {
+    line-height: 21px !important;
+}
+.lh-22 {
+    line-height: 22px !important;
+}
+.lh-23 {
+    line-height: 23px !important;
+}
+.lh-24 {
+    line-height: 24px !important;
+}
+.lh-25 {
+    line-height: 25px !important;
+}
+.lh-26 {
+    line-height: 26px !important;
+}
+.lh-27 {
+    line-height: 27px !important;
+}
+.lh-28 {
+    line-height: 28px !important;
+}
+.lh-29 {
+    line-height: 29px !important;
+}
+.lh-30 {
+    line-height: 30px !important;
+}
+.lh-31 {
+    line-height: 31px !important;
+}
+.lh-32 {
+    line-height: 32px !important;
+}
+.lh-33 {
+    line-height: 33px !important;
+}
+.lh-34 {
+    line-height: 34px !important;
+}
+.lh-35 {
+    line-height: 35px !important;
+}
+.lh-36 {
+    line-height: 36px !important;
+}
+.lh-37 {
+    line-height: 37px !important;
+}
+.lh-38 {
+    line-height: 38px !important;
+}
+.lh-39 {
+    line-height: 39px !important;
+}
+.lh-40 {
+    line-height: 40px !important;
+}
+.lh-41 {
+    line-height: 41px !important;
+}
+.lh-42 {
+    line-height: 42px !important;
+}
+.lh-43 {
+    line-height: 43px !important;
+}
+.lh-44 {
+    line-height: 44px !important;
+}
+.lh-45 {
+    line-height: 45px !important;
+}
+.lh-46 {
+    line-height: 46px !important;
+}
+.lh-47 {
+    line-height: 47px !important;
+}
+.lh-48 {
+    line-height: 48px !important;
+}
+.lh-49 {
+    line-height: 49px !important;
+}
+.lh-50 {
+    line-height: 50px !important;
+}
+.lh-51 {
+    line-height: 51px !important;
+}
+.lh-52 {
+    line-height: 52px !important;
+}
+.lh-53 {
+    line-height: 53px !important;
+}
+.lh-54 {
+    line-height: 54px !important;
+}
+.lh-55 {
+    line-height: 55px !important;
+}
+.lh-56 {
+    line-height: 56px !important;
+}
+.lh-57 {
+    line-height: 57px !important;
+}
+.lh-58 {
+    line-height: 58px !important;
+}
+.lh-59 {
+    line-height: 59px !important;
+}
+.lh-60 {
+    line-height: 60px !important;
+}
+.lh-61 {
+    line-height: 61px !important;
+}
+.lh-62 {
+    line-height: 62px !important;
+}
+.lh-63 {
+    line-height: 63px !important;
+}
+.lh-64 {
+    line-height: 64px !important;
+}
+.lh-65 {
+    line-height: 65px !important;
+}
+.lh-66 {
+    line-height: 66px !important;
+}
+.lh-67 {
+    line-height: 67px !important;
+}
+.lh-68 {
+    line-height: 68px !important;
+}
+.lh-69 {
+    line-height: 69px !important;
+}
+.lh-70 {
+    line-height: 70px !important;
+}
+.lh-71 {
+    line-height: 71px !important;
+}
+.lh-72 {
+    line-height: 72px !important;
+}
+.lh-73 {
+    line-height: 73px !important;
+}
+.lh-74 {
+    line-height: 74px !important;
+}
+.lh-75 {
+    line-height: 75px !important;
+}
+.lh-76 {
+    line-height: 76px !important;
+}
+.lh-77 {
+    line-height: 77px !important;
+}
+.lh-78 {
+    line-height: 78px !important;
+}
+.lh-79 {
+    line-height: 79px !important;
+}
+.lh-80 {
+    line-height: 80px !important;
+}
+.lh-81 {
+    line-height: 81px !important;
+}
+.lh-82 {
+    line-height: 82px !important;
+}
+.lh-83 {
+    line-height: 83px !important;
+}
+.lh-84 {
+    line-height: 84px !important;
+}
+.lh-85 {
+    line-height: 85px !important;
+}
+.lh-86 {
+    line-height: 86px !important;
+}
+.lh-87 {
+    line-height: 87px !important;
+}
+.lh-88 {
+    line-height: 88px !important;
+}
+.lh-89 {
+    line-height: 89px !important;
+}
+.lh-90 {
+    line-height: 90px !important;
+}
+.lh-91 {
+    line-height: 91px !important;
+}
+.lh-92 {
+    line-height: 92px !important;
+}
+.lh-93 {
+    line-height: 93px !important;
+}
+.lh-94 {
+    line-height: 94px !important;
+}
+.lh-95 {
+    line-height: 95px !important;
+}
+.lh-96 {
+    line-height: 96px !important;
+}
+.lh-97 {
+    line-height: 97px !important;
+}
+.lh-98 {
+    line-height: 98px !important;
+}
+.lh-99 {
+    line-height: 99px !important;
+}
+.lh-100 {
+    line-height: 100px !important;
+}
+
+/*Custom Line Height CSS*/
+
+/* ==========================================================================
+                            TOP COUNTER CSS
+========================================================================== */
+
+/* ==========================================================================
+                            TOP COUNTER CSS
+========================================================================== */
+
+/*=============================================================
+  Simple Ripple Animation
+=============================================================*/
+@keyframes rippleBoxShadow {
+    0% {
+        transform: translate(-50%, -50%) scale(1);
+        box-shadow: 0 0 0 0 rgba(var(--ripple-color-rgb), 0.3),
+            0 0 0 5px rgba(var(--ripple-color-rgb), 0.25),
+            0 0 0 10px rgba(var(--ripple-color-rgb), 0.2),
+            0 0 0 20px rgba(var(--ripple-color-rgb), 0.1);
+    }
+
+    100% {
+        transform: translate(-50%, -50%) scale(1);
+        box-shadow: 0 0 0 5px rgba(var(--ripple-color-rgb), 0.25),
+            0 0 0 10px rgba(var(--ripple-color-rgb), 0.2),
+            0 0 0 20px rgba(var(--ripple-color-rgb), 0.1),
+            0 0 0 40px rgba(var(--ripple-color-rgb), 0);
+    }
+}
+
+.ripple-info {
+    position: relative;
+    z-index: 1;
+}
+
+.ripple-info::before {
+    content: '';
+    position: absolute;
+    z-index: -1;
+    top: 50%;
+    left: 50%;
+    width: 1px;
+    height: 1px;
+    --ripple-color-rgb: 79, 192, 232;
+    /* Info Color RGB */
+    animation: rippleBoxShadow 2s linear infinite;
+    border-radius: 50%;
+}
+
+/* Success Color: #9FD369 */
+.ripple-success {
+    position: relative;
+    z-index: 1;
+}
+
+.ripple-success::before {
+    content: '';
+    position: absolute;
+    z-index: -1;
+    top: 50%;
+    left: 50%;
+    width: 1px;
+    height: 1px;
+    --ripple-color-rgb: 159, 211, 105;
+    animation: rippleBoxShadow 2s linear infinite;
+    border-radius: 50%;
+}
+
+.ripple-danger {
+    position: relative;
+    z-index: 1;
+}
+
+.ripple-danger::before {
+    content: '';
+    position: absolute;
+    z-index: -1;
+    top: 50%;
+    left: 50%;
+    width: 1px;
+    height: 1px;
+    --ripple-color-rgb: 235, 84, 99;
+    animation: rippleBoxShadow 2s linear infinite;
+    border-radius: 50%;
+}
+
+.ripple-primary {
+    position: relative;
+    z-index: 1;
+}
+
+.ripple-primary::before {
+    content: '';
+    position: absolute;
+    z-index: -1;
+    top: 50%;
+    left: 50%;
+    width: 1px;
+    height: 1px;
+    --ripple-color-rgb: 94, 155, 235;
+    animation: rippleBoxShadow 2s linear infinite;
+    border-radius: 50%;
+}
+
+.ripple-warning {
+    position: relative;
+    z-index: 1;
+}
+
+.ripple-warning::before {
+    content: '';
+    position: absolute;
+    z-index: -1;
+    top: 50%;
+    left: 50%;
+    width: 1px;
+    height: 1px;
+    --ripple-color-rgb: 251, 110, 82;
+    animation: rippleBoxShadow 2s linear infinite;
+    border-radius: 50%;
+}
+
+.ripple-purple {
+    position: relative;
+    z-index: 1;
+}
+
+.ripple-purple::before {
+    content: '';
+    position: absolute;
+    z-index: -1;
+    top: 50%;
+    left: 50%;
+    width: 1px;
+    height: 1px;
+    --ripple-color-rgb: 172, 146, 237;
+    animation: rippleBoxShadow 2s linear infinite;
+    border-radius: 50%;
+}
+
+/*=============================================================
+  Simple Ripple Animation
+=============================================================*/
+
+/* ==========================================================================
+                        CREATE Button CUSTOM CSS 
+========================================================================== */
+/* Info Button (Original) */
+        .create-btn-info {
+            display: inline-flex;
+            height: 30px;
+            text-align: center;
+            border-radius: 10px 5px 10px 5px;
+            transition: all 0.2s ease-in-out;
+            font-size: 13px;
+            border: none;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            background: rgba(27, 132, 255, 0.75) !important;
+            padding: 5px 15px;
+            cursor: pointer;
+            font-weight: 500;
+        }
+        .create-btn-info:hover {
+            background-color: rgb(27, 132, 255) !important;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 5px rgba(0, 0, 0, 0.15);
+            color: #fff;
+        }
+
+        /* Primary Button */
+        .create-btn-primary {
+            display: inline-flex;
+            height: 30px;
+            text-align: center;
+            border-radius: 10px 5px 10px 5px;
+            transition: all 0.2s ease-in-out;
+            font-size: 13px;
+            border: none;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            background: #4196FA !important;
+            padding: 5px 15px;
+            cursor: pointer;
+            font-weight: 500;
+        }
+        .create-btn-primary:hover {
+            background-color: #2a87f9 !important;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 5px rgba(0, 0, 0, 0.15);
+            color: #fff;
+        }
+
+        /* Success Button */
+        .create-btn-success {
+            display: inline-flex;
+            height: 30px;
+            text-align: center;
+            border-radius: 10px 5px 10px 5px;
+            transition: all 0.2s ease-in-out;
+            font-size: 13px;
+            border: none;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            background: #8CC052 !important;
+            padding: 5px 15px;
+            cursor: pointer;
+            font-weight: 500;
+        }
+        .create-btn-success:hover {
+            background-color: #79b53a !important;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 5px rgba(0, 0, 0, 0.15);
+            color: #fff;
+        }
+
+        /* Alt Info Button */
+        .create-btn-info-alt {
+            display: inline-flex;
+            height: 30px;
+            text-align: center;
+            border-radius: 10px 5px 10px 5px;
+            transition: all 0.2s ease-in-out;
+            font-size: 13px;
+            border: none;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            background: #4fc0e8 !important;
+            padding: 5px 15px;
+            cursor: pointer;
+            font-weight: 500;
+        }
+        .create-btn-info-alt:hover {
+            background-color: #36b3db !important;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 5px rgba(0, 0, 0, 0.15);
+            color: #fff;
+        }
+
+        /* White Button */
+        .create-btn-white {
+            display: inline-flex;
+            height: 30px;
+            text-align: center;
+            border-radius: 10px 5px 10px 5px;
+            transition: all 0.2s ease-in-out;
+            font-size: 13px;
+            border: 1px solid #ddd;
+            align-items: center;
+            justify-content: center;
+            color: #333 !important;
+            background: #FFFFFF !important;
+            padding: 5px 15px;
+            cursor: pointer;
+            font-weight: 500;
+        }
+        .create-btn-white:hover {
+            background-color: #f2f2f2 !important;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 5px rgba(0, 0, 0, 0.15);
+            color: #333 !important;
+        }
+
+        /* Purple Button */
+        .create-btn-purple {
+            display: inline-flex;
+            height: 30px;
+            text-align: center;
+            border-radius: 10px 5px 10px 5px;
+            transition: all 0.2s ease-in-out;
+            font-size: 13px;
+            border: none;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            background: #4A2A85 !important;
+            padding: 5px 15px;
+            cursor: pointer;
+            font-weight: 500;
+        }
+        .create-btn-purple:hover {
+            background-color: #3c226e !important;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 5px rgba(0, 0, 0, 0.15);
+            color: #fff;
+        }
+
+        /* Blue Button */
+        .create-btn-blue {
+            display: inline-flex;
+            height: 30px;
+            text-align: center;
+            border-radius: 10px 5px 10px 5px;
+            transition: all 0.2s ease-in-out;
+            font-size: 13px;
+            border: none;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            background: #13B8ED !important;
+            padding: 5px 15px;
+            cursor: pointer;
+            font-weight: 500;
+        }
+        .create-btn-blue:hover {
+            background-color: #0fa4d1 !important;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 5px rgba(0, 0, 0, 0.15);
+            color: #fff;
+        }
+
+        /* Base Button */
+        .create-btn-base {
+            display: inline-flex;
+            height: 30px;
+            text-align: center;
+            border-radius: 10px 5px 10px 5px;
+            transition: all 0.2s ease-in-out;
+            font-size: 13px;
+            border: none;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            background: #7367f0 !important;
+            padding: 5px 15px;
+            cursor: pointer;
+            font-weight: 500;
+        }
+        .create-btn-base:hover {
+            background-color: #5f54e8 !important;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 5px rgba(0, 0, 0, 0.15);
+            color: #fff;
+        }
+
+        /* Orange Button */
+        .create-btn-orange {
+            display: inline-flex;
+            height: 30px;
+            text-align: center;
+            border-radius: 10px 5px 10px 5px;
+            transition: all 0.2s ease-in-out;
+            font-size: 13px;
+            border: none;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            background: #f7891e !important;
+            padding: 5px 15px;
+            cursor: pointer;
+            font-weight: 500;
+        }
+        .create-btn-orange:hover {
+            background-color: #e5780c !important;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 5px rgba(0, 0, 0, 0.15);
+            color: #fff;
+        }
+
+        /* Teal Button */
+        .create-btn-teal {
+            display: inline-flex;
+            height: 30px;
+            text-align: center;
+            border-radius: 10px 5px 10px 5px;
+            transition: all 0.2s ease-in-out;
+            font-size: 13px;
+            border: none;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            background: #0F626A !important;
+            padding: 5px 15px;
+            cursor: pointer;
+            font-weight: 500;
+        }
+        .create-btn-teal:hover {
+            background-color: #0b4f55 !important;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 5px rgba(0, 0, 0, 0.15);
+            color: #fff;
+        }
+
+        /* Green Button */
+        .create-btn-green {
+            display: inline-flex;
+            height: 30px;
+            text-align: center;
+            border-radius: 10px 5px 10px 5px;
+            transition: all 0.2s ease-in-out;
+            font-size: 13px;
+            border: none;
+            align-items: center;
+            justify-content: center;
+            color: #212529 !important;
+            background: #AECC34 !important;
+            padding: 5px 15px;
+            cursor: pointer;
+            font-weight: 500;
+        }
+        .create-btn-green:hover {
+            background-color: #9ac01f !important;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 5px rgba(0, 0, 0, 0.15);
+            color: #212529 !important;
+        }
+/* ==========================================================================
+                          Create Button CUSTOM CSS
+========================================================================== */
+
+
+
+/* ==========================================================================
+                          SELECT Button CUSTOM CSS
+========================================================================== */
+/* Select Info Button */
+        .select-btn-info {
+            display: inline-flex;
+            height: 30px;
+            text-align: center;
+            border-radius: 50px 25px 50px 25px;
+            transition: all 0.2s ease-in-out;
+            font-size: 13px;
+            border: 1px dashed #686D76 !important;
+            align-items: center;
+            justify-content: center;
+            color: rgba(27, 132, 255, 0.8);
+            background: rgba(27, 132, 255, 0.15);
+            padding: 5px 15px;
+            cursor: pointer;
+            font-weight: 500;
+        }
+        .select-btn-info:hover {
+            background-color: rgba(27, 132, 255, .75);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 5px rgba(0, 0, 0, 0.15);
+            color: #fff;
+        }
+
+        /* Select Primary Button */
+        .select-btn-primary {
+            display: inline-flex;
+            height: 30px;
+            text-align: center;
+            border-radius: 50px 25px 50px 25px;
+            transition: all 0.2s ease-in-out;
+            font-size: 13px;
+            border: 1px dashed #686D76 !important;
+            align-items: center;
+            justify-content: center;
+            color: rgba(65, 150, 250, 0.8);
+            background: rgba(65, 150, 250, 0.15);
+            padding: 5px 15px;
+            cursor: pointer;
+            font-weight: 500;
+        }
+        .select-btn-primary:hover {
+            background-color: rgba(65, 150, 250, .75);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 5px rgba(0, 0, 0, 0.15);
+            color: #fff;
+        }
+
+        /* Select Success Button */
+        .select-btn-success {
+            display: inline-flex;
+            height: 30px;
+            text-align: center;
+            border-radius: 50px 25px 50px 25px;
+            transition: all 0.2s ease-in-out;
+            font-size: 13px;
+            border: 1px dashed #686D76 !important;
+            align-items: center;
+            justify-content: center;
+            color: rgba(140, 192, 82, 0.8);
+            background: rgba(140, 192, 82, 0.15);
+            padding: 5px 15px;
+            cursor: pointer;
+            font-weight: 500;
+        }
+        .select-btn-success:hover {
+            background-color: rgba(140, 192, 82, .75);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 5px rgba(0, 0, 0, 0.15);
+            color: #fff;
+        }
+
+        /* Select Alt Info Button */
+        .select-btn-info-alt {
+            display: inline-flex;
+            height: 30px;
+            text-align: center;
+            border-radius: 50px 25px 50px 25px;
+            transition: all 0.2s ease-in-out;
+            font-size: 13px;
+            border: 1px dashed #686D76 !important;
+            align-items: center;
+            justify-content: center;
+            color: rgba(79, 192, 232, 0.8);
+            background: rgba(79, 192, 232, 0.15);
+            padding: 5px 15px;
+            cursor: pointer;
+            font-weight: 500;
+        }
+        .select-btn-info-alt:hover {
+            background-color: rgba(79, 192, 232, .75);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 5px rgba(0, 0, 0, 0.15);
+            color: #fff;
+        }
+
+        /* Select White Button */
+        .select-btn-white {
+            display: inline-flex;
+            height: 30px;
+            text-align: center;
+            border-radius: 50px 25px 50px 25px;
+            transition: all 0.2s ease-in-out;
+            font-size: 13px;
+            border: 1px dashed #686D76 !important;
+            align-items: center;
+            justify-content: center;
+            color: #555;
+            background: rgba(221, 221, 221, 0.2);
+            padding: 5px 15px;
+            cursor: pointer;
+            font-weight: 500;
+        }
+        .select-btn-white:hover {
+            background-color: rgba(150, 150, 150, .75);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 5px rgba(0, 0, 0, 0.15);
+            color: #fff;
+        }
+
+        /* Select Purple Button */
+        .select-btn-purple {
+            display: inline-flex;
+            height: 30px;
+            text-align: center;
+            border-radius: 50px 25px 50px 25px;
+            transition: all 0.2s ease-in-out;
+            font-size: 13px;
+            border: 1px dashed #686D76 !important;
+            align-items: center;
+            justify-content: center;
+            color: rgba(74, 42, 133, 0.8);
+            background: rgba(74, 42, 133, 0.15);
+            padding: 5px 15px;
+            cursor: pointer;
+            font-weight: 500;
+        }
+        .select-btn-purple:hover {
+            background-color: rgba(74, 42, 133, .75);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 5px rgba(0, 0, 0, 0.15);
+            color: #fff;
+        }
+
+        /* Select Blue Button */
+        .select-btn-blue {
+            display: inline-flex;
+            height: 30px;
+            text-align: center;
+            border-radius: 50px 25px 50px 25px;
+            transition: all 0.2s ease-in-out;
+            font-size: 13px;
+            border: 1px dashed #686D76 !important;
+            align-items: center;
+            justify-content: center;
+            color: rgba(19, 184, 237, 0.8);
+            background: rgba(19, 184, 237, 0.15);
+            padding: 5px 15px;
+            cursor: pointer;
+            font-weight: 500;
+        }
+        .select-btn-blue:hover {
+            background-color: rgba(19, 184, 237, .75);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 5px rgba(0, 0, 0, 0.15);
+            color: #fff;
+        }
+
+        /* Select Base Button */
+        .select-btn-base {
+            display: inline-flex;
+            height: 30px;
+            text-align: center;
+            border-radius: 50px 25px 50px 25px;
+            transition: all 0.2s ease-in-out;
+            font-size: 13px;
+            border: 1px dashed #686D76 !important;
+            align-items: center;
+            justify-content: center;
+            color: rgba(115, 103, 240, 0.8);
+            background: rgba(115, 103, 240, 0.15);
+            padding: 5px 15px;
+            cursor: pointer;
+            font-weight: 500;
+        }
+        .select-btn-base:hover {
+            background-color: rgba(115, 103, 240, .75);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 5px rgba(0, 0, 0, 0.15);
+            color: #fff;
+        }
+
+        /* Select Orange Button */
+        .select-btn-orange {
+            display: inline-flex;
+            height: 30px;
+            text-align: center;
+            border-radius: 50px 25px 50px 25px;
+            transition: all 0.2s ease-in-out;
+            font-size: 13px;
+            border: 1px dashed #686D76 !important;
+            align-items: center;
+            justify-content: center;
+            color: rgba(247, 137, 30, 0.8);
+            background: rgba(247, 137, 30, 0.15);
+            padding: 5px 15px;
+            cursor: pointer;
+            font-weight: 500;
+        }
+        .select-btn-orange:hover {
+            background-color: rgba(247, 137, 30, .75);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 5px rgba(0, 0, 0, 0.15);
+            color: #fff;
+        }
+
+        /* Select Teal Button */
+        .select-btn-teal {
+            display: inline-flex;
+            height: 30px;
+            text-align: center;
+            border-radius: 50px 25px 50px 25px;
+            transition: all 0.2s ease-in-out;
+            font-size: 13px;
+            border: 1px dashed #686D76 !important;
+            align-items: center;
+            justify-content: center;
+            color: rgba(15, 98, 106, 0.8);
+            background: rgba(15, 98, 106, 0.15);
+            padding: 5px 15px;
+            cursor: pointer;
+            font-weight: 500;
+        }
+        .select-btn-teal:hover {
+            background-color: rgba(15, 98, 106, .75);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 5px rgba(0, 0, 0, 0.15);
+            color: #fff;
+        }
+
+        /* Select Green Button */
+        .select-btn-green {
+            display: inline-flex;
+            height: 30px;
+            text-align: center;
+            border-radius: 50px 25px 50px 25px;
+            transition: all 0.2s ease-in-out;
+            font-size: 13px;
+            border: 1px dashed #686D76 !important;
+            align-items: center;
+            justify-content: center;
+            color: rgba(174, 204, 52, 0.9);
+            background: rgba(174, 204, 52, 0.15);
+            padding: 5px 15px;
+            cursor: pointer;
+            font-weight: 500;
+        }
+        .select-btn-green:hover {
+            background-color: rgba(174, 204, 52, .75);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 5px rgba(0, 0, 0, 0.15);
+            color: #fff;
+        }
+/* ==========================================================================
+                          SELECT Button CUSTOM CSS
+========================================================================== */
+
+
+
+/* ==========================================================================
+                            TOP COUNTER CSS
+========================================================================== */
+.base-modal {
+  max-width: 400px!important;
+}
+.small-large-modal {
+  max-width: 500px!important;
+}
+.medium-modal{
+    max-width: 600px!important;
+}
+.large-modal {
+  max-width: 700px!important;
+}
+.extra-large-modal {
+  max-width: 80%!important;
+}
+
+
+/* ==========================================================================
+                            Action Buttons
+========================================================================== */
+
+.action-btn {
+display:inline-flex;
+  width: 22px;
+  height: 22px;
+  line-height: 34px;
+  text-align: center;
+  border-radius: 3px;
+  transition: all 0.2s ease-in-out;
+  font-size: 15px;
+  border: none;
+  align-items: center;
+  justify-content: center;
+}
+
+.action-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 5px rgba(0,0,0,0.15);
+    color: #ffffff;
+}
+
+/* Primary Action Button */
+.action-btn-primary {
+  display:inline-flex;
+  width: 22px;
+  height: 22px;
+  line-height: 34px;
+  text-align: center;
+  border-radius: 3px;
+  transition: all 0.2s ease-in-out;
+  font-size: 16px;
+  border: none;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(94, 155, 235, 0.1);
+  color: rgba(94, 155, 235, 0.9);
+}
+.action-btn-primary:hover {
+    background-color: rgba(94, 155, 235, 0.75);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 5px rgba(0, 0, 0, 0.15);
+    color: #fff;
+}
+
+/* Info Action Button */
+.action-btn-info {
+  display:inline-flex;
+  width: 22px;
+  height: 22px;
+  line-height: 34px;
+  text-align: center;
+  border-radius: 3px;
+  transition: all 0.2s ease-in-out;
+  font-size: 16px;
+  border: none;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(27, 132, 255, 0.1); /* RGB for #1B84FF */
+  color: rgba(27, 132, 255, 0.9);
+}
+.action-btn-info:hover {
+    background-color: rgba(27, 132, 255, 0.75);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 5px rgba(0, 0, 0, 0.15);
+    color: #fff;
+}
+
+/* Success Action Button */
+.action-btn-success {
+  display:inline-flex;
+  width: 22px;
+  height: 22px;
+  line-height: 34px;
+  text-align: center;
+  border-radius: 3px;
+  transition: all 0.2s ease-in-out;
+  font-size: 16px;
+  border: none;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(23, 162, 184, 0.1); /* RGB for #17a2b8 */
+  color: rgba(23, 162, 184, 0.9);
+}
+.action-btn-success:hover {
+    background-color: rgba(23, 162, 184, 0.8);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 5px rgba(0, 0, 0, 0.15);
+    color: #fff;
+}
+
+/* Danger Action Button */
+.action-btn-danger {
+  display:inline-flex;
+  width: 22px;
+  height: 22px;
+  line-height: 34px;
+  text-align: center;
+  border-radius: 3px;
+  transition: all 0.2s ease-in-out;
+  font-size: 15px;
+  border: none;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(231, 13, 13, 0.1); /* RGB for #E70D0D */
+  color: rgba(231, 13, 13, 0.9);
+}
+.action-btn-danger:hover {
+    background-color: rgba(231, 13, 13, 0.75);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 5px rgba(0, 0, 0, 0.15);
+    color: #fff;
+}
+
+/* Warning Action Button */
+.action-btn-warning {
+  display:inline-flex;
+  width: 22px;
+  height: 22px;
+  line-height: 34px;
+  text-align: center;
+  border-radius: 3px;
+  transition: all 0.2s ease-in-out;
+  font-size: 16px;
+  border: none;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(255, 193, 7, 0.1); /* RGB for #FFC107 */
+  color: rgba(255, 193, 7, 0.9);
+}
+.action-btn-warning:hover {
+    background-color: rgba(255, 193, 7, 0.75);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 5px rgba(0, 0, 0, 0.15);
+    color: #fff;
+}
+
+/* Secondary Action Button */
+.action-btn-secondary {
+  display:inline-flex;
+  width: 22px;
+  height: 22px;
+  line-height: 34px;
+  text-align: center;
+  border-radius: 3px;
+  transition: all 0.2s ease-in-out;
+  font-size: 16px;
+  border: none;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(59, 112, 128, 0.1); /* RGB for #3B7080 */
+  color: rgba(59, 112, 128, 0.9);
+}
+.action-btn-secondary:hover {
+    background-color: rgba(59, 112, 128, 0.75);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 5px rgba(0, 0, 0, 0.15);
+    color: #fff;
+}
+
+/* Dark Action Button */
+.action-btn-dark {
+  display:inline-flex;
+  width: 22px;
+  height: 22px;
+  line-height: 34px;
+  text-align: center;
+  border-radius: 3px;
+  transition: all 0.2s ease-in-out;
+  font-size: 16px;
+  border: none;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(33, 37, 41, 0.1); /* RGB for #212529 */
+  color: rgba(33, 37, 41, 0.9);
+}
+.action-btn-dark:hover {
+    background-color: rgba(33, 37, 41, 0.75);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 5px rgba(0, 0, 0, 0.15);
+    color: #fff;
+}
+/* ==========================================================================
+                            Action Buttons
+========================================================================== */
+
+
+.qb-card-header-title-sm {
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--qbit-purple);
+  margin-bottom: 0px;
+  line-height: 20px;
+}
+.qb-card-header-title-md {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--qbit-purple);
+  margin-bottom: 0px;
+  line-height: 20px;
+}
+.qb-card-header-title-lg {
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--qbit-purple);
+  margin-bottom: 0px;
+  line-height: 20px;
+}
+.qb-card-header-title-xl {
+  font-size: 22px;
+  font-weight: 600;
+  color: var(--qbit-purple);
+  margin-bottom: 0px;
+  line-height: 20px;
+}
+
+
+
+
+
+
+
+
+
+
+/*Active/Inactive Button CSS*/
+.toggle-button-cover {
+  display: table-cell;
+  position: relative;
+  width: 300px;
+  height: 140px;
+  box-sizing: border-box;
+}
+
+.button-cover {
+  /*height: 100px;*/
+  /*margin: 20px;*/
+  /*background-color: #fff;*/
+  /*box-shadow: 0 10px 20px -8px #c5d6d6;*/
+  /*border-radius: 4px;*/
+}
+
+.button-cover:before {
+  counter-increment: button-counter;
+  content: counter(button-counter);
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  color: #d7e3e3;
+  font-size: 12px;
+  line-height: 1;
+  padding: 5px;
+}
+
+.button-cover,
+.knobs,
+.layer {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+}
+
+.button {
+position: relative;
+  width: 74px;
+  height: 17px;
+  margin: 0 auto;
+  overflow: hidden;
+}
+
+.button.r,
+.button.r .layer {
+  border-radius: 100px;
+}
+
+.button.b2 {
+  border-radius: 2px;
+}
+.checkbox {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  margin: 0;
+  opacity: 0;
+  cursor: pointer;
+  z-index: 3;
+}
+
+.knobs {
+  z-index: 2;
+}
+
+.layer {
+  width: 100%;
+  background-color: #D8EFD3;
+  transition: 0.3s ease all;
+  z-index: 1;
+}
+
+/* Button 1 */
+#button-1 .knobs:before {
+  content: "Active";
+  position: absolute;
+  top: 0;
+  left: 0;
+  color: #fff;
+  font-size: 10px;
+  font-weight: 400;
+  text-align: center;
+  line-height: 0;
+  padding: 8px;
+  background-color: #16db65;
+  border-radius: 50px;
+  transition: 0.3s cubic-bezier(0.18, 0.89, 0.35, 1.15) all;
+}
+
+#button-1 .checkbox:checked + .knobs:before {
+  content: "Inactive";
+  left: 20px;
+  background-color: #FF6363;
+}
+
+#button-1 .checkbox:checked ~ .layer {
+  background-color: #FFE1E1;
+}
+
+#button-1 .knobs,
+#button-1 .knobs:before,
+#button-1 .layer {
+  transition: 0.3s ease all;
+}
+/*Active/Inactive Button CSS  --------------------------------------------*/
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* =================================================
+   TOP COUNTER CSS
+   ================================================= */
+.custom-counter-inner {
+    position: relative;
+    z-index: 1;
+    padding: 15px;
+    height: 100%;
+    overflow: hidden;
+    border-radius: 10px;
+    background: rgba(12, 175, 96, 0.1);
+}
+.bottom-svg {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    opacity: 0.75;
+    z-index: -1;
+}
+.custom-counter-inner .bottom-svg {
+    bottom: -35px;
+    height: 75px;
+    width: 100px;
+}
+.custom-counter-icon {
+height: 42px;
+  width: 42px;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  -webkit-box-pack: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+  padding: 5px;
+  background-color: #fff;
+  border-radius: 6px;
+  line-height: 0;
+  align-items: center;
+}
+
+.counter-bg-1{
+    background: rgba(75, 137, 220, 0.1)!important;
+}
+.counter-bg-2{
+    background: rgba(140, 192, 82, 0.15)!important;
+}
+.counter-bg-3{
+    background: rgba(59, 174, 218, 0.15)!important;
+}
+.counter-bg-4{
+    background: rgba(12, 175, 96, 0.1)!important;
+}
+
+
+
+
+
+/* =================================================
+   ACTION & VIEW-SWITCHER BUTTONS (FINAL)
+   ================================================= */
+.list-view-switch {
+  display: inline-flex;
+  align-items: center;
+  background-color: rgba(247, 137, 30, 0.1) !important;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 5px;
+  transition: all 0.2s ease-in-out;
+  font-size: 18px;
+  border: 1px solid rgba(247, 137, 30, 0.4) !important;
+  color: #f7891e !important;
+}
+
+.list-view-switch:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 10px rgba(247, 137, 30, 0.15);
+    color: #ffffff!important; 
+    background-color: rgba(247, 137, 30, 0.5)!important;
+}
+
+.list-view-switch.active {
+    background-color: #f7891e!important;
+    color: #ffffff!important; 
+    box-shadow: 0 4px 10px rgba(247, 137, 30, 0.3);
+}
+

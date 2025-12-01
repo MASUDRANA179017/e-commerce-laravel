@@ -1,0 +1,28 @@
+.drop-wrap{
+    position:relative
+}
+.drop-zone {
+  min-height: 80px;
+  background: var(--qbit-orange-10);
+  border: 2px dashed var(--qbit-orange-20);
+  border-radius: 10px;
+  padding: 10px;
+  margin-bottom: 10px;
+}
+.drop-zone.drag-over{
+  background: var(--qbit-blue-10);
+  border: 2px dashed var(--qbit-blue-20);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
