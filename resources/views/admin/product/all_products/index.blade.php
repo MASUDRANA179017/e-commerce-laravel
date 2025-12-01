@@ -423,6 +423,279 @@
         transform: scale(1.05);
         box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
     }
+    
+    /* Product Details Modal Styles */
+    .product-details-modal .modal-body {
+        max-height: 70vh;
+        overflow-y: auto;
+    }
+    
+    .product-detail-wrapper {
+        display: grid;
+        grid-template-columns: 400px 1fr;
+        gap: 0;
+    }
+    
+    @media (max-width: 992px) {
+        .product-detail-wrapper {
+            grid-template-columns: 1fr;
+        }
+    }
+    
+    .product-gallery {
+        background: #f8f9fc;
+        padding: 30px;
+        border-right: 1px solid #eaecf4;
+    }
+    
+    .product-main-image {
+        width: 100%;
+        aspect-ratio: 1;
+        border-radius: 15px;
+        overflow: hidden;
+        background: #fff;
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+        margin-bottom: 15px;
+    }
+    
+    .product-main-image img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+    }
+    
+    .product-thumbnails {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+    
+    .product-thumb-item {
+        width: 70px;
+        height: 70px;
+        border-radius: 10px;
+        overflow: hidden;
+        cursor: pointer;
+        border: 2px solid transparent;
+        transition: all 0.3s;
+    }
+    
+    .product-thumb-item:hover,
+    .product-thumb-item.active {
+        border-color: #667eea;
+        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+    }
+    
+    .product-thumb-item img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+    
+    .product-info-section {
+        padding: 30px;
+    }
+    
+    .product-badges {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 15px;
+        flex-wrap: wrap;
+    }
+    
+    .product-badge {
+        padding: 6px 14px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 600;
+    }
+    
+    .product-badge-brand {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: #fff;
+    }
+    
+    .product-badge-category {
+        background: rgba(16, 185, 129, 0.15);
+        color: #10b981;
+    }
+    
+    .product-badge-status {
+        background: rgba(245, 158, 11, 0.15);
+        color: #f59e0b;
+    }
+    
+    .product-badge-status.active {
+        background: rgba(16, 185, 129, 0.15);
+        color: #10b981;
+    }
+    
+    .product-detail-title {
+        font-size: 24px;
+        font-weight: 700;
+        color: #2d3748;
+        margin-bottom: 10px;
+        line-height: 1.3;
+    }
+    
+    .product-sku-detail {
+        font-size: 14px;
+        color: #718096;
+        margin-bottom: 20px;
+    }
+    
+    .product-sku-detail code {
+        background: #f1f5f9;
+        padding: 4px 10px;
+        border-radius: 5px;
+        color: #667eea;
+    }
+    
+    .product-price-section {
+        background: linear-gradient(135deg, #f8f9fc 0%, #eef2ff 100%);
+        border-radius: 12px;
+        padding: 20px;
+        margin-bottom: 25px;
+    }
+    
+    .product-price-current {
+        font-size: 32px;
+        font-weight: 800;
+        color: #667eea;
+    }
+    
+    .product-price-original {
+        font-size: 18px;
+        color: #a0aec0;
+        text-decoration: line-through;
+        margin-left: 10px;
+    }
+    
+    .product-price-discount {
+        background: #ef4444;
+        color: #fff;
+        padding: 4px 12px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 600;
+        margin-left: 15px;
+    }
+    
+    .product-meta-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 15px;
+        margin-bottom: 25px;
+    }
+    
+    .product-meta-item {
+        background: #f8f9fc;
+        padding: 15px;
+        border-radius: 10px;
+    }
+    
+    .product-meta-label {
+        font-size: 12px;
+        color: #718096;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-bottom: 5px;
+    }
+    
+    .product-meta-value {
+        font-size: 16px;
+        font-weight: 600;
+        color: #2d3748;
+    }
+    
+    .product-description-section {
+        margin-bottom: 25px;
+    }
+    
+    .product-description-section h6 {
+        font-size: 14px;
+        font-weight: 600;
+        color: #5a5c69;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-bottom: 12px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+    
+    .product-description-section h6 i {
+        color: #667eea;
+    }
+    
+    .product-description-text {
+        color: #4a5568;
+        line-height: 1.7;
+        font-size: 14px;
+    }
+    
+    .product-variants-section {
+        border-top: 1px solid #eaecf4;
+        padding-top: 20px;
+    }
+    
+    .variant-item {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 12px 15px;
+        background: #f8f9fc;
+        border-radius: 8px;
+        margin-bottom: 10px;
+    }
+    
+    .variant-name {
+        font-weight: 600;
+        color: #2d3748;
+    }
+    
+    .variant-details {
+        display: flex;
+        gap: 20px;
+        font-size: 14px;
+        color: #718096;
+    }
+    
+    .product-loading {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 80px 20px;
+    }
+    
+    .product-loading .spinner-border {
+        width: 50px;
+        height: 50px;
+        border-width: 4px;
+    }
+    
+    .no-image-placeholder {
+        width: 100%;
+        height: 300px;
+        background: linear-gradient(135deg, #f5f7fa 0%, #e4e8eb 100%);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        border-radius: 15px;
+    }
+    
+    .no-image-placeholder i {
+        font-size: 60px;
+        color: #b0b5c0;
+        margin-bottom: 15px;
+    }
+    
+    .no-image-placeholder p {
+        color: #718096;
+    }
 </style>
 @endpush
 
@@ -583,9 +856,9 @@
                                 </td>
                                 <td>
                                     <div class="action-buttons">
-                                        <a href="{{ route('admin.product-create.index', ['edit' => $p->id]) }}" class="action-btn action-btn-view" title="View Product">
+                                        <button type="button" class="action-btn action-btn-view btn-view-product" data-product-id="{{ $p->id }}" title="View Product">
                                             <i class="fas fa-eye"></i>
-                                        </a>
+                                        </button>
                                         <a href="{{ route('admin.product-create.index', ['edit' => $p->id]) }}" class="action-btn action-btn-edit" title="Edit Product">
                                             <i class="fas fa-edit"></i>
                                         </a>
@@ -652,6 +925,31 @@
                 <div id="productVariantsContainer" class="table-responsive">
                     <!-- Variants will load dynamically -->
                 </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal for Product Details -->
+<div class="modal fade" id="productDetailsModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content product-details-modal">
+            <div class="modal-header">
+                <h5 class="modal-title"><i class="fas fa-box-open me-2"></i>Product Details</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body p-0">
+                <div id="productDetailsContainer">
+                    <!-- Product details will load dynamically -->
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    <i class="fas fa-times me-2"></i>Close
+                </button>
+                <a href="#" id="editProductBtn" class="btn btn-primary">
+                    <i class="fas fa-edit me-2"></i>Edit Product
+                </a>
             </div>
         </div>
     </div>
@@ -810,6 +1108,179 @@ document.addEventListener("DOMContentLoaded", function() {
             })
             .catch(() => {
                 container.html('<div class="text-center py-5 text-danger"><i class="fas fa-exclamation-circle fa-2x mb-3"></i><p>Failed to load variants.</p></div>');
+            });
+
+        modal.show();
+    });
+
+    // View Product Details Modal
+    $(document).on('click', '.btn-view-product', function() {
+        const productId = $(this).data('product-id');
+        const modal = new bootstrap.Modal(document.getElementById('productDetailsModal'));
+        const container = $('#productDetailsContainer');
+        const editBtn = $('#editProductBtn');
+        
+        // Set edit button URL
+        editBtn.attr('href', `/admin/product-create?edit=${productId}`);
+        
+        // Show loading state
+        container.html(`
+            <div class="product-loading">
+                <div class="spinner-border text-primary mb-3"></div>
+                <p class="text-muted">Loading product details...</p>
+            </div>
+        `);
+
+        fetch(`/admin/product/${productId}/details`)
+            .then(res => res.json())
+            .then(data => {
+                if (data.success && data.product) {
+                    const p = data.product;
+                    const images = data.images || [];
+                    const variants = data.variants || [];
+                    
+                    let imagesHtml = '';
+                    if (images.length > 0) {
+                        imagesHtml = `
+                            <div class="product-main-image">
+                                <img src="${images[0].url}" alt="${p.title}" id="mainProductImage">
+                            </div>
+                            ${images.length > 1 ? `
+                                <div class="product-thumbnails">
+                                    ${images.map((img, index) => `
+                                        <div class="product-thumb-item ${index === 0 ? 'active' : ''}" data-image="${img.url}">
+                                            <img src="${img.url}" alt="Thumbnail ${index + 1}">
+                                        </div>
+                                    `).join('')}
+                                </div>
+                            ` : ''}
+                        `;
+                    } else {
+                        imagesHtml = `
+                            <div class="no-image-placeholder">
+                                <i class="fas fa-image"></i>
+                                <p>No images available</p>
+                            </div>
+                        `;
+                    }
+                    
+                    let variantsHtml = '';
+                    if (variants.length > 0) {
+                        variantsHtml = `
+                            <div class="product-variants-section">
+                                <h6><i class="fas fa-layer-group"></i> Product Variants (${variants.length})</h6>
+                                ${variants.map(v => `
+                                    <div class="variant-item">
+                                        <span class="variant-name">${v.name}</span>
+                                        <div class="variant-details">
+                                            <span><i class="fas fa-barcode me-1"></i>${v.sku || 'N/A'}</span>
+                                            <span><i class="fas fa-tag me-1"></i>৳${v.price || '0'}</span>
+                                            <span><i class="fas fa-boxes me-1"></i>${v.stock || '0'} in stock</span>
+                                        </div>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        `;
+                    }
+                    
+                    let priceHtml = '';
+                    if (p.discount_price && p.discount_price < p.price) {
+                        const discountPercent = Math.round((1 - p.discount_price / p.price) * 100);
+                        priceHtml = `
+                            <span class="product-price-current">৳${parseFloat(p.discount_price).toLocaleString()}</span>
+                            <span class="product-price-original">৳${parseFloat(p.price).toLocaleString()}</span>
+                            <span class="product-price-discount">${discountPercent}% OFF</span>
+                        `;
+                    } else {
+                        priceHtml = `<span class="product-price-current">৳${parseFloat(p.price || 0).toLocaleString()}</span>`;
+                    }
+                    
+                    const html = `
+                        <div class="product-detail-wrapper">
+                            <div class="product-gallery">
+                                ${imagesHtml}
+                            </div>
+                            <div class="product-info-section">
+                                <div class="product-badges">
+                                    ${p.brand_name ? `<span class="product-badge product-badge-brand"><i class="fas fa-tag me-1"></i>${p.brand_name}</span>` : ''}
+                                    ${p.category_name ? `<span class="product-badge product-badge-category"><i class="fas fa-folder me-1"></i>${p.category_name}</span>` : ''}
+                                    <span class="product-badge product-badge-status ${p.status === 'active' ? 'active' : ''}">
+                                        <i class="fas fa-${p.status === 'active' ? 'check-circle' : 'times-circle'} me-1"></i>${p.status ? p.status.charAt(0).toUpperCase() + p.status.slice(1) : 'Draft'}
+                                    </span>
+                                </div>
+                                
+                                <h2 class="product-detail-title">${p.title}</h2>
+                                <p class="product-sku-detail">SKU: <code>${p.sku || 'N/A'}</code></p>
+                                
+                                <div class="product-price-section">
+                                    ${priceHtml}
+                                </div>
+                                
+                                <div class="product-meta-grid">
+                                    <div class="product-meta-item">
+                                        <div class="product-meta-label">Stock Quantity</div>
+                                        <div class="product-meta-value">${p.stock_quantity || 0} units</div>
+                                    </div>
+                                    <div class="product-meta-item">
+                                        <div class="product-meta-label">Unit</div>
+                                        <div class="product-meta-value">${p.unit_name || 'Piece'}</div>
+                                    </div>
+                                    <div class="product-meta-item">
+                                        <div class="product-meta-label">Created</div>
+                                        <div class="product-meta-value">${p.created_at ? new Date(p.created_at).toLocaleDateString('en-US', { day: 'numeric', month: 'short', year: 'numeric' }) : 'N/A'}</div>
+                                    </div>
+                                    <div class="product-meta-item">
+                                        <div class="product-meta-label">Total Images</div>
+                                        <div class="product-meta-value">${images.length} images</div>
+                                    </div>
+                                </div>
+                                
+                                ${p.short_description ? `
+                                    <div class="product-description-section">
+                                        <h6><i class="fas fa-align-left"></i> Short Description</h6>
+                                        <p class="product-description-text">${p.short_description}</p>
+                                    </div>
+                                ` : ''}
+                                
+                                ${p.description ? `
+                                    <div class="product-description-section">
+                                        <h6><i class="fas fa-file-alt"></i> Full Description</h6>
+                                        <div class="product-description-text">${p.description}</div>
+                                    </div>
+                                ` : ''}
+                                
+                                ${variantsHtml}
+                            </div>
+                        </div>
+                    `;
+                    
+                    container.html(html);
+                    
+                    // Handle thumbnail clicks
+                    $(document).on('click', '.product-thumb-item', function() {
+                        const newImage = $(this).data('image');
+                        $('#mainProductImage').attr('src', newImage);
+                        $('.product-thumb-item').removeClass('active');
+                        $(this).addClass('active');
+                    });
+                    
+                } else {
+                    container.html(`
+                        <div class="product-loading">
+                            <i class="fas fa-exclamation-triangle fa-3x text-warning mb-3"></i>
+                            <p class="text-muted">Product not found</p>
+                        </div>
+                    `);
+                }
+            })
+            .catch(err => {
+                console.error('Error:', err);
+                container.html(`
+                    <div class="product-loading">
+                        <i class="fas fa-exclamation-circle fa-3x text-danger mb-3"></i>
+                        <p class="text-danger">Failed to load product details</p>
+                    </div>
+                `);
             });
 
         modal.show();
