@@ -10,13 +10,14 @@ class CustomerController extends Controller
 {
     public function index()
     {
-        $customers = User::where('role', 'customer')->orWhereNull('role')->paginate(20);
+        // Get all users as customers (adjust query based on your actual user structure)
+        $customers = User::paginate(20);
         return view('admin.customers.index', compact('customers'));
     }
 
     public function getData(Request $request)
     {
-        $customers = User::where('role', 'customer')->orWhereNull('role')->get();
+        $customers = User::all();
         return response()->json(['data' => $customers]);
     }
 
