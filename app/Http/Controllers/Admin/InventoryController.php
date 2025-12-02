@@ -10,13 +10,13 @@ class InventoryController extends Controller
 {
     public function stock()
     {
-        $products = Product::with('category', 'brand')->paginate(20);
+        $products = Product::with('categories', 'brand', 'coverImage')->paginate(20);
         return view('admin.inventory.stock', compact('products'));
     }
 
     public function stockData(Request $request)
     {
-        $products = Product::select('id', 'name', 'stock', 'price', 'sku')->get();
+        $products = Product::select('id', 'title', 'stock_quantity', 'price', 'sku')->get();
         return response()->json(['data' => $products]);
     }
 
@@ -32,22 +32,24 @@ class InventoryController extends Controller
         
         switch ($request->type) {
             case 'add':
-                $product->increment('stock', $request->quantity);
+                $product->increment('stock_quantity', $request->quantity);
                 break;
             case 'subtract':
-                $product->decrement('stock', $request->quantity);
+                $product->decrement('stock_quantity', $request->quantity);
                 break;
             case 'set':
-                $product->update(['stock' => $request->quantity]);
+                $product->update(['stock_quantity' => $request->quantity]);
                 break;
         }
 
-        return response()->json(['success' => true, 'new_stock' => $product->fresh()->stock]);
+        return response()->json(['success' => true, 'new_stock' => $product->fresh()->stock_quantity]);
     }
 
     public function lowStock()
     {
-        $products = Product::where('stock', '<', 10)->paginate(20);
+        $products = Product::with('categories', 'brand', 'coverImage')
+            ->where('stock_quantity', '<', 10)
+            ->paginate(20);
         return view('admin.inventory.low-stock', compact('products'));
     }
 

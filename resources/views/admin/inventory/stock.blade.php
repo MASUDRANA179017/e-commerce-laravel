@@ -55,20 +55,20 @@
                                     <div class="d-flex align-items-center gap-2">
                                         <div class="wh-40 rounded bg-light overflow-hidden">
                                             @if($product->coverImage)
-                                                <img src="{{ asset('storage/' . $product->coverImage->image) }}" class="w-100 h-100 object-fit-cover">
+                                                <img src="{{ asset('storage/' . $product->coverImage->path) }}" class="w-100 h-100 object-fit-cover">
                                             @endif
                                         </div>
-                                        <span class="fw-medium">{{ Str::limit($product->name, 30) }}</span>
+                                        <span class="fw-medium">{{ Str::limit($product->title, 30) }}</span>
                                     </div>
                                 </td>
                                 <td><code>{{ $product->sku ?? '-' }}</code></td>
-                                <td>{{ $product->stock ?? 0 }}</td>
+                                <td>{{ $product->stock_quantity ?? 0 }}</td>
                                 <td>0</td>
-                                <td>{{ $product->stock ?? 0 }}</td>
+                                <td>{{ $product->stock_quantity ?? 0 }}</td>
                                 <td>
-                                    @if(($product->stock ?? 0) > 10)
+                                    @if(($product->stock_quantity ?? 0) > 10)
                                         <span class="qbit-badge-success"><i class="bx bx-check-circle"></i> In Stock</span>
-                                    @elseif(($product->stock ?? 0) > 0)
+                                    @elseif(($product->stock_quantity ?? 0) > 0)
                                         <span class="qbit-badge-warning"><i class="bx bx-error"></i> Low Stock</span>
                                     @else
                                         <span class="qbit-badge-danger"><i class="bx bx-x-circle"></i> Out of Stock</span>

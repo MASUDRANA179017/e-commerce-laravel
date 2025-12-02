@@ -33,15 +33,15 @@
                         <tbody>
                             @forelse($products ?? [] as $product)
                             <tr>
-                                <td class="ps-3">{{ $product->name ?? $product->title ?? 'N/A' }}</td>
+                                <td class="ps-3">{{ $product->title ?? 'N/A' }}</td>
                                 <td><code>{{ $product->sku ?? '-' }}</code></td>
                                 <td>
-                                    <span class="qbit-badge-{{ ($product->stock ?? 0) == 0 ? 'danger' : 'warning' }}">
-                                        <i class="bx bx-package"></i> {{ $product->stock ?? 0 }} units
+                                    <span class="qbit-badge-{{ ($product->stock_quantity ?? 0) == 0 ? 'danger' : 'warning' }}">
+                                        <i class="bx bx-package"></i> {{ $product->stock_quantity ?? 0 }} units
                                     </span>
                                 </td>
                                 <td>
-                                    @if(($product->stock ?? 0) == 0)
+                                    @if(($product->stock_quantity ?? 0) == 0)
                                         <span class="qbit-badge-danger"><i class="bx bx-x-circle"></i> Out of Stock</span>
                                     @else
                                         <span class="qbit-badge-warning"><i class="bx bx-error"></i> Low Stock</span>
