@@ -38,14 +38,14 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
         Route::get('/', [OrderController::class, 'index'])->name('index');
         Route::get('/data', [OrderController::class, 'getData'])->name('data');
         Route::get('/create', [OrderController::class, 'create'])->name('create');
+        Route::get('/abandoned', [OrderController::class, 'abandoned'])->name('abandoned');
+        Route::get('/returns', [OrderController::class, 'returns'])->name('returns');
         Route::post('/', [OrderController::class, 'store'])->name('store');
         Route::get('/{order}', [OrderController::class, 'show'])->name('show');
         Route::get('/{order}/edit', [OrderController::class, 'edit'])->name('edit');
         Route::put('/{order}', [OrderController::class, 'update'])->name('update');
         Route::delete('/{order}', [OrderController::class, 'destroy'])->name('destroy');
         Route::post('/{order}/status', [OrderController::class, 'updateStatus'])->name('update-status');
-        Route::get('/abandoned', [OrderController::class, 'abandoned'])->name('abandoned');
-        Route::get('/returns', [OrderController::class, 'returns'])->name('returns');
         Route::get('/{order}/invoice', [OrderController::class, 'invoice'])->name('invoice');
         Route::get('/{order}/print', [OrderController::class, 'printOrder'])->name('print');
     });
