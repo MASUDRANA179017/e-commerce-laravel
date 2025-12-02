@@ -7,7 +7,7 @@
     <div class="col-12 mb-4">
         <div class="d-flex align-items-center justify-content-between flex-wrap gap-3">
             <h3 class="fw-bold mb-0">Banners & Sliders</h3>
-            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addBannerModal">
+            <button class="create-btn-base" data-bs-toggle="modal" data-bs-target="#addBannerModal">
                 <span class="material-symbols-outlined fs-14">add</span> Add Banner
             </button>
         </div>

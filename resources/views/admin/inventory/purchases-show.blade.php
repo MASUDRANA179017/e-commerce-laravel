@@ -7,7 +7,7 @@
     <div class="col-12 mb-4">
         <div class="d-flex align-items-center justify-content-between flex-wrap gap-3">
             <h3 class="fw-bold mb-0">Purchase Order #{{ $purchase ?? 'N/A' }}</h3>
-            <a href="{{ route('admin.inventory.purchases') }}" class="btn btn-outline-secondary">
+            <a href="{{ route('admin.inventory.purchases') }}" class="create-btn-white">
                 <i class="fas fa-arrow-left me-2"></i>Back
             </a>
         </div>
@@ -60,7 +60,7 @@
             <div class="card-body">
                 <div class="d-flex justify-content-between mb-2">
                     <span>Status:</span>
-                    <span class="badge bg-warning">Pending</span>
+                    <span class="qbit-badge-warning"><i class="bx bx-time"></i> Pending</span>
                 </div>
                 <div class="d-flex justify-content-between mb-2">
                     <span>Order Date:</span>
@@ -71,7 +71,7 @@
                     <span>Total:</span>
                     <span>৳0.00</span>
                 </div>
-                <button class="btn btn-success w-100 mt-3">
+                <button class="create-btn-base w-100 mt-3">
                     <i class="fas fa-check me-2"></i>Mark as Received
                 </button>
             </div>

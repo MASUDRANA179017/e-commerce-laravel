@@ -83,7 +83,7 @@
         <div class="card border-0">
             <div class="card-header bg-white d-flex align-items-center justify-content-between">
                 <h5 class="mb-0 fw-bold">Inventory Status</h5>
-                <button class="btn btn-outline-secondary btn-sm">
+                <button class="select-btn-info">
                     <span class="material-symbols-outlined fs-14">download</span> Export
                 </button>
             </div>

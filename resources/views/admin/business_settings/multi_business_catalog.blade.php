@@ -58,9 +58,9 @@
   <div class="d-flex justify-content-between align-items-center mb-2">
     <h3 class="page-title mb-0"><i class="bx bx-category-alt me-2"></i>Multi-Business Master Catalog</h3>
     <div class="hstack">
-      <button id="btnExport" class="btn btn-sm btn-outline"><i class="bx bx-download me-1"></i>Export</button>
-      <label class="btn btn-sm btn-outline mb-0"><i class="bx bx-upload me-1"></i>Import<input id="imp" type="file" accept="application/json" class="d-none"></label>
-      <button id="btnClear" class="btn btn-sm btn-outline"><i class="bx bx-trash me-1"></i>Clear Local</button>
+      <button id="btnExport" class="select-btn-info"><i class="bx bx-download me-1"></i>Export</button>
+      <label class="select-btn-info mb-0"><i class="bx bx-upload me-1"></i>Import<input id="imp" type="file" accept="application/json" class="d-none"></label>
+      <button id="btnClear" class="select-btn-white"><i class="bx bx-trash me-1"></i>Clear Local</button>
     </div>
   </div>
   <div class="qb-wizard-nav" id="bizTabs"><!-- JS --></div>
@@ -164,8 +164,8 @@
       </div>
       <div class="modal-body" id="amBody"><!-- JS form --></div>
       <div class="modal-footer">
-        <button class="btn btn-outline-secondary" data-bs-dismiss="modal">Close</button>
-        <button id="amSave" class="btn btn-primary">Save</button>
+        <button class="create-btn-white" data-bs-dismiss="modal">Close</button>
+        <button id="amSave" class="create-btn-base">Save</button>
       </div>
     </div>
   </div>

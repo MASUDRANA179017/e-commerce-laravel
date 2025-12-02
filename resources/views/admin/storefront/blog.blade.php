@@ -7,7 +7,7 @@
     <div class="col-12 mb-4">
         <div class="d-flex align-items-center justify-content-between flex-wrap gap-3">
             <h3 class="fw-bold mb-0">Blog Management</h3>
-            <button class="btn btn-primary">
+            <button class="create-btn-base">
                 <span class="material-symbols-outlined fs-14">add</span> New Post
             </button>
         </div>

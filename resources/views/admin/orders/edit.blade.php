@@ -7,7 +7,7 @@
     <div class="col-12 mb-4">
         <div class="d-flex align-items-center justify-content-between flex-wrap gap-3">
             <h3 class="fw-bold mb-0">Edit Order #{{ $order ?? 'N/A' }}</h3>
-            <a href="{{ route('admin.orders.index') }}" class="btn btn-outline-secondary">
+            <a href="{{ route('admin.orders.index') }}" class="select-btn-white">
                 <i class="fas fa-arrow-left me-2"></i>Back to Orders
             </a>
         </div>
@@ -104,7 +104,7 @@
                     <span>Total:</span>
                     <span>৳0.00</span>
                 </div>
-                <button type="submit" class="btn btn-primary w-100 mt-3">
+                <button type="submit" class="create-btn-base w-100 mt-3">
                     <i class="fas fa-save me-2"></i>Update Order
                 </button>
             </div>

@@ -217,8 +217,8 @@
             <span class="pill"><i class="bx bx-store-alt"></i> All core configurations for e-commerce</span>
         </div>
         <div class="d-flex gap-2">
-            <button class="btn btn-outline-secondary" id="btnExport"><i class="bx bx-download me-1"></i>Export JSON</button>
-            <label class="btn btn-outline-secondary mb-0" for="importFile"><i class="bx bx-upload me-1"></i>Import
+            <button class="select-btn-info" id="btnExport"><i class="bx bx-download me-1"></i>Export JSON</button>
+            <label class="select-btn-info mb-0" for="importFile"><i class="bx bx-upload me-1"></i>Import
                 JSON</label>
             <input id="importFile" type="file" accept="application/json" class="d-none">
             <button class="btn btn-primary" id="btnSaveAll"><i class="bx bx-save me-1"></i>Save Changes</button>
@@ -265,7 +265,7 @@
                     <form class="panel card-form" id="companyInfoForm" data-part="company_info">
                         <div class="panel-header d-flex justify-content-between align-items-center">
                             <h5 class="panel-title mb-0">Company Information</h5>
-                            <button type="button" class="btn btn-outline-primary btn-sm edit-card-btn">Edit</button>
+                            <button type="button" class="select-btn-primary edit-card-btn">Edit</button>
                         </div>
                         <div class="panel-body">
                             <div class="row g-3">
@@ -306,7 +306,7 @@
                     <form class="panel mt-3 card-form" id="legalNumbersForm" data-part="legal_numbers">
                         <div class="panel-header d-flex justify-content-between align-items-center">
                             <h6 class="panel-title mb-0">Legal & Official Numbers</h6>
-                            <button type="button" class="btn btn-outline-primary btn-sm edit-card-btn">Edit</button>
+                            <button type="button" class="select-btn-primary edit-card-btn">Edit</button>
                         </div>
                         <div class="panel-body">
                             <div class="row">
@@ -334,7 +334,7 @@
                     <form class="panel mt-3 card-form" id="addressForm" data-part="address">
                         <div class="panel-header d-flex justify-content-between align-items-center">
                             <h6 class="panel-title mb-0">Address Information</h6>
-                            <button type="button" class="btn btn-outline-primary btn-sm edit-card-btn">Edit</button>
+                            <button type="button" class="select-btn-primary edit-card-btn">Edit</button>
                         </div>
                         <div class="panel-body">
                             <div class="row g-3">
@@ -371,7 +371,7 @@
             <form class="panel card-form" id="contactForm" data-part="contact_info">
                 <div class="panel-header d-flex justify-content-between align-items-center">
                     <h5 class="panel-title mb-0">Contact Information</h5>
-                    <button type="button" class="btn btn-outline-primary btn-sm edit-card-btn">Edit</button>
+                    <button type="button" class="select-btn-primary edit-card-btn">Edit</button>
                 </div>
                 <div class="panel-body">
                     <div class="row g-3">
@@ -387,11 +387,11 @@
                                         <div class="input-group mb-2">
                                             <input type="text" name="official_contact_number[]" class="form-control"
                                                 value="{{ $v }}" disabled>
-                                            <button type="button" class="btn btn-outline-danger remove"
+                                            <button type="button" class="action-btn-danger remove"
                                                 disabled>&times;</button>
                                         </div>
                                     @endforeach
-                                    <button type="button" class="btn btn-sm btn-outline-secondary add" disabled>Add
+                                    <button type="button" class="select-btn-white add" disabled>Add
                                         official</button>
                                 </div>
                             </div>
@@ -411,11 +411,11 @@
                                         <div class="input-group mb-2">
                                             <input type="text" name="whatsapp_number[]" class="form-control"
                                                 value="{{ $v }}" disabled>
-                                            <button type="button" class="btn btn-outline-danger remove"
+                                            <button type="button" class="action-btn-danger remove"
                                                 disabled>&times;</button>
                                         </div>
                                     @endforeach
-                                    <button type="button" class="btn btn-sm btn-outline-secondary add" disabled>Add
+                                    <button type="button" class="select-btn-white add" disabled>Add
                                         WhatsApp</button>
                                 </div>
                             </div>
@@ -435,11 +435,11 @@
                                         <div class="input-group mb-2">
                                             <input type="text" name="hotline_number[]" class="form-control"
                                                 value="{{ $v }}" disabled>
-                                            <button type="button" class="btn btn-outline-danger remove"
+                                            <button type="button" class="action-btn-danger remove"
                                                 disabled>&times;</button>
                                         </div>
                                     @endforeach
-                                    <button type="button" class="btn btn-sm btn-outline-secondary add" disabled>Add
+                                    <button type="button" class="select-btn-white add" disabled>Add
                                         hotline</button>
                                 </div>
                             </div>
@@ -459,11 +459,11 @@
                                         <div class="input-group mb-2">
                                             <input type="email" name="email_address[]" class="form-control"
                                                 value="{{ $v }}" disabled>
-                                            <button type="button" class="btn btn-outline-danger remove"
+                                            <button type="button" class="action-btn-danger remove"
                                                 disabled>&times;</button>
                                         </div>
                                     @endforeach
-                                    <button type="button" class="btn btn-sm btn-outline-secondary add" disabled>Add
+                                    <button type="button" class="select-btn-white add" disabled>Add
                                         email</button>
                                 </div>
                             </div>
@@ -492,7 +492,7 @@
             <form class="panel mt-3 card-form" id="socialForm" data-part="social_media">
                 <div class="panel-header d-flex justify-content-between align-items-center">
                     <h5 class="panel-title mb-0">Social Media Information</h5>
-                    <button type="button" class="btn btn-outline-primary btn-sm edit-card-btn">Edit</button>
+                    <button type="button" class="select-btn-primary edit-card-btn">Edit</button>
                 </div>
                 <div class="panel-body">
                     <div class="row g-3">
@@ -565,7 +565,7 @@
             <form class="panel card-form" id="localizationForm" data-part="localization">
                 <div class="panel-header d-flex justify-content-between align-items-center">
                     <h5 class="panel-title mb-0"><i class="bx bx-globe me-2"></i>Localization Settings</h5>
-                    <button type="button" class="btn btn-outline-primary btn-sm edit-card-btn">Edit</button>
+                    <button type="button" class="select-btn-primary edit-card-btn">Edit</button>
                 </div>
                 <div class="panel-body">
                     <div class="row g-3">
@@ -646,7 +646,7 @@
             <form class="panel mt-3 card-form" id="currencyForm" data-part="currency">
                 <div class="panel-header d-flex justify-content-between align-items-center">
                     <h5 class="panel-title mb-0"><i class="bx bx-money me-2"></i>Currencies & Exchange Rates</h5>
-                    <button type="button" class="btn btn-outline-primary btn-sm edit-card-btn">Edit</button>
+                    <button type="button" class="select-btn-primary edit-card-btn">Edit</button>
                 </div>
                 <div class="panel-body">
                     <div class="row g-3">
@@ -693,7 +693,7 @@
             <div class="panel mt-3">
                 <div class="panel-header d-flex justify-content-between align-items-center">
                     <h5 class="panel-title mb-0"><i class="bx bx-calendar-event me-2"></i>Public Holidays</h5>
-                    <span class="badge bg-light text-dark border">Year: {{ date('Y') }}</span>
+                    <span class="qbit-badge-light"><i class="bx bx-calendar"></i> Year: {{ date('Y') }}</span>
                 </div>
                 <div class="panel-body">
                     <div class="row g-3 align-items-start">
@@ -743,7 +743,7 @@
             <form class="panel mt-3 card-form" id="opHoursForm" data-part="operational_hours">
                 <div class="panel-header d-flex justify-content-between align-items-center">
                     <h5 class="panel-title mb-0"><i class="bx bx-time me-2"></i>Operational Hours</h5>
-                    <button type="button" class="btn btn-outline-primary btn-sm edit-card-btn">Edit</button>
+                    <button type="button" class="select-btn-primary edit-card-btn">Edit</button>
                 </div>
                 <div class="panel-body">
                     <div class="table-responsive">
@@ -789,7 +789,7 @@
                 enctype="multipart/form-data">
                 <div class="panel-header d-flex justify-content-between align-items-center">
                     <h5 class="panel-title mb-0"><i class="bx bx-palette me-2"></i>Company Branding</h5>
-                    <button type="button" class="btn btn-outline-primary btn-sm edit-card-btn">Edit</button>
+                    <button type="button" class="select-btn-primary edit-card-btn">Edit</button>
                 </div>
                 <div class="panel-body">
                     <div class="row g-3">
@@ -907,7 +907,7 @@
             <form class="panel mt-3 card-form" id="systemSettingsForm" data-part="system_settings">
                 <div class="panel-header d-flex justify-content-between align-items-center">
                     <h5 class="panel-title mb-0"><i class="bx bx-cog me-2"></i>General System Settings</h5>
-                    <button type="button" class="btn btn-outline-primary btn-sm edit-card-btn">Edit</button>
+                    <button type="button" class="select-btn-primary edit-card-btn">Edit</button>
                 </div>
                 <div class="panel-body">
                     <div class="row g-3">
@@ -928,7 +928,7 @@
             <form class="panel mt-3 card-form" id="backupForm" data-part="backup">
                 <div class="panel-header d-flex justify-content-between align-items-center">
                     <h5 class="panel-title mb-0"><i class="bx bx-data me-2"></i>Backup & Maintenance</h5>
-                    <button type="button" class="btn btn-outline-primary btn-sm edit-card-btn">Edit</button>
+                    <button type="button" class="select-btn-primary edit-card-btn">Edit</button>
                 </div>
                 <div class="panel-body">
                     <div class="row g-3">

@@ -198,7 +198,7 @@ a.text-decoration-none:hover {
                             <label for="description" class="form-label fw-semibold">Issue Description</label>
                             <textarea id="description" name="description" placeholder="Describe your issue" class="form-control rounded-3 shadow-sm" rows="4" required></textarea>
                         </div>
-                        <button type="submit" class="btn btn-primary shadow-sm rounded-3 px-4 py-2">
+                        <button type="submit" class="create-btn-base">
                             <i class="fas fa-paper-plane me-2"></i>Submit Ticket
                         </button>
                     </form>

@@ -7,7 +7,7 @@
     <div class="col-12 mb-4">
         <div class="d-flex align-items-center justify-content-between flex-wrap gap-3">
             <h3 class="fw-bold mb-0">Edit Blog Post</h3>
-            <a href="{{ route('admin.storefront.blog') }}" class="btn btn-outline-secondary">
+            <a href="{{ route('admin.storefront.blog') }}" class="select-btn-white">
                 <i class="fas fa-arrow-left me-2"></i>Back to Blog
             </a>
         </div>
@@ -48,7 +48,7 @@
                         <option value="published" selected>Published</option>
                     </select>
                 </div>
-                <button class="btn btn-primary w-100">
+                <button class="create-btn-base w-100">
                     <i class="fas fa-save me-2"></i>Update Post
                 </button>
             </div>

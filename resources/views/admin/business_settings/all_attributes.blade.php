@@ -145,15 +145,15 @@ $(function () {
           <span class="pill-icon"></span>
           <span class="pill-name">${term.name} <span class="small-muted">(${term.code ?? ''})</span></span>
           <span class="pill-actions">
-            <button class="btn btn-sm btn-outline-secondary" data-action="edit-term"><i class='bx bxs-edit-alt'></i></button>
-            <button class="btn btn-sm btn-outline-danger" data-action="delete-term"><i class='bx bxs-trash'></i></button>
+            <button class="action-btn-success" data-action="edit-term"><i class='bx bxs-edit-alt'></i></button>
+            <button class="action-btn-danger" data-action="delete-term"><i class='bx bxs-trash'></i></button>
           </span>
         </div>
         <div class="edit-state d-none">
           <div class="form-grid">${getDynamicFormHTML(attr.edit_fields || ['name','code'], term, true)}</div>
           <div class="edit-actions">
-            <button class="btn btn-sm btn-cancel" data-action="cancel-edit"><i class='bx bx-x'></i></button>
-            <button class="btn btn-sm btn-save" data-action="save-edit"><i class='bx bx-check'></i></button>
+            <button class="action-btn-secondary" data-action="cancel-edit"><i class='bx bx-x'></i></button>
+            <button class="action-btn-success" data-action="save-edit"><i class='bx bx-check'></i></button>
           </div>
         </div>
       </div>
@@ -312,8 +312,8 @@ $(function () {
         <td><input type="checkbox" class="form-check-input"></td>
         <td><input type="checkbox" class="form-check-input" checked></td>
         <td class="text-end">
-          <button class="btn-icon" data-action="edit-set-term"><i class="bx bx-edit-alt"></i></button>
-          <button class="btn-icon" data-action="delete-set-term"><i class="bx bx-trash"></i></button>
+          <button class="action-btn-success" data-action="edit-set-term"><i class="bx bx-edit-alt"></i></button>
+          <button class="action-btn-danger" data-action="delete-set-term"><i class="bx bx-trash"></i></button>
         </td>
       </tr>
     `);
@@ -358,13 +358,13 @@ function createSetCard(name = 'Untitled Set', id = null, collapsed = false){
           <input class="form-control form-control-sm d-none" value="Untitled Set" data-title-input>
         </div>
         <div class="d-flex gap-2" data-actions-view>
-          <button class="btn-icon" data-action="edit-set-name" title="Edit name"><i class="bx bx-edit-alt"></i></button>
-          <button class="btn-icon" data-action="preview-set" title="Preview"><i class="bx bx-show"></i></button>
-          <button class="btn-icon" data-action="delete-set" title="Delete"><i class="bx bx-trash"></i></button>
+          <button class="action-btn-success" data-action="edit-set-name" title="Edit name"><i class="bx bx-edit-alt"></i></button>
+          <button class="action-btn-info" data-action="preview-set" title="Preview"><i class="bx bx-show"></i></button>
+          <button class="action-btn-danger" data-action="delete-set" title="Delete"><i class="bx bx-trash"></i></button>
         </div>
         <div class="d-flex gap-2 d-none" data-actions-edit>
-          <button class="btn-primary btn-sm" data-action="save-set-name"><i class="bx bx-save me-1"></i>Save</button>
-          <button class="btn-icon" data-action="cancel-set-name" title="Cancel"><i class="bx bx-x"></i></button>
+          <button class="create-btn-base" data-action="save-set-name"><i class="bx bx-save me-1"></i>Save</button>
+          <button class="action-btn-secondary" data-action="cancel-set-name" title="Cancel"><i class="bx bx-x"></i></button>
         </div>
       </div>
       <div class="set-dz"><i class='bx bx-move'></i><span>Drop values here</span></div>

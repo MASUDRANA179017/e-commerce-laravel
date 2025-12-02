@@ -3,7 +3,7 @@
 
 @push('styles')
 <style>
-    /* Product Table Styles */
+    /* Products Card - Using base card styling */
     .products-card {
         border: none;
         border-radius: 15px;
@@ -12,7 +12,7 @@
     }
     
     .products-card .card-header {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        background: linear-gradient(135deg, #7367f0 0%, #4A2A85 100%);
         padding: 20px 25px;
         border: none;
     }
@@ -29,14 +29,9 @@
         font-size: 13px;
     }
     
-    .products-table {
-        margin: 0;
-    }
-    
-    .products-table thead {
-        background: #f8f9fc;
-    }
-    
+    /* Products Table */
+    .products-table { margin: 0; }
+    .products-table thead { background: #f8f9fc; }
     .products-table thead th {
         border: none;
         padding: 15px 20px;
@@ -46,656 +41,177 @@
         text-transform: uppercase;
         letter-spacing: 0.5px;
     }
-    
-    .products-table tbody tr {
-        transition: all 0.2s ease;
-    }
-    
-    .products-table tbody tr:hover {
-        background: #f8f9fc;
-    }
-    
+    .products-table tbody tr { transition: all 0.2s ease; }
+    .products-table tbody tr:hover { background: #f8f9fc; }
     .products-table tbody td {
         padding: 15px 20px;
         vertical-align: middle;
         border-bottom: 1px solid #eaecf4;
     }
     
-    /* Product Info Cell */
-    .product-info {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-    }
-    
+    /* Product Info - Using qbit-bms-style classes */
+    .product-info { display: flex; align-items: center; gap: 12px; }
     .product-thumb {
-        width: 50px;
-        height: 50px;
+        width: 50px; height: 50px;
         border-radius: 10px;
         object-fit: cover;
         border: 2px solid #eaecf4;
     }
-    
     .product-thumb-placeholder {
-        width: 50px;
-        height: 50px;
+        width: 50px; height: 50px;
         border-radius: 10px;
         background: linear-gradient(135deg, #f5f7fa 0%, #e4e8eb 100%);
-        display: flex;
-        align-items: center;
-        justify-content: center;
+        display: flex; align-items: center; justify-content: center;
         color: #b0b5c0;
     }
-    
     .product-name {
-        font-weight: 600;
-        color: #2d3748;
-        margin-bottom: 2px;
-        max-width: 200px;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
+        font-weight: 600; color: #2d3748;
+        margin-bottom: 2px; max-width: 200px;
+        white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
     }
+    .product-sku { font-size: 11px; color: #a0aec0; }
     
-    .product-sku {
-        font-size: 11px;
-        color: #a0aec0;
-    }
-    
-    /* Badge Styles */
-    .badge-brand {
-        background: rgba(102, 126, 234, 0.1);
-        color: #667eea;
-        padding: 6px 12px;
-        border-radius: 20px;
-        font-weight: 500;
-        font-size: 12px;
-    }
-    
-    .badge-category {
-        background: rgba(16, 185, 129, 0.1);
-        color: #10b981;
-        padding: 6px 12px;
-        border-radius: 20px;
-        font-weight: 500;
-        font-size: 12px;
-    }
+    /* Badge Styles - Using qbit-badge classes from qbit-bms-style.css */
     
     /* Status Toggle */
-    .status-toggle-wrapper {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-    }
-    
-    .status-label {
-        font-size: 12px;
-        font-weight: 500;
-        color: #718096;
-    }
-    
-    .product-toggle-switch {
-        position: relative;
-        display: inline-block;
-        width: 44px;
-        height: 24px;
-    }
-    
-    .product-toggle-switch input {
-        opacity: 0;
-        width: 0;
-        height: 0;
-    }
-    
+    .status-toggle-wrapper { display: flex; align-items: center; gap: 8px; }
+    .product-toggle-switch { position: relative; display: inline-block; width: 44px; height: 24px; }
+    .product-toggle-switch input { opacity: 0; width: 0; height: 0; }
     .product-slider {
-        position: absolute;
-        cursor: pointer;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
+        position: absolute; cursor: pointer;
+        top: 0; left: 0; right: 0; bottom: 0;
         background-color: #e2e8f0;
-        transition: .3s;
-        border-radius: 24px;
+        transition: .3s; border-radius: 24px;
     }
-    
     .product-slider:before {
-        position: absolute;
-        content: "";
-        height: 18px;
-        width: 18px;
-        left: 3px;
-        bottom: 3px;
-        background-color: white;
-        transition: .3s;
-        border-radius: 50%;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        position: absolute; content: "";
+        height: 18px; width: 18px; left: 3px; bottom: 3px;
+        background-color: white; transition: .3s;
+        border-radius: 50%; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
     }
+    input:checked + .product-slider { background: linear-gradient(135deg, #7367f0 0%, #4A2A85 100%); }
+    input:checked + .product-slider:before { transform: translateX(20px); }
     
-    input:checked + .product-slider {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    }
-    
-    input:checked + .product-slider:before {
-        transform: translateX(20px);
-    }
-    
-    /* Info Badges */
+    /* Info Badges - Media counts */
     .info-badge {
-        display: inline-flex;
-        align-items: center;
-        gap: 6px;
-        padding: 6px 12px;
-        border-radius: 8px;
-        font-size: 12px;
-        font-weight: 500;
-        cursor: pointer;
-        transition: all 0.2s;
+        display: inline-flex; align-items: center; gap: 6px;
+        padding: 6px 12px; border-radius: 8px;
+        font-size: 12px; font-weight: 500;
+        cursor: pointer; transition: all 0.2s; border: none;
     }
-    
     .info-badge-images {
-        background: rgba(59, 130, 246, 0.1);
-        color: #3b82f6;
-        border: 1px solid rgba(59, 130, 246, 0.2);
+        background: rgba(27, 132, 255, 0.1);
+        color: #1B84FF;
+        border: 1px solid rgba(27, 132, 255, 0.2);
     }
-    
-    .info-badge-images:hover {
-        background: rgba(59, 130, 246, 0.2);
-    }
-    
+    .info-badge-images:hover { background: rgba(27, 132, 255, 0.2); }
     .info-badge-variants {
-        background: rgba(139, 92, 246, 0.1);
-        color: #8b5cf6;
-        border: 1px solid rgba(139, 92, 246, 0.2);
+        background: rgba(115, 103, 240, 0.1);
+        color: #7367f0;
+        border: 1px solid rgba(115, 103, 240, 0.2);
     }
-    
-    .info-badge-variants:hover {
-        background: rgba(139, 92, 246, 0.2);
-    }
-    
-    /* Action Buttons */
-    .action-buttons {
-        display: flex;
-        align-items: center;
-        justify-content: flex-end;
-        gap: 8px;
-    }
-    
-    .action-btn {
-        width: 36px;
-        height: 36px;
-        border-radius: 10px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        border: none;
-        cursor: pointer;
-        transition: all 0.2s;
-    }
-    
-    .action-btn i {
-        font-size: 16px;
-    }
-    
-    .action-btn-view {
-        background: rgba(59, 130, 246, 0.1);
-        color: #3b82f6;
-    }
-    
-    .action-btn-view:hover {
-        background: #3b82f6;
-        color: #fff;
-        transform: translateY(-2px);
-        box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
-    }
-    
-    .action-btn-edit {
-        background: rgba(16, 185, 129, 0.1);
-        color: #10b981;
-    }
-    
-    .action-btn-edit:hover {
-        background: #10b981;
-        color: #fff;
-        transform: translateY(-2px);
-        box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
-    }
-    
-    .action-btn-delete {
-        background: rgba(239, 68, 68, 0.1);
-        color: #ef4444;
-    }
-    
-    .action-btn-delete:hover {
-        background: #ef4444;
-        color: #fff;
-        transform: translateY(-2px);
-        box-shadow: 0 4px 12px rgba(239, 68, 68, 0.4);
-    }
+    .info-badge-variants:hover { background: rgba(115, 103, 240, 0.2); }
     
     /* Search Box */
-    .search-box {
-        position: relative;
-    }
-    
+    .search-box { position: relative; }
     .search-box input {
         padding: 12px 20px 12px 45px;
         border: 2px solid #eaecf4;
-        border-radius: 12px;
-        width: 300px;
+        border-radius: 12px; width: 300px;
         transition: all 0.3s;
     }
-    
     .search-box input:focus {
-        border-color: #667eea;
-        box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+        border-color: #7367f0;
+        box-shadow: 0 0 0 4px rgba(115, 103, 240, 0.1);
         outline: none;
     }
-    
     .search-box .search-icon {
-        position: absolute;
-        left: 15px;
-        top: 50%;
-        transform: translateY(-50%);
-        color: #a0aec0;
-    }
-    
-    /* Stats Cards */
-    .stats-row {
-        display: flex;
-        gap: 20px;
-        margin-bottom: 25px;
-    }
-    
-    .stat-card {
-        flex: 1;
-        background: #fff;
-        border-radius: 12px;
-        padding: 20px;
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-        display: flex;
-        align-items: center;
-        gap: 15px;
-    }
-    
-    .stat-icon {
-        width: 50px;
-        height: 50px;
-        border-radius: 12px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 22px;
-    }
-    
-    .stat-icon-total {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        color: #fff;
-    }
-    
-    .stat-icon-active {
-        background: rgba(16, 185, 129, 0.15);
-        color: #10b981;
-    }
-    
-    .stat-icon-inactive {
-        background: rgba(239, 68, 68, 0.15);
-        color: #ef4444;
-    }
-    
-    .stat-info h3 {
-        font-size: 24px;
-        font-weight: 700;
-        color: #2d3748;
-        margin: 0;
-    }
-    
-    .stat-info p {
-        font-size: 13px;
-        color: #718096;
-        margin: 0;
+        position: absolute; left: 15px; top: 50%;
+        transform: translateY(-50%); color: #a0aec0;
     }
     
     /* Empty State */
-    .empty-state {
-        text-align: center;
-        padding: 60px 20px;
-    }
-    
+    .empty-state { text-align: center; padding: 60px 20px; }
     .empty-state-icon {
-        width: 80px;
-        height: 80px;
-        border-radius: 50%;
+        width: 80px; height: 80px; border-radius: 50%;
         background: #f8f9fc;
-        display: flex;
-        align-items: center;
-        justify-content: center;
+        display: flex; align-items: center; justify-content: center;
         margin: 0 auto 20px;
     }
+    .empty-state-icon i { font-size: 36px; color: #a0aec0; }
+    .empty-state h5 { color: #2d3748; font-weight: 600; margin-bottom: 8px; }
+    .empty-state p { color: #718096; margin-bottom: 20px; }
     
-    .empty-state-icon i {
-        font-size: 36px;
-        color: #a0aec0;
-    }
-    
-    .empty-state h5 {
-        color: #2d3748;
-        font-weight: 600;
-        margin-bottom: 8px;
-    }
-    
-    .empty-state p {
-        color: #718096;
-        margin-bottom: 20px;
-    }
-    
-    /* Modal Improvements */
-    .modal-content {
-        border: none;
-        border-radius: 15px;
-    }
-    
+    /* Modal Styles */
+    .modal-content { border: none; border-radius: 15px; }
     .modal-header {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        border-radius: 15px 15px 0 0;
-        padding: 20px 25px;
+        background: linear-gradient(135deg, #7367f0 0%, #4A2A85 100%);
+        border-radius: 15px 15px 0 0; padding: 20px 25px;
     }
-    
-    .modal-header .modal-title {
-        color: #fff;
-        font-weight: 600;
-    }
-    
-    .modal-header .btn-close {
-        filter: brightness(0) invert(1);
-    }
+    .modal-header .modal-title { color: #fff; font-weight: 600; }
+    .modal-header .btn-close { filter: brightness(0) invert(1); }
     
     #productImagesContainer img {
-        width: 120px;
-        height: 120px;
-        object-fit: cover;
-        border-radius: 12px;
-        border: 2px solid #eaecf4;
-        transition: all 0.3s;
+        width: 120px; height: 120px;
+        object-fit: cover; border-radius: 12px;
+        border: 2px solid #eaecf4; transition: all 0.3s;
     }
-    
     #productImagesContainer img:hover {
         transform: scale(1.05);
         box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
     }
     
-    /* Product Details Modal Styles */
-    .product-details-modal .modal-body {
-        max-height: 70vh;
-        overflow-y: auto;
-    }
-    
-    .product-detail-wrapper {
-        display: grid;
-        grid-template-columns: 400px 1fr;
-        gap: 0;
-    }
-    
-    @media (max-width: 992px) {
-        .product-detail-wrapper {
-            grid-template-columns: 1fr;
-        }
-    }
-    
-    .product-gallery {
-        background: #f8f9fc;
-        padding: 30px;
-        border-right: 1px solid #eaecf4;
-    }
-    
+    /* Product Details Modal */
+    .product-details-modal .modal-body { max-height: 70vh; overflow-y: auto; }
+    .product-detail-wrapper { display: grid; grid-template-columns: 400px 1fr; gap: 0; }
+    @media (max-width: 992px) { .product-detail-wrapper { grid-template-columns: 1fr; } }
+    .product-gallery { background: #f8f9fc; padding: 30px; border-right: 1px solid #eaecf4; }
     .product-main-image {
-        width: 100%;
-        aspect-ratio: 1;
-        border-radius: 15px;
-        overflow: hidden;
-        background: #fff;
-        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
-        margin-bottom: 15px;
+        width: 100%; aspect-ratio: 1; border-radius: 15px;
+        overflow: hidden; background: #fff;
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1); margin-bottom: 15px;
     }
-    
-    .product-main-image img {
-        width: 100%;
-        height: 100%;
-        object-fit: contain;
-    }
-    
-    .product-thumbnails {
-        display: flex;
-        gap: 10px;
-        flex-wrap: wrap;
-        justify-content: center;
-    }
-    
+    .product-main-image img { width: 100%; height: 100%; object-fit: contain; }
+    .product-thumbnails { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; }
     .product-thumb-item {
-        width: 70px;
-        height: 70px;
-        border-radius: 10px;
-        overflow: hidden;
-        cursor: pointer;
-        border: 2px solid transparent;
-        transition: all 0.3s;
+        width: 70px; height: 70px; border-radius: 10px;
+        overflow: hidden; cursor: pointer;
+        border: 2px solid transparent; transition: all 0.3s;
     }
-    
-    .product-thumb-item:hover,
-    .product-thumb-item.active {
-        border-color: #667eea;
-        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+    .product-thumb-item:hover, .product-thumb-item.active {
+        border-color: #7367f0;
+        box-shadow: 0 4px 12px rgba(115, 103, 240, 0.3);
     }
-    
-    .product-thumb-item img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-    }
-    
-    .product-info-section {
-        padding: 30px;
-    }
-    
-    .product-badges {
-        display: flex;
-        gap: 10px;
-        margin-bottom: 15px;
-        flex-wrap: wrap;
-    }
-    
-    .product-badge {
-        padding: 6px 14px;
-        border-radius: 20px;
-        font-size: 12px;
-        font-weight: 600;
-    }
-    
-    .product-badge-brand {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        color: #fff;
-    }
-    
-    .product-badge-category {
-        background: rgba(16, 185, 129, 0.15);
-        color: #10b981;
-    }
-    
-    .product-badge-status {
-        background: rgba(245, 158, 11, 0.15);
-        color: #f59e0b;
-    }
-    
-    .product-badge-status.active {
-        background: rgba(16, 185, 129, 0.15);
-        color: #10b981;
-    }
-    
-    .product-detail-title {
-        font-size: 24px;
-        font-weight: 700;
-        color: #2d3748;
-        margin-bottom: 10px;
-        line-height: 1.3;
-    }
-    
-    .product-sku-detail {
-        font-size: 14px;
-        color: #718096;
-        margin-bottom: 20px;
-    }
-    
-    .product-sku-detail code {
-        background: #f1f5f9;
-        padding: 4px 10px;
-        border-radius: 5px;
-        color: #667eea;
-    }
-    
+    .product-thumb-item img { width: 100%; height: 100%; object-fit: cover; }
+    .product-info-section { padding: 30px; }
+    .product-badges { display: flex; gap: 10px; margin-bottom: 15px; flex-wrap: wrap; }
+    .product-detail-title { font-size: 24px; font-weight: 700; color: #2d3748; margin-bottom: 10px; line-height: 1.3; }
+    .product-sku-detail { font-size: 14px; color: #718096; margin-bottom: 20px; }
+    .product-sku-detail code { background: #f1f5f9; padding: 4px 10px; border-radius: 5px; color: #7367f0; }
     .product-price-section {
         background: linear-gradient(135deg, #f8f9fc 0%, #eef2ff 100%);
-        border-radius: 12px;
-        padding: 20px;
-        margin-bottom: 25px;
+        border-radius: 12px; padding: 20px; margin-bottom: 25px;
     }
-    
-    .product-price-current {
-        font-size: 32px;
-        font-weight: 800;
-        color: #667eea;
-    }
-    
-    .product-price-original {
-        font-size: 18px;
-        color: #a0aec0;
-        text-decoration: line-through;
-        margin-left: 10px;
-    }
-    
-    .product-price-discount {
-        background: #ef4444;
-        color: #fff;
-        padding: 4px 12px;
-        border-radius: 20px;
-        font-size: 12px;
-        font-weight: 600;
-        margin-left: 15px;
-    }
-    
-    .product-meta-grid {
-        display: grid;
-        grid-template-columns: repeat(2, 1fr);
-        gap: 15px;
-        margin-bottom: 25px;
-    }
-    
-    .product-meta-item {
-        background: #f8f9fc;
-        padding: 15px;
-        border-radius: 10px;
-    }
-    
-    .product-meta-label {
-        font-size: 12px;
-        color: #718096;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-        margin-bottom: 5px;
-    }
-    
-    .product-meta-value {
-        font-size: 16px;
-        font-weight: 600;
-        color: #2d3748;
-    }
-    
-    .product-description-section {
-        margin-bottom: 25px;
-    }
-    
-    .product-description-section h6 {
-        font-size: 14px;
-        font-weight: 600;
-        color: #5a5c69;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-        margin-bottom: 12px;
-        display: flex;
-        align-items: center;
-        gap: 8px;
-    }
-    
-    .product-description-section h6 i {
-        color: #667eea;
-    }
-    
-    .product-description-text {
-        color: #4a5568;
-        line-height: 1.7;
-        font-size: 14px;
-    }
-    
-    .product-variants-section {
-        border-top: 1px solid #eaecf4;
-        padding-top: 20px;
-    }
-    
-    .variant-item {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        padding: 12px 15px;
-        background: #f8f9fc;
-        border-radius: 8px;
-        margin-bottom: 10px;
-    }
-    
-    .variant-name {
-        font-weight: 600;
-        color: #2d3748;
-    }
-    
-    .variant-details {
-        display: flex;
-        gap: 20px;
-        font-size: 14px;
-        color: #718096;
-    }
-    
-    .product-loading {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        padding: 80px 20px;
-    }
-    
-    .product-loading .spinner-border {
-        width: 50px;
-        height: 50px;
-        border-width: 4px;
-    }
-    
-    .no-image-placeholder {
-        width: 100%;
-        height: 300px;
-        background: linear-gradient(135deg, #f5f7fa 0%, #e4e8eb 100%);
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        border-radius: 15px;
-    }
-    
-    .no-image-placeholder i {
-        font-size: 60px;
-        color: #b0b5c0;
-        margin-bottom: 15px;
-    }
-    
-    .no-image-placeholder p {
-        color: #718096;
-    }
+    .product-price-current { font-size: 32px; font-weight: 800; color: #7367f0; }
+    .product-price-original { font-size: 18px; color: #a0aec0; text-decoration: line-through; margin-left: 10px; }
+    .product-price-discount { background: #ef4444; color: #fff; padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; margin-left: 15px; }
+    .product-meta-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; margin-bottom: 25px; }
+    .product-meta-item { background: #f8f9fc; padding: 15px; border-radius: 10px; }
+    .product-meta-label { font-size: 12px; color: #718096; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 5px; }
+    .product-meta-value { font-size: 16px; font-weight: 600; color: #2d3748; }
+    .product-description-section { margin-bottom: 25px; }
+    .product-description-section h6 { font-size: 14px; font-weight: 600; color: #5a5c69; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+    .product-description-section h6 i { color: #7367f0; }
+    .product-description-text { color: #4a5568; line-height: 1.7; font-size: 14px; }
+    .product-variants-section { border-top: 1px solid #eaecf4; padding-top: 20px; }
+    .variant-item { display: flex; align-items: center; justify-content: space-between; padding: 12px 15px; background: #f8f9fc; border-radius: 8px; margin-bottom: 10px; }
+    .variant-name { font-weight: 600; color: #2d3748; }
+    .variant-details { display: flex; gap: 20px; font-size: 14px; color: #718096; }
+    .product-loading { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 80px 20px; }
+    .product-loading .spinner-border { width: 50px; height: 50px; border-width: 4px; }
+    .no-image-placeholder { width: 100%; height: 300px; background: linear-gradient(135deg, #f5f7fa 0%, #e4e8eb 100%); display: flex; flex-direction: column; align-items: center; justify-content: center; border-radius: 15px; }
+    .no-image-placeholder i { font-size: 60px; color: #b0b5c0; margin-bottom: 15px; }
+    .no-image-placeholder p { color: #718096; }
 </style>
 @endpush
 
@@ -708,13 +224,13 @@
                 <h3 class="fw-bold mb-1">All Products</h3>
                 <p class="text-muted mb-0">Manage and organize your product catalog</p>
             </div>
-            <a href="{{ route('admin.product-create.index') }}" class="btn btn-primary d-flex align-items-center gap-2" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border: none; padding: 12px 24px; border-radius: 10px;">
+            <a href="{{ route('admin.product-create.index') }}" class="create-btn-base d-flex align-items-center gap-2">
                 <i class="fas fa-plus"></i> Add New Product
             </a>
         </div>
     </div>
 
-    <!-- Stats Row -->
+    <!-- Stats Row - Using custom counter styles -->
     @php
         $totalCount = is_countable($products) ? count($products) : 0;
         $activeCount = 0;
@@ -729,33 +245,50 @@
             }
         }
     @endphp
-    <div class="col-12">
-        <div class="stats-row">
-            <div class="stat-card">
-                <div class="stat-icon stat-icon-total">
-                    <i class="fas fa-box"></i>
+    <div class="col-xl-4 col-md-6 mb-4">
+        <div class="custom-counter-inner counter-bg-1">
+            <svg class="bottom-svg" viewBox="0 0 80 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="60" cy="50" r="40" fill="rgba(75, 137, 220, 0.15)"/>
+            </svg>
+            <div class="d-flex align-items-center gap-3">
+                <div class="custom-counter-icon">
+                    <i class="fas fa-box fs-20" style="color: #4B89DC;"></i>
                 </div>
-                <div class="stat-info">
-                    <h3>{{ $totalCount }}</h3>
-                    <p>Total Products</p>
-                </div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-icon stat-icon-active">
-                    <i class="fas fa-check-circle"></i>
-                </div>
-                <div class="stat-info">
-                    <h3>{{ $activeCount }}</h3>
-                    <p>Active Products</p>
+                <div>
+                    <h3 class="fw-700 fs-24 mb-0">{{ $totalCount }}</h3>
+                    <p class="mb-0 fs-13 text-muted">Total Products</p>
                 </div>
             </div>
-            <div class="stat-card">
-                <div class="stat-icon stat-icon-inactive">
-                    <i class="fas fa-times-circle"></i>
+        </div>
+    </div>
+    <div class="col-xl-4 col-md-6 mb-4">
+        <div class="custom-counter-inner counter-bg-2">
+            <svg class="bottom-svg" viewBox="0 0 80 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="60" cy="50" r="40" fill="rgba(140, 192, 82, 0.15)"/>
+            </svg>
+            <div class="d-flex align-items-center gap-3">
+                <div class="custom-counter-icon">
+                    <i class="fas fa-check-circle fs-20" style="color: #8CC052;"></i>
                 </div>
-                <div class="stat-info">
-                    <h3>{{ $inactiveCount }}</h3>
-                    <p>Inactive Products</p>
+                <div>
+                    <h3 class="fw-700 fs-24 mb-0">{{ $activeCount }}</h3>
+                    <p class="mb-0 fs-13 text-muted">Active Products</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-4 col-md-6 mb-4">
+        <div class="custom-counter-inner counter-bg-3">
+            <svg class="bottom-svg" viewBox="0 0 80 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="60" cy="50" r="40" fill="rgba(59, 174, 218, 0.15)"/>
+            </svg>
+            <div class="d-flex align-items-center gap-3">
+                <div class="custom-counter-icon">
+                    <i class="fas fa-times-circle fs-20" style="color: #3BAEDA;"></i>
+                </div>
+                <div>
+                    <h3 class="fw-700 fs-24 mb-0">{{ $inactiveCount }}</h3>
+                    <p class="mb-0 fs-13 text-muted">Inactive Products</p>
                 </div>
             </div>
         </div>
@@ -792,7 +325,7 @@
                             @forelse($products as $index => $p)
                             <tr>
                                 <td>
-                                    <span class="badge bg-light text-dark fw-bold">{{ $index + 1 }}</span>
+                                    <span class="qbit-badge-gray">{{ $index + 1 }}</span>
                                 </td>
                                 <td>
                                     <div class="product-info">
@@ -820,14 +353,14 @@
                                 </td>
                                 <td>
                                     @if($p->brand_name)
-                                        <span class="badge-brand">{{ $p->brand_name }}</span>
+                                        <span class="qbit-badge-purple"><i class="bx bx-tag"></i> {{ $p->brand_name }}</span>
                                     @else
                                         <span class="text-muted">-</span>
                                     @endif
                                 </td>
                                 <td>
                                     @if($p->category_name)
-                                        <span class="badge-category">{{ $p->category_name }}</span>
+                                        <span class="qbit-badge-info"><i class="bx bx-folder"></i> {{ $p->category_name }}</span>
                                     @else
                                         <span class="text-muted">-</span>
                                     @endif
@@ -855,17 +388,17 @@
                                     </div>
                                 </td>
                                 <td>
-                                    <div class="action-buttons">
-                                        <button type="button" class="action-btn action-btn-view btn-view-product" data-product-id="{{ $p->id }}" title="View Product">
+                                    <div class="d-flex align-items-center gap-1">
+                                        <button type="button" class="action-btn-info btn-view-product" data-product-id="{{ $p->id }}" title="View Product">
                                             <i class="fas fa-eye"></i>
                                         </button>
-                                        <a href="{{ route('admin.product.edit', $p->id) }}" class="action-btn action-btn-edit" title="Edit Product">
+                                        <a href="{{ route('admin.product.edit', $p->id) }}" class="action-btn-success" title="Edit Product">
                                             <i class="fas fa-edit"></i>
                                         </a>
                                         <form action="{{ route('admin.product.destroy', $p->id) }}" method="POST" class="d-inline delete-form">
                                             @csrf
                                             @method('DELETE')
-                                            <button type="button" class="action-btn action-btn-delete btn-delete" title="Delete Product">
+                                            <button type="button" class="action-btn-danger btn-delete" title="Delete Product">
                                                 <i class="fas fa-trash-alt"></i>
                                             </button>
                                         </form>
@@ -881,7 +414,7 @@
                                         </div>
                                         <h5>No Products Found</h5>
                                         <p>Start by adding your first product to the catalog</p>
-                                        <a href="{{ route('admin.product-create.index') }}" class="btn btn-primary">
+                                        <a href="{{ route('admin.product-create.index') }}" class="create-btn-base">
                                             <i class="fas fa-plus me-2"></i>Add Product
                                         </a>
                                     </div>
@@ -944,10 +477,10 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                <button type="button" class="create-btn-white" data-bs-dismiss="modal">
                     <i class="fas fa-times me-2"></i>Close
                 </button>
-                <a href="#" id="editProductBtn" class="btn btn-primary">
+                <a href="#" id="editProductBtn" class="create-btn-base">
                     <i class="fas fa-edit me-2"></i>Edit Product
                 </a>
             </div>
@@ -1202,10 +735,10 @@ document.addEventListener("DOMContentLoaded", function() {
                             </div>
                             <div class="product-info-section">
                                 <div class="product-badges">
-                                    ${p.brand_name ? `<span class="product-badge product-badge-brand"><i class="fas fa-tag me-1"></i>${p.brand_name}</span>` : ''}
-                                    ${p.category_name ? `<span class="product-badge product-badge-category"><i class="fas fa-folder me-1"></i>${p.category_name}</span>` : ''}
-                                    <span class="product-badge product-badge-status ${p.status === 'active' ? 'active' : ''}">
-                                        <i class="fas fa-${p.status === 'active' ? 'check-circle' : 'times-circle'} me-1"></i>${p.status ? p.status.charAt(0).toUpperCase() + p.status.slice(1) : 'Draft'}
+                                    ${p.brand_name ? `<span class="qbit-badge-purple"><i class="bx bx-tag"></i> ${p.brand_name}</span>` : ''}
+                                    ${p.category_name ? `<span class="qbit-badge-info"><i class="bx bx-folder"></i> ${p.category_name}</span>` : ''}
+                                    <span class="qbit-badge-${p.status === 'active' ? 'success' : 'warning'}">
+                                        <i class="bx bx-${p.status === 'active' ? 'check-circle' : 'x-circle'}"></i> ${p.status ? p.status.charAt(0).toUpperCase() + p.status.slice(1) : 'Draft'}
                                     </span>
                                 </div>
                                 
@@ -1288,3 +821,4 @@ document.addEventListener("DOMContentLoaded", function() {
 });
 </script>
 @endpush
+

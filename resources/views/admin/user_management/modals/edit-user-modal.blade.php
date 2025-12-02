@@ -123,11 +123,11 @@
                                 </div>
                                 <input type="file" name="profile_image" id="editProfileImageInput" accept="image/*" style="display: none;">
                                 <div class="mb-3">
-                                    <button type="button" class="btn btn-outline-primary btn-sm me-2"
+                                    <button type="button" class="select-btn-primary me-2"
                                         onclick="document.getElementById('editProfileImageInput').click()">
                                         <i class="bx bx-upload me-1"></i> Upload Image
                                     </button>
-                                    <button type="button" class="btn btn-outline-secondary btn-sm" id="editResetImageBtn">
+                                    <button type="button" class="select-btn-white" id="editResetImageBtn">
                                         <i class="bx bx-reset"></i> Reset
                                     </button>
                                 </div>
@@ -138,10 +138,10 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                <button type="button" class="create-btn-white" data-bs-dismiss="modal">
                     <i class="bx bx-x me-1"></i>Cancel
                 </button>
-                <button type="button" class="btn btn-primary" id="updateUserBtn">
+                <button type="button" class="create-btn-base" id="updateUserBtn">
                     <i class="bx bx-edit me-1"></i>Update User
                 </button>
             </div>

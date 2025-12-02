@@ -90,7 +90,7 @@
                                     <option>Y-m-d (2025-12-01)</option>
                                 </select>
                             </div>
-                            <button type="submit" class="btn btn-primary">Save Changes</button>
+                            <button type="submit" class="create-btn-base">Save Changes</button>
                         </form>
                     </div>
                 </div>
@@ -128,7 +128,7 @@
                                     <input type="email" class="form-control" value="info@growup.com">
                                 </div>
                             </div>
-                            <button type="submit" class="btn btn-primary">Save Changes</button>
+                            <button type="submit" class="create-btn-base">Save Changes</button>
                         </form>
                     </div>
                 </div>
@@ -170,8 +170,8 @@
                                     <input type="password" class="form-control">
                                 </div>
                             </div>
-                            <button type="submit" class="btn btn-primary">Save Changes</button>
-                            <button type="button" class="btn btn-outline-secondary ms-2">Send Test Email</button>
+                            <button type="submit" class="create-btn-base">Save Changes</button>
+                            <button type="button" class="select-btn-info ms-2">Send Test Email</button>
                         </form>
                     </div>
                 </div>
@@ -254,7 +254,7 @@
                                 <label class="form-label">Free Shipping Threshold</label>
                                 <input type="number" class="form-control" value="5000" placeholder="Order amount for free shipping">
                             </div>
-                            <button type="submit" class="btn btn-primary">Save Changes</button>
+                            <button type="submit" class="create-btn-base">Save Changes</button>
                         </form>
                     </div>
                 </div>
@@ -290,7 +290,7 @@
                                     <label class="form-check-label" for="taxIncluded">Prices include tax</label>
                                 </div>
                             </div>
-                            <button type="submit" class="btn btn-primary">Save Changes</button>
+                            <button type="submit" class="create-btn-base">Save Changes</button>
                         </form>
                     </div>
                 </div>
@@ -320,7 +320,7 @@
                                 <label class="form-label"><i class="fab fa-youtube text-danger me-2"></i>YouTube</label>
                                 <input type="url" class="form-control" placeholder="https://youtube.com/yourchannel">
                             </div>
-                            <button type="submit" class="btn btn-primary">Save Changes</button>
+                            <button type="submit" class="create-btn-base">Save Changes</button>
                         </form>
                     </div>
                 </div>
@@ -350,7 +350,7 @@
                                 <label class="form-label">Google Analytics ID</label>
                                 <input type="text" class="form-control" placeholder="UA-XXXXXXXXX-X">
                             </div>
-                            <button type="submit" class="btn btn-primary">Save Changes</button>
+                            <button type="submit" class="create-btn-base">Save Changes</button>
                         </form>
                     </div>
                 </div>

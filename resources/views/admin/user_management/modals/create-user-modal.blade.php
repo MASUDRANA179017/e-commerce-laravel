@@ -156,11 +156,11 @@
                                     <input type="file"  name="profile_image" id="profileImageInput" accept="image/*"
                                         style="display: none;">
                                     <div class="mb-3">
-                                        <button type="button" class="btn btn-outline-primary btn-sm me-2"
+                                        <button type="button" class="select-btn-primary me-2"
                                             onclick="document.getElementById('profileImageInput').click()">
                                             <i class="bx bx-upload me-1"></i> Upload Image
                                         </button>
-                                        <button type="button" class="btn btn-outline-secondary btn-sm" id="resetImageBtn">
+                                        <button type="button" class="select-btn-white" id="resetImageBtn">
                                             <i class="bx bx-reset"></i> Reset
                                         </button>
                                     </div>
@@ -172,13 +172,13 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    <button type="button" class="create-btn-white" data-bs-dismiss="modal">
                         <i class="bx bx-x me-1"></i>Cancel
                     </button>
-                    <button type="button" class="btn btn-outline-primary me-2" id="resetFormInputFieldsBtn">
+                    <button type="button" class="create-btn-info-alt me-2" id="resetFormInputFieldsBtn">
                         <i class="bx bx-reset me-1"></i>Reset Form
                     </button>
-                    <button type="button" class="btn btn-primary" id="createUserBtn">
+                    <button type="button" class="create-btn-base" id="createUserBtn">
                         <i class="bx bx-user-plus me-1"></i>Create User
                     </button>
                 </div>

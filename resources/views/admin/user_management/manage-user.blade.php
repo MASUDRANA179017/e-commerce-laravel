@@ -80,7 +80,7 @@
                                                     <option value="0">Inactive</option>
                                                 </select>
                                             </div>
-                                            <div class="col-md-2"><button class="btn btn-outline-secondary w-100"
+                                            <div class="col-md-2"><button class="create-btn-white w-100"
                                                     id="clearFilters"><i class="bx bx-refresh"></i> Clear</button></div>
                                         </div>
                                     </div>

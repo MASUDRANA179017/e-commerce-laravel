@@ -16,9 +16,9 @@
                 </div>
             </div>
             <div class="d-flex gap-2">
-                <button type="button" class="btn btn-outline-secondary" id="btnSaveDraft"><i class="bx bx-save me-1"></i>Save
+                <button type="button" class="create-btn-white" id="btnSaveDraft"><i class="bx bx-save me-1"></i>Save
                     Draft</button>
-                <button type="button" class="btn btn-primary" id="btnPublish"><i
+                <button type="button" class="create-btn-base" id="btnPublish"><i
                         class="bx bx-rocket me-1"></i>Publish</button>
             </div>
         </div>
@@ -115,7 +115,7 @@
                                         <label class="form-label">Categories <span class="req">*</span></label>
                                         <div id="catChips"></div>
                                         <div class="d-flex gap-2 mt-2">
-                                            <button class="btn btn-outline-secondary btn-sm" id="btnAssignCats"><i
+                                            <button class="select-btn-info" id="btnAssignCats"><i
                                                     class="bx bx-sitemap me-1"></i>Assign Categories</button>
                                             <span class="small-muted">Primary category থেকে কনফিগ এপ্লাই হবে</span>
                                         </div>
@@ -128,7 +128,7 @@
                                             <select id="attrSet" class="form-select">
                                                 <option value="">— None —</option>
                                             </select>
-                                            <button class="btn btn-outline-secondary" type="button" id="btnSetPreview"
+                                            <button class="action-btn-info" type="button" id="btnSetPreview"
                                                 title="Preview set"><i class="bx bx-show"></i></button>
                                         </div>
                                     </div>
@@ -139,7 +139,7 @@
                                             <select id="variantRule" class="form-select">
                                                 <option value="">— None —</option>
                                             </select>
-                                            <button class="btn btn-outline-secondary" type="button"
+                                            <button class="action-btn-info" type="button"
                                                 id="btnVariantRulePreview" title="Preview rule"><i
                                                     class="bx bx-show"></i></button>
                                         </div>
@@ -169,7 +169,7 @@
                             <div class="panel-header d-flex justify-content-between align-items-center">
                                 <h6 class="panel-title mb-0"><i class="bx bx-check-shield me-1"></i>Primary Category
                                     Config</h6>
-                                <button class="btn btn-sm btn-outline-secondary btn-icon" id="btnMediaRulePreview"
+                                <button class="action-btn-info" id="btnMediaRulePreview"
                                     title="Media Rule Preview"><i class="bx bx-image-alt"></i></button>
                             </div>
                             <div class="panel-body">
@@ -185,7 +185,7 @@
                                                 <option value="">— None —</option>
                                             </select>
                                         </div>
-                                        <button class="btn btn-outline-secondary" type="button"
+                                        <button class="action-btn-info" type="button"
                                             id="btnMediaRulePreview2" title="Preview rule"><i
                                                 class="bx bx-show"></i></button>
                                     </div>
@@ -296,7 +296,7 @@
                     <div class="panel-body">
                         <div class="d-flex align-items-center gap-2 mb-2">
 
-                           <button type="button" class="btn btn-primary btn-sm" id="btnGenVariants">
+                           <button type="button" class="create-btn-base" id="btnGenVariants">
                             <i class="bx bx-grid-alt me-1"></i>Generate Variants
                             </button>
                             <div id="variantAxes" class="ms-auto"></div>
@@ -338,7 +338,7 @@
                     <div id="catList" class="row g-2"></div>
                 </div>
                 <div class="modal-footer">
-                    <button class="btn btn-primary" id="btnCatSave"><i class="bx bx-save me-1"></i>Save</button>
+                    <button class="create-btn-base" id="btnCatSave"><i class="bx bx-save me-1"></i>Save</button>
                 </div>
             </div>
         </div>
@@ -1318,8 +1318,8 @@
                       <td><input class="form-control form-control-sm v-sku" placeholder="AUTO"></td>
                       <td class="vimg-cell ${wantImg?'':'hidden'}"><input type="file" accept="image/*" class="form-control form-control-sm v-img"></td>
                       <td class="text-end">
-                          <button type="button" class="btn btn-sm btn-outline-secondary me-1 v-dup" title="Duplicate"><i class="bx bx-copy"></i></button>
-                          <button type="button" class="btn btn-sm btn-outline-danger v-del" title="Delete"><i class="bx bx-trash"></i></button>
+                          <button type="button" class="action-btn-secondary me-1 v-dup" title="Duplicate"><i class="bx bx-copy"></i></button>
+                          <button type="button" class="action-btn-danger v-del" title="Delete"><i class="bx bx-trash"></i></button>
                       </td>`;
 
               tr.dataset.variant = JSON.stringify(pair);

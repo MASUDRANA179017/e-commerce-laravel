@@ -3,19 +3,36 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Order;
 use Illuminate\Http\Request;
 
 class OrderController extends Controller
 {
     public function index()
     {
-        return view('admin.orders.index');
+        // Get orders with stats
+        $orders = Order::with('items', 'user')
+            ->orderBy('created_at', 'desc')
+            ->paginate(15);
+        
+        // Calculate stats
+        $stats = [
+            'pending' => Order::where('status', 'pending')->count(),
+            'processing' => Order::whereIn('status', ['processing', 'shipped'])->count(),
+            'completed' => Order::where('status', 'delivered')->count(),
+            'cancelled' => Order::where('status', 'cancelled')->count(),
+        ];
+        
+        return view('admin.orders.index', compact('orders', 'stats'));
     }
 
     public function getData(Request $request)
     {
         // Return orders data for DataTable
-        $orders = collect(); // Order::query()
+        $orders = Order::with('items', 'user')
+            ->orderBy('created_at', 'desc')
+            ->get();
+            
         return response()->json(['data' => $orders]);
     }
 
@@ -30,31 +47,44 @@ class OrderController extends Controller
         return redirect()->route('admin.orders.index')->with('success', 'Order created successfully');
     }
 
-    public function show($order)
+    public function show($id)
     {
+        $order = Order::with('items', 'user')->findOrFail($id);
         return view('admin.orders.show', compact('order'));
     }
 
-    public function edit($order)
+    public function edit($id)
     {
+        $order = Order::with('items', 'user')->findOrFail($id);
         return view('admin.orders.edit', compact('order'));
     }
 
-    public function update(Request $request, $order)
+    public function update(Request $request, $id)
     {
-        // Update order logic
+        $order = Order::findOrFail($id);
+        
+        $order->update([
+            'status' => $request->status,
+            'notes' => $request->notes,
+        ]);
+        
         return redirect()->route('admin.orders.index')->with('success', 'Order updated successfully');
     }
 
-    public function destroy($order)
+    public function destroy($id)
     {
-        // Delete order logic
+        $order = Order::findOrFail($id);
+        $order->delete();
+        
         return response()->json(['success' => true]);
     }
 
-    public function updateStatus(Request $request, $order)
+    public function updateStatus(Request $request, $id)
     {
-        // Update order status
+        $order = Order::findOrFail($id);
+        $order->status = $request->status;
+        $order->save();
+        
         return response()->json(['success' => true, 'message' => 'Status updated']);
     }
 
@@ -68,14 +98,15 @@ class OrderController extends Controller
         return view('admin.orders.returns');
     }
 
-    public function invoice($order)
+    public function invoice($id)
     {
+        $order = Order::with('items', 'user')->findOrFail($id);
         return view('admin.orders.invoice', compact('order'));
     }
 
-    public function printOrder($order)
+    public function printOrder($id)
     {
+        $order = Order::with('items', 'user')->findOrFail($id);
         return view('admin.orders.print', compact('order'));
     }
 }
-

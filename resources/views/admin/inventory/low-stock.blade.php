@@ -7,7 +7,7 @@
     <div class="col-12 mb-4">
         <div class="d-flex align-items-center justify-content-between flex-wrap gap-3">
             <h3 class="fw-bold mb-0">Low Stock Products</h3>
-            <a href="{{ route('admin.inventory.stock') }}" class="btn btn-outline-secondary">
+            <a href="{{ route('admin.inventory.stock') }}" class="create-btn-white">
                 <i class="fas fa-arrow-left me-2"></i>Back to Stock
             </a>
         </div>
@@ -36,19 +36,19 @@
                                 <td class="ps-3">{{ $product->name ?? $product->title ?? 'N/A' }}</td>
                                 <td><code>{{ $product->sku ?? '-' }}</code></td>
                                 <td>
-                                    <span class="badge bg-{{ ($product->stock ?? 0) == 0 ? 'danger' : 'warning' }}">
-                                        {{ $product->stock ?? 0 }} units
+                                    <span class="qbit-badge-{{ ($product->stock ?? 0) == 0 ? 'danger' : 'warning' }}">
+                                        <i class="bx bx-package"></i> {{ $product->stock ?? 0 }} units
                                     </span>
                                 </td>
                                 <td>
                                     @if(($product->stock ?? 0) == 0)
-                                        <span class="badge bg-danger bg-opacity-10 text-danger">Out of Stock</span>
+                                        <span class="qbit-badge-danger"><i class="bx bx-x-circle"></i> Out of Stock</span>
                                     @else
-                                        <span class="badge bg-warning bg-opacity-10 text-warning">Low Stock</span>
+                                        <span class="qbit-badge-warning"><i class="bx bx-error"></i> Low Stock</span>
                                     @endif
                                 </td>
                                 <td class="text-end pe-3">
-                                    <button class="btn btn-sm btn-warning">Restock</button>
+                                    <span class="qbit-badge-orange" style="cursor:pointer;"><i class="bx bx-plus"></i> Restock</span>
                                 </td>
                             </tr>
                             @empty

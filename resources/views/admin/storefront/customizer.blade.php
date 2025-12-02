@@ -86,17 +86,17 @@
             </div>
         </div>
 
-        <button class="btn btn-primary w-100">Save Changes</button>
+        <button class="create-btn-base w-100">Save Changes</button>
     </div>
 
     <div class="col-lg-8">
         <div class="card border-0">
             <div class="card-header bg-white d-flex align-items-center justify-content-between">
                 <h5 class="mb-0 fw-bold">Preview</h5>
-                <div class="btn-group btn-group-sm">
-                    <button class="btn btn-outline-secondary active">Desktop</button>
-                    <button class="btn btn-outline-secondary">Tablet</button>
-                    <button class="btn btn-outline-secondary">Mobile</button>
+                <div class="d-flex gap-1">
+                    <button class="select-btn-base active">Desktop</button>
+                    <button class="select-btn-white">Tablet</button>
+                    <button class="select-btn-white">Mobile</button>
                 </div>
             </div>
             <div class="card-body p-0">

@@ -7,7 +7,7 @@
     <div class="col-12 mb-4">
         <div class="d-flex align-items-center justify-content-between flex-wrap gap-3">
             <h3 class="fw-bold mb-0">Flash Sales</h3>
-            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addFlashSaleModal">
+            <button class="create-btn-base" data-bs-toggle="modal" data-bs-target="#addFlashSaleModal">
                 <span class="material-symbols-outlined fs-14">add</span> Create Flash Sale
             </button>
         </div>
@@ -22,7 +22,7 @@
                         <h5 class="fw-bold text-primary mb-1">No Active Flash Sale</h5>
                         <p class="mb-0 text-muted">Create a flash sale to boost your sales with limited-time offers</p>
                     </div>
-                    <button class="btn btn-primary">
+                    <button class="create-btn-base">
                         <span class="material-symbols-outlined fs-14">flash_on</span> Start Flash Sale
                     </button>
                 </div>

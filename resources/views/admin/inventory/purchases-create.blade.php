@@ -7,7 +7,7 @@
     <div class="col-12 mb-4">
         <div class="d-flex align-items-center justify-content-between flex-wrap gap-3">
             <h3 class="fw-bold mb-0">Create Purchase Order</h3>
-            <a href="{{ route('admin.inventory.purchases') }}" class="btn btn-outline-secondary">
+            <a href="{{ route('admin.inventory.purchases') }}" class="select-btn-white">
                 <i class="fas fa-arrow-left me-2"></i>Back
             </a>
         </div>
@@ -37,7 +37,7 @@
         <div class="card border-0">
             <div class="card-header bg-white d-flex justify-content-between align-items-center">
                 <h5 class="mb-0 fw-bold">Order Items</h5>
-                <button class="btn btn-sm btn-primary">
+                <button class="create-btn-base">
                     <i class="fas fa-plus me-1"></i>Add Item
                 </button>
             </div>
@@ -83,7 +83,7 @@
                     <span>Total:</span>
                     <span>৳0.00</span>
                 </div>
-                <button class="btn btn-primary w-100 mt-3">
+                <button class="create-btn-base w-100 mt-3">
                     <i class="fas fa-save me-2"></i>Create Purchase Order
                 </button>
             </div>

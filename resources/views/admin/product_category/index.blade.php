@@ -37,11 +37,11 @@
                         <input class="form-check-input" type="checkbox" id="toggleMenuOnly">
                         <label class="form-check-label small" for="toggleMenuOnly">Menu only</label>
                     </div>
-                    <button class="btn btn-sm btn-outline-secondary" id="btnExpandAll"><i
+                    <button class="select-btn-white" id="btnExpandAll"><i
                             class="bx bx-chevrons-down me-1"></i>Expand</button>
-                    <button class="btn btn-sm btn-outline-secondary" id="btnCollapseAll"><i
+                    <button class="select-btn-white" id="btnCollapseAll"><i
                             class="bx bx-chevrons-up me-1"></i>Collapse</button>
-                    <button class="btn btn-sm btn-primary" id="btnOpenAdd"><i class="bx bx-folder-plus me-1"></i>Add
+                    <button class="create-btn-base" id="btnOpenAdd"><i class="bx bx-folder-plus me-1"></i>Add
                         Category</button>
                 </div>
             </div>
@@ -107,9 +107,9 @@
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button class="btn btn-outline-secondary" type="button" id="btnSaveNew"><i
+                        <button class="create-btn-white" type="button" id="btnSaveNew"><i
                                 class="bx bx-plus me-1"></i>Save & New</button>
-                        <button class="btn btn-primary" type="submit"><i class="bx bx-save me-1"></i>Save</button>
+                        <button class="create-btn-base" type="submit"><i class="bx bx-save me-1"></i>Save</button>
                     </div>
                 </form>
             </div>
@@ -127,7 +127,7 @@
                 <div class="modal-body">
                     <div class="d-flex justify-content-between align-items-center mb-2">
                         <input id="imSearch" class="form-control form-control-sm" placeholder="Search SKU/Name/Variant">
-                        <button class="btn btn-sm btn-outline-secondary" id="imExport"><i
+                        <button class="create-btn-info-alt" id="imExport"><i
                                 class="bx bx-download me-1"></i>Export CSV</button>
                     </div>
                     <div class="table-responsive">
@@ -145,7 +145,7 @@
                         </table>
                     </div>
                 </div>
-                <div class="modal-footer"><button class="btn btn-secondary" data-bs-dismiss="modal">Close</button></div>
+                <div class="modal-footer"><button class="create-btn-white" data-bs-dismiss="modal">Close</button></div>
             </div>
         </div>
     </div>
@@ -162,7 +162,7 @@
                     <div class="d-flex justify-content-between align-items-center mb-2">
                         <input id="omSearch" class="form-control form-control-sm"
                             placeholder="Search orders (no/customer/status)">
-                        <button class="btn btn-sm btn-outline-secondary" id="omExport"><i
+                        <button class="create-btn-info-alt" id="omExport"><i
                                 class="bx bx-download me-1"></i>Export CSV</button>
                     </div>
                     <div class="table-responsive">
@@ -181,7 +181,7 @@
                         </table>
                     </div>
                 </div>
-                <div class="modal-footer"><button class="btn btn-secondary" data-bs-dismiss="modal">Close</button></div>
+                <div class="modal-footer"><button class="create-btn-white" data-bs-dismiss="modal">Close</button></div>
             </div>
         </div>
     </div>
@@ -197,13 +197,13 @@
                 <div class="modal-body">
                     <div class="d-flex justify-content-between align-items-center mb-2">
                         <input id="vmSearch" class="form-control form-control-sm" placeholder="Search variant name/SKU">
-                        <button class="btn btn-sm btn-outline-primary" id="btnOpenAssign"><i
+                        <button class="create-btn-primary" id="btnOpenAssign"><i
                                 class="bx bx-link-alt me-1"></i>Assign Variants</button>
                     </div>
                     <ul class="list-group" id="vmList"><!-- JS --></ul>
                     <div class="small text-muted mt-2">Click on a variant name to see preview.</div>
                 </div>
-                <div class="modal-footer"><button class="btn btn-secondary" data-bs-dismiss="modal">Close</button></div>
+                <div class="modal-footer"><button class="create-btn-white" data-bs-dismiss="modal">Close</button></div>
             </div>
         </div>
     </div>
@@ -234,14 +234,14 @@
                     <div class="d-flex justify-content-between align-items-center mb-2">
                         <input id="amSearch" class="form-control form-control-sm" placeholder="Search variants">
                         <div class="d-flex gap-2">
-                            <button class="btn btn-sm btn-outline-secondary" id="amSelAll">Select all</button>
-                            <button class="btn btn-sm btn-outline-secondary" id="amClear">Clear</button>
+                            <button class="select-btn-info" id="amSelAll">Select all</button>
+                            <button class="select-btn-white" id="amClear">Clear</button>
                         </div>
                     </div>
                     <div id="amList" class="row g-2"><!-- JS --></div>
                 </div>
                 <div class="modal-footer">
-                    <button class="btn btn-primary" id="amSave"><i class="bx bx-save me-1"></i>Save</button>
+                    <button class="create-btn-base" id="amSave"><i class="bx bx-save me-1"></i>Save</button>
                 </div>
             </div>
         </div>
@@ -441,9 +441,9 @@
                                 </div>
                             </div>
                             <div class="cat-actions">
-                                <button class="btn btn-sm btn-outline-primary btn-xxs" data-assign title="Assign Variants"><i class="bx bx-link-alt"></i></button>
-                                <button class="btn btn-sm btn-outline-secondary btn-xxs" data-edit title="Edit"><i class="bx bx-edit"></i></button>
-                                <button class="btn btn-sm btn-outline-danger btn-xxs" data-del title="Delete"><i class="bx bx-trash"></i></button>
+                                <button class="action-btn-primary" data-assign title="Assign Variants"><i class="bx bx-link-alt"></i></button>
+                                <button class="action-btn-success" data-edit title="Edit"><i class="bx bx-edit"></i></button>
+                                <button class="action-btn-danger" data-del title="Delete"><i class="bx bx-trash"></i></button>
                             </div>
                         </div>
                     `;

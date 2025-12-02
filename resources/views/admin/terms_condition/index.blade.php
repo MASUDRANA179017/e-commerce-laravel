@@ -94,8 +94,8 @@
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                        <button type="submit" class="btn btn-primary">
+                        <button type="button" class="create-btn-white" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="create-btn-base">
                             <i class="fas fa-save me-1"></i>Save
                         </button>
                     </div>
@@ -206,13 +206,13 @@
                             <td><small>${createdAt}</small></td>
                             <td><small>${updatedAt}</small></td>
                             <td class="text-center">
-                                <button class="btn btn-sm btn-info action-btn" onclick="viewTerm(${item.id})" title="View">
+                                <button class="action-btn-info" onclick="viewTerm(${item.id})" title="View">
                                     <i class="fas fa-eye"></i>
                                 </button>
-                                <button class="btn btn-sm btn-warning action-btn" onclick="editTerm(${item.id})" title="Edit">
+                                <button class="action-btn-success" onclick="editTerm(${item.id})" title="Edit">
                                     <i class="fas fa-edit"></i>
                                 </button>
-                                <button class="btn btn-sm btn-danger action-btn" onclick="deleteTerm(${item.id})" title="Delete">
+                                <button class="action-btn-danger" onclick="deleteTerm(${item.id})" title="Delete">
                                     <i class="fas fa-trash"></i>
                                 </button>
                             </td>

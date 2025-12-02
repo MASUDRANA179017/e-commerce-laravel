@@ -70,7 +70,7 @@
                 <h5 class="mb-0 fw-bold">Customer List</h5>
                 <div class="d-flex gap-2">
                     <input type="text" class="form-control form-control-sm" placeholder="Search customers..." style="width: 200px;">
-                    <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#addCustomerModal">
+                    <button class="create-btn-base" data-bs-toggle="modal" data-bs-target="#addCustomerModal">
                         <span class="material-symbols-outlined fs-14">add</span> Add Customer
                     </button>
                 </div>
@@ -112,20 +112,14 @@
                                 <td>0</td>
                                 <td>৳0.00</td>
                                 <td>
-                                    <span class="badge bg-success bg-opacity-10 text-success">Active</span>
+                                    <span class="qbit-badge-success"><i class="bx bx-check-circle"></i> Active</span>
                                 </td>
                                 <td>{{ $customer->created_at->format('M d, Y') }}</td>
                                 <td class="text-end pe-3">
-                                    <div class="dropdown">
-                                        <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
-                                            Actions
-                                        </button>
-                                        <ul class="dropdown-menu dropdown-menu-end">
-                                            <li><a class="dropdown-item" href="#">View Details</a></li>
-                                            <li><a class="dropdown-item" href="#">Edit</a></li>
-                                            <li><hr class="dropdown-divider"></li>
-                                            <li><a class="dropdown-item text-danger" href="#">Delete</a></li>
-                                        </ul>
+                                    <div class="d-flex align-items-center justify-content-end gap-1">
+                                        <a href="#" class="action-btn-info" title="View Details"><i class="fas fa-eye"></i></a>
+                                        <a href="#" class="action-btn-success" title="Edit"><i class="fas fa-edit"></i></a>
+                                        <a href="#" class="action-btn-danger" title="Delete"><i class="fas fa-trash"></i></a>
                                     </div>
                                 </td>
                             </tr>

@@ -8,10 +8,10 @@
         <div class="d-flex align-items-center justify-content-between flex-wrap gap-3">
             <h3 class="fw-bold mb-0">Invoice #{{ $order ?? 'N/A' }}</h3>
             <div class="d-flex gap-2">
-                <a href="{{ route('admin.orders.index') }}" class="btn btn-outline-secondary">
+                <a href="{{ route('admin.orders.index') }}" class="select-btn-white">
                     <i class="fas fa-arrow-left me-2"></i>Back
                 </a>
-                <button class="btn btn-primary" onclick="window.print()">
+                <button class="create-btn-base" onclick="window.print()">
                     <i class="fas fa-print me-2"></i>Print Invoice
                 </button>
             </div>

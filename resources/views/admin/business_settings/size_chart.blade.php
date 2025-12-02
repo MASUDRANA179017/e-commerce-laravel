@@ -19,7 +19,7 @@
                 <div class="panel-header d-flex justify-content-between align-items-center">
                     <h3 class="panel-title">Charts</h3>
                     <div class="d-flex gap-2">
-                        <button class="btn btn-primary" id="btnBlank"><i class="bx bx-table me-1"></i>Add Blank
+                        <button class="create-btn-base" id="btnBlank"><i class="bx bx-table me-1"></i>Add Blank
                             Chart</button>
                     </div>
                 </div>
@@ -68,13 +68,13 @@
                     <hr class="my-4">
                     <h6 class="modal-section-title">Measurements</h6>
                     <div class="d-flex gap-2 mb-3">
-                        <button class="btn btn-sm btn-outline-secondary" type="button" id="scAddColumn"><i
+                        <button class="select-btn-white" type="button" id="scAddColumn"><i
                                 class="bx bx-plus"></i> Add Column</button>
-                        <button class="btn btn-sm btn-outline-secondary" type="button" id="scAddRow"><i
+                        <button class="select-btn-white" type="button" id="scAddRow"><i
                                 class="bx bx-plus"></i> Add Row</button>
-                        <button class="btn btn-sm btn-outline-secondary" type="button" id="scImportCsv"><i
+                        <button class="select-btn-info" type="button" id="scImportCsv"><i
                                 class="bx bx-import"></i> Import CSV</button>
-                        <button class="btn btn-sm btn-outline-secondary" type="button" id="scExportCsv"><i
+                        <button class="select-btn-info" type="button" id="scExportCsv"><i
                                 class="bx bx-export"></i> Export CSV</button>
                     </div>
                     <div class="table-responsive">
@@ -103,9 +103,9 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button class="btn btn-light" type="button" id="scReset">Reset</button>
-                    <button class="btn btn-secondary" type="button" id="scSaveAndNew">Save & New</button>
-                    <button class="btn btn-primary" type="button" id="scSave">Save</button>
+                    <button class="create-btn-white" type="button" id="scReset">Reset</button>
+                    <button class="create-btn-info-alt" type="button" id="scSaveAndNew">Save & New</button>
+                    <button class="create-btn-base" type="button" id="scSave">Save</button>
                 </div>
             </div>
         </div>
@@ -117,7 +117,7 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h6 class="modal-title"><i class="bx bx-show me-2"></i><span id="cpTitle">Preview</span></h6>
-                    <button type="button" class="btn-icon" data-bs-dismiss="modal"><i class="bx bx-x"></i></button>
+                    <button type="button" class="action-btn-secondary" data-bs-dismiss="modal"><i class="bx bx-x"></i></button>
                 </div>
                 <div class="modal-body" id="cpBody"></div>
             </div>
@@ -218,16 +218,16 @@
           <input class="form-control form-control-sm d-none" style="max-width:260px" value="${chartData.name}" data-title-input>
         </div>
         <div class="d-flex gap-2" data-actions-view>
-          <button class="btn btn-sm btn-success" data-save-card>
+          <button class="create-btn-success" data-save-card>
             <i class="bx bx-save me-1"></i><span data-save-label>Save</span>
           </button>
-          <button class="btn-icon" data-edit-title title="Edit name"><i class="bx bx-edit-alt"></i></button>
-          <button class="btn-icon" data-preview title="Preview"><i class="bx bx-show"></i></button>
-          <button class="btn-icon" data-remove title="Delete"><i class="bx bx-trash"></i></button>
+          <button class="action-btn-success" data-edit-title title="Edit name"><i class="bx bx-edit-alt"></i></button>
+          <button class="action-btn-info" data-preview title="Preview"><i class="bx bx-show"></i></button>
+          <button class="action-btn-danger" data-remove title="Delete"><i class="bx bx-trash"></i></button>
         </div>
         <div class="d-flex gap-2 d-none" data-actions-edit>
-          <button class="btn-primary btn-sm" data-save-title><i class="bx bx-save me-1"></i>Save</button>
-          <button class="btn-icon" data-cancel-title title="Cancel"><i class="bx bx-x"></i></button>
+          <button class="create-btn-base" data-save-title><i class="bx bx-save me-1"></i>Save</button>
+          <button class="action-btn-secondary" data-cancel-title title="Cancel"><i class="bx bx-x"></i></button>
         </div>
       </div>
 
@@ -236,7 +236,7 @@
           <div class="img-wrap">
             <img class="img-thumb ${chartData.image ? '' : 'd-none'}" data-img-prev ${chartData.image ? `src="${chartData.image}"` : ''}>
             <input type="file" accept=".jpg,.jpeg,.png,.webp,image/*" class="form-control form-control-sm" style="max-width:260px" data-img-input>
-            <button class="btn-icon ${chartData.image ? '' : 'd-none'}" title="Remove image" data-img-remove><i class="bx bx-trash"></i></button>
+            <button class="action-btn-danger ${chartData.image ? '' : 'd-none'}" title="Remove image" data-img-remove><i class="bx bx-trash"></i></button>
           </div>
           <div class="d-flex gap-2">
             <select class="form-select form-select-sm" style="width:auto" data-unit>
@@ -245,8 +245,8 @@
               <option value="mm"   ${chartData.unit==='mm'?'selected':''}>mm</option>
               <option value=""     ${!chartData.unit?'selected':''}>—</option>
             </select>
-            <button class="btn btn-sm btn-outline-secondary" data-add-col><i class="bx bx-plus me-1"></i>Column</button>
-            <button class="btn btn-sm btn-outline-secondary" data-add-row><i class="bx bx-plus me-1"></i>Row</button>
+            <button class="select-btn-white" data-add-col><i class="bx bx-plus me-1"></i>Column</button>
+            <button class="select-btn-white" data-add-row><i class="bx bx-plus me-1"></i>Row</button>
           </div>
         </div>
 
@@ -278,7 +278,7 @@
                     `<td><input class="form-control form-control-sm" data-row="${rIdx}" data-col="${cIdx}" value="${row[cIdx] ?? ''}"></td>`
                   ).join('')}
                   <td class="text-end">
-                    <button class="btn-icon" data-del-row="${rIdx}" title="Delete row"><i class="bx bx-trash"></i></button>
+                    <button class="action-btn-danger" data-del-row="${rIdx}" title="Delete row"><i class="bx bx-trash"></i></button>
                   </td>
                 </tr>`
           ).join('')}
@@ -821,7 +821,7 @@
                     });
                     const actionCell = tr.insertCell();
                     const btn = document.createElement('button');
-                    btn.className = 'btn btn-sm btn-outline-danger';
+                    btn.className = 'action-btn-danger';
                     btn.innerHTML = '<i class="bx bx-trash"></i>';
                     btn.onclick = () => {
                         modalChartData.rows.splice(rowIndex, 1);

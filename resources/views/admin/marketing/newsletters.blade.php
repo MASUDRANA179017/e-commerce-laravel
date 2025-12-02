@@ -7,7 +7,7 @@
     <div class="col-12 mb-4">
         <div class="d-flex align-items-center justify-content-between flex-wrap gap-3">
             <h3 class="fw-bold mb-0">Newsletter Management</h3>
-            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#composeNewsletterModal">
+            <button class="create-btn-base" data-bs-toggle="modal" data-bs-target="#composeNewsletterModal">
                 <span class="material-symbols-outlined fs-14">mail</span> Compose Newsletter
             </button>
         </div>
@@ -65,7 +65,7 @@
         <div class="card border-0 h-100">
             <div class="card-header bg-white d-flex justify-content-between align-items-center">
                 <h5 class="mb-0 fw-bold">Recent Subscribers</h5>
-                <button class="btn btn-sm btn-outline-primary">Export</button>
+                <button class="select-btn-info">Export</button>
             </div>
             <div class="card-body p-0">
                 <div class="table-responsive">

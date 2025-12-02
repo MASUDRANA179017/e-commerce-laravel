@@ -13,7 +13,7 @@
         <ul class="menu-inner">
             <!-- Dashboard -->
             <li class="menu-item {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}">
-                <a href="{{ route('admin.dashboard') }}" class="menu-link">
+                <a href="{{ route('dashboard') }}" class="menu-link">
                     <span class="material-symbols-outlined menu-icon">dashboard</span>
                     <span class="title">Dashboard</span>
                 </a>

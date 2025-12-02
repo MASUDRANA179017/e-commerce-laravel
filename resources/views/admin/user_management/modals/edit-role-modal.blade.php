@@ -40,13 +40,13 @@
                 </form>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                <button type="button" class="create-btn-white" data-bs-dismiss="modal">
                     <i class="bx bx-x me-1"></i>Cancel
                 </button>
-                <button type="button" class="btn btn-outline-primary me-2" id="resetEditRoleForm">
+                <button type="button" class="create-btn-info-alt me-2" id="resetEditRoleForm">
                     <i class="bx bx-reset me-1"></i>Reset Form
                 </button>
-                <button type="button" class="btn btn-primary" id="updateRoleBtn">
+                <button type="button" class="create-btn-base" id="updateRoleBtn">
                     <i class="bx bx-edit-alt me-1"></i>Update Role
                 </button>
             </div>

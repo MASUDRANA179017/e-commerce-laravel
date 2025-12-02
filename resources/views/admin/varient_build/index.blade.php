@@ -87,9 +87,9 @@
           </div>
 
           <div class="d-grid gap-2">
-            <button class="btn btn-primary" id="btnGenerate"><i class="bx bx-grid-alt me-1"></i>Generate Variants</button>
-            <button class="btn btn-outline-secondary" id="btnReset"><i class="bx bx-reset me-1"></i>Reset</button>
-            <button class="btn btn-success" id="btnSave"><i class="bx bx-save me-1"></i>Save Variant Set</button>
+            <button class="create-btn-base" id="btnGenerate"><i class="bx bx-grid-alt me-1"></i>Generate Variants</button>
+            <button class="create-btn-white" id="btnReset"><i class="bx bx-reset me-1"></i>Reset</button>
+            <button class="create-btn-success" id="btnSave"><i class="bx bx-save me-1"></i>Save Variant Set</button>
           </div>
         </div>
       </div>
@@ -131,10 +131,10 @@
               <div class="col-md-7">
                 <!-- External Assign Buttons (keep your existing modals/actions) -->
                 <div class="d-flex flex-wrap gap-2">
-                  <button class="btn btn-outline-primary" id="btnAssignCategories">
+                  <button class="select-btn-primary" id="btnAssignCategories">
                     <i class="bx bx-category-alt me-1"></i>Assign Categories
                   </button>
-                  <button class="btn btn-outline-secondary d-none" id="btnAssignSizeChart">
+                  <button class="select-btn-white d-none" id="btnAssignSizeChart">
                     <i class="bx bx-spreadsheet me-1"></i>Assign Size Chart
                   </button>
                 </div>
@@ -146,8 +146,8 @@
                   <li class="opt-note">—</li>
                 </ul>
                 <div class="mt-2">
-                  <span class="badge bg-light text-dark me-1" id="bizBadge" style="display:none"></span>
-                  <span class="badge bg-light text-dark" id="attrSetBadge" style="display:none"></span>
+                  <span class="qbit-badge-light me-1" id="bizBadge" style="display:none"></span>
+                  <span class="qbit-badge-light" id="attrSetBadge" style="display:none"></span>
                 </div>
                 <div class="mt-3 opt-note">
                   Price & Quantity will be managed from Inventory/Purchase; Images from Product Add — hidden here.

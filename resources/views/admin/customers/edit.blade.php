@@ -7,7 +7,7 @@
     <div class="col-12 mb-4">
         <div class="d-flex align-items-center justify-content-between flex-wrap gap-3">
             <h3 class="fw-bold mb-0">Edit Customer</h3>
-            <a href="{{ route('admin.customers.index') }}" class="btn btn-outline-secondary">
+            <a href="{{ route('admin.customers.index') }}" class="select-btn-white">
                 <i class="fas fa-arrow-left me-2"></i>Back to Customers
             </a>
         </div>
@@ -46,7 +46,7 @@
                         <label class="form-label">Address</label>
                         <textarea name="address" class="form-control" rows="3">{{ $customer->address ?? '' }}</textarea>
                     </div>
-                    <button type="submit" class="btn btn-primary">
+                    <button type="submit" class="create-btn-base">
                         <i class="fas fa-save me-2"></i>Update Customer
                     </button>
                 </form>

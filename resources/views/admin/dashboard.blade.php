@@ -161,7 +161,7 @@
             <div class="card-header bg-white d-flex align-items-center justify-content-between">
                 <h5 class="mb-0 fw-bold">Sales Overview</h5>
                 <div class="dropdown">
-                    <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                    <button class="select-btn-white dropdown-toggle" type="button" data-bs-toggle="dropdown">
                         This Year
                     </button>
                     <ul class="dropdown-menu dropdown-menu-end">
@@ -208,7 +208,7 @@
                                     </div>
                                 </td>
                                 <td class="py-3 text-end">
-                                    <span class="badge bg-success bg-opacity-10 text-success">In Stock: {{ $product->stock }}</span>
+                                    <span class="qbit-badge-success"><i class="bx bx-package"></i> In Stock: {{ $product->stock }}</span>
                                 </td>
                             </tr>
                             @empty
@@ -252,13 +252,22 @@
                                 <td>{{ $order->customer_name ?? 'N/A' }}</td>
                                 <td>৳{{ number_format($order->total ?? 0, 2) }}</td>
                                 <td>
-                                    <span class="badge bg-{{ $order->status_color ?? 'secondary' }} bg-opacity-10 text-{{ $order->status_color ?? 'secondary' }}">
-                                        {{ $order->status ?? 'Pending' }}
+                                    @php
+                                        $statusClass = match($order->status ?? 'pending') {
+                                            'completed', 'delivered' => 'success',
+                                            'processing', 'shipped' => 'primary',
+                                            'pending' => 'warning',
+                                            'cancelled', 'refunded' => 'danger',
+                                            default => 'gray'
+                                        };
+                                    @endphp
+                                    <span class="qbit-badge-{{ $statusClass }}">
+                                        {{ ucfirst($order->status ?? 'Pending') }}
                                     </span>
                                 </td>
                                 <td>{{ $order->created_at->format('M d, Y') ?? '-' }}</td>
                                 <td class="text-end pe-3">
-                                    <a href="#" class="btn btn-sm btn-outline-primary">View</a>
+                                    <a href="#" class="action-btn-info">View</a>
                                 </td>
                             </tr>
                             @empty
@@ -280,7 +289,7 @@
         <div class="card border-0 mb-4">
             <div class="card-header bg-white d-flex align-items-center justify-content-between">
                 <h5 class="mb-0 fw-bold">Low Stock Alert</h5>
-                <span class="badge bg-danger">{{ count($lowStockProducts ?? []) }} items</span>
+                <span class="qbit-badge-danger"><i class="bx bx-error"></i> {{ count($lowStockProducts ?? []) }} items</span>
             </div>
             <div class="card-body p-0">
                 <div class="table-responsive">
@@ -306,7 +315,7 @@
                                     </div>
                                 </td>
                                 <td class="py-3 text-end">
-                                    <a href="#" class="btn btn-sm btn-warning">Restock</a>
+                                    <a href="#" class="qbit-badge-orange"><i class="bx bx-plus"></i> Restock</a>
                                 </td>
                             </tr>
                             @empty

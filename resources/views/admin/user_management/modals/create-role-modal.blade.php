@@ -42,13 +42,13 @@
                     </form>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    <button type="button" class="create-btn-white" data-bs-dismiss="modal">
                         <i class="bx bx-x me-1"></i>Cancel
                     </button>
-                    <button type="button" class="btn btn-outline-primary me-2">
+                    <button type="button" class="create-btn-info-alt me-2">
                         <i class="bx bx-reset me-1"></i>Reset Form
                     </button>
-                    <button type="button" class="btn btn-primary" id="createRoleBtn">
+                    <button type="button" class="create-btn-base" id="createRoleBtn">
                         <i class="bx bx-shield-alt-2 me-1"></i>Create Role
                     </button>
                 </div>

@@ -20,7 +20,7 @@
             <div class="panel h-100">
                 <div class="panel-header d-flex justify-content-between align-items-center">
                     <h3 class="panel-title">Manage Brands</h3>
-                    <button class="btn btn-primary" id="btnAddBrand"><i class="bx bx-plus me-1"></i>Add Brand</button>
+                    <button class="create-btn-base" id="btnAddBrand"><i class="bx bx-plus me-1"></i>Add Brand</button>
                 </div>
                 <div class="panel-body scroll-col">
                     <div class="drop-wrap">
@@ -60,7 +60,7 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h6 class="modal-title"><i class="bx bx-buildings me-2"></i><span id="bmTitle">Add Brand</span></h6>
-                    <button type="button" class="btn-icon" data-bs-dismiss="modal"><i class="bx bx-x"></i></button>
+                    <button type="button" class="action-btn-secondary" data-bs-dismiss="modal"><i class="bx bx-x"></i></button>
                 </div>
                 <form id="brandForm">
                     <div class="modal-body">
@@ -111,7 +111,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="modal-footer"><button class="btn btn-primary" type="submit"><i
+                    <div class="modal-footer"><button class="create-btn-base" type="submit"><i
                                 class="bx bx-save me-1"></i>Save</button></div>
                 </form>
             </div>
@@ -192,9 +192,9 @@
                         '<td><div class="form-check form-switch"><input class="form-check-input featureToggle" type="checkbox" ' + (b.featured ? 'checked' : '') + '></div></td>' +
                         '<td><div class="form-check form-switch"><input class="form-check-input activeToggle" type="checkbox" ' + (b.active ? 'checked' : '') + '></div></td>' +
                         '<td class="text-end">' +
-                        '<button class="btn-icon" data-preview title="Preview"><i class="bx bx-show"></i></button> ' +
-                        '<button class="btn-icon" data-edit title="Edit"><i class="bx bx-edit-alt"></i></button> ' +
-                        '<button class="btn-icon" data-del title="Delete"><i class="bx bx-trash"></i></button>' +
+                        '<button class="action-btn-info" data-preview title="Preview"><i class="bx bx-show"></i></button> ' +
+                        '<button class="action-btn-success" data-edit title="Edit"><i class="bx bx-edit-alt"></i></button> ' +
+                        '<button class="action-btn-danger" data-del title="Delete"><i class="bx bx-trash"></i></button>' +
                         '</td></tr>';
                 }
 
@@ -409,9 +409,9 @@
                                             </div>
                                         </td>
                                         <td class="text-end">
-                                            <button onclick="viewBrand(${brand.id})" class="btn-icon" data-preview title="Preview"><i class="bx bx-show"></i></button>
-                                            <button onclick="editBrand(${brand.id})" data-id="${brand.id}" data-edit title="Edit" class="btn-icon"><i class="bx bx-edit-alt"></i></button>
-                                            <button onclick="deleteBrand(${brand.id})" data-id="${brand.id}" data-del title="Delete" class="btn-icon"><i class="bx bx-trash"></i></button>
+                                            <button onclick="viewBrand(${brand.id})" class="action-btn-info" data-preview title="Preview"><i class="bx bx-show"></i></button>
+                                            <button onclick="editBrand(${brand.id})" data-id="${brand.id}" data-edit title="Edit" class="action-btn-success"><i class="bx bx-edit-alt"></i></button>
+                                            <button onclick="deleteBrand(${brand.id})" data-id="${brand.id}" data-del title="Delete" class="action-btn-danger"><i class="bx bx-trash"></i></button>
                                         </td>
                                     </tr>
                                     `);

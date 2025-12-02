@@ -258,7 +258,7 @@ body {
                 <textarea name="message" class="form-control" rows="5" placeholder="How can we help you with your project?"
                     required></textarea>
             </div>
-            <button type="submit" class="btn btn-primary w-100">Send Message</button>
+            <button type="submit" class="create-btn-base w-100">Send Message</button>
         </form>
     </div>
 

@@ -7,7 +7,7 @@
     <div class="col-12 mb-4">
         <div class="d-flex align-items-center justify-content-between flex-wrap gap-3">
             <h3 class="fw-bold mb-0">Vendors</h3>
-            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addVendorModal">
+            <button class="create-btn-base" data-bs-toggle="modal" data-bs-target="#addVendorModal">
                 <span class="material-symbols-outlined fs-14">add</span> Add Vendor
             </button>
         </div>
@@ -81,8 +81,8 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="submit" class="btn btn-primary">Add Vendor</button>
+                    <button type="button" class="create-btn-white" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="create-btn-base">Add Vendor</button>
                 </div>
             </form>
         </div>

@@ -8,10 +8,10 @@
         <div class="d-flex align-items-center justify-content-between flex-wrap gap-3">
             <h3 class="fw-bold mb-0">Stock Management</h3>
             <div class="d-flex gap-2">
-                <button class="btn btn-outline-secondary">
+                <button class="create-btn-white">
                     <span class="material-symbols-outlined fs-14">download</span> Export
                 </button>
-                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#adjustStockModal">
+                <button class="create-btn-base" data-bs-toggle="modal" data-bs-target="#adjustStockModal">
                     <span class="material-symbols-outlined fs-14">tune</span> Adjust Stock
                 </button>
             </div>
@@ -67,15 +67,15 @@
                                 <td>{{ $product->stock ?? 0 }}</td>
                                 <td>
                                     @if(($product->stock ?? 0) > 10)
-                                        <span class="badge bg-success bg-opacity-10 text-success">In Stock</span>
+                                        <span class="qbit-badge-success"><i class="bx bx-check-circle"></i> In Stock</span>
                                     @elseif(($product->stock ?? 0) > 0)
-                                        <span class="badge bg-warning bg-opacity-10 text-warning">Low Stock</span>
+                                        <span class="qbit-badge-warning"><i class="bx bx-error"></i> Low Stock</span>
                                     @else
-                                        <span class="badge bg-danger bg-opacity-10 text-danger">Out of Stock</span>
+                                        <span class="qbit-badge-danger"><i class="bx bx-x-circle"></i> Out of Stock</span>
                                     @endif
                                 </td>
                                 <td class="text-end pe-3">
-                                    <button class="btn btn-sm btn-outline-primary">Adjust</button>
+                                    <button class="action-btn-info">Adjust</button>
                                 </td>
                             </tr>
                             @empty
@@ -132,8 +132,8 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="submit" class="btn btn-primary">Save Changes</button>
+                    <button type="button" class="create-btn-white" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="create-btn-base">Save Changes</button>
                 </div>
             </form>
         </div>

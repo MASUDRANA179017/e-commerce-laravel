@@ -42,11 +42,11 @@
                     </form>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    <button type="button" class="create-btn-white" data-bs-dismiss="modal">
                         <i class="bx bx-x me-1"></i>Cancel
                     </button>
 
-                    <button type="button" class="btn btn-primary" id="assignRoleBtn">
+                    <button type="button" class="create-btn-base" id="assignRoleBtn">
                         <i class="bx bx-user-check me-1"></i>Assign Role(s)
                     </button>
                 </div>

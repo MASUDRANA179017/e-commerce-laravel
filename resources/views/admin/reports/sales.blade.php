@@ -78,8 +78,8 @@
                 <div class="d-flex gap-2">
                     <input type="date" class="form-control form-control-sm">
                     <input type="date" class="form-control form-control-sm">
-                    <button class="btn btn-primary btn-sm">Apply</button>
-                    <button class="btn btn-outline-secondary btn-sm">
+                    <button class="create-btn-base">Apply</button>
+                    <button class="select-btn-info">
                         <span class="material-symbols-outlined fs-14">download</span> Export
                     </button>
                 </div>

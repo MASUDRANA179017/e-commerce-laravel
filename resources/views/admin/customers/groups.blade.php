@@ -21,7 +21,7 @@
         <div class="card border-0">
             <div class="card-header bg-white d-flex align-items-center justify-content-between">
                 <h5 class="mb-0 fw-bold">Group List</h5>
-                <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#addGroupModal">
+                <button class="create-btn-base" data-bs-toggle="modal" data-bs-target="#addGroupModal">
                     <span class="material-symbols-outlined fs-14">add</span> Add Group
                 </button>
             </div>
@@ -41,46 +41,46 @@
                             <tr>
                                 <td class="ps-3">
                                     <div class="d-flex align-items-center gap-2">
-                                        <span class="badge bg-primary">Default</span>
+                                        <span class="qbit-badge-primary"><i class="bx bx-user"></i> Default</span>
                                         <span class="fw-medium">Regular Customers</span>
                                     </div>
                                 </td>
                                 <td>0%</td>
                                 <td>0</td>
-                                <td><span class="badge bg-success bg-opacity-10 text-success">Active</span></td>
+                                <td><span class="qbit-badge-success"><i class="bx bx-check-circle"></i> Active</span></td>
                                 <td class="text-end pe-3">
-                                    <button class="btn btn-sm btn-outline-primary me-1">Edit</button>
-                                    <button class="btn btn-sm btn-outline-danger">Delete</button>
+                                    <button class="action-btn-success me-1" title="Edit"><i class="bx bx-edit"></i></button>
+                                    <button class="action-btn-danger" title="Delete"><i class="bx bx-trash"></i></button>
                                 </td>
                             </tr>
                             <tr>
                                 <td class="ps-3">
                                     <div class="d-flex align-items-center gap-2">
-                                        <span class="badge bg-warning">VIP</span>
+                                        <span class="qbit-badge-orange"><i class="bx bx-crown"></i> VIP</span>
                                         <span class="fw-medium">VIP Customers</span>
                                     </div>
                                 </td>
                                 <td>10%</td>
                                 <td>0</td>
-                                <td><span class="badge bg-success bg-opacity-10 text-success">Active</span></td>
+                                <td><span class="qbit-badge-success"><i class="bx bx-check-circle"></i> Active</span></td>
                                 <td class="text-end pe-3">
-                                    <button class="btn btn-sm btn-outline-primary me-1">Edit</button>
-                                    <button class="btn btn-sm btn-outline-danger">Delete</button>
+                                    <button class="action-btn-success me-1" title="Edit"><i class="bx bx-edit"></i></button>
+                                    <button class="action-btn-danger" title="Delete"><i class="bx bx-trash"></i></button>
                                 </td>
                             </tr>
                             <tr>
                                 <td class="ps-3">
                                     <div class="d-flex align-items-center gap-2">
-                                        <span class="badge bg-info">Wholesale</span>
+                                        <span class="qbit-badge-info"><i class="bx bx-store"></i> Wholesale</span>
                                         <span class="fw-medium">Wholesale Buyers</span>
                                     </div>
                                 </td>
                                 <td>15%</td>
                                 <td>0</td>
-                                <td><span class="badge bg-success bg-opacity-10 text-success">Active</span></td>
+                                <td><span class="qbit-badge-success"><i class="bx bx-check-circle"></i> Active</span></td>
                                 <td class="text-end pe-3">
-                                    <button class="btn btn-sm btn-outline-primary me-1">Edit</button>
-                                    <button class="btn btn-sm btn-outline-danger">Delete</button>
+                                    <button class="action-btn-success me-1" title="Edit"><i class="bx bx-edit"></i></button>
+                                    <button class="action-btn-danger" title="Delete"><i class="bx bx-trash"></i></button>
                                 </td>
                             </tr>
                         </tbody>
