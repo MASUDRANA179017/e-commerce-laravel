@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Models\Admin\Business_SetUp\BusinessSetup;
 use App\Models\User;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\RedirectResponse;
@@ -19,7 +20,8 @@ class RegisteredUserController extends Controller
      */
     public function create(): View
     {
-        return view('auth.register');
+        $business_setup = BusinessSetup::first();
+        return view('auth.register', compact('business_setup'));
     }
 
     /**
@@ -37,7 +39,7 @@ class RegisteredUserController extends Controller
         ]);
 
         $user = User::create([
-            'username' => $request->name,
+            'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
         ]);
