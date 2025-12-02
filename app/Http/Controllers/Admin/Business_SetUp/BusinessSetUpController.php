@@ -161,6 +161,34 @@ class BusinessSetUpController extends Controller
                 $business->update($dataToUpdate);
                 break;
 
+            case 'login_page':
+                $request->validate([
+                    'login_background' => 'nullable|image|mimes:jpg,jpeg,png,svg,gif|max:5120',
+                    'login_image'      => 'nullable|image|mimes:jpg,jpeg,png,svg,gif|max:2048',
+                    'login_title'      => 'nullable|string|max:255',
+                    'login_tagline'    => 'nullable|string|max:500',
+                    'login_subtitle'   => 'nullable|string|max:500',
+                    'login_copyright'  => 'nullable|string|max:255',
+                ]);
+
+                // Handle text fields
+                $dataToUpdate['login_title']     = $request->input('login_title');
+                $dataToUpdate['login_tagline']   = $request->input('login_tagline');
+                $dataToUpdate['login_subtitle']  = $request->input('login_subtitle');
+                $dataToUpdate['login_copyright'] = $request->input('login_copyright');
+
+                // Handle image uploads
+                if ($request->hasFile('login_background')) {
+                    deleteFile($business->login_background);
+                    $dataToUpdate['login_background'] = uploadFile($request->file('login_background'), 'business_setup/login');
+                }
+                if ($request->hasFile('login_image')) {
+                    deleteFile($business->login_image);
+                    $dataToUpdate['login_image'] = uploadFile($request->file('login_image'), 'business_setup/login');
+                }
+                $business->update($dataToUpdate);
+                break;
+
             case 'system_settings':
                 $validated = $request->validate([
                     'system_name'          => 'required|string|max:255',

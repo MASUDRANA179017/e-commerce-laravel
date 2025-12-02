@@ -835,6 +835,91 @@
                         class="btn btn-secondary btn-sm cancel-card-btn me-2">Cancel</button><button type="button"
                         class="btn btn-success btn-sm save-card-btn">Save</button></div>
             </form>
+
+            <form class="panel mt-3 card-form" id="loginPageForm" data-part="login_page" method="PUT"
+                enctype="multipart/form-data">
+                <div class="panel-header d-flex justify-content-between align-items-center">
+                    <h5 class="panel-title mb-0"><i class="bx bx-log-in me-2"></i>Login Page Customization</h5>
+                    <button type="button" class="select-btn-primary edit-card-btn">Edit</button>
+                </div>
+                <div class="panel-body">
+                    <div class="row g-3">
+                        <!-- Login Page Images -->
+                        <div class="col-lg-6 col-sm-6">
+                            <div class="panel setting-card-1">
+                                <div class="panel-header">
+                                    <h5 class="panel-title">Login Background Image</h5>
+                                </div>
+                                <div class="panel-body text-center">
+                                    <img alt="Login Background" style="max-height: 120px; object-fit: cover;"
+                                        src="{{ $business_setup->login_background ? asset('storage/' . $business_setup->login_background) : asset('frontend/assets/images/page-bg.jpg') }}" class="my-3 img-fluid rounded">
+                                    <label class="setting-button-1 w-100"><i class="bx bx-cloud-upload"></i> Choose file
+                                        <input type="file" name="login_background" class="d-none" accept="image/*" disabled>
+                                    </label>
+                                    <small class="text-muted d-block mt-1">Recommended: 1920x1080px</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-6 col-sm-6">
+                            <div class="panel setting-card-1">
+                                <div class="panel-header">
+                                    <h5 class="panel-title">Login Illustration Image</h5>
+                                </div>
+                                <div class="panel-body text-center">
+                                    <img alt="Login Image" style="max-height: 120px; object-fit: cover;"
+                                        src="{{ $business_setup->login_image ? asset('storage/' . $business_setup->login_image) : 'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=400&h=300&fit=crop' }}" class="my-3 img-fluid rounded">
+                                    <label class="setting-button-1 w-100"><i class="bx bx-cloud-upload"></i> Choose file
+                                        <input type="file" name="login_image" class="d-none" accept="image/*" disabled>
+                                    </label>
+                                    <small class="text-muted d-block mt-1">Recommended: 400x300px</small>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Login Page Text Fields -->
+                        <div class="col-lg-6">
+                            <div class="form-group">
+                                <label>Login Page Title</label>
+                                <input type="text" name="login_title" class="form-control"
+                                    value="{{ $business_setup->login_title ?? '' }}"
+                                    placeholder="e.g., QBit BMS - Ecosystem" disabled>
+                                <small class="text-muted">Displayed as the main heading on login page</small>
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="form-group">
+                                <label>Login Page Tagline</label>
+                                <input type="text" name="login_tagline" class="form-control"
+                                    value="{{ $business_setup->login_tagline ?? '' }}"
+                                    placeholder="e.g., An Integrated Ecosystem of 10 Powerful Applications" disabled>
+                                <small class="text-muted">Displayed below the illustration image</small>
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="form-group">
+                                <label>Login Subtitle</label>
+                                <input type="text" name="login_subtitle" class="form-control"
+                                    value="{{ $business_setup->login_subtitle ?? '' }}"
+                                    placeholder="e.g., Unlock Ultimate Efficiency with the Complete Suite." disabled>
+                                <small class="text-muted">Displayed below "Sign In" heading</small>
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="form-group">
+                                <label>Login Copyright Text</label>
+                                <input type="text" name="login_copyright" class="form-control"
+                                    value="{{ $business_setup->login_copyright ?? '' }}"
+                                    placeholder="e.g., Copyright © 2025 - QBit Tech" disabled>
+                                <small class="text-muted">Displayed at the bottom of login page</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="panel-footer text-end d-none">
+                    <button type="button" class="btn btn-secondary btn-sm cancel-card-btn me-2">Cancel</button>
+                    <button type="button" class="btn btn-success btn-sm save-card-btn">Save</button>
+                </div>
+            </form>
             <div class="panel mt-3">
                 <div class="panel-header">
                     <h5 class="panel-title mb-0"><i class="bx bx-folder-open me-2"></i>Official Documents</h5>

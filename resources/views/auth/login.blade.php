@@ -205,25 +205,25 @@
         
         <div class="branding-section">
             <div class="mx-auto text-center">
-                <img src="{{ asset('frontend/assets/images/logo.png') }}" class="img-fluid" width="200px" alt="Logo">
+                <img src="{{ $business_setup->logo ? asset('storage/' . $business_setup->logo) : asset('frontend/assets/images/logo.png') }}" class="img-fluid" width="200px" alt="{{ $business_setup->company_name ?? 'Logo' }}">
             </div>
-            <h4 class="text-white text-center">QBit BMS - Ecosystem</h4>
+            <h4 class="text-white text-center">{{ $business_setup->login_title ?? ($business_setup->system_name ?? 'QBit BMS - Ecosystem') }}</h4>
             <div class="authen-overlay-img mx-auto text-center mb-3">
-                <img src="https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=400&h=300&fit=crop" style="width: 80%; border-radius: 15px;" alt="Shopping Illustration">
+                <img src="{{ $business_setup->login_image ? asset('storage/' . $business_setup->login_image) : 'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=400&h=300&fit=crop' }}" style="width: 80%; border-radius: 15px;" alt="{{ $business_setup->company_name ?? 'Illustration' }}">
             </div>
             <div class="text-center mx-auto mt-4">
-                <p class="text-white fs-15 mb-1">An Integrated Ecosystem of 10 Powerful Applications</p>
-                <p class="mb-0 text-white fs-13">Copyright © 2025 - QBit Tech</p>
+                <p class="text-white fs-15 mb-1">{{ $business_setup->login_tagline ?? 'An Integrated Ecosystem of 10 Powerful Applications' }}</p>
+                <p class="mb-0 text-white fs-13">{{ $business_setup->login_copyright ?? ('Copyright © ' . date('Y') . ' - ' . ($business_setup->company_name ?? 'QBit Tech')) }}</p>
             </div>
         </div>
         
         <div class="login-section">
             <div class="mx-auto text-center mb-4">
-                <img src="{{ asset('frontend/assets/images/logo.png') }}" class="img-fluid" width="150px" alt="Logo">
+                <img src="{{ $business_setup->logo ? asset('storage/' . $business_setup->logo) : asset('frontend/assets/images/logo.png') }}" class="img-fluid" width="150px" alt="{{ $business_setup->company_name ?? 'Logo' }}">
             </div>
             <div class="text-center">
                 <h2 class="fs-30 mb-2 qb-card-header-title-md">Sign In</h2>
-                <p class="mb-4">Unlock Ultimate Efficiency with the Complete Suite.</p>
+                <p class="mb-4">{{ $business_setup->login_subtitle ?? 'Unlock Ultimate Efficiency with the Complete Suite.' }}</p>
             </div>
             
             <form action="{{ route('login') }}" method="POST">
@@ -285,7 +285,7 @@
                                 </div>
                             </div>
                         </div>
-                        <img src="{{ asset('frontend/assets/images/logo.png') }}" class="img-fluid" width="100px" alt="Logo">
+                        <img src="{{ $business_setup->logo ? asset('storage/' . $business_setup->logo) : asset('frontend/assets/images/logo.png') }}" class="img-fluid" width="100px" alt="{{ $business_setup->company_name ?? 'Logo' }}">
                     </div>
                     <div class="text-center mb-4">
                         <h2 class="fs-24 mb-2 qb-card-header-title-md">Account Recovery</h2>
@@ -478,7 +478,7 @@
                                 </div>
                             </div>
                         </div>
-                        <img src="{{ asset('frontend/assets/images/logo.png') }}" class="img-fluid" width="80px" alt="Logo">
+                        <img src="{{ $business_setup->logo ? asset('storage/' . $business_setup->logo) : asset('frontend/assets/images/logo.png') }}" class="img-fluid" width="80px" alt="{{ $business_setup->company_name ?? 'Logo' }}">
                     </div>
                     <div class="text-center mb-4">
                         <h2 class="fs-24 mb-2 qb-card-header-title-md">Create New Password</h2>

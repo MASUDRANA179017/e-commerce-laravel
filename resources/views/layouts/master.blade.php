@@ -307,14 +307,15 @@
                                         <div class="d-xxl-flex align-items-center cursor dropdown-toggle"
                                             data-bs-toggle="dropdown">
                                             <div class="flex-shrink-0">
-                                                <img class=" administrator" src="assets/images/user-161.png"
-                                                    alt="admin">
+                                                <img class="administrator rounded-circle" style="width: 40px; height: 40px; object-fit: cover;" 
+                                                    src="{{ Auth::user()->image ? asset('storage/' . Auth::user()->image) : asset('assets/images/user-161.png') }}"
+                                                    alt="{{ Auth::user()->name }}">
                                             </div>
                                             <div class="flex-grow-1 ms-2">
                                                 <div class="d-flex align-items-center justify-content-between">
                                                     <div class="d-none d-xxl-block">
                                                         <div class="d-flex align-content-center">
-                                                            <h3 class="fs-14 fw-500 ">Asaduzzaman Khan</h3>
+                                                            <h3 class="fs-14 fw-500 ">{{ Auth::user()->name }}</h3>
                                                         </div>
                                                     </div>
                                                     <i class="material-symbols-outlined me-2" data-bs-toggle="tooltip"
@@ -327,39 +328,40 @@
                                         <div class="dropdown-menu border-0 bg-white dropdown-menu-end">
                                             <div class="d-flex align-items-center info">
                                                 <div class="flex-shrink-0">
-                                                    <img class="rounded-circle wh-30 administrator"
-                                                        src="assets/images/administrator.jpg" alt="admin">
+                                                    <img class="rounded-circle wh-30 administrator" style="width: 40px; height: 40px; object-fit: cover;"
+                                                        src="{{ Auth::user()->image ? asset('storage/' . Auth::user()->image) : asset('assets/images/administrator.jpg') }}" 
+                                                        alt="{{ Auth::user()->name }}">
                                                 </div>
                                                 <div class="flex-grow-1 ms-2">
-                                                    <h3 class="fw-medium">Olivia John</h3>
-                                                    <span class="fs-12">Marketing Manager</span>
+                                                    <h3 class="fw-medium">{{ Auth::user()->name }}</h3>
+                                                    <span class="fs-12">{{ Auth::user()->designationname->name ?? (Auth::user()->getRoleNames()->first() ?? 'User') }}</span>
                                                 </div>
                                             </div>
                                             <ul class="admin-link ps-0 mb-0 list-unstyled">
                                                 <li>
                                                     <a class="dropdown-item admin-item-link d-flex align-items-center text-body"
-                                                        href="my-profile.html">
+                                                        href="{{ route('admin.user-profile.index') }}">
                                                         <i class="material-symbols-outlined">account_circle</i>
                                                         <span class="ms-2">My Profile</span>
                                                     </a>
                                                 </li>
                                                 <li>
                                                     <a class="dropdown-item admin-item-link d-flex align-items-center text-body"
-                                                        href="chat.html">
+                                                        href="{{ route('dashboard') }}">
                                                         <i class="material-symbols-outlined">chat</i>
                                                         <span class="ms-2">Messages</span>
                                                     </a>
                                                 </li>
                                                 <li>
                                                     <a class="dropdown-item admin-item-link d-flex align-items-center text-body"
-                                                        href="to-do-list.html">
+                                                        href="{{ route('dashboard') }}">
                                                         <i class="material-symbols-outlined">format_list_bulleted </i>
                                                         <span class="ms-2">My Task</span>
                                                     </a>
                                                 </li>
                                                 <li>
                                                     <a class="dropdown-item admin-item-link d-flex align-items-center text-body"
-                                                        href="checkout.html">
+                                                        href="{{ route('dashboard') }}">
                                                         <i class="material-symbols-outlined">credit_card </i>
                                                         <span class="ms-2">Billing</span>
                                                     </a>
@@ -368,31 +370,33 @@
                                             <ul class="admin-link ps-0 mb-0 list-unstyled">
                                                 <li>
                                                     <a class="dropdown-item admin-item-link d-flex align-items-center text-body"
-                                                        href="settings.html">
+                                                        href="{{ route('admin.users.business-setup.index') }}">
                                                         <i class="material-symbols-outlined">settings </i>
                                                         <span class="ms-2">Settings</span>
                                                     </a>
                                                 </li>
                                                 <li>
                                                     <a class="dropdown-item admin-item-link d-flex align-items-center text-body"
-                                                        href="tickets.html">
+                                                        href="{{ route('dashboard') }}">
                                                         <i class="material-symbols-outlined">support</i>
                                                         <span class="ms-2">Support</span>
                                                     </a>
                                                 </li>
                                                 <li>
                                                     <a class="dropdown-item admin-item-link d-flex align-items-center text-body"
-                                                        href="lock-screen.html">
+                                                        href="{{ route('login') }}">
                                                         <i class="material-symbols-outlined">lock</i>
                                                         <span class="ms-2">Lock Screen</span>
                                                     </a>
                                                 </li>
                                                 <li>
-                                                    <a class="dropdown-item admin-item-link d-flex align-items-center text-body"
-                                                        href="login.html">
-                                                        <i class="material-symbols-outlined">logout</i>
-                                                        <span class="ms-2">Logout</span>
-                                                    </a>
+                                                    <form method="POST" action="{{ route('logout') }}" class="m-0" id="logout-form">
+                                                        @csrf
+                                                        <button type="submit" class="dropdown-item admin-item-link d-flex align-items-center text-body border-0 bg-transparent w-100 text-start" style="cursor: pointer;">
+                                                            <i class="material-symbols-outlined">logout</i>
+                                                            <span class="ms-2">Logout</span>
+                                                        </button>
+                                                    </form>
                                                 </li>
                                             </ul>
                                         </div>
