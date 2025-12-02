@@ -26,23 +26,46 @@ class UserProfileController extends Controller
     public function getUserDetails(Request $request)
     {
         $userId = Auth::id();
-        $user = User::with('departmentname', 'designationname')->findOrFail($userId);
+        $user = User::findOrFail($userId);
+
+        // Safely get department and designation if relationships exist
+        $department = 'N/A';
+        $designation = 'N/A';
+        
+        if (method_exists($user, 'departmentname') && $user->departmentname) {
+            $department = $user->departmentname->name ?? 'N/A';
+        }
+        
+        if (method_exists($user, 'designationname') && $user->designationname) {
+            $designation = $user->designationname->title ?? 'N/A';
+        }
+
+        // Safely get social info if relationship exists
+        $socialInfo = null;
+        if (method_exists($user, 'socialInfo')) {
+            $socialInfo = $user->socialInfo;
+        }
+
+        // Safely get recovery info if relationship exists
+        $recovery = null;
+        if (method_exists($user, 'recovery')) {
+            $recovery = $user->recovery;
+        }
 
         return response()->json([
             'full_name' => $user->name,
-            'department' => $user->departmentname->name ?? 'N/A',
-            'designation' => $user->designationname->title ?? 'N/A',
+            'department' => $department,
+            'designation' => $designation,
             'email' => $user->email,
-            'phone' => $user->phone,
-            'whatsapp' => $user->socialInfo->whatsapp,
-            // 'username' => $user->username,
-            'recovery_email' => $user->recovery->recovery_email,
-            'recovery_phone' => $user->recovery->recovery_phone,
-            'facebook' => $user->socialInfo->facebook,
-            'linkedin' => $user->socialInfo->linkedin,
-            'github' => $user->socialInfo->github,
-            'portfolio' => $user->socialInfo->portfolio,
-            'image' => $user->image,
+            'phone' => $user->phone ?? '',
+            'whatsapp' => $socialInfo->whatsapp ?? '',
+            'recovery_email' => $recovery->recovery_email ?? '',
+            'recovery_phone' => $recovery->recovery_phone ?? '',
+            'facebook' => $socialInfo->facebook ?? '',
+            'linkedin' => $socialInfo->linkedin ?? '',
+            'github' => $socialInfo->github ?? '',
+            'portfolio' => $socialInfo->portfolio ?? '',
+            'image' => $user->image ?? '',
             'enlisted_on' => $user->created_at->format('Y-m-d'),
         ]);
     }

@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>QBit BMS - Ecosystem</title>
+    <title>{{ $business_setup->login_title ?? ($business_setup->system_name ?? 'QBit BMS') }} - Login</title>
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="icon" type="image/png" href="{{ asset('assets/images/QBit-Tech_Fevicon.png') }}">
+    <link rel="icon" type="image/png" href="{{ $business_setup->favicon ? asset('storage/' . $business_setup->favicon) : asset('frontend/assets/images/logo.png') }}">
 
     <style>
         :root {
@@ -32,7 +32,7 @@
             justify-content: center;
             position: relative;
             overflow: hidden;
-            background: url("{{ asset('assets/images/main-bg.jpg') }}") no-repeat center center;
+            background: url("{{ $business_setup->login_background ? asset('storage/' . $business_setup->login_background) : asset('frontend/assets/images/page-bg.jpg') }}") no-repeat center center;
 
             background-size: cover;
             background-attachment: fixed;
@@ -205,11 +205,11 @@
         
         <div class="branding-section">
             <div class="mx-auto text-center">
-                <img src="{{ asset('assets/images/QBit-BMS_Logo-2.png') }}" class="img-fluid" width="200px" alt="Logo">
+                <img src="{{ asset('frontend/assets/images/logo.png') }}" class="img-fluid" width="200px" alt="Logo">
             </div>
             <h4 class="text-white text-center">QBit BMS - Ecosystem</h4>
             <div class="authen-overlay-img mx-auto text-center mb-3">
-                <img src="{{ asset('assets/images/HR-login.png') }}" style="width: 80%;" alt="Img">
+                <img src="https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=400&h=300&fit=crop" style="width: 80%; border-radius: 15px;" alt="Shopping Illustration">
             </div>
             <div class="text-center mx-auto mt-4">
                 <p class="text-white fs-15 mb-1">An Integrated Ecosystem of 10 Powerful Applications</p>
@@ -219,7 +219,7 @@
         
         <div class="login-section">
             <div class="mx-auto text-center mb-4">
-                <img src="{{ asset('assets/images/QBit-BMS_Logo-2.png') }}" class="img-fluid" width="150px" alt="Logo">
+                <img src="{{ asset('frontend/assets/images/logo.png') }}" class="img-fluid" width="150px" alt="Logo">
             </div>
             <div class="text-center">
                 <h2 class="fs-30 mb-2 qb-card-header-title-md">Sign In</h2>
@@ -285,7 +285,7 @@
                                 </div>
                             </div>
                         </div>
-                        <img src="{{ asset('assets/images/QBit-BMS_Logo-2.png') }}" class="img-fluid" width="100px" alt="Logo">
+                        <img src="{{ asset('frontend/assets/images/logo.png') }}" class="img-fluid" width="100px" alt="Logo">
                     </div>
                     <div class="text-center mb-4">
                         <h2 class="fs-24 mb-2 qb-card-header-title-md">Account Recovery</h2>
@@ -478,7 +478,7 @@
                                 </div>
                             </div>
                         </div>
-                        <img src="{{ asset('assets/img/QBit-Tech_new_Logo-Design.png') }}" class="img-fluid" width="80px" alt="Logo">
+                        <img src="{{ asset('frontend/assets/images/logo.png') }}" class="img-fluid" width="80px" alt="Logo">
                     </div>
                     <div class="text-center mb-4">
                         <h2 class="fs-24 mb-2 qb-card-header-title-md">Create New Password</h2>
