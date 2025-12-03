@@ -23,6 +23,12 @@ return Application::configure(basePath: dirname(__DIR__))
             'permission' => PermissionMiddleware::class,
             'role_or_permission' => RoleOrPermissionMiddleware::class,
         ]);
+        
+        // Exclude cart and wishlist routes from CSRF verification for AJAX
+        $middleware->validateCsrfTokens(except: [
+            'cart/*',
+            'wishlist/*',
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //

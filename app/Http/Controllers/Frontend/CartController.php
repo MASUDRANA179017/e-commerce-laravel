@@ -35,10 +35,11 @@ class CartController extends Controller
      */
     public function add(Request $request)
     {
-        $request->validate([
-            'product_id' => 'required|exists:products,id',
-            'quantity' => 'sometimes|integer|min:1',
-        ]);
+        try {
+            $request->validate([
+                'product_id' => 'required|exists:products,id',
+                'quantity' => 'sometimes|integer|min:1',
+            ]);
 
         // Get product with image
         $product = DB::table('products')
@@ -99,6 +100,24 @@ class CartController extends Controller
         }
 
         return back()->with('success', 'Product added to cart!');
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            if ($request->ajax() || $request->expectsJson()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => $e->errors()['product_id'][0] ?? 'Validation failed',
+                ], 422);
+            }
+            throw $e;
+        } catch (\Exception $e) {
+            if ($request->ajax() || $request->expectsJson()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Something went wrong. Please try again.',
+                    'error' => config('app.debug') ? $e->getMessage() : null,
+                ], 500);
+            }
+            throw $e;
+        }
     }
 
     /**
