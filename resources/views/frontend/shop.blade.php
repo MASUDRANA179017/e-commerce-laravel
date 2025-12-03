@@ -9,7 +9,7 @@
         <div class="swiper-wrapper">
             <div class="swiper-slide">
                 <div class="banner-two__slider-single">
-                    <div class="banner-two__slider-bg" data-background="{{ asset('frontend/assets/images/product-banner-1.jpg') }}"></div>
+                    <div class="banner-two__slider-bg" data-background="{{ asset('frontend/assets/images/web-banner-4.png') }}"></div>
                     <div class="container">
                         <div class="row">
                             <div class="col-12 col-lg-10 m-auto">

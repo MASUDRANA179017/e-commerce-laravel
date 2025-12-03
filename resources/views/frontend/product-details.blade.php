@@ -10,6 +10,9 @@
     }
     $mainImage = $productImages->first();
     
+    // Fallback dummy image
+    $dummyImage = asset('frontend/assets/images/shop/KHPP-SA21 - 1.png');
+    
     // Get price
     $price = $product->price ?? 0;
     $salePrice = $product->sale_price ?? null;
@@ -63,9 +66,9 @@
                                  class="img-fluid w-100" 
                                  id="mainProductImage" 
                                  style="max-height: 500px; object-fit: contain;"
-                                 onerror="this.src='https://via.placeholder.com/500x500?text=No+Image'">
+                                 onerror="this.onerror=null; this.src='{{ $dummyImage }}';">
                         @else
-                            <img src="https://via.placeholder.com/500x500?text=No+Image" 
+                            <img src="{{ $dummyImage }}" 
                                  alt="{{ $product->title }}" 
                                  class="img-fluid w-100" 
                                  id="mainProductImage" 
@@ -104,7 +107,7 @@
                                  class="img-fluid w-100 h-100" 
                                  style="object-fit: cover;" 
                                  onclick="changeMainImage(this, '{{ asset('storage/' . ($image->path ?? $image->image)) }}')"
-                                 onerror="this.src='https://via.placeholder.com/80?text=No+Image'">
+                                 onerror="this.onerror=null; this.src='{{ $dummyImage }}'">
                         </div>
                         @endforeach
                     </div>

@@ -1,4 +1,7 @@
 @php
+    // Fallback dummy image
+    $dummyImage = asset('frontend/assets/images/shop/KHPP-SA21 - 1.png');
+    
     // Get product image
     $productImage = null;
     if (isset($product->cover_image) && $product->cover_image) {
@@ -49,9 +52,9 @@
                     <img src="{{ asset('storage/' . $productImage) }}" 
                          alt="{{ $product->title ?? 'Product' }}"
                          loading="lazy"
-                         onerror="this.src='https://via.placeholder.com/400x400/f8f9fa/6c757d?text=No+Image'">
+                         onerror="this.onerror=null; this.src='{{ $dummyImage }}';">
                 @else
-                    <img src="https://via.placeholder.com/400x400/f8f9fa/6c757d?text=No+Image" 
+                    <img src="{{ $dummyImage }}" 
                          alt="{{ $product->title ?? 'Product' }}">
                 @endif
             </a>

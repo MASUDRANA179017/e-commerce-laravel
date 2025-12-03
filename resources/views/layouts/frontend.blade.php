@@ -296,6 +296,147 @@
             background: var(--primary-color);
             color: #fff;
         }
+        
+        /* Text & Typography Styles */
+        a {
+            text-decoration: none !important;
+        }
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Outfit', sans-serif;
+            font-weight: 600;
+            color: #333;
+            line-height: 1.3;
+        }
+        p {
+            font-family: 'Nunito', sans-serif;
+            font-size: 15px;
+            line-height: 1.7;
+            color: #666;
+            text-align: left;
+        }
+        .text-white p {
+            color: rgba(255,255,255,0.8);
+        }
+        
+        /* Navbar link styles */
+        .navbar__list li a {
+            text-decoration: none;
+            color: #333;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+        .navbar__list li a:hover {
+            color: var(--primary-color);
+        }
+        
+        /* Footer text styles */
+        .footer-two__widget p,
+        .footer-two__widget a {
+            color: rgba(255,255,255,0.7);
+            text-decoration: none;
+            font-size: 14px;
+            line-height: 1.8;
+        }
+        .footer-two__widget a:hover {
+            color: var(--primary-color);
+        }
+        .footer-two__widget h5 {
+            color: #fff;
+            font-size: 18px;
+            margin-bottom: 20px;
+        }
+        .footer-two__widget ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        .footer-two__widget ul li {
+            margin-bottom: 10px;
+        }
+        
+        /* Topbar text */
+        .topbar a {
+            color: rgba(255,255,255,0.8);
+            text-decoration: none;
+            font-size: 13px;
+        }
+        .topbar a:hover {
+            color: #fff;
+        }
+        
+        /* Section titles */
+        .section-eight-wrapper h2,
+        .section-six-wrapper h2 {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 15px;
+        }
+        .section-eight-wrapper h6,
+        .section-six-wrapper h6 {
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--primary-color);
+            margin-bottom: 10px;
+        }
+        
+        /* FAQ accordion text */
+        .faq-eight-accordion-button {
+            font-size: 16px;
+            font-weight: 600;
+            color: #333;
+            text-decoration: none;
+        }
+        .faq-eight-accordion-body p {
+            font-size: 14px;
+            color: #666;
+        }
+        
+        /* Testimonial text */
+        .testimonial-six-paragraph {
+            font-size: 16px;
+            line-height: 1.8;
+            color: #555;
+            font-style: italic;
+        }
+        
+        /* Product card text */
+        .property-single-content h4 a {
+            text-decoration: none;
+        }
+        .property-single-content p {
+            margin-bottom: 0;
+            font-size: 13px;
+        }
+        .property-details li {
+            font-size: 14px;
+        }
+        
+        /* Banner text */
+        .banner-two__slider-content h1 {
+            font-size: 42px;
+            font-weight: 700;
+            line-height: 1.2;
+            margin-bottom: 15px;
+        }
+        .banner-two__slider-content p {
+            font-size: 16px;
+            opacity: 0.9;
+            margin-bottom: 25px;
+        }
+        
+        /* Category card text */
+        .ministrie-eight-title a {
+            color: #fff;
+            text-decoration: none;
+            font-size: 20px;
+            font-weight: 600;
+        }
+        .ministrie-eight-paragraph {
+            font-size: 14px;
+            color: rgba(255,255,255,0.8);
+            line-height: 1.6;
+        }
     </style>
     
     @stack('styles')
@@ -397,18 +538,18 @@
                                     </div>
                                     <!-- Cart & Wishlist -->
                                     <div class="contact-btn d-flex align-items-center gap-3">
-                                        <a href="{{ route('wishlist.index') }}" class="position-relative text-dark" title="Wishlist">
+                                        <a href="{{ route('wishlist.index') }}" class="position-relative text-dark" title="Wishlist" style="text-decoration: none;">
                                             <i class='bx bx-heart fs-4'></i>
                                             @php $wishlistCount = count(session('wishlist', [])); @endphp
                                             @if($wishlistCount > 0)
                                                 <span class="cart-count">{{ $wishlistCount }}</span>
                                             @endif
                                         </a>
-                                        <a href="{{ route('cart.index') }}" class="open-cart position-relative text-dark" title="Cart">
+                                        <button type="button" class="open-cart position-relative text-dark border-0 bg-transparent" title="Cart" style="text-decoration: none; cursor: pointer;" onclick="openSidebarCart()">
                                             <i class='bx bx-cart fs-4'></i>
                                             @php $cartCount = array_sum(array_column(session('cart', []), 'qty')); @endphp
                                             <span class="cart-count">{{ $cartCount }}</span>
-                                        </a>
+                                        </button>
                                     </div>
                                     <!-- Mobile toggle -->
                                     <button class="open-offcanvas-nav d-flex d-xl-none" aria-label="toggle mobile menu" title="Open menu">
@@ -467,7 +608,6 @@
         
         <!-- ========== SIDEBAR CART ========== -->
         @include('frontend.partials.sidebar-cart')
-        <div class="cart-backdrop"></div>
         
         <!-- Main Content -->
         <main>
@@ -666,6 +806,28 @@
     <script src="{{ asset('frontend/js/owlcarousel.min.js') }}"></script>
     <script src="{{ asset('frontend/js/slick-slider.js') }}"></script>
     <script src="{{ asset('frontend/js/swiper-slider.js') }}"></script>
+    
+    <!-- Polyfill for missing plugins and elements -->
+    <script>
+        // MetisMenu polyfill - prevents error if plugin not loaded
+        if (typeof jQuery !== 'undefined' && !jQuery.fn.metisMenu) {
+            jQuery.fn.metisMenu = function() { return this; };
+        }
+        
+        // Create dummy elements for countdown to prevent errors
+        (function() {
+            var countdownIds = ['days', 'hours', 'minutes', 'seconds', 'headline', 'countdown', 'content'];
+            countdownIds.forEach(function(id) {
+                if (!document.getElementById(id)) {
+                    var dummy = document.createElement('div');
+                    dummy.id = id;
+                    dummy.style.display = 'none';
+                    document.body.appendChild(dummy);
+                }
+            });
+        })();
+    </script>
+    
     <script src="{{ asset('frontend/js/main.js') }}"></script>
     <script src="{{ asset('frontend/js/custom.js') }}"></script>
     
@@ -698,11 +860,14 @@
             e.stopPropagation();
             
             const productId = btn.dataset.productId || btn.dataset.id;
-            if (!productId) return;
+            if (!productId) {
+                console.error('No product ID found');
+                return;
+            }
             
             btn.disabled = true;
             const originalHtml = btn.innerHTML;
-            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Adding...';
             
             fetch('/cart/add', {
                 method: 'POST',
@@ -719,10 +884,18 @@
                 btn.innerHTML = originalHtml;
                 
                 if (data.success) {
+                    // Update cart count in header
                     document.querySelectorAll('.cart-count').forEach(el => {
                         el.textContent = data.cartCount;
                     });
                     showToast('success', data.message || 'Product added to cart!');
+                    
+                    // Open cart sidebar after a brief delay
+                    setTimeout(function() {
+                        if (typeof openSidebarCart === 'function') {
+                            openSidebarCart();
+                        }
+                    }, 300);
                 } else {
                     showToast('error', data.message || 'Failed to add product to cart');
                 }
@@ -786,22 +959,6 @@
             });
         });
         
-        // Sidebar Cart Toggle
-        document.querySelector('.open-cart')?.addEventListener('click', function(e) {
-            e.preventDefault();
-            document.querySelector('.sidebar-cart')?.classList.add('active');
-            document.querySelector('.cart-backdrop')?.classList.add('active');
-        });
-        
-        document.querySelector('.close-cart')?.addEventListener('click', function() {
-            document.querySelector('.sidebar-cart')?.classList.remove('active');
-            document.querySelector('.cart-backdrop')?.classList.remove('active');
-        });
-        
-        document.querySelector('.cart-backdrop')?.addEventListener('click', function() {
-            document.querySelector('.sidebar-cart')?.classList.remove('active');
-            this.classList.remove('active');
-        });
     </script>
     
     @stack('scripts')

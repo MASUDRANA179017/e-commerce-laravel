@@ -1,19 +1,22 @@
 @php
-    // Get product image
-    $productImage = null;
-    if (isset($product->cover_image) && $product->cover_image) {
-        $productImage = $product->cover_image;
-    } elseif ($product->images && $product->images->count() > 0) {
-        $img = $product->images->where('is_cover', true)->first() ?? $product->images->first();
-        $productImage = $img->path ?? $img->image ?? null;
-    } elseif (isset($product->coverImage) && $product->coverImage) {
-        $productImage = $product->coverImage->path ?? $product->coverImage->image ?? null;
-    }
+    // Get product image path
+    $productImagePath = null;
     
-    // Get additional images for carousel
-    $additionalImages = collect();
-    if ($product->images && $product->images->count() > 1) {
-        $additionalImages = $product->images->take(3);
+    // Try coverImage relationship first
+    if ($product->coverImage && $product->coverImage->path) {
+        $productImagePath = $product->coverImage->path;
+    }
+    // Try images collection
+    elseif ($product->images && $product->images->count() > 0) {
+        $coverImg = $product->images->where('is_cover', true)->first();
+        if ($coverImg && $coverImg->path) {
+            $productImagePath = $coverImg->path;
+        } else {
+            $firstImg = $product->images->first();
+            if ($firstImg && $firstImg->path) {
+                $productImagePath = $firstImg->path;
+            }
+        }
     }
 
     // Get price
@@ -30,35 +33,30 @@
     $categoryName = 'Uncategorized';
     if ($product->categories && $product->categories->count() > 0) {
         $categoryName = $product->categories->first()->name ?? 'Uncategorized';
-    } elseif (isset($product->category_name)) {
-        $categoryName = $product->category_name;
     }
 
     // Check if new (within 30 days)
     $isNew = $product->created_at && $product->created_at->diffInDays(now()) < 30;
     
-    // Dummy images array for fallback
-    $dummyImages = [
-        'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=400&h=400&fit=crop',
-        'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=400&h=400&fit=crop',
-        'https://images.unsplash.com/photo-1572635196237-14b3f281503f?w=400&h=400&fit=crop',
-        'https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?w=400&h=400&fit=crop',
-        'https://images.unsplash.com/photo-1560343090-f0409e92791a?w=400&h=400&fit=crop',
-    ];
-    $randomDummyImage = $dummyImages[array_rand($dummyImages)];
+    // Dummy images for fallback
+    $dummyImageList = ['KHPP-SA21 - 1.png', 'KHPP-SA22 - 1.png', 'KHPP-SA23 - 1.png', 'KHPP-SA24 - 1.png'];
+    $dummyImage = 'frontend/assets/images/shop/' . $dummyImageList[array_rand($dummyImageList)];
 @endphp
 
 <div class="col-lg-3 col-md-4 col-sm-6">
     <div class="property-single-boxarea p-0" data-aos="fade-up" data-aos-duration="1000">
-        <div class="property-list-img-area position-relative">
-            <a href="{{ route('product.show', $product->slug ?? $product->id) }}">
-                <div class="img1 image-anime">
-                    @if($productImage)
-                        <img src="{{ asset('storage/' . $productImage) }}" 
+        <div class="property-list-img-area position-relative" style="aspect-ratio: 1; background: #f8f9fa;">
+            <a href="{{ route('product.show', $product->slug ?? $product->id) }}" class="d-block h-100">
+                <div class="img1 h-100" style="overflow: hidden;">
+                    @if($productImagePath)
+                        <img src="{{ asset('storage/' . $productImagePath) }}" 
                              alt="{{ $product->title ?? 'Product' }}"
-                             onerror="this.src='{{ $randomDummyImage }}'">
+                             style="width: 100%; height: 100%; object-fit: cover;"
+                             onerror="this.onerror=null; this.src='{{ asset($dummyImage) }}';">
                     @else
-                        <img src="{{ $randomDummyImage }}" alt="{{ $product->title ?? 'Product' }}">
+                        <img src="{{ asset($dummyImage) }}" 
+                             alt="{{ $product->title ?? 'Product' }}"
+                             style="width: 100%; height: 100%; object-fit: cover;">
                     @endif
                 </div>
             </a>

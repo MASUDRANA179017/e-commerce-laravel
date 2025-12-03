@@ -176,34 +176,38 @@
                         
                         <!-- Order Totals -->
                         <div class="order-totals">
-                            <div class="d-flex justify-content-between mb-2">
-                                <span class="text-muted">Subtotal</span>
-                                <span>৳{{ number_format($subtotal ?? 0, 2) }}</span>
+                            <div class="d-flex justify-content-between mb-3">
+                                <span class="text-muted" style="font-size: 16px;">Subtotal</span>
+                                <span style="font-size: 16px; font-weight: 600;">৳{{ number_format($subtotal ?? 0, 2) }}</span>
                             </div>
                             @if(($discount ?? 0) > 0)
-                            <div class="d-flex justify-content-between mb-2 text-success">
-                                <span>Discount</span>
-                                <span>-৳{{ number_format($discount, 2) }}</span>
+                            <div class="d-flex justify-content-between mb-3 text-success">
+                                <span style="font-size: 16px;">Discount</span>
+                                <span style="font-size: 16px; font-weight: 600;">-৳{{ number_format($discount, 2) }}</span>
                             </div>
                             @endif
-                            <div class="d-flex justify-content-between mb-2">
-                                <span class="text-muted">Shipping</span>
-                                <span>{{ ($shipping ?? 0) > 0 ? '৳' . number_format($shipping, 2) : 'Free' }}</span>
+                            <div class="d-flex justify-content-between mb-3">
+                                <span class="text-muted" style="font-size: 16px;">Shipping</span>
+                                <span style="font-size: 16px; font-weight: 600;">{{ ($shipping ?? 0) > 0 ? '৳' . number_format($shipping, 2) : 'Free' }}</span>
                             </div>
                             <hr>
-                            <div class="d-flex justify-content-between mb-4">
-                                <span class="fw-bold fs-5">Total</span>
-                                <span class="fw-bold fs-4 text-primary">৳{{ number_format($total ?? 0, 2) }}</span>
+                            <div class="d-flex justify-content-between mb-4 pt-2">
+                                <span style="font-size: 20px; font-weight: 700; color: #1a1a2e;">Total</span>
+                                <span style="font-size: 24px; font-weight: 700; color: #0496ff;">৳{{ number_format($total ?? 0, 2) }}</span>
                             </div>
                         </div>
                         
                         <!-- Terms Agreement -->
-                        <div class="form-check mb-4">
-                            <input class="form-check-input @error('terms') is-invalid @enderror" type="checkbox" id="terms" name="terms" required>
-                            <label class="form-check-label" for="terms">
-                                I have read and agree to the <a href="#" target="_blank">Terms & Conditions</a> and <a href="#" target="_blank">Privacy Policy</a>
+                        <div class="mb-4">
+                            <label class="d-flex align-items-start gap-3 cursor-pointer" style="cursor: pointer;">
+                                <input type="checkbox" id="terms" name="terms" required 
+                                       style="width: 20px; height: 20px; min-width: 20px; margin-top: 2px; accent-color: #0496ff; cursor: pointer;"
+                                       class="@error('terms') is-invalid @enderror">
+                                <span class="text-muted" style="line-height: 1.5;">
+                                    I have read and agree to the <a href="#" target="_blank" class="text-primary">Terms & Conditions</a> and <a href="#" target="_blank" class="text-primary">Privacy Policy</a>
+                                </span>
                             </label>
-                            @error('terms')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                            @error('terms')<div class="text-danger small mt-1">{{ $message }}</div>@enderror
                         </div>
                         
                         <!-- Place Order Button -->

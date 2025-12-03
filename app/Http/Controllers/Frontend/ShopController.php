@@ -17,7 +17,7 @@ class ShopController extends Controller
     public function index(Request $request)
     {
         // Get total count of all active products
-        $totalProducts = Product::where('status', 'Active')->count();
+        $totalProducts = Product::whereIn('status', ['active', 'Active', 1])->count();
 
         // Get all categories with active product counts using raw query for reliability
         $categories = collect();
@@ -30,7 +30,7 @@ class ShopController extends Controller
                     $category->products_count = DB::table('product_category_map')
                         ->join('products', 'product_category_map.product_id', '=', 'products.id')
                         ->where('product_category_map.category_id', $category->id)
-                        ->where('products.status', 'Active')
+                        ->whereIn('products.status', ['active', 'Active', 1])
                         ->count();
                     
                     // Generate slug if not exists
@@ -51,7 +51,7 @@ class ShopController extends Controller
                 ->orderBy('name')
                 ->get()
                 ->map(function ($brand) {
-                    $brand->products_count = Product::where('status', 'Active')
+                    $brand->products_count = Product::whereIn('status', ['active', 'Active', 1])
                         ->where('brand_id', $brand->id)
                         ->count();
                     
@@ -68,9 +68,9 @@ class ShopController extends Controller
             // Use empty collection
         }
 
-        // Build products query
-        $query = Product::where('status', 'Active')
-            ->with(['images', 'brand', 'categories']);
+        // Build products query (status can be 'active' or 'Active')
+        $query = Product::whereIn('status', ['active', 'Active', 1])
+            ->with(['images', 'coverImage', 'brand', 'categories']);
 
         // Filter by category
         if ($request->filled('category')) {
@@ -164,7 +164,7 @@ class ShopController extends Controller
 
         // Get min/max prices for filter
         $priceRange = DB::table('products')
-            ->where('status', 'Active')
+            ->whereIn('status', ['active', 'Active', 1])
             ->selectRaw('MIN(COALESCE(sale_price, price)) as min_price, MAX(price) as max_price')
             ->first();
 
