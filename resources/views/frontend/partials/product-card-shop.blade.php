@@ -9,17 +9,12 @@
     } elseif (isset($product->coverImage) && $product->coverImage) {
         $productImage = $product->coverImage->path ?? $product->coverImage->image ?? null;
     }
-    
-    // Get additional images for carousel
-    $additionalImages = [];
-    if ($product->images && $product->images->count() > 1) {
-        $additionalImages = $product->images->take(3);
-    }
 
     // Get price
     $price = $product->price ?? 0;
     $salePrice = $product->sale_price ?? null;
     $isOnSale = $salePrice && $salePrice < $price;
+    $discountPercent = $isOnSale && $price > 0 ? round((($price - $salePrice) / $price) * 100) : 0;
 
     // Get stock
     $stockQty = $product->stock_quantity ?? 0;
@@ -35,45 +30,50 @@
 
     // Check if new (within 30 days)
     $isNew = $product->created_at && $product->created_at->diffInDays(now()) < 30;
+    
+    // Dummy images array for fallback
+    $dummyImages = [
+        'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=400&h=400&fit=crop',
+        'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=400&h=400&fit=crop',
+        'https://images.unsplash.com/photo-1572635196237-14b3f281503f?w=400&h=400&fit=crop',
+        'https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?w=400&h=400&fit=crop',
+        'https://images.unsplash.com/photo-1560343090-f0409e92791a?w=400&h=400&fit=crop',
+    ];
+    $randomDummyImage = $dummyImages[array_rand($dummyImages)];
 @endphp
 
 <div class="col-12 col-sm-6 col-md-4 col-lg-4">
     <div class="property-single-boxarea p-0" data-aos="fade-up" data-aos-duration="1000">
-        <div class="property-list-img-area position-relative owl-carousel">
-            @if($additionalImages && count($additionalImages) > 0)
-                @foreach($additionalImages as $img)
-                    <a href="{{ route('product.show', $product->slug ?? $product->id) }}">
-                        <div class="img1 image-anime">
-                            <img src="{{ asset('storage/' . ($img->path ?? $img->image)) }}" alt="{{ $product->title ?? 'Product' }}">
-                        </div>
-                    </a>
-                @endforeach
-            @else
-                <a href="{{ route('product.show', $product->slug ?? $product->id) }}">
-                    <div class="img1 image-anime">
-                        @if($productImage)
-                            <img src="{{ asset('storage/' . $productImage) }}" alt="{{ $product->title ?? 'Product' }}">
-                        @else
-                            <img src="https://via.placeholder.com/400x400/f8f9fa/6c757d?text=No+Image" alt="{{ $product->title ?? 'Product' }}">
-                        @endif
-                    </div>
-                </a>
-            @endif
+        <div class="property-list-img-area position-relative">
+            <a href="{{ route('product.show', $product->slug ?? $product->id) }}">
+                <div class="img1 image-anime">
+                    @if($productImage)
+                        <img src="{{ asset('storage/' . $productImage) }}" 
+                             alt="{{ $product->title ?? 'Product' }}"
+                             onerror="this.src='{{ $randomDummyImage }}'">
+                    @else
+                        <img src="{{ $randomDummyImage }}" alt="{{ $product->title ?? 'Product' }}">
+                    @endif
+                </div>
+            </a>
             
-            <div class="position-absolute top-0 start-0 p-2">
+            <div class="position-absolute top-0 start-0 p-2 d-flex flex-wrap gap-1">
                 @if($isNew)
-                    <span class="badge bg-primary me-1">New</span>
+                    <span class="badge bg-primary">New</span>
                 @endif
-                @if($isOnSale)
-                    <span class="badge bg-warning">Sale</span>
+                @if($isOnSale && $discountPercent > 0)
+                    <span class="badge bg-danger">-{{ $discountPercent }}%</span>
                 @endif
                 @if($product->featured ?? false)
-                    <span class="badge bg-success me-1">Featured</span>
-                @endif
-                @if(!$inStock)
-                    <span class="badge bg-danger">Out of Stock</span>
+                    <span class="badge bg-warning text-dark">Hot</span>
                 @endif
             </div>
+            
+            @if(!$inStock)
+            <div class="position-absolute bottom-0 start-0 end-0 text-center py-2" style="background: rgba(220, 53, 69, 0.9);">
+                <span class="text-white fw-bold small">Out of Stock</span>
+            </div>
+            @endif
         </div>
         
         <div class="property-single-content">
@@ -91,6 +91,7 @@
                     <i class='bx bx-coin-stack me-1'></i>
                     @if($isOnSale)
                         <span class="text-danger fw-bold">৳{{ number_format($salePrice, 0) }}</span>
+                        <small class="text-decoration-line-through text-muted ms-1">৳{{ number_format($price, 0) }}</small>
                     @else
                         <span class="fw-bold">৳{{ number_format($price, 0) }}</span>
                     @endif
@@ -127,4 +128,3 @@
         </div>
     </div>
 </div>
-

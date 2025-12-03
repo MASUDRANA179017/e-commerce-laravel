@@ -39,9 +39,9 @@
             <div class="cart-item d-flex gap-3 mb-3 pb-3" style="border-bottom: 1px solid #eee;" data-row-id="{{ $rowId }}">
                 <div class="cart-item-image" style="width: 80px; height: 80px; flex-shrink: 0; border-radius: 10px; overflow: hidden; background: #f5f5f5;">
                     @if(isset($item['options']['image']) && $item['options']['image'])
-                        <img src="{{ asset('storage/' . $item['options']['image']) }}" alt="{{ $item['name'] }}" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.src='https://via.placeholder.com/80?text=No+Image'">
+                        <img src="{{ asset('storage/' . $item['options']['image']) }}" alt="{{ $item['name'] }}" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.src='https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=80&h=80&fit=crop'">
                     @else
-                        <img src="https://via.placeholder.com/80?text=No+Image" alt="{{ $item['name'] }}" style="width: 100%; height: 100%; object-fit: cover;">
+                        <img src="https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=80&h=80&fit=crop" alt="{{ $item['name'] }}" style="width: 100%; height: 100%; object-fit: cover;">
                     @endif
                 </div>
                 <div class="cart-item-details flex-grow-1">

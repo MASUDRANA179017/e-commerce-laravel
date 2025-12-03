@@ -11,7 +11,7 @@
     }
     
     // Get additional images for carousel
-    $additionalImages = [];
+    $additionalImages = collect();
     if ($product->images && $product->images->count() > 1) {
         $additionalImages = $product->images->take(3);
     }
@@ -20,6 +20,7 @@
     $price = $product->price ?? 0;
     $salePrice = $product->sale_price ?? null;
     $isOnSale = $salePrice && $salePrice < $price;
+    $discountPercent = $isOnSale && $price > 0 ? round((($price - $salePrice) / $price) * 100) : 0;
 
     // Get stock
     $stockQty = $product->stock_quantity ?? 0;
@@ -35,45 +36,50 @@
 
     // Check if new (within 30 days)
     $isNew = $product->created_at && $product->created_at->diffInDays(now()) < 30;
+    
+    // Dummy images array for fallback
+    $dummyImages = [
+        'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=400&h=400&fit=crop',
+        'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=400&h=400&fit=crop',
+        'https://images.unsplash.com/photo-1572635196237-14b3f281503f?w=400&h=400&fit=crop',
+        'https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?w=400&h=400&fit=crop',
+        'https://images.unsplash.com/photo-1560343090-f0409e92791a?w=400&h=400&fit=crop',
+    ];
+    $randomDummyImage = $dummyImages[array_rand($dummyImages)];
 @endphp
 
-<div class="col-lg-3 col-md-4">
+<div class="col-lg-3 col-md-4 col-sm-6">
     <div class="property-single-boxarea p-0" data-aos="fade-up" data-aos-duration="1000">
-        <div class="property-list-img-area position-relative owl-carousel">
-            @if($additionalImages->count() > 0)
-                @foreach($additionalImages as $img)
-                    <a href="{{ route('product.show', $product->slug ?? $product->id) }}">
-                        <div class="img1 image-anime">
-                            <img src="{{ asset('storage/' . ($img->path ?? $img->image)) }}" alt="{{ $product->title ?? 'Product' }}">
-                        </div>
-                    </a>
-                @endforeach
-            @else
-                <a href="{{ route('product.show', $product->slug ?? $product->id) }}">
-                    <div class="img1 image-anime">
-                        @if($productImage)
-                            <img src="{{ asset('storage/' . $productImage) }}" alt="{{ $product->title ?? 'Product' }}">
-                        @else
-                            <img src="https://via.placeholder.com/400x400/f8f9fa/6c757d?text=No+Image" alt="{{ $product->title ?? 'Product' }}">
-                        @endif
-                    </div>
-                </a>
-            @endif
+        <div class="property-list-img-area position-relative">
+            <a href="{{ route('product.show', $product->slug ?? $product->id) }}">
+                <div class="img1 image-anime">
+                    @if($productImage)
+                        <img src="{{ asset('storage/' . $productImage) }}" 
+                             alt="{{ $product->title ?? 'Product' }}"
+                             onerror="this.src='{{ $randomDummyImage }}'">
+                    @else
+                        <img src="{{ $randomDummyImage }}" alt="{{ $product->title ?? 'Product' }}">
+                    @endif
+                </div>
+            </a>
             
-            <div class="position-absolute top-0 start-0 p-2">
+            <div class="position-absolute top-0 start-0 p-2 d-flex flex-wrap gap-1">
                 @if($isNew)
-                    <span class="badge bg-primary me-1">New</span>
+                    <span class="badge bg-primary">New</span>
                 @endif
-                @if($isOnSale)
-                    <span class="badge bg-warning">Sale</span>
+                @if($isOnSale && $discountPercent > 0)
+                    <span class="badge bg-danger">-{{ $discountPercent }}%</span>
                 @endif
                 @if($product->featured ?? false)
-                    <span class="badge bg-success">Featured</span>
-                @endif
-                @if(!$inStock)
-                    <span class="badge bg-danger">Out of Stock</span>
+                    <span class="badge bg-warning text-dark">Hot</span>
                 @endif
             </div>
+            
+            @if(!$inStock)
+            <div class="position-absolute bottom-0 start-0 end-0 text-center py-2" style="background: rgba(220, 53, 69, 0.9);">
+                <span class="text-white fw-bold small">Out of Stock</span>
+            </div>
+            @endif
         </div>
         
         <div class="property-single-content">
@@ -82,7 +88,7 @@
                     {{ Str::limit($product->title ?? 'Product', 40) }}
                 </a>
             </h4>
-            <p class="m-0"><i class='bx bxs-tag me-1'></i>Category: {{ $categoryName }}</p>
+            <p class="m-0"><i class='bx bxs-tag me-1'></i>{{ $categoryName }}</p>
         </div>
         
         <div class="property-details">
@@ -91,7 +97,7 @@
                     <i class='bx bx-coin-stack me-1'></i>
                     @if($isOnSale)
                         <span class="text-danger fw-bold">৳{{ number_format($salePrice, 0) }}</span>
-                        <small class="text-decoration-line-through text-muted">৳{{ number_format($price, 0) }}</small>
+                        <small class="text-decoration-line-through text-muted ms-1">৳{{ number_format($price, 0) }}</small>
                     @else
                         <span class="fw-bold">৳{{ number_format($price, 0) }}</span>
                     @endif
@@ -109,7 +115,7 @@
         
         <div class="mt-0 pt-0 btn-area1 text-center d-flex align-items-center justify-content-center">
             <a href="{{ route('product.show', $product->slug ?? $product->id) }}" class="action-btn-success p-3 h-30px w-auto rounded-3">
-                <i class="bx bx-show fs-15 me-1"></i>View Details
+                <i class="bx bx-show fs-15 me-1"></i>View
             </a>
             <button type="button" 
                     title="Add to Wishlist" 
@@ -122,10 +128,9 @@
                         title="Add to Cart" 
                         data-id="{{ $product->id }}" 
                         class="add-to-cart action-btn-success p-3 ms-2 h-30px w-auto rounded-3 border-0">
-                    <i class="bx bxs-cart fs-15 me-1"></i> Add to Cart
+                    <i class="bx bxs-cart fs-15 me-1"></i>Cart
                 </button>
             @endif
         </div>
     </div>
 </div>
-
