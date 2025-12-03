@@ -1,82 +1,24 @@
 @extends('layouts.frontend')
 
-@section('title', 'Home - GrowUp E-Commerce')
+@section('title', 'Home - ' . config('app.name', 'E-Commerce'))
 
 @section('content')
-<!-- Hero Banner Section -->
-<section class="hero-banner position-relative overflow-hidden">
-    <div class="hero-slider swiper" id="heroSlider">
+<!-- Banner Section -->
+<section class="banner-two">
+    <div class="banner-two__slider swiper">
         <div class="swiper-wrapper">
-            <!-- Slide 1 -->
             <div class="swiper-slide">
-                <div class="hero-slide" style="background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); min-height: 600px;">
-                    <div class="container h-100">
-                        <div class="row align-items-center h-100" style="min-height: 600px;">
-                            <div class="col-lg-6" data-aos="fade-right">
-                                <span class="badge bg-warning text-dark mb-3 px-4 py-2 rounded-pill fw-semibold">
-                                    <i class="fa-solid fa-fire me-1"></i> Hot Collection 2024
-                                </span>
-                                <h1 class="hero-title text-white mb-4" style="font-size: 56px; font-weight: 800; line-height: 1.1;">
-                                    Discover Your <br>
-                                    <span style="background: linear-gradient(90deg, #0496ff, #38ef7d); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Perfect Style</span>
-                                </h1>
-                                <p class="text-white-50 mb-4 lead">
-                                    Explore our curated collection of premium products. Quality you can trust, prices you'll love.
-                                </p>
-                                <div class="d-flex gap-3 flex-wrap">
-                                    <a href="{{ route('shop.index') }}" class="btn btn-primary btn-lg px-5 py-3 rounded-pill fw-semibold" style="background: linear-gradient(135deg, #0496ff 0%, #0380d9 100%); border: none;">
-                                        Shop Now <i class="fa-solid fa-arrow-right ms-2"></i>
-                                    </a>
-                                    <a href="{{ route('shop.index', ['on_sale' => 1]) }}" class="btn btn-outline-light btn-lg px-5 py-3 rounded-pill fw-semibold">
-                                        <i class="fa-solid fa-tag me-2"></i> View Offers
-                                    </a>
-                                </div>
-                                <div class="hero-stats d-flex gap-5 mt-5">
-                                    <div>
-                                        <h3 class="text-white mb-0" style="font-weight: 700;">10K+</h3>
-                                        <small class="text-white-50">Happy Customers</small>
-                                    </div>
-                                    <div>
-                                        <h3 class="text-white mb-0" style="font-weight: 700;">5K+</h3>
-                                        <small class="text-white-50">Products</small>
-                                    </div>
-                                    <div>
-                                        <h3 class="text-white mb-0" style="font-weight: 700;">4.9</h3>
-                                        <small class="text-white-50">
-                                            <i class="fa-solid fa-star text-warning"></i> Rating
-                                        </small>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-lg-6 text-center d-none d-lg-block position-relative">
-                                <div class="hero-image-wrapper">
-                                    <div class="hero-circle" style="position: absolute; width: 450px; height: 450px; background: rgba(4, 150, 255, 0.1); border-radius: 50%; top: 50%; left: 50%; transform: translate(-50%, -50%);"></div>
-                                    <img src="https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=500&h=500&fit=crop" 
-                                         alt="Shopping" 
-                                         class="img-fluid rounded-4 shadow-lg position-relative"
-                                         style="max-height: 450px; object-fit: cover;">
-                                </div>
-                                <!-- Floating Cards -->
-                                <div class="floating-card" style="position: absolute; top: 20%; left: 10%; background: #fff; padding: 15px 20px; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); animation: float 3s ease-in-out infinite;">
-                                    <div class="d-flex align-items-center gap-2">
-                                        <div style="width: 40px; height: 40px; background: #dcfce7; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
-                                            <i class="fa-solid fa-truck text-success"></i>
-                                        </div>
-                                        <div>
-                                            <strong style="font-size: 14px;">Free Delivery</strong>
-                                            <small class="d-block text-muted">On ৳5000+</small>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="floating-card" style="position: absolute; bottom: 15%; right: 5%; background: #fff; padding: 15px 20px; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); animation: float 3s ease-in-out infinite 1.5s;">
-                                    <div class="d-flex align-items-center gap-2">
-                                        <div style="width: 40px; height: 40px; background: #fef3c7; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
-                                            <i class="fa-solid fa-percent text-warning"></i>
-                                        </div>
-                                        <div>
-                                            <strong style="font-size: 14px;">Up to 50%</strong>
-                                            <small class="d-block text-muted">Discount</small>
-                                        </div>
+                <div class="banner-two__slider-single">
+                    <div class="banner-two__slider-bg" data-background="{{ asset('frontend/assets/images/product-banner-1.jpg') }}"></div>
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-12 col-md-6 col-lg-7">
+                                <div class="banner-two__slider-content">
+                                    <span class="sub-title-main text-white"><i class='bx bxs-tag'></i> New Arrival</span>
+                                    <h1 class="title-animation text-white mb-0">Trendy Fashion Collection</h1>
+                                    <p class="text-white mt-0 fs-13 text-white-50 mb-5">Discover the latest trends in clothing, accessories, and more. Shop now for exclusive deals!</p>
+                                    <div class="d-flex gap-2 mt-4">
+                                        <a href="{{ route('shop.index') }}" class="btn--primary p-2 px-5">Shop Now <i class="fa-solid fa-arrow-right"></i></a>
                                     </div>
                                 </div>
                             </div>
@@ -84,502 +26,398 @@
                     </div>
                 </div>
             </div>
-            
-            <!-- Slide 2 -->
             <div class="swiper-slide">
-                <div class="hero-slide" style="background: linear-gradient(135deg, #0496ff 0%, #0380d9 100%); min-height: 600px;">
-                    <div class="container h-100">
-                        <div class="row align-items-center h-100" style="min-height: 600px;">
-                            <div class="col-lg-6">
-                                <span class="badge bg-danger mb-3 px-4 py-2 rounded-pill fw-semibold">
-                                    <i class="fa-solid fa-bolt me-1"></i> Flash Sale
-                                </span>
-                                <h1 class="hero-title text-white mb-4" style="font-size: 56px; font-weight: 800; line-height: 1.1;">
-                                    Mega Sale <br>Up to 
-                                    <span style="color: #ffc107;">50% OFF</span>
-                                </h1>
-                                <p class="text-white-50 mb-4 lead">
-                                    Limited time offer! Grab your favorite products at unbeatable prices before they're gone.
-                                </p>
-                                <a href="{{ route('shop.index', ['on_sale' => 1]) }}" class="btn btn-warning btn-lg px-5 py-3 rounded-pill fw-semibold text-dark">
-                                    <i class="fa-solid fa-shopping-cart me-2"></i> Shop Sale Items
-                                </a>
-                            </div>
-                            <div class="col-lg-6 text-center d-none d-lg-block">
-                                <img src="https://images.unsplash.com/photo-1607082348824-0a96f2a4b9da?w=500&h=400&fit=crop" 
-                                     alt="Sale" 
-                                     class="img-fluid rounded-4 shadow-lg"
-                                     style="max-height: 400px; object-fit: cover;">
+                <div class="banner-two__slider-single">
+                    <div class="banner-two__slider-bg" data-background="{{ asset('frontend/assets/images/product-banner-2.jpg') }}"></div>
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-12 col-md-6 col-lg-7">
+                                <div class="banner-two__slider-content">
+                                    <span class="sub-title-main text-white"><i class='bx bxs-star'></i> Bestsellers</span>
+                                    <h1 class="title-animation text-white mb-0">Electronics & Gadgets</h1>
+                                    <p class="text-white mt-0 fs-13 text-white-50 mb-5">Find the best smartphones, laptops, and smart devices. Get flexible payment options!</p>
+                                    <div class="d-flex gap-2 mt-4">
+                                        <a href="{{ route('shop.index') }}" class="btn--primary p-2 px-5">Explore Now <i class="fa-solid fa-arrow-right"></i></a>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-            
-            <!-- Slide 3 -->
             <div class="swiper-slide">
-                <div class="hero-slide" style="background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%); min-height: 600px;">
-                    <div class="container h-100">
-                        <div class="row align-items-center h-100" style="min-height: 600px;">
-                            <div class="col-lg-6">
-                                <span class="badge bg-dark mb-3 px-4 py-2 rounded-pill fw-semibold">
-                                    <i class="fa-solid fa-crown me-1"></i> Premium Quality
-                                </span>
-                                <h1 class="hero-title text-white mb-4" style="font-size: 56px; font-weight: 800; line-height: 1.1;">
-                                    Quality Products <br>
-                                    <span>Best Prices</span>
-                                </h1>
-                                <p class="text-white-50 mb-4 lead">
-                                    We source only the finest products to ensure you get the best value for your money.
-                                </p>
-                                <a href="{{ route('shop.index') }}" class="btn btn-dark btn-lg px-5 py-3 rounded-pill fw-semibold">
-                                    Explore Collection <i class="fa-solid fa-arrow-right ms-2"></i>
-                                </a>
-                            </div>
-                            <div class="col-lg-6 text-center d-none d-lg-block">
-                                <img src="https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=500&h=400&fit=crop" 
-                                     alt="Quality" 
-                                     class="img-fluid rounded-4 shadow-lg"
-                                     style="max-height: 400px; object-fit: cover;">
+                <div class="banner-two__slider-single">
+                    <div class="banner-two__slider-bg" data-background="{{ asset('frontend/assets/images/product-banner-3.jpg') }}"></div>
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-12 col-md-6 col-lg-7">
+                                <div class="banner-two__slider-content">
+                                    <span class="sub-title-main text-white"><i class='bx bxs-shopping-bags'></i> Special Offers</span>
+                                    <h1 class="title-animation text-white mb-0">Home & Living Essentials</h1>
+                                    <p class="text-white mt-0 fs-13 text-white-50 mb-5">High-quality furniture, kitchenware, and decor to brighten up your home. Free delivery on select items!</p>
+                                    <div class="d-flex gap-2 mt-4">
+                                        <a href="{{ route('shop.index') }}" class="btn--primary p-2 px-5">View Deals <i class="fa-solid fa-arrow-right"></i></a>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-        <!-- Navigation -->
-        <div class="swiper-button-next text-white"></div>
-        <div class="swiper-button-prev text-white"></div>
-        <div class="swiper-pagination"></div>
     </div>
+    <div class="banner-six-slide-dot swiper-pagination"></div>
 </section>
 
-<!-- Features Section -->
-<section class="features-section py-5" style="background: #fff; margin-top: -60px; position: relative; z-index: 10;">
-    <div class="container">
-        <div class="features-wrapper bg-white rounded-4 shadow-lg p-4">
-            <div class="row g-4">
-                <div class="col-lg-3 col-md-6">
-                    <div class="feature-item d-flex align-items-center gap-3 p-3 rounded-3 h-100" style="background: linear-gradient(135deg, rgba(4, 150, 255, 0.1) 0%, rgba(4, 150, 255, 0.05) 100%);">
-                        <div class="feature-icon" style="width: 60px; height: 60px; background: #0496ff; border-radius: 15px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
-                            <i class="fa-solid fa-truck-fast text-white fa-lg"></i>
-                        </div>
-                        <div>
-                            <h6 class="mb-1 fw-bold">Free Shipping</h6>
-                            <small class="text-muted">Orders over ৳5,000</small>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-3 col-md-6">
-                    <div class="feature-item d-flex align-items-center gap-3 p-3 rounded-3 h-100" style="background: linear-gradient(135deg, rgba(40, 167, 69, 0.1) 0%, rgba(40, 167, 69, 0.05) 100%);">
-                        <div class="feature-icon" style="width: 60px; height: 60px; background: #28a745; border-radius: 15px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
-                            <i class="fa-solid fa-rotate-left text-white fa-lg"></i>
-                        </div>
-                        <div>
-                            <h6 class="mb-1 fw-bold">Easy Returns</h6>
-                            <small class="text-muted">30-day return policy</small>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-3 col-md-6">
-                    <div class="feature-item d-flex align-items-center gap-3 p-3 rounded-3 h-100" style="background: linear-gradient(135deg, rgba(111, 66, 193, 0.1) 0%, rgba(111, 66, 193, 0.05) 100%);">
-                        <div class="feature-icon" style="width: 60px; height: 60px; background: #6f42c1; border-radius: 15px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
-                            <i class="fa-solid fa-shield-halved text-white fa-lg"></i>
-                        </div>
-                        <div>
-                            <h6 class="mb-1 fw-bold">Secure Payment</h6>
-                            <small class="text-muted">100% protected</small>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-3 col-md-6">
-                    <div class="feature-item d-flex align-items-center gap-3 p-3 rounded-3 h-100" style="background: linear-gradient(135deg, rgba(253, 126, 20, 0.1) 0%, rgba(253, 126, 20, 0.05) 100%);">
-                        <div class="feature-icon" style="width: 60px; height: 60px; background: #fd7e14; border-radius: 15px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
-                            <i class="fa-solid fa-headset text-white fa-lg"></i>
-                        </div>
-                        <div>
-                            <h6 class="mb-1 fw-bold">24/7 Support</h6>
-                            <small class="text-muted">Dedicated help</small>
-                        </div>
-                    </div>
-                </div>
+<!-- Category Section -->
+@php
+    $categories = \App\Models\Admin\Product\ProductCategory::take(4)->get();
+@endphp
+<section class="ministrie-eight-area">
+    <div class="container-fluid">
+        <div class="d-flex align-items-center justify-content-between">
+            <div class="section-eight-wrapper mb-0" data-aos="fade-up" data-aos-duration="1000" data-aos-delay="200">
+                <h6 class="sub-title-main"><i class="fa-solid fa-cart-shopping"></i> Our Top Picks</h6>
+                <h2 class="title-animation">Explore Our <span>Product Categories</span></h2>
             </div>
-        </div>
-    </div>
-</section>
-
-<!-- Categories Section -->
-<section class="categories-section py-5">
-    <div class="container">
-        <div class="section-header d-flex justify-content-between align-items-center mb-5">
-            <div>
-                <span class="badge bg-primary-subtle text-primary px-3 py-2 rounded-pill mb-2">
-                    <i class="fa-solid fa-th-large me-1"></i> Categories
-                </span>
-                <h2 class="section-title mb-0" style="font-size: 36px; font-weight: 700; color: #1a1a2e;">
-                    Shop by Category
-                </h2>
-            </div>
-            <a href="{{ route('shop.index') }}" class="btn btn-outline-primary rounded-pill px-4 d-none d-md-inline-flex align-items-center">
-                View All <i class="fa-solid fa-arrow-right ms-2"></i>
+            <a href="{{ route('shop.index') }}" aria-label="all products" title="all products" class="btn--primary p-2 px-5">
+                View All Products<i class="fa-solid fa-arrow-right ms-2"></i>
             </a>
         </div>
-        
-        <div class="categories-slider swiper" id="categoriesSlider">
-            <div class="swiper-wrapper">
-                @forelse($categories ?? [] as $category)
-                <div class="swiper-slide">
-                    <a href="{{ route('shop.index', ['category' => $category->slug ?? $category->name]) }}" class="category-card text-decoration-none d-block">
-                        <div class="category-image position-relative overflow-hidden rounded-4" style="height: 200px; background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);">
-                            @if($category->image)
-                                <img src="{{ asset('storage/' . $category->image) }}" alt="{{ $category->name }}" class="w-100 h-100" style="object-fit: cover;">
-                            @else
-                                <div class="d-flex align-items-center justify-content-center h-100">
-                                    <i class="fa-solid fa-folder fa-3x text-muted"></i>
-                                </div>
-                            @endif
-                            <div class="category-overlay position-absolute top-0 start-0 w-100 h-100 d-flex align-items-end" style="background: linear-gradient(to top, rgba(26,26,46,0.8) 0%, transparent 60%);">
-                                <div class="p-3 w-100">
-                                    <h5 class="text-white mb-1">{{ $category->name }}</h5>
-                                    <small class="text-white-50">{{ $category->products_count ?? 0 }} Products</small>
+        <div class="row">
+            <div class="col-xxl-12">
+                <div class="ministrie-eight-slide p-relative" data-aos="fade-up" data-aos-duration="1000" data-aos-delay="200">
+                    <div class="ministrie-eight-active swiper-container swiper mySwiper">
+                        <div class="ministrie-eight-swiper-wrapper swiper-wrapper">
+                            @foreach($categories as $category)
+                            <div class="ministrie-eight-wrapper swiper-slide">
+                                <div class="ministrie-eight-thumb position-relative z-1">
+                                    <img src="{{ $category->image ? asset('storage/' . $category->image) : asset('frontend/assets/images/shop/add-1.jpg') }}" alt="{{ $category->name }}">
+                                    <div class="ministrie-eight-wrap">
+                                        <div class="ministrie-eight-button">
+                                            <a href="{{ route('shop.index', ['category' => $category->slug]) }}"><i class="fa-solid fa-arrow-right"></i></a>
+                                        </div>
+                                        <div class="ministrie-eight-content">
+                                            <h4 class="ministrie-eight-title"><a href="{{ route('shop.index', ['category' => $category->slug]) }}">{{ $category->name }}</a></h4>
+                                            <p class="ministrie-eight-paragraph">
+                                                {{ Str::limit($category->description ?? 'Explore our amazing collection of products in this category.', 100) }}
+                                            </p>
+                                            <div class="d-flex align-items-center justify-content-between pt-2">
+                                                <span class="fw-700 title-lg text-white d-inline-flex align-items-center">Products</span>
+                                                <p class="title-lg fw-500 text-white w-60">{{ $category->products_count ?? $category->products()->count() }} items</p>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
+                            @endforeach
                         </div>
-                    </a>
+                    </div>
                 </div>
-                @empty
-                @for($i = 1; $i <= 6; $i++)
-                <div class="swiper-slide">
-                    <a href="{{ route('shop.index') }}" class="category-card text-decoration-none d-block">
-                        <div class="category-image position-relative overflow-hidden rounded-4" style="height: 200px; background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);">
-                            <div class="d-flex align-items-center justify-content-center h-100">
-                                <i class="fa-solid fa-folder fa-3x text-muted"></i>
-                            </div>
-                            <div class="category-overlay position-absolute top-0 start-0 w-100 h-100 d-flex align-items-end" style="background: linear-gradient(to top, rgba(26,26,46,0.8) 0%, transparent 60%);">
-                                <div class="p-3 w-100">
-                                    <h5 class="text-white mb-1">Category {{ $i }}</h5>
-                                    <small class="text-white-50">0 Products</small>
-                                </div>
-                            </div>
-                        </div>
-                    </a>
-                </div>
-                @endfor
-                @endforelse
             </div>
         </div>
+        <div class="ministrie-eight-dot text-center m-auto mt-2"></div>
     </div>
 </section>
 
 <!-- Featured Products Section -->
-<section class="products-section py-5" style="background: linear-gradient(180deg, #f8f9fa 0%, #fff 100%);">
-    <div class="container">
-        <div class="section-header text-center mb-5">
-            <span class="badge bg-warning-subtle text-warning px-3 py-2 rounded-pill mb-2">
-                <i class="fa-solid fa-star me-1"></i> Featured
-            </span>
-            <h2 class="section-title" style="font-size: 36px; font-weight: 700; color: #1a1a2e;">
-                Featured Products
-            </h2>
-            <p class="text-muted mt-2">Handpicked products just for you</p>
-        </div>
-        
-        <div class="row g-4">
-            @forelse($featuredProducts ?? [] as $product)
-            <div class="col-xl-3 col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="{{ $loop->index * 50 }}">
-                @include('frontend.partials.product-card', ['product' => $product])
+@php
+    $featuredProducts = \App\Models\Product::with(['images', 'categories', 'brand'])
+        ->where('status', 1)
+        ->where('featured', 1)
+        ->take(8)
+        ->get();
+    
+    $newArrivals = \App\Models\Product::with(['images', 'categories', 'brand'])
+        ->where('status', 1)
+        ->orderBy('created_at', 'desc')
+        ->take(8)
+        ->get();
+    
+    $topSelling = \App\Models\Product::with(['images', 'categories', 'brand'])
+        ->where('status', 1)
+        ->orderBy('id', 'desc')
+        ->take(8)
+        ->get();
+@endphp
+<section class="team ff-team difference-two">
+    <div class="container-fluid">
+        <div class="d-flex align-items-center justify-content-between">
+            <div class="section-eight-wrapper mb-0" data-aos="fade-up" data-aos-duration="1000" data-aos-delay="200">
+                <h6 class="sub-title-main"><i class="fa-solid fa-building"></i> Explore by Category</h6>
+                <h2 class="title-animation">Browse Our <span>Featured Products</span></h2>
             </div>
-            @empty
-            <div class="col-12">
-                <div class="text-center py-5">
-                    <div class="empty-icon mb-4" style="width: 120px; height: 120px; background: #f8f9fa; border-radius: 50%; margin: 0 auto; display: flex; align-items: center; justify-content: center;">
-                        <i class="fa-solid fa-box-open fa-3x text-muted"></i>
-                    </div>
-                    <h4 class="text-muted mb-2">No Featured Products</h4>
-                    <p class="text-muted mb-4">Check back soon for amazing products!</p>
-                    <a href="{{ route('shop.index') }}" class="btn btn-primary rounded-pill px-4">
-                        Browse All Products
-                    </a>
-                </div>
-            </div>
-            @endforelse
-        </div>
-        
-        @if(isset($featuredProducts) && count($featuredProducts) > 0)
-        <div class="text-center mt-5">
-            <a href="{{ route('shop.index') }}" class="btn btn-primary btn-lg rounded-pill px-5 py-3" style="background: linear-gradient(135deg, #0496ff 0%, #0380d9 100%); border: none;">
-                View All Products <i class="fa-solid fa-arrow-right ms-2"></i>
-            </a>
-        </div>
-        @endif
-    </div>
-</section>
-
-<!-- Promotional Banner -->
-<section class="promo-section py-5">
-    <div class="container">
-        <div class="promo-banner position-relative overflow-hidden rounded-4" style="background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);">
-            <div class="row align-items-center">
-                <div class="col-lg-7 p-5">
-                    <span class="badge bg-danger px-3 py-2 rounded-pill mb-3">
-                        <i class="fa-solid fa-gift me-1"></i> Special Offer
-                    </span>
-                    <h2 class="text-white mb-3" style="font-size: 42px; font-weight: 700;">
-                        Get <span style="color: #ffc107;">20% OFF</span><br>Your First Order
-                    </h2>
-                    <p class="text-white-50 mb-4">
-                        Subscribe to our newsletter and unlock exclusive discounts, early access to sales, and more!
-                    </p>
-                    <form action="#" method="POST" class="newsletter-form">
-                        @csrf
-                        <div class="d-flex gap-2 flex-wrap">
-                            <input type="email" name="email" class="form-control form-control-lg rounded-pill" placeholder="Enter your email" style="max-width: 350px; padding: 15px 25px;">
-                            <button type="submit" class="btn btn-warning btn-lg rounded-pill px-4 fw-semibold text-dark">
-                                Subscribe <i class="fa-solid fa-paper-plane ms-2"></i>
+            <div class="difference-two__inner cta mt-0">
+                <div class="difference-two__inner-content">
+                    <div class="difference-two__tab">
+                        <div class="difference-two__tab-btns border-0">
+                            <button class="difference-two__tab-btn fs-15 fw-600 p-2 px-4 active" data-target="#all" aria-label="all" title="all">
+                                <i class='bx bx-fullscreen bx-tada fs-15'></i> New Arrivals
+                            </button>
+                            <button class="difference-two__tab-btn fs-15 fw-600 p-2 px-4" data-target="#trending" aria-label="trending" title="trending">
+                                <i class='bx bxs-hot bx-flashing fs-15'></i> Trending
+                            </button>
+                            <button class="difference-two__tab-btn fs-15 fw-600 p-2 px-4" data-target="#topselling" aria-label="topselling" title="topselling">
+                                <i class='bx bxs-star bx-flashing fs-15'></i> Top Selling
                             </button>
                         </div>
-                    </form>
-                    <p class="text-white-50 mt-3 small">
-                        <i class="fa-solid fa-lock me-1"></i> We respect your privacy. Unsubscribe at any time.
-                    </p>
-                </div>
-                <div class="col-lg-5 d-none d-lg-block">
-                    <img src="https://images.unsplash.com/photo-1557821552-17105176677c?w=500&h=400&fit=crop" 
-                         alt="Newsletter" 
-                         class="img-fluid rounded-end-4"
-                         style="height: 100%; object-fit: cover;">
-                </div>
-            </div>
-            <!-- Decorative Elements -->
-            <div class="position-absolute" style="top: 20px; right: 40%; width: 100px; height: 100px; background: rgba(4, 150, 255, 0.2); border-radius: 50%; filter: blur(40px);"></div>
-            <div class="position-absolute" style="bottom: 20px; left: 30%; width: 150px; height: 150px; background: rgba(255, 193, 7, 0.2); border-radius: 50%; filter: blur(60px);"></div>
-        </div>
-    </div>
-</section>
-
-<!-- New Arrivals Section -->
-<section class="products-section py-5">
-    <div class="container">
-        <div class="section-header d-flex justify-content-between align-items-center mb-5">
-            <div>
-                <span class="badge bg-success-subtle text-success px-3 py-2 rounded-pill mb-2">
-                    <i class="fa-solid fa-sparkles me-1"></i> Just In
-                </span>
-                <h2 class="section-title mb-0" style="font-size: 36px; font-weight: 700; color: #1a1a2e;">
-                    New Arrivals
-                </h2>
-            </div>
-            <a href="{{ route('shop.index', ['sort' => 'newest']) }}" class="btn btn-outline-success rounded-pill px-4 d-none d-md-inline-flex align-items-center">
-                View All <i class="fa-solid fa-arrow-right ms-2"></i>
-            </a>
-        </div>
-        
-        <div class="row g-4">
-            @forelse($newArrivals ?? [] as $product)
-            <div class="col-xl-3 col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="{{ $loop->index * 50 }}">
-                @include('frontend.partials.product-card', ['product' => $product])
-            </div>
-            @empty
-            <div class="col-12">
-                <div class="text-center py-5">
-                    <div class="empty-icon mb-4" style="width: 120px; height: 120px; background: #f8f9fa; border-radius: 50%; margin: 0 auto; display: flex; align-items: center; justify-content: center;">
-                        <i class="fa-solid fa-clock fa-3x text-muted"></i>
                     </div>
-                    <h4 class="text-muted mb-2">New Arrivals Coming Soon</h4>
-                    <p class="text-muted">Stay tuned for exciting new products!</p>
                 </div>
             </div>
-            @endforelse
         </div>
-    </div>
-</section>
-
-<!-- Best Sellers Section -->
-@if(isset($bestSellers) && count($bestSellers) > 0)
-<section class="products-section py-5" style="background: #f8f9fa;">
-    <div class="container">
-        <div class="section-header d-flex justify-content-between align-items-center mb-5">
-            <div>
-                <span class="badge bg-danger-subtle text-danger px-3 py-2 rounded-pill mb-2">
-                    <i class="fa-solid fa-fire-flame-curved me-1"></i> Popular
-                </span>
-                <h2 class="section-title mb-0" style="font-size: 36px; font-weight: 700; color: #1a1a2e;">
-                    Best Sellers
-                </h2>
+        <div class="row">
+            <div class="difference-two__tab-content">
+                <!-- New Arrivals Tab -->
+                <div class="difference-two__content-single" id="all">
+                    <div class="row">
+                        @foreach($newArrivals as $product)
+                            @include('frontend.partials.product-card-template', ['product' => $product])
+                        @endforeach
+                    </div>
+                </div>
+                
+                <!-- Trending Tab -->
+                <div class="difference-two__content-single" id="trending">
+                    <div class="row">
+                        @foreach($featuredProducts as $product)
+                            @include('frontend.partials.product-card-template', ['product' => $product])
+                        @endforeach
+                    </div>
+                </div>
+                
+                <!-- Top Selling Tab -->
+                <div class="difference-two__content-single" id="topselling">
+                    <div class="row">
+                        @foreach($topSelling as $product)
+                            @include('frontend.partials.product-card-template', ['product' => $product])
+                        @endforeach
+                    </div>
+                </div>
             </div>
-            <a href="{{ route('shop.index', ['sort' => 'popularity']) }}" class="btn btn-outline-danger rounded-pill px-4 d-none d-md-inline-flex align-items-center">
-                View All <i class="fa-solid fa-arrow-right ms-2"></i>
-            </a>
         </div>
-        
-        <div class="row g-4">
-            @foreach($bestSellers as $product)
-            <div class="col-xl-3 col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="{{ $loop->index * 50 }}">
-                @include('frontend.partials.product-card', ['product' => $product])
-            </div>
-            @endforeach
-        </div>
-    </div>
-</section>
-@endif
-
-<!-- Brands Section -->
-@if(isset($brands) && count($brands) > 0)
-<section class="brands-section py-5">
-    <div class="container">
-        <div class="text-center mb-5">
-            <span class="badge bg-secondary-subtle text-secondary px-3 py-2 rounded-pill mb-2">
-                <i class="fa-solid fa-award me-1"></i> Trusted Brands
-            </span>
-            <h2 class="section-title" style="font-size: 36px; font-weight: 700; color: #1a1a2e;">
-                Shop Top Brands
-            </h2>
-        </div>
-        
-        <div class="brands-slider swiper" id="brandsSlider">
-            <div class="swiper-wrapper align-items-center">
-                @foreach($brands as $brand)
-                <div class="swiper-slide">
-                    <a href="{{ route('shop.index', ['brand' => $brand->slug ?? $brand->name]) }}" class="brand-card d-flex align-items-center justify-content-center p-4 bg-white rounded-3 shadow-sm" style="height: 100px; transition: all 0.3s;">
-                        @if($brand->logo)
-                            <img src="{{ asset('storage/' . $brand->logo) }}" alt="{{ $brand->name }}" style="max-height: 60px; max-width: 120px; object-fit: contain;">
-                        @else
-                            <span class="fw-bold text-muted" style="font-size: 18px;">{{ $brand->name }}</span>
-                        @endif
+        <div class="row">
+            <div class="col-12">
+                <div class="text-center mt-5">
+                    <a href="{{ route('shop.index') }}" aria-label="all products" title="all products" class="btn--primary p-2 px-5">
+                        View All Products<i class="fa-solid fa-arrow-right ms-2"></i>
                     </a>
                 </div>
-                @endforeach
             </div>
         </div>
     </div>
 </section>
-@endif
 
-<!-- Testimonials Section -->
-<section class="testimonials-section py-5" style="background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);">
+<!-- Flash Sale / Countdown Section -->
+<section id="countdownSection" class="countdown-eight-area" data-background="{{ asset('frontend/assets/images/shop/Ad-1.jpg') }}">
     <div class="container">
-        <div class="text-center mb-5">
-            <span class="badge bg-info-subtle text-info px-3 py-2 rounded-pill mb-2">
-                <i class="fa-solid fa-quote-left me-1"></i> Testimonials
-            </span>
-            <h2 class="section-title" style="font-size: 36px; font-weight: 700; color: #1a1a2e;">
-                What Our Customers Say
-            </h2>
+        <div class="row align-items-center justify-content-between">
+            <div class="col-xl-6 col-lg-8">
+                <div class="countdown-eight-wrapper" data-aos="fade-up" data-aos-duration="1000" data-aos-delay="200">
+                    <div class="section-eight-wrapper">
+                        <h6 class="section-eight-subtitle d-inline-block">Limited Time Offer</h6>
+                        <h2 class="section-eight-title char-animation text-white">Flash Sale Is Live!</h2>
+                    </div>
+                    <div class="countdown-eight-timer" id="countdown">
+                        <ul>
+                            <li><span id="days">00</span>Days</li>
+                            <li><span id="hours">00</span>Hours</li>
+                            <li><span id="minutes">00</span>Minutes</li>
+                            <li><span id="seconds">00</span>Seconds</li>
+                        </ul>
+                    </div>
+                    <a href="{{ route('shop.index', ['on_sale' => 1]) }}" class="btn--primary p-2 px-5">Shop Now</a>
+                </div>
+            </div>
         </div>
-        
-        <div class="testimonials-slider swiper" id="testimonialsSlider">
-            <div class="swiper-wrapper">
-                <div class="swiper-slide">
-                    <div class="testimonial-card bg-white p-4 rounded-4 shadow-sm h-100">
-                        <div class="d-flex gap-1 mb-3">
-                            @for($i = 0; $i < 5; $i++)
-                                <i class="fa-solid fa-star text-warning"></i>
-                            @endfor
-                        </div>
-                        <p class="mb-4 text-muted">"Amazing quality products and super fast delivery! The customer service team was incredibly helpful. I'll definitely be ordering again!"</p>
-                        <div class="d-flex align-items-center gap-3">
-                            <img src="https://i.pravatar.cc/60?img=1" alt="Customer" class="rounded-circle" style="width: 50px; height: 50px; object-fit: cover;">
-                            <div>
-                                <h6 class="mb-0 fw-bold">Sarah Johnson</h6>
-                                <small class="text-success"><i class="fa-solid fa-check-circle me-1"></i> Verified Buyer</small>
+    </div>
+</section>
+
+<!-- Testimonial Section -->
+<section class="testimonial-six-area">
+    <div class="container">
+        <div class="row align-items-center testimonial-six-frist-row">
+            <div class="col-xl-6 col-lg-6">
+                <div class="row justify-content-center">
+                    <div class="col-xl-12">
+                        <div class="testimonial-six-slide position-relative overflow-hidden" data-aos="fade-up">
+                            <div class="testimonial-six-active swiper-container">
+                                <div class="swiper-wrapper">
+                                    <div class="testimonial-six-wrapper swiper-slide">
+                                        <div class="testimonial-six-top">
+                                            <div class="testimonial-six-top-content">
+                                                <h6>Customer Story</h6>
+                                                <div class="testimonial-six-review">
+                                                    <i class="fa-solid fa-star text-warning"></i>
+                                                    <i class="fa-solid fa-star text-warning"></i>
+                                                    <i class="fa-solid fa-star text-warning"></i>
+                                                    <i class="fa-solid fa-star text-warning"></i>
+                                                    <i class="fa-solid fa-star text-warning"></i>
+                                                </div>
+                                            </div>
+                                            <p class="testimonial-six-paragraph">
+                                                "I'm very happy with my purchase. The website was easy to navigate,
+                                                and the checkout process was simple. The delivery was incredibly fast
+                                                and the product was exactly as described. Great experience overall!"
+                                            </p>
+                                        </div>
+                                        <div class="testimonial-six-bottom">
+                                            <div class="testimonial-six-author">
+                                                <div class="testimonial-six-author-img">
+                                                    <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Customer">
+                                                </div>
+                                                <div class="testimonial-six-author-content">
+                                                    <h6>John Doe</h6>
+                                                    <p>Verified Buyer</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="testimonial-six-wrapper swiper-slide">
+                                        <div class="testimonial-six-top">
+                                            <div class="testimonial-six-top-content">
+                                                <h6>Customer Story</h6>
+                                                <div class="testimonial-six-review">
+                                                    <i class="fa-solid fa-star text-warning"></i>
+                                                    <i class="fa-solid fa-star text-warning"></i>
+                                                    <i class="fa-solid fa-star text-warning"></i>
+                                                    <i class="fa-solid fa-star text-warning"></i>
+                                                    <i class="fa-solid fa-star text-warning"></i>
+                                                </div>
+                                            </div>
+                                            <p class="testimonial-six-paragraph">
+                                                "The quality of the products is fantastic! Everything looks even better
+                                                in person than online. The size chart was accurate, and the
+                                                package arrived safely. I will definitely be a returning customer!"
+                                            </p>
+                                        </div>
+                                        <div class="testimonial-six-bottom">
+                                            <div class="testimonial-six-author">
+                                                <div class="testimonial-six-author-img">
+                                                    <img src="https://randomuser.me/api/portraits/women/44.jpg" alt="Customer">
+                                                </div>
+                                                <div class="testimonial-six-author-content">
+                                                    <h6>Sarah Smith</h6>
+                                                    <p>Regular Customer</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
+                            <div class="testimonial-six-dot"></div>
                         </div>
                     </div>
                 </div>
-                <div class="swiper-slide">
-                    <div class="testimonial-card bg-white p-4 rounded-4 shadow-sm h-100">
-                        <div class="d-flex gap-1 mb-3">
-                            @for($i = 0; $i < 5; $i++)
-                                <i class="fa-solid fa-star text-warning"></i>
-                            @endfor
-                        </div>
-                        <p class="mb-4 text-muted">"Great selection and competitive prices. The website is easy to navigate and checkout was smooth. Highly recommended for online shopping!"</p>
-                        <div class="d-flex align-items-center gap-3">
-                            <img src="https://i.pravatar.cc/60?img=3" alt="Customer" class="rounded-circle" style="width: 50px; height: 50px; object-fit: cover;">
-                            <div>
-                                <h6 class="mb-0 fw-bold">Michael Chen</h6>
-                                <small class="text-success"><i class="fa-solid fa-check-circle me-1"></i> Verified Buyer</small>
-                            </div>
+            </div>
+            <div class="col-xl-6 col-lg-6">
+                <div class="testimonial-six-right" data-aos="fade-up">
+                    <div class="section-six-wrapper mb-4">
+                        <h6 class="sub-title-main">Testimonials</h6>
+                        <h2 class="title-animation">Real Reviews from Our Customers</h2>
+                        <p class="section-six-paragraph">
+                            We pride ourselves on providing high-quality products and an exceptional shopping
+                            experience. Hear directly from our satisfied customers about their purchases, fast
+                            delivery, and excellent customer service.
+                        </p>
+                    </div>
+                    <div class="testimonial-six-wrap">
+                        <div class="testimonial-six-rating">
+                            <h6>4.9/5 Rating</h6>
+                            <p>Based on verified purchases & feedback.</p>
                         </div>
                     </div>
                 </div>
-                <div class="swiper-slide">
-                    <div class="testimonial-card bg-white p-4 rounded-4 shadow-sm h-100">
-                        <div class="d-flex gap-1 mb-3">
-                            @for($i = 0; $i < 5; $i++)
-                                <i class="fa-solid fa-star text-warning"></i>
-                            @endfor
-                        </div>
-                        <p class="mb-4 text-muted">"Love shopping here! Products are exactly as described and the packaging is always neat. Customer support is responsive and helpful."</p>
-                        <div class="d-flex align-items-center gap-3">
-                            <img src="https://i.pravatar.cc/60?img=5" alt="Customer" class="rounded-circle" style="width: 50px; height: 50px; object-fit: cover;">
-                            <div>
-                                <h6 class="mb-0 fw-bold">Emily Davis</h6>
-                                <small class="text-success"><i class="fa-solid fa-check-circle me-1"></i> Verified Buyer</small>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xl-12">
+                <div class="testimonial-six-down-content text-center">
+                    <h3 class="testimonial-six-down-title">
+                        Trusted by 10,000+ Happy Customers
+                    </h3>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- FAQ Section -->
+<section class="faq-eight-area">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-xl-6">
+                <div class="faq-eight-wrapper" data-aos="fade-up" data-aos-duration="1000" data-aos-delay="200">
+                    <div class="accordion" id="general_faqaccordion">
+                        <div class="accordion-item faq-eight-accordion-item">
+                            <h2 class="accordion-header" id="order_one">
+                                <button class="accordion-button faq-eight-accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#order__collapse_one" aria-expanded="true" aria-controls="order__collapse_one">
+                                    1. How do I place an order?
+                                </button>
+                            </h2>
+                            <div id="order__collapse_one" class="accordion-collapse collapse show" aria-labelledby="order_one" data-bs-parent="#general_faqaccordion">
+                                <div class="accordion-body faq-eight-accordion-body">
+                                    <p>Simply browse our products, add items to your cart, and proceed to checkout. 
+                                    Follow the steps to enter your shipping address and payment details. 
+                                    Once your order is confirmed, you'll receive a confirmation email.</p>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                </div>
-                <div class="swiper-slide">
-                    <div class="testimonial-card bg-white p-4 rounded-4 shadow-sm h-100">
-                        <div class="d-flex gap-1 mb-3">
-                            @for($i = 0; $i < 5; $i++)
-                                <i class="fa-solid fa-star text-warning"></i>
-                            @endfor
+                        <div class="accordion-item faq-eight-accordion-item">
+                            <h2 class="accordion-header" id="order_two">
+                                <button class="accordion-button faq-eight-accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#order__collapse_two" aria-expanded="false" aria-controls="order__collapse_two">
+                                    2. What payment methods do you accept?
+                                </button>
+                            </h2>
+                            <div id="order__collapse_two" class="accordion-collapse collapse" aria-labelledby="order_two" data-bs-parent="#general_faqaccordion">
+                                <div class="accordion-body faq-eight-accordion-body">
+                                    <p>We accept Cash on Delivery (COD), bKash, Nagad, and all major credit/debit cards. 
+                                    Choose your preferred payment method at checkout.</p>
+                                </div>
+                            </div>
                         </div>
-                        <p class="mb-4 text-muted">"Best online shopping experience! Fast shipping, quality products, and excellent customer service. Will definitely recommend to friends."</p>
-                        <div class="d-flex align-items-center gap-3">
-                            <img src="https://i.pravatar.cc/60?img=8" alt="Customer" class="rounded-circle" style="width: 50px; height: 50px; object-fit: cover;">
-                            <div>
-                                <h6 class="mb-0 fw-bold">James Wilson</h6>
-                                <small class="text-success"><i class="fa-solid fa-check-circle me-1"></i> Verified Buyer</small>
+                        <div class="accordion-item faq-eight-accordion-item">
+                            <h2 class="accordion-header" id="order_three">
+                                <button class="accordion-button collapsed faq-eight-accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#order__collapse_three" aria-expanded="false" aria-controls="order__collapse_three">
+                                    3. How long does delivery take?
+                                </button>
+                            </h2>
+                            <div id="order__collapse_three" class="accordion-collapse collapse" aria-labelledby="order_three" data-bs-parent="#general_faqaccordion">
+                                <div class="accordion-body faq-eight-accordion-body">
+                                    <p>Delivery typically takes 2-5 business days within Dhaka and 5-7 business days 
+                                    for other areas in Bangladesh. Express delivery options are also available.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="accordion-item faq-eight-accordion-item">
+                            <h2 class="accordion-header" id="order_four">
+                                <button class="accordion-button collapsed faq-eight-accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#order__collapse_four" aria-expanded="false" aria-controls="order__collapse_four">
+                                    4. Can I return or exchange products?
+                                </button>
+                            </h2>
+                            <div id="order__collapse_four" class="accordion-collapse collapse" aria-labelledby="order_four" data-bs-parent="#general_faqaccordion">
+                                <div class="accordion-body faq-eight-accordion-body">
+                                    <p>Yes! We offer a 7-day return policy for most products. Items must be unused and 
+                                    in original packaging. Contact our support team to initiate a return.</p>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-            <div class="swiper-pagination mt-4"></div>
-        </div>
-    </div>
-</section>
-
-<!-- App Download Section -->
-<section class="app-section py-5">
-    <div class="container">
-        <div class="app-banner rounded-4 overflow-hidden" style="background: linear-gradient(135deg, #0496ff 0%, #0380d9 100%);">
-            <div class="row align-items-center">
-                <div class="col-lg-6 p-5">
-                    <span class="badge bg-white text-primary px-3 py-2 rounded-pill mb-3">
-                        <i class="fa-solid fa-mobile-screen me-1"></i> Mobile App
-                    </span>
-                    <h2 class="text-white mb-3" style="font-size: 38px; font-weight: 700;">
-                        Download Our App<br>For Better Experience
-                    </h2>
-                    <p class="text-white-50 mb-4">
-                        Shop anytime, anywhere with our mobile app. Get exclusive app-only deals and track your orders in real-time.
-                    </p>
-                    <div class="d-flex gap-3 flex-wrap">
-                        <a href="#" class="btn btn-dark btn-lg rounded-pill px-4 d-flex align-items-center gap-2">
-                            <i class="fa-brands fa-apple fa-lg"></i>
-                            <div class="text-start">
-                                <small class="d-block" style="font-size: 10px; line-height: 1;">Download on</small>
-                                <span style="font-size: 14px; font-weight: 600;">App Store</span>
-                            </div>
-                        </a>
-                        <a href="#" class="btn btn-dark btn-lg rounded-pill px-4 d-flex align-items-center gap-2">
-                            <i class="fa-brands fa-google-play fa-lg"></i>
-                            <div class="text-start">
-                                <small class="d-block" style="font-size: 10px; line-height: 1;">Get it on</small>
-                                <span style="font-size: 14px; font-weight: 600;">Google Play</span>
-                            </div>
-                        </a>
+            <div class="col-xl-6 col-lg-10">
+                <div class="faq-eight-right" data-aos="fade-up" data-aos-duration="1000" data-aos-delay="300">
+                    <div class="section-eight-wrapper mb-0">
+                        <h6 class="sub-title-main">Question & Answer</h6>
+                        <h2 class="title-animation">Frequently Asked Questions</h2>
+                        <p class="section-eight-paragraph mb-2">
+                            Have questions about shopping with us? Find answers to common queries about ordering, 
+                            shipping, payments, and returns. If you need more help, our customer support team 
+                            is always ready to assist you.
+                        </p>
+                        <div class="about-eight-button event-eight-btn d-inline-block mt-3 mb-4">
+                            <a href="{{ route('frontend.contact') }}" class="btn--primary">Contact with Us <i class="bx bx-right-arrow-alt"></i></a>
+                        </div>
                     </div>
-                </div>
-                <div class="col-lg-6 text-center d-none d-lg-block">
-                    <img src="https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?w=400&h=500&fit=crop" 
-                         alt="Mobile App" 
-                         class="img-fluid"
-                         style="max-height: 350px; object-fit: contain;">
                 </div>
             </div>
         </div>
@@ -587,172 +425,28 @@
 </section>
 @endsection
 
-@push('styles')
-<style>
-    /* Hero Section */
-    .hero-banner {
-        position: relative;
-    }
-    
-    .hero-slide {
-        display: flex;
-        align-items: center;
-    }
-    
-    @keyframes float {
-        0%, 100% { transform: translateY(0); }
-        50% { transform: translateY(-10px); }
-    }
-    
-    /* Swiper Navigation */
-    .swiper-button-next,
-    .swiper-button-prev {
-        width: 50px;
-        height: 50px;
-        background: rgba(255,255,255,0.2);
-        border-radius: 50%;
-        backdrop-filter: blur(10px);
-    }
-    
-    .swiper-button-next::after,
-    .swiper-button-prev::after {
-        font-size: 18px;
-        font-weight: bold;
-    }
-    
-    .swiper-pagination-bullet {
-        width: 12px;
-        height: 12px;
-        background: rgba(255,255,255,0.5);
-        opacity: 1;
-    }
-    
-    .swiper-pagination-bullet-active {
-        background: #fff;
-        width: 30px;
-        border-radius: 6px;
-    }
-    
-    /* Category Cards */
-    .category-card {
-        transition: all 0.3s ease;
-    }
-    
-    .category-card:hover {
-        transform: translateY(-5px);
-    }
-    
-    .category-card:hover .category-image {
-        transform: scale(1.05);
-    }
-    
-    /* Brand Cards */
-    .brand-card {
-        filter: grayscale(100%);
-        opacity: 0.7;
-    }
-    
-    .brand-card:hover {
-        filter: grayscale(0%);
-        opacity: 1;
-        transform: scale(1.05);
-    }
-    
-    /* Responsive */
-    @media (max-width: 768px) {
-        .hero-title {
-            font-size: 36px !important;
-        }
-        
-        .section-title {
-            font-size: 28px !important;
-        }
-        
-        .hero-stats {
-            gap: 20px !important;
-        }
-        
-        .features-wrapper {
-            margin-top: 0 !important;
-        }
-    }
-</style>
-@endpush
-
 @push('scripts')
 <script>
-    // Hero Slider
-    var heroSwiper = new Swiper('#heroSlider', {
-        loop: true,
-        autoplay: {
-            delay: 6000,
-            disableOnInteraction: false,
-        },
-        pagination: {
-            el: '.swiper-pagination',
-            clickable: true,
-        },
-        navigation: {
-            nextEl: '.swiper-button-next',
-            prevEl: '.swiper-button-prev',
-        },
-        effect: 'fade',
-        fadeEffect: {
-            crossFade: true
-        }
-    });
+    // Countdown Timer
+    function updateCountdown() {
+        const endDate = new Date();
+        endDate.setDate(endDate.getDate() + 7); // 7 days from now
+        
+        const now = new Date().getTime();
+        const distance = endDate.getTime() - now;
+        
+        const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+        
+        document.getElementById('days').textContent = String(days).padStart(2, '0');
+        document.getElementById('hours').textContent = String(hours).padStart(2, '0');
+        document.getElementById('minutes').textContent = String(minutes).padStart(2, '0');
+        document.getElementById('seconds').textContent = String(seconds).padStart(2, '0');
+    }
     
-    // Categories Slider
-    var categoriesSwiper = new Swiper('#categoriesSlider', {
-        slidesPerView: 2,
-        spaceBetween: 20,
-        loop: true,
-        autoplay: {
-            delay: 4000,
-            disableOnInteraction: false,
-        },
-        breakpoints: {
-            576: { slidesPerView: 3 },
-            768: { slidesPerView: 4 },
-            992: { slidesPerView: 5 },
-            1200: { slidesPerView: 6 }
-        }
-    });
-    
-    // Brands Slider
-    var brandsSwiper = new Swiper('#brandsSlider', {
-        slidesPerView: 2,
-        spaceBetween: 20,
-        loop: true,
-        autoplay: {
-            delay: 3000,
-            disableOnInteraction: false,
-        },
-        breakpoints: {
-            576: { slidesPerView: 3 },
-            768: { slidesPerView: 4 },
-            992: { slidesPerView: 5 },
-            1200: { slidesPerView: 6 }
-        }
-    });
-    
-    // Testimonials Slider
-    var testimonialsSwiper = new Swiper('#testimonialsSlider', {
-        slidesPerView: 1,
-        spaceBetween: 20,
-        loop: true,
-        autoplay: {
-            delay: 5000,
-            disableOnInteraction: false,
-        },
-        pagination: {
-            el: '.swiper-pagination',
-            clickable: true,
-        },
-        breakpoints: {
-            768: { slidesPerView: 2 },
-            992: { slidesPerView: 3 }
-        }
-    });
+    setInterval(updateCountdown, 1000);
+    updateCountdown();
 </script>
 @endpush
