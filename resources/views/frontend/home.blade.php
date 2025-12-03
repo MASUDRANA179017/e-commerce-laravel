@@ -9,7 +9,7 @@
         <div class="swiper-wrapper">
             <div class="swiper-slide">
                 <div class="banner-two__slider-single">
-                    <div class="banner-two__slider-bg" data-background="{{ asset('frontend/assets/images/product-banner-1.jpg') }}"></div>
+                    <div class="banner-two__slider-bg" data-background="{{ asset('frontend/assets/images/web-banner-1.png') }}"></div>
                     <div class="container">
                         <div class="row">
                             <div class="col-12 col-md-6 col-lg-7">
@@ -28,7 +28,7 @@
             </div>
             <div class="swiper-slide">
                 <div class="banner-two__slider-single">
-                    <div class="banner-two__slider-bg" data-background="{{ asset('frontend/assets/images/product-banner-2.jpg') }}"></div>
+                    <div class="banner-two__slider-bg" data-background="{{ asset('frontend/assets/images/web-banner-2.png') }}"></div>
                     <div class="container">
                         <div class="row">
                             <div class="col-12 col-md-6 col-lg-7">
@@ -47,7 +47,7 @@
             </div>
             <div class="swiper-slide">
                 <div class="banner-two__slider-single">
-                    <div class="banner-two__slider-bg" data-background="{{ asset('frontend/assets/images/product-banner-3.jpg') }}"></div>
+                    <div class="banner-two__slider-bg" data-background="{{ asset('frontend/assets/images/web-banner-3.png') }}"></div>
                     <div class="container">
                         <div class="row">
                             <div class="col-12 col-md-6 col-lg-7">
@@ -122,19 +122,19 @@
 
 <!-- Featured Products Section -->
 @php
-    $featuredProducts = \App\Models\Product::with(['images', 'categories', 'brand'])
+    $featuredProducts = \App\Models\Product::with(['images', 'coverImage', 'categories', 'brand'])
         ->where('status', 1)
         ->where('featured', 1)
         ->take(8)
         ->get();
     
-    $newArrivals = \App\Models\Product::with(['images', 'categories', 'brand'])
+    $newArrivals = \App\Models\Product::with(['images', 'coverImage', 'categories', 'brand'])
         ->where('status', 1)
         ->orderBy('created_at', 'desc')
         ->take(8)
         ->get();
     
-    $topSelling = \App\Models\Product::with(['images', 'categories', 'brand'])
+    $topSelling = \App\Models\Product::with(['images', 'coverImage', 'categories', 'brand'])
         ->where('status', 1)
         ->orderBy('id', 'desc')
         ->take(8)
