@@ -89,10 +89,20 @@
                 <div class="ministrie-eight-slide p-relative" data-aos="fade-up" data-aos-duration="1000" data-aos-delay="200">
                     <div class="ministrie-eight-active swiper-container swiper mySwiper">
                         <div class="ministrie-eight-swiper-wrapper swiper-wrapper">
-                            @foreach($categories as $category)
+                            @foreach($categories as $index => $category)
+                            @php
+                                $categoryImages = [
+                                    'frontend/assets/images/ministrie-eight-thumb1.jpg',
+                                    'frontend/assets/images/ministrie-eight-thumb2.jpg',
+                                    'frontend/assets/images/ministrie-eight-thumb3.jpg',
+                                ];
+                                $catImage = $category->thumb_url 
+                                    ? asset('storage/' . $category->thumb_url) 
+                                    : asset($categoryImages[$index % count($categoryImages)]);
+                            @endphp
                             <div class="ministrie-eight-wrapper swiper-slide">
                                 <div class="ministrie-eight-thumb position-relative z-1">
-                                    <img src="{{ $category->image ? asset('storage/' . $category->image) : asset('frontend/assets/images/shop/add-1.jpg') }}" alt="{{ $category->name }}">
+                                    <img src="{{ $catImage }}" alt="{{ $category->name }}">
                                     <div class="ministrie-eight-wrap">
                                         <div class="ministrie-eight-button">
                                             <a href="{{ route('shop.index', ['category' => $category->slug]) }}"><i class="fa-solid fa-arrow-right"></i></a>
@@ -123,19 +133,19 @@
 <!-- Featured Products Section -->
 @php
     $featuredProducts = \App\Models\Product::with(['images', 'coverImage', 'categories', 'brand'])
-        ->where('status', 1)
+        ->whereIn('status', ['active', 'Active', 1])
         ->where('featured', 1)
         ->take(8)
         ->get();
     
     $newArrivals = \App\Models\Product::with(['images', 'coverImage', 'categories', 'brand'])
-        ->where('status', 1)
+        ->whereIn('status', ['active', 'Active', 1])
         ->orderBy('created_at', 'desc')
         ->take(8)
         ->get();
     
     $topSelling = \App\Models\Product::with(['images', 'coverImage', 'categories', 'brand'])
-        ->where('status', 1)
+        ->whereIn('status', ['active', 'Active', 1])
         ->orderBy('id', 'desc')
         ->take(8)
         ->get();
