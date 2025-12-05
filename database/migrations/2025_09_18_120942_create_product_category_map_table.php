@@ -11,14 +11,16 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('product_category_map', function (Blueprint $table) {
-           $table->foreignId('product_id')->constrained('products')->cascadeOnDelete();
-            $table->foreignId('category_id')->constrained('product_categories')->cascadeOnDelete();
-            $table->boolean('is_primary')->default(false);
-            $table->primary(['product_id','category_id']);
-            $table->index(['category_id','product_id']);
-            $table->index(['product_id','is_primary']);
-        });
+        if (!Schema::hasTable('product_category_map')) {
+            Schema::create('product_category_map', function (Blueprint $table) {
+               $table->foreignId('product_id')->constrained('products')->cascadeOnDelete();
+                $table->foreignId('category_id')->constrained('product_categories')->cascadeOnDelete();
+                $table->boolean('is_primary')->default(false);
+                $table->primary(['product_id','category_id']);
+                $table->index(['category_id','product_id']);
+                $table->index(['product_id','is_primary']);
+            });
+        }
     }
 
     /**
