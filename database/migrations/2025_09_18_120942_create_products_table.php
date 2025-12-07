@@ -15,7 +15,10 @@ return new class extends Migration
            $table->bigIncrements('id');
             $table->foreignId('brand_id')->nullable()->constrained('brands')->cascadeOnUpdate();
             $table->foreignId('attribute_set_id')->nullable()->constrained('attribute_sets')->cascadeOnUpdate();
-            $table->foreignId('variant_rule_id')->nullable()->constrained('variant_rules')->cascadeOnUpdate();
+            // Define variant_rule_id without a foreign key constraint because the
+            // referenced table may be created in a later migration. This avoids
+            // migration ordering FK errors during db rebuilds.
+            $table->unsignedBigInteger('variant_rule_id')->nullable();
 
             $table->string('title');
             $table->string('slug')->unique();
