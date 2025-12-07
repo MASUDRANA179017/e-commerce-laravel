@@ -102,12 +102,24 @@
             position: relative;
             overflow: hidden;
             aspect-ratio: 1 / 1;
+            background: #f8f9fa;
         }
-        .property-list-img-area img {
+        .property-list-img-area a {
+            display: block;
             width: 100%;
             height: 100%;
-            object-fit: cover;
+        }
+        .property-list-img-area .img1 {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+        }
+        .property-list-img-area img {
+            width: 100% !important;
+            height: 100% !important;
+            object-fit: cover !important;
             transition: transform 0.5s ease;
+            display: block !important;
         }
         .property-single-boxarea:hover .property-list-img-area img {
             transform: scale(1.08);

@@ -45,18 +45,16 @@
 
 <div class="col-lg-3 col-md-4 col-sm-6">
     <div class="property-single-boxarea p-0" data-aos="fade-up" data-aos-duration="1000">
-        <div class="property-list-img-area position-relative" style="aspect-ratio: 1; background: #f8f9fa;">
-            <a href="{{ route('product.show', $product->slug ?? $product->id) }}" class="d-block h-100">
-                <div class="img1 h-100" style="overflow: hidden;">
+        <div class="property-list-img-area position-relative">
+            <a href="{{ route('product.show', $product->slug ?? $product->id) }}">
+                <div class="img1">
                     @if($productImagePath)
                         <img src="{{ asset('storage/' . $productImagePath) }}" 
                              alt="{{ $product->title ?? 'Product' }}"
-                             style="width: 100%; height: 100%; object-fit: cover;"
                              onerror="this.onerror=null; this.src='{{ asset($dummyImage) }}';">
                     @else
                         <img src="{{ asset($dummyImage) }}" 
-                             alt="{{ $product->title ?? 'Product' }}"
-                             style="width: 100%; height: 100%; object-fit: cover;">
+                             alt="{{ $product->title ?? 'Product' }}">
                     @endif
                 </div>
             </a>
