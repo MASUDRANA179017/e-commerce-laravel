@@ -1,22 +1,16 @@
 @php
-    // Get product image path
-    $productImagePath = null;
+    // Fallback dummy image (using relative URL)
+    $dummyImage = '/frontend/assets/images/shop/KHPP-SA21 - 1.png';
     
-    // Try coverImage relationship first
-    if ($product->coverImage && $product->coverImage->path) {
-        $productImagePath = $product->coverImage->path;
-    }
-    // Try images collection
-    elseif ($product->images && $product->images->count() > 0) {
-        $coverImg = $product->images->where('is_cover', true)->first();
-        if ($coverImg && $coverImg->path) {
-            $productImagePath = $coverImg->path;
-        } else {
-            $firstImg = $product->images->first();
-            if ($firstImg && $firstImg->path) {
-                $productImagePath = $firstImg->path;
-            }
-        }
+    // Get product image (same logic as working product-card.blade.php)
+    $productImagePath = null;
+    if (isset($product->cover_image) && $product->cover_image) {
+        $productImagePath = $product->cover_image;
+    } elseif ($product->images && $product->images->count() > 0) {
+        $img = $product->images->where('is_cover', true)->first() ?? $product->images->first();
+        $productImagePath = $img->path ?? $img->image ?? null;
+    } elseif (isset($product->coverImage) && $product->coverImage) {
+        $productImagePath = $product->coverImage->path ?? $product->coverImage->image ?? null;
     }
 
     // Get price
@@ -37,10 +31,6 @@
 
     // Check if new (within 30 days)
     $isNew = $product->created_at && $product->created_at->diffInDays(now()) < 30;
-    
-    // Dummy images for fallback
-    $dummyImageList = ['KHPP-SA21 - 1.png', 'KHPP-SA22 - 1.png', 'KHPP-SA23 - 1.png', 'KHPP-SA24 - 1.png'];
-    $dummyImage = 'frontend/assets/images/shop/' . $dummyImageList[array_rand($dummyImageList)];
 @endphp
 
 <div class="col-12 col-sm-6 col-md-4 col-lg-4">
@@ -49,11 +39,12 @@
             <a href="{{ route('product.show', $product->slug ?? $product->id) }}">
                 <div class="img1">
                     @if($productImagePath)
-                        <img src="{{ asset('storage/' . $productImagePath) }}" 
+                        <img src="/storage/{{ $productImagePath }}" 
                              alt="{{ $product->title ?? 'Product' }}"
-                             onerror="this.onerror=null; this.src='{{ asset($dummyImage) }}';">
+                             loading="lazy"
+                             onerror="this.onerror=null; this.src='{{ $dummyImage }}';">
                     @else
-                        <img src="{{ asset($dummyImage) }}" 
+                        <img src="{{ $dummyImage }}" 
                              alt="{{ $product->title ?? 'Product' }}">
                     @endif
                 </div>

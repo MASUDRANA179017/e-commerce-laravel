@@ -130,9 +130,11 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
         Route::delete('/coupons/{coupon}', [MarketingController::class, 'destroyCoupon'])->name('coupons.destroy');
         Route::post('/coupons/{coupon}/toggle', [MarketingController::class, 'toggleCoupon'])->name('coupons.toggle');
         Route::get('/flash-sales', [MarketingController::class, 'flashSales'])->name('flash-sales');
+        Route::get('/flash-sales/{sale}', [MarketingController::class, 'showFlashSale'])->name('flash-sales.show');
         Route::post('/flash-sales', [MarketingController::class, 'storeFlashSale'])->name('flash-sales.store');
         Route::put('/flash-sales/{sale}', [MarketingController::class, 'updateFlashSale'])->name('flash-sales.update');
         Route::delete('/flash-sales/{sale}', [MarketingController::class, 'destroyFlashSale'])->name('flash-sales.destroy');
+        Route::post('/flash-sales/{sale}/toggle', [MarketingController::class, 'toggleFlashSale'])->name('flash-sales.toggle');
         Route::get('/newsletters', [MarketingController::class, 'newsletters'])->name('newsletters');
         Route::get('/newsletters/subscribers', [MarketingController::class, 'subscribers'])->name('newsletters.subscribers');
         Route::post('/newsletters', [MarketingController::class, 'sendNewsletter'])->name('newsletters.send');

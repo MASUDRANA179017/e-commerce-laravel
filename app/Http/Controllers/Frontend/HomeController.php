@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Product;
 use App\Models\Admin\Product\ProductCategory;
 use App\Models\Admin\Brand\Brand;
+use App\Models\FlashSale;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -135,12 +136,47 @@ class HomeController extends Controller
             // Use empty collection
         }
 
+        // Get active or upcoming flash sale
+        $flashSale = null;
+        $flashSaleProducts = collect();
+        try {
+            // Update statuses first
+            $now = now();
+            FlashSale::where('status', 'scheduled')
+                ->where('start_time', '<=', $now)
+                ->where('end_time', '>=', $now)
+                ->update(['status' => 'active']);
+            FlashSale::where('status', 'active')
+                ->where('end_time', '<', $now)
+                ->update(['status' => 'ended']);
+            
+            // Prefer an active flash sale; if none, use the next scheduled one
+            $flashSale = FlashSale::whereIn('status', ['active', 'scheduled'])
+                ->where('end_time', '>=', $now)
+                ->orderByRaw("FIELD(status, 'active', 'scheduled', 'draft', 'ended')")
+                ->orderByDesc('is_featured')
+                ->orderBy('start_time')
+                ->first();
+            
+            if ($flashSale) {
+                $flashSaleProducts = $flashSale->products()
+                    ->whereIn('status', ['active', 'Active'])
+                    ->with('images')
+                    ->limit(8)
+                    ->get();
+            }
+        } catch (\Exception $e) {
+            // Flash sale table might not exist yet
+        }
+
         return view('frontend.home', compact(
             'categories', 
             'featuredProducts', 
             'newArrivals', 
             'bestSellers',
-            'brands'
+            'brands',
+            'flashSale',
+            'flashSaleProducts'
         ));
     }
 }

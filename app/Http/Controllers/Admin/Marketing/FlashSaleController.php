@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Admin;
+namespace App\Http\Controllers\Admin\Marketing;
 
 use App\Http\Controllers\Controller;
 use App\Models\FlashSale;
@@ -9,55 +9,12 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
-class MarketingController extends Controller
+class FlashSaleController extends Controller
 {
-    public function coupons()
-    {
-        return view('admin.marketing.coupons');
-    }
-
-    public function couponsData(Request $request)
-    {
-        $coupons = collect(); // Coupon::all()
-        return response()->json(['data' => $coupons]);
-    }
-
-    public function storeCoupon(Request $request)
-    {
-        $request->validate([
-            'code' => 'required|string|unique:coupons',
-            'type' => 'required|in:percentage,fixed',
-            'value' => 'required|numeric|min:0',
-        ]);
-
-        // Create coupon logic
-        return response()->json(['success' => true, 'message' => 'Coupon created']);
-    }
-
-    public function showCoupon($coupon)
-    {
-        return response()->json(['coupon' => $coupon]);
-    }
-
-    public function updateCoupon(Request $request, $coupon)
-    {
-        // Update coupon logic
-        return response()->json(['success' => true, 'message' => 'Coupon updated']);
-    }
-
-    public function destroyCoupon($coupon)
-    {
-        // Delete coupon logic
-        return response()->json(['success' => true]);
-    }
-
-    public function toggleCoupon($coupon)
-    {
-        // Toggle coupon status
-        return response()->json(['success' => true]);
-    }
-
-    public function flashSales()
+    /**
+     * Display flash sales list
+     */
+    public function index()
     {
         // Update statuses based on time
         $this->updateFlashSaleStatuses();
@@ -66,7 +23,7 @@ class MarketingController extends Controller
             ->orderByDesc('created_at')
             ->get();
         
-        $activeFlashSale = FlashSale::active()->where('is_featured', true)->with('products')->first()
+        $activeFlashSale = FlashSale::active()->featured()->with('products')->first()
             ?? FlashSale::active()->with('products')->first();
         
         $products = Product::whereIn('status', ['active', 'Active'])
@@ -77,13 +34,10 @@ class MarketingController extends Controller
         return view('admin.marketing.flash-sales', compact('flashSales', 'activeFlashSale', 'products'));
     }
 
-    public function showFlashSale($id)
-    {
-        $flashSale = FlashSale::with('products')->findOrFail($id);
-        return response()->json(['flash_sale' => $flashSale]);
-    }
-
-    public function storeFlashSale(Request $request)
+    /**
+     * Store a new flash sale
+     */
+    public function store(Request $request)
     {
         $request->validate([
             'title' => 'required|string|max:255',
@@ -93,6 +47,7 @@ class MarketingController extends Controller
             'discount_percent' => 'nullable|numeric|min:0|max:100',
             'is_featured' => 'nullable|boolean',
             'products' => 'nullable|array',
+            'products.*' => 'exists:products,id',
         ]);
 
         try {
@@ -148,7 +103,10 @@ class MarketingController extends Controller
         }
     }
 
-    public function updateFlashSale(Request $request, $id)
+    /**
+     * Update flash sale
+     */
+    public function update(Request $request, $id)
     {
         $request->validate([
             'title' => 'required|string|max:255',
@@ -158,6 +116,7 @@ class MarketingController extends Controller
             'discount_percent' => 'nullable|numeric|min:0|max:100',
             'is_featured' => 'nullable|boolean',
             'products' => 'nullable|array',
+            'products.*' => 'exists:products,id',
         ]);
 
         try {
@@ -194,7 +153,9 @@ class MarketingController extends Controller
             ]);
 
             // Sync products
-            $flashSale->products()->sync($request->products ?? []);
+            if ($request->has('products')) {
+                $flashSale->products()->sync($request->products ?? []);
+            }
 
             DB::commit();
 
@@ -213,7 +174,10 @@ class MarketingController extends Controller
         }
     }
 
-    public function destroyFlashSale($id)
+    /**
+     * Delete flash sale
+     */
+    public function destroy($id)
     {
         try {
             $flashSale = FlashSale::findOrFail($id);
@@ -231,7 +195,10 @@ class MarketingController extends Controller
         }
     }
 
-    public function toggleFlashSale($id)
+    /**
+     * Toggle flash sale status
+     */
+    public function toggleStatus($id)
     {
         try {
             $flashSale = FlashSale::findOrFail($id);
@@ -262,6 +229,59 @@ class MarketingController extends Controller
         }
     }
 
+    /**
+     * Get active flash sale data for frontend API
+     */
+    public function getActive()
+    {
+        $this->updateFlashSaleStatuses();
+        
+        $flashSale = FlashSale::active()
+            ->orderByDesc('is_featured')
+            ->with(['products' => function($q) {
+                $q->whereIn('status', ['active', 'Active'])
+                  ->with('images')
+                  ->limit(12);
+            }])
+            ->first();
+
+        if (!$flashSale) {
+            return response()->json([
+                'success' => false,
+                'message' => 'No active flash sale',
+            ]);
+        }
+
+        return response()->json([
+            'success' => true,
+            'flash_sale' => [
+                'id' => $flashSale->id,
+                'title' => $flashSale->title,
+                'description' => $flashSale->description,
+                'end_time' => $flashSale->end_time->toIso8601String(),
+                'end_timestamp' => $flashSale->end_time->timestamp * 1000,
+                'discount_percent' => $flashSale->discount_percent,
+                'products_count' => $flashSale->products->count(),
+                'products' => $flashSale->products->map(function($product) {
+                    $image = $product->images->where('is_cover', true)->first() 
+                        ?? $product->images->first();
+                    return [
+                        'id' => $product->id,
+                        'title' => $product->title,
+                        'slug' => $product->slug,
+                        'price' => $product->price,
+                        'sale_price' => $product->sale_price,
+                        'flash_price' => $product->pivot->flash_price,
+                        'image' => $image ? '/storage/' . $image->path : null,
+                    ];
+                }),
+            ],
+        ]);
+    }
+
+    /**
+     * Update flash sale statuses based on time
+     */
     private function updateFlashSaleStatuses()
     {
         $now = now();
@@ -276,28 +296,6 @@ class MarketingController extends Controller
         FlashSale::where('status', 'active')
             ->where('end_time', '<', $now)
             ->update(['status' => 'ended']);
-    }
-
-    public function newsletters()
-    {
-        return view('admin.marketing.newsletters');
-    }
-
-    public function subscribers()
-    {
-        return response()->json(['subscribers' => collect()]);
-    }
-
-    public function sendNewsletter(Request $request)
-    {
-        // Send newsletter logic
-        return response()->json(['success' => true, 'message' => 'Newsletter sent']);
-    }
-
-    public function deleteSubscriber($subscriber)
-    {
-        // Delete subscriber logic
-        return response()->json(['success' => true]);
     }
 }
 

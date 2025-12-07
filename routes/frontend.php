@@ -7,6 +7,7 @@ use App\Http\Controllers\Frontend\CartController;
 use App\Http\Controllers\Frontend\WishlistController;
 use App\Http\Controllers\Frontend\CheckoutController;
 use App\Http\Controllers\Frontend\ContactController;
+use App\Http\Controllers\Frontend\FlashSaleController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -20,6 +21,9 @@ use Illuminate\Support\Facades\Route;
 
 // Home Page
 Route::get('/', [HomeController::class, 'index'])->name('home');
+
+// Flash Sale page
+Route::get('/flash-sale', [FlashSaleController::class, 'index'])->name('flash-sale.index');
 
 // Shop / Products
 Route::get('/shop', [ShopController::class, 'index'])->name('shop.index');

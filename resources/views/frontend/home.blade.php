@@ -218,16 +218,36 @@
 </section>
 
 <!-- Flash Sale / Countdown Section -->
-<section id="countdownSection" class="countdown-eight-area" data-background="{{ asset('frontend/assets/images/shop/Ad-1.jpg') }}">
+@if(isset($flashSale) && $flashSale)
+@php
+    $isActiveFlash = $flashSale->status === 'active';
+@endphp
+<section id="countdownSection" class="countdown-eight-area" data-background="{{ $flashSale->banner_image ? asset('storage/' . $flashSale->banner_image) : asset('frontend/assets/images/shop/Ad-1.jpg') }}">
     <div class="container">
         <div class="row align-items-center justify-content-between">
             <div class="col-xl-6 col-lg-8">
                 <div class="countdown-eight-wrapper" data-aos="fade-up" data-aos-duration="1000" data-aos-delay="200">
                     <div class="section-eight-wrapper">
-                        <h6 class="section-eight-subtitle d-inline-block">Limited Time Offer</h6>
-                        <h2 class="section-eight-title char-animation text-white">Flash Sale Is Live!</h2>
+                        <h6 class="section-eight-subtitle d-inline-block">
+                            {{ $isActiveFlash ? 'Limited Time Offer' : 'Coming Soon' }}
+                        </h6>
+                        <h2 class="section-eight-title char-animation text-white">
+                            {{ $isActiveFlash ? $flashSale->title : ($flashSale->title . ' Starts Soon!') }}
+                        </h2>
+                        @if($flashSale->description)
+                        <p class="text-white opacity-75 mt-2">{{ $flashSale->description }}</p>
+                        @endif
+                        @if($flashSale->discount_percent > 0)
+                        <div class="mt-3">
+                            <span class="badge bg-danger fs-5 p-2 px-3">Up to {{ $flashSale->discount_percent }}% OFF</span>
+                        </div>
+                        @endif
                     </div>
-                    <div class="countdown-eight-timer" id="countdown">
+                    <div
+                        class="countdown-eight-timer"
+                        id="countdown"
+                        data-end-time="{{ $flashSale->end_time->timestamp * 1000 }}"
+                    >
                         <ul>
                             <li><span id="days">00</span>Days</li>
                             <li><span id="hours">00</span>Hours</li>
@@ -235,12 +255,32 @@
                             <li><span id="seconds">00</span>Seconds</li>
                         </ul>
                     </div>
-                    <a href="{{ route('shop.index', ['on_sale' => 1]) }}" class="btn--primary p-2 px-5">Shop Now</a>
+                    <a href="{{ route('flash-sale.index') }}" class="btn--primary p-2 px-5">
+                        {{ $isActiveFlash ? 'Shop Flash Sale' : 'View Upcoming Deals' }}
+                    </a>
                 </div>
             </div>
         </div>
     </div>
 </section>
+@else
+<!-- No active flash sale - show default banner -->
+<section id="countdownSection" class="countdown-eight-area" data-background="{{ asset('frontend/assets/images/shop/Ad-1.jpg') }}">
+    <div class="container">
+        <div class="row align-items-center justify-content-between">
+            <div class="col-xl-6 col-lg-8">
+                <div class="countdown-eight-wrapper" data-aos="fade-up" data-aos-duration="1000" data-aos-delay="200">
+                    <div class="section-eight-wrapper">
+                        <h6 class="section-eight-subtitle d-inline-block">Special Offers</h6>
+                        <h2 class="section-eight-title char-animation text-white">Check Our Latest Deals!</h2>
+                    </div>
+                    <a href="{{ route('shop.index') }}" class="btn--primary p-2 px-5 mt-4">Shop Now</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+@endif
 
 <!-- Testimonial Section -->
 <section class="testimonial-six-area">
@@ -435,28 +475,74 @@
 </section>
 @endsection
 
+@push('styles')
+<style>
+    /* Fix countdown timer shaking - use fixed width and tabular numbers */
+    .countdown-eight-timer ul li {
+        min-width: 100px;
+        width: 100px;
+    }
+    .countdown-eight-timer ul li span {
+        font-variant-numeric: tabular-nums;
+        font-feature-settings: "tnum";
+        min-width: 80px;
+        text-align: center;
+        display: inline-block;
+    }
+</style>
+@endpush
+
 @push('scripts')
 <script>
-    // Countdown Timer
-    function updateCountdown() {
-        const endDate = new Date();
-        endDate.setDate(endDate.getDate() + 7); // 7 days from now
-        
-        const now = new Date().getTime();
-        const distance = endDate.getTime() - now;
-        
-        const days = Math.floor(distance / (1000 * 60 * 60 * 24));
-        const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-        const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-        const seconds = Math.floor((distance % (1000 * 60)) / 1000);
-        
-        document.getElementById('days').textContent = String(days).padStart(2, '0');
-        document.getElementById('hours').textContent = String(hours).padStart(2, '0');
-        document.getElementById('minutes').textContent = String(minutes).padStart(2, '0');
-        document.getElementById('seconds').textContent = String(seconds).padStart(2, '0');
-    }
-    
-    setInterval(updateCountdown, 1000);
-    updateCountdown();
+    // Countdown Timer - Always counts down to flash sale end time from database
+    (function() {
+        const countdownEl = document.getElementById('countdown');
+        if (!countdownEl) return;
+
+        const endAttr = countdownEl.getAttribute('data-end-time');
+
+        if (!endAttr) {
+            return;
+        }
+
+        const endTime = parseInt(endAttr, 10);
+
+        function updateCountdown() {
+            const daysEl = document.getElementById('days');
+            const hoursEl = document.getElementById('hours');
+            const minutesEl = document.getElementById('minutes');
+            const secondsEl = document.getElementById('seconds');
+
+            if (!daysEl || !hoursEl || !minutesEl || !secondsEl) return;
+
+            const now = Date.now();
+
+            // Otherwise count down to end time
+            const distanceToEnd = endTime - now;
+
+            if (distanceToEnd <= 0) {
+                // Sale ended
+                daysEl.textContent = '00';
+                hoursEl.textContent = '00';
+                minutesEl.textContent = '00';
+                secondsEl.textContent = '00';
+                return;
+            }
+
+            const days = Math.floor(distanceToEnd / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((distanceToEnd % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((distanceToEnd % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((distanceToEnd % (1000 * 60)) / 1000);
+
+            daysEl.textContent = String(days).padStart(2, '0');
+            hoursEl.textContent = String(hours).padStart(2, '0');
+            minutesEl.textContent = String(minutes).padStart(2, '0');
+            secondsEl.textContent = String(seconds).padStart(2, '0');
+        }
+
+        // Update every second
+        setInterval(updateCountdown, 1000);
+        updateCountdown();
+    })();
 </script>
 @endpush
