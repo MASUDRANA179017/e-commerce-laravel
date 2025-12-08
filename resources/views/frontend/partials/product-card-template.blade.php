@@ -4,6 +4,8 @@
 
     // Get product image (same logic as working product-card.blade.php)
     $productImagePath = null;
+    $secondImagePath = null; // New logic for second image
+
     if (isset($product->cover_image) && $product->cover_image) {
         $productImagePath = $product->cover_image;
     } elseif ($product->images && $product->images->count() > 0) {
@@ -12,6 +14,16 @@
     } elseif (isset($product->coverImage) && $product->coverImage) {
         $productImagePath = $product->coverImage->path ?? $product->coverImage->image ?? null;
     }
+
+    // Try to find a second image for hover effect
+    if ($product->images && $product->images->count() > 1) {
+        // Exclude the main image if possible, otherwise just take the second one
+        $secondImg = $product->images->where('path', '!=', $productImagePath)->first();
+        if ($secondImg) {
+            $secondImagePath = $secondImg->path ?? $secondImg->image ?? null;
+        }
+    }
+
 
     // Get price
     $price = $product->price ?? 0;
@@ -37,17 +49,31 @@
     <div class="property-single-boxarea p-0" data-aos="fade-up" data-aos-duration="1000">
         <div class="property-list-img-area position-relative">
             <a href="{{ route('product.show', $product->slug ?? $product->id) }}">
-                <div class="img1">
+                <div class="img1 position-relative overflow-hidden">
                     @if($productImagePath)
                         <img src="{{ asset('storage/' . $productImagePath) }}" alt="{{ $product->title ?? 'Product' }}"
-                            loading="lazy" onerror="this.onerror=null; this.src='{{ $dummyImage }}';">
+                            class="main-img transition-opacity" loading="lazy"
+                            onerror="this.onerror=null; this.src='{{ $dummyImage }}';">
                     @else
-                        <img src="{{ $dummyImage }}" alt="{{ $product->title ?? 'Product' }}">
+                        <img src="{{ $dummyImage }}" alt="{{ $product->title ?? 'Product' }}" class="main-img">
+                    @endif
+
+                    @if($secondImagePath)
+                        <img src="{{ asset('storage/' . $secondImagePath) }}" alt="{{ $product->title ?? 'Product' }}"
+                            class="hover-img position-absolute top-0 start-0 w-100 h-100" loading="lazy"
+                            style="opacity: 0; transition: opacity 0.4s ease-in-out; object-fit: cover;"
+                            onerror="this.style.display='none';">
                     @endif
                 </div>
             </a>
 
-            <div class="position-absolute top-0 start-0 p-2 d-flex flex-wrap gap-1">
+            <style>
+                .property-single-boxarea:hover .hover-img {
+                    opacity: 1 !important;
+                }
+            </style>
+
+            <div class="position-absolute top-0 start-0 p-2 d-flex flex-wrap gap-1" style="z-index: 2;">
                 @if($isNew)
                     <span class="badge bg-primary">New</span>
                 @endif
@@ -61,7 +87,7 @@
 
             @if(!$inStock)
                 <div class="position-absolute bottom-0 start-0 end-0 text-center py-2"
-                    style="background: rgba(220, 53, 69, 0.9);">
+                    style="background: rgba(220, 53, 69, 0.9); z-index: 2;">
                     <span class="text-white fw-bold small">Out of Stock</span>
                 </div>
             @endif

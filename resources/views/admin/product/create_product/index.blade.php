@@ -383,6 +383,9 @@
 
     @push('scripts')
        <script>
+        window.PRODUCT_BOOTSTRAP = @json($PRODUCT_BOOTSTRAP);
+       </script>
+       <script>
   (function() {
       'use strict';
 
@@ -518,7 +521,8 @@
               media: [],
               variant: []
           },
-          CAT_CFG_CACHE: new Map()
+          CAT_CFG_CACHE: new Map(),
+          DELETED_IMAGES: new Set()
       };
 
       function toAttrId(token) {
@@ -1385,6 +1389,7 @@
               variant_rule_id: $('#variantRule')?.value || null,
               attributes: attrsPayload,
               variant_wise_image: $('#variantWiseImage')?.checked || false,
+              deleted_images: [...STATE.DELETED_IMAGES],
               variants,
               sizeChart: $('#sizeChart')?.value || null,
               seo: {
@@ -1412,6 +1417,34 @@
           }
           return true;
       }
+
+
+      /* ===== Image Actions ===== */
+      window.removeImage = function(btn) {
+          const item = btn.closest('.gallery-item');
+          if (!item) return;
+          const id = item.dataset.imageId;
+          if (id) {
+              STATE.DELETED_IMAGES.add(id);
+          }
+          item.remove();
+      };
+      
+      window.setCover = function(btn) {
+          document.querySelectorAll('.gallery-item').forEach(el => {
+            el.classList.remove('is-cover');
+            const bad = el.querySelector('.cover-badge');
+            if(bad) bad.remove();
+          });
+          const item = btn.closest('.gallery-item');
+          item.classList.add('is-cover');
+          item.insertAdjacentHTML('beforeend', '<span class="cover-badge">Cover</span>');
+          
+          // Re-index inputs if they exist (for new images), or we need to handle "Cover Change" for existing images?
+          // Existing images don't have radio inputs in this UI implementation for "new" cover selection logic easily
+          // unless we add hidden inputs. 
+          // For now let's minimal fix: Delete is the priority.
+      };
 
 
       /* ===== Init ===== */

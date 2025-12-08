@@ -310,6 +310,18 @@ class ProductController extends Controller
                 ]);
             }
 
+            // 🗑️ Delete Removed Images
+            $deletedImages = $payload['deleted_images'] ?? [];
+            if (!empty($deletedImages)) {
+                $imgsToDelete = DB::table('product_images')->whereIn('id', $deletedImages)->get();
+                foreach ($imgsToDelete as $img) {
+                    if ($img->path && \Illuminate\Support\Facades\Storage::disk('public')->exists($img->path)) {
+                        \Illuminate\Support\Facades\Storage::disk('public')->delete($img->path);
+                    }
+                }
+                DB::table('product_images')->whereIn('id', $deletedImages)->delete();
+            }
+
             // 🖼️ Gallery Images
             $galleryFiles = $request->file('gallery');
             $galleryFiles = is_array($galleryFiles) ? $galleryFiles : ($galleryFiles ? [$galleryFiles] : []);
