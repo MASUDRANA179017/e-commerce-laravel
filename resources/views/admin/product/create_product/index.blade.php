@@ -1431,11 +1431,20 @@
               renderCatChips();
               toggleVariantImageColumn();
 
+              if (BOOT?.assignedCategories && Array.isArray(BOOT.assignedCategories)) {
+                  BOOT.assignedCategories.forEach(c => selectedCats.add(c));
+              }
               if (BOOT?.primaryCategory) {
                   selectedCats.add(BOOT.primaryCategory);
                   primaryCat = BOOT.primaryCategory;
+              }
+              
+              if (selectedCats.size > 0) {
                   syncPrimarySelect();
                   renderCatChips();
+              }
+              
+              if (primaryCat) {
                   applyPrimaryConfig();
               }
               if (setSel?.value) await refreshVariantRuleForSet(); // pre-lock if needed

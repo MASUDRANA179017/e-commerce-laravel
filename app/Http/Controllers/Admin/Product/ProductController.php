@@ -37,7 +37,7 @@ class ProductController extends Controller
     {
         $brands = Brand::orderBy('name')->get();
         $bootstrap = ['primaryCategory' => null];
-        
+
         // Get product with brand
         $product = DB::table('products')
             ->leftJoin('brands', 'products.brand_id', '=', 'brands.id')
@@ -71,7 +71,28 @@ class ProductController extends Controller
             ->where('product_id', $id)
             ->get();
 
-        $bootstrap['primaryCategory'] = $product->category_id;
+        $assignedCats = DB::table('product_category_map as pcm')
+            ->join('product_categories as pc', 'pcm.category_id', '=', 'pc.id')
+            ->where('pcm.product_id', $id)
+            ->pluck('pc.slug')
+            ->toArray();
+
+        $bootstrap['primaryCategory'] = $product->category_id; // Keeping legacy (though might be mismatch if view expects slug)
+        // Actually, let's fix the primary category to be slug too if possible, but let's check what the view receives.
+        // View receives $bootstrap['primaryCategory'].
+        // If the view line 1434 checks BOOT.primaryCategory, and previous code passed ID...
+        // Wait, line 54 selects 'pc.id as category_id'. So it IS an ID.
+        // If the frontend expects slugs, we should probably pass the slug for primary too.
+        // But let's check the view again. Line 728: value="${item.slug}".
+        // So the frontend works with SLUGS.
+        // Is $product->category_id an ID or Slug? It's an ID (line 54).
+        // If I pass ID '5' and frontend has slugs 'men-fashion', '5' != 'men-fashion'.
+        // So primary category might ALSO be broken/not showing up correctly as "primary" in the UI list if it's using ID.
+
+        // Let's pass slugs for everything to be safe.
+        $primaryCatSlug = DB::table('product_categories')->where('id', $product->category_id)->value('slug');
+        $bootstrap['primaryCategory'] = $primaryCatSlug;
+        $bootstrap['assignedCategories'] = $assignedCats;
 
         return view('admin.product.create_product.index', [
             'brands' => $brands,
@@ -135,28 +156,28 @@ class ProductController extends Controller
                     $checked = $row->status === 'active' ? 'checked' : '';
                     return '
                         <div class="d-flex align-items-center gap-2">
-                            <span class="fw-bold">'.ucfirst($row->status).'</span>
+                            <span class="fw-bold">' . ucfirst($row->status) . '</span>
                             <label class="product-toggle-switch">
-                                <input type="checkbox" class="toggle-status" data-product-id="'.$row->id.'" '.$checked.'>
+                                <input type="checkbox" class="toggle-status" data-product-id="' . $row->id . '" ' . $checked . '>
                                 <span class="product-slider"></span>
                             </label>
                         </div>';
                 })
                 ->addColumn('images', function ($row) {
-                    return '<button class="btn btn-sm btn-outline-primary btn-view-images" data-product-id="'.$row->id.'">'
-                        .$row->images_count.' Images</button>';
+                    return '<button class="btn btn-sm btn-outline-primary btn-view-images" data-product-id="' . $row->id . '">'
+                        . $row->images_count . ' Images</button>';
                 })
                 ->addColumn('variants', function ($row) {
-                    return '<button class="btn btn-sm btn-outline-secondary btn-view-variants" data-product-id="'.$row->id.'">'
-                        .$row->variants_count.' Variants</button>';
+                    return '<button class="btn btn-sm btn-outline-secondary btn-view-variants" data-product-id="' . $row->id . '">'
+                        . $row->variants_count . ' Variants</button>';
                 })
                 ->addColumn('action', function ($row) {
                     return '
                         <div class="btn-group">
-                            <a href="#" class="btn btn-sm btn-primary editProduct" data-id="'.$row->id.'">
+                            <a href="#" class="btn btn-sm btn-primary editProduct" data-id="' . $row->id . '">
                                 <i class="bi bi-pencil-square"></i>
                             </a>
-                            <button class="btn btn-sm btn-danger deleteProduct" data-id="'.$row->id.'">
+                            <button class="btn btn-sm btn-danger deleteProduct" data-id="' . $row->id . '">
                                 <i class="bi bi-trash"></i>
                             </button>
                         </div>';
@@ -176,7 +197,8 @@ class ProductController extends Controller
     private function resolveCategoryIdFromPath(string $path): ?int
     {
         $segments = array_filter(array_map('trim', explode('/', $path)));
-        if (empty($segments)) return null;
+        if (empty($segments))
+            return null;
 
         $parentId = null;
         foreach ($segments as $seg) {
@@ -191,7 +213,8 @@ class ProductController extends Controller
                 ->select('id')
                 ->first();
 
-            if (!$row) return null;
+            if (!$row)
+                return null;
             $parentId = $row->id;
         }
         return $parentId;
@@ -211,7 +234,7 @@ class ProductController extends Controller
 
         return DB::transaction(function () use ($request, $payload, $existingProductId, $isUpdate) {
             $slug = $payload['slug'] ?? Str::slug($payload['title'] ?? (string) Str::uuid());
-            
+
             $productData = [
                 'brand_id' => $payload['brand_id'] ?? null,
                 'attribute_set_id' => $payload['attribute_set_id'] ?? null,
@@ -237,13 +260,13 @@ class ProductController extends Controller
                 // Update existing product
                 DB::table('products')->where('id', $existingProductId)->update($productData);
                 $productId = $existingProductId;
-                
+
                 // Clear existing category mappings for update
                 DB::table('product_category_map')->where('product_id', $productId)->delete();
-                
+
                 // Clear existing attributes for update
                 DB::table('product_attribute_terms')->where('product_id', $productId)->delete();
-                
+
                 // Clear existing variants for update (optional - you may want to keep them)
                 // DB::table('product_variant_options')->whereIn('variant_id', 
                 //     DB::table('product_variants')->where('product_id', $productId)->pluck('id')
@@ -291,7 +314,7 @@ class ProductController extends Controller
             $galleryFiles = $request->file('gallery');
             $galleryFiles = is_array($galleryFiles) ? $galleryFiles : ($galleryFiles ? [$galleryFiles] : []);
             $coverIdx = (int) $request->input('gallery_cover_index', 0);
-            
+
             // Only process images if new files are uploaded
             if (count($galleryFiles) > 0) {
                 // Get current max sort order for existing images
@@ -301,7 +324,8 @@ class ProductController extends Controller
                 $sort = $maxSort + 1;
 
                 foreach ($galleryFiles as $idx => $file) {
-                    if (!($file instanceof \Illuminate\Http\UploadedFile) || !$file->isValid()) continue;
+                    if (!($file instanceof \Illuminate\Http\UploadedFile) || !$file->isValid())
+                        continue;
                     $path = $file->store('product/images', 'public');
                     DB::table('product_images')->insert([
                         'product_id' => $productId,
@@ -368,7 +392,7 @@ class ProductController extends Controller
             }
 
             return response()->json([
-                'ok' => true, 
+                'ok' => true,
                 'product_id' => $productId,
                 'message' => $isUpdate ? 'Product updated successfully!' : 'Product created successfully!',
                 'is_update' => $isUpdate

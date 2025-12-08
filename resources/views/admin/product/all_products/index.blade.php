@@ -332,10 +332,10 @@
                                         @php
                                             $coverImg = null;
                                             if (isset($p->id)) {
-                                                $coverImg = \DB::table('product_images')
+                                                $images = \DB::table('product_images')
                                                     ->where('product_id', $p->id)
-                                                    ->where('is_cover', true)
-                                                    ->first();
+                                                    ->get();
+                                                $coverImg = $images->where('is_cover', 1)->first() ?? $images->first();
                                             }
                                         @endphp
                                         @if($coverImg && $coverImg->path)
