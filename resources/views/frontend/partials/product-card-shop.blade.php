@@ -1,6 +1,6 @@
 @php
-    // Fallback dummy image (using relative URL)
-    $dummyImage = '/frontend/assets/images/shop/KHPP-SA21 - 1.png';
+    // Fallback dummy image
+    $dummyImage = asset('frontend/assets/images/shop/KHPP-SA21 - 1.png');
     
     // Get product image (same logic as working product-card.blade.php)
     $productImagePath = null;

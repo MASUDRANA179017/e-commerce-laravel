@@ -27,9 +27,9 @@ class AppServiceProvider extends ServiceProvider
         if (Schema::hasTable('business_setups') && Schema::hasTable('products')) {
             // Use first() to avoid throwing during migrations when no BusinessSetup row exists yet.
             $business_setups = BusinessSetup::first();
-            view()->share('business_setups', $business_setups ?? null);
+            view()->share('business_setup', $business_setups ?? null);
         } else {
-            view()->share('business_setups', null);
+            view()->share('business_setup', null);
         }
     }
 }

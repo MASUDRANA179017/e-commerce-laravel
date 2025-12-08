@@ -237,7 +237,7 @@
         $inactiveCount = 0;
         if ($products) {
             foreach ($products as $prod) {
-                if (isset($prod->status) && $prod->status === 'active') {
+                if (isset($prod->status) && strtolower($prod->status) === 'active') {
                     $activeCount++;
                 } else {
                     $inactiveCount++;
@@ -370,7 +370,7 @@
                                         <label class="product-toggle-switch">
                                             <input type="checkbox" class="product-status-toggle"
                                                 data-product-id="{{ $p->id }}"
-                                                {{ $p->status === 'active' ? 'checked' : '' }}>
+                                                {{ strtolower($p->status) === 'active' ? 'checked' : '' }}>
                                             <span class="product-slider"></span>
                                         </label>
                                     </div>
@@ -737,8 +737,8 @@ document.addEventListener("DOMContentLoaded", function() {
                                 <div class="product-badges">
                                     ${p.brand_name ? `<span class="qbit-badge-purple"><i class="bx bx-tag"></i> ${p.brand_name}</span>` : ''}
                                     ${p.category_name ? `<span class="qbit-badge-info"><i class="bx bx-folder"></i> ${p.category_name}</span>` : ''}
-                                    <span class="qbit-badge-${p.status === 'active' ? 'success' : 'warning'}">
-                                        <i class="bx bx-${p.status === 'active' ? 'check-circle' : 'x-circle'}"></i> ${p.status ? p.status.charAt(0).toUpperCase() + p.status.slice(1) : 'Draft'}
+                                    <span class="qbit-badge-${(p.status && p.status.toLowerCase() === 'active') ? 'success' : 'warning'}">
+                                        <i class="bx bx-${(p.status && p.status.toLowerCase() === 'active') ? 'check-circle' : 'x-circle'}"></i> ${p.status || 'Draft'}
                                     </span>
                                 </div>
                                 

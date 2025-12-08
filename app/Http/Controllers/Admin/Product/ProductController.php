@@ -387,19 +387,23 @@ class ProductController extends Controller
             $status = $data['status'] ?? null;
         }
 
-        if (!in_array($status, ['active', 'inactive'])) {
+        // UI sends "active" / "inactive"; DB enum is "Active" / "Draft" / "Archived"
+        if (!in_array($status, ['active', 'inactive'], true)) {
             return response()->json(['ok' => false, 'message' => 'Invalid status.'], 400);
         }
+
+        // Map UI status to DB enum value
+        $dbStatus = $status === 'active' ? 'Active' : 'Draft';
 
         try {
             DB::table('products')
                 ->where('id', $id)
-                ->update(['status' => $status, 'updated_at' => now()]);
+                ->update(['status' => $dbStatus, 'updated_at' => now()]);
 
             return response()->json([
                 'ok' => true,
-                'status' => $status,
-                'message' => "Product status updated to '{$status}' successfully!"
+                'status' => $dbStatus,
+                'message' => "Product status updated to '{$dbStatus}' successfully!"
             ]);
         } catch (\Exception $e) {
             Log::error("Update product status error (ID: {$id}): " . $e->getMessage());

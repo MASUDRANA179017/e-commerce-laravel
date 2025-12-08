@@ -18,7 +18,7 @@
                                         <i class="bx bxs-shopping-bags"></i> Browse Our Collection
                                     </span>
                                     <h1 class="title-animation text-white">Shop All Products</h1>
-                                    <p class="text-white mt-2 mb-4">
+                                    <p class="text-white mt-2 mb-4 text-center">
                                         Discover amazing products at great prices. Quality you can trust, delivery you can count on.
                                     </p>
                                 </div>
