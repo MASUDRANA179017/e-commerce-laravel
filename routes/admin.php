@@ -180,5 +180,19 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
         Route::post('/social', [SettingsController::class, 'updateSocial'])->name('social');
         Route::post('/seo', [SettingsController::class, 'updateSeo'])->name('seo');
     });
+
+    /*
+    |--------------------------------------------------------------------------
+    | Blog Management
+    |--------------------------------------------------------------------------
+    */
+    Route::prefix('blogs')->name('blogs.')->group(function () {
+        Route::get('/', [\App\Http\Controllers\Admin\BlogController::class, 'index'])->name('index');
+        Route::get('/create', [\App\Http\Controllers\Admin\BlogController::class, 'create'])->name('create');
+        Route::post('/', [\App\Http\Controllers\Admin\BlogController::class, 'store'])->name('store');
+        Route::get('/{blog}/edit', [\App\Http\Controllers\Admin\BlogController::class, 'edit'])->name('edit');
+        Route::put('/{blog}', [\App\Http\Controllers\Admin\BlogController::class, 'update'])->name('update');
+        Route::delete('/{blog}', [\App\Http\Controllers\Admin\BlogController::class, 'destroy'])->name('destroy');
+    });
 });
 

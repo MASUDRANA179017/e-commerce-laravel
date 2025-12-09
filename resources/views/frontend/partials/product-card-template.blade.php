@@ -115,10 +115,10 @@
     </style>
 @endonce
 
-<div class="col-12 col-sm-6 col-md-4 col-lg-4">
+<div class="col-12 col-sm-6 col-md-3 col-lg-3">
     <div class="property-single-boxarea p-0" data-aos="fade-up" data-aos-duration="1000">
         <div class="property-list-img-area position-relative">
-            <div class="img1 position-relative overflow-hidden" style="height: 300px;"> <!-- Increased height for shop page -->
+            <div class="img1 position-relative overflow-hidden" style="height: 400px;"> 
                 
                 @php
                     $swiperId = 'shop-swiper-' . ($product->id ?? uniqid());
@@ -133,16 +133,16 @@
                                     $path = $image->path ?? $image->image ?? null; 
                                 @endphp
                                 <div class="swiper-slide">
-                                    <a href="{{ route('product.show', $product->slug ?? $product->id) }}" class="d-block w-100 h-100">
-                                        @if($path)
-                                            <img src="{{ asset('storage/' . $path) }}" alt="{{ $product->title ?? 'Product' }}"
-                                                class="w-100 h-100 object-fit-cover" loading="lazy"
-                                                onerror="this.onerror=null; this.src='{{ $dummyImage }}';">
-                                        @else
-                                             <img src="{{ $dummyImage }}" alt="{{ $product->title ?? 'Product' }}"
-                                                class="w-100 h-100 object-fit-cover">
-                                        @endif
-                                    </a>
+                                    
+                                    @if($path)
+                                        <img src="{{ asset('storage/' . $path) }}" alt="{{ $product->title ?? 'Product' }}"
+                                            class="w-100 h-100 object-fit-cover" loading="lazy"
+                                            onerror="this.onerror=null; this.src='{{ $dummyImage }}';">
+                                    @else
+                                            <img src="{{ $dummyImage }}" alt="{{ $product->title ?? 'Product' }}"
+                                            class="w-100 h-100 object-fit-cover">
+                                    @endif
+                                    
                                 </div>
                             @endforeach
                         </div>

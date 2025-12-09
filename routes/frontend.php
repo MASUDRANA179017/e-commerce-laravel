@@ -83,3 +83,9 @@ Route::get('/faq', function () {
     return view('frontend.faq');
 })->name('frontend.faq');
 
+// Blog Routes
+Route::prefix('blog')->name('blog.')->group(function () {
+    Route::get('/', [\App\Http\Controllers\Frontend\BlogController::class, 'index'])->name('index');
+    Route::get('/{slug}', [\App\Http\Controllers\Frontend\BlogController::class, 'show'])->name('show');
+});
+

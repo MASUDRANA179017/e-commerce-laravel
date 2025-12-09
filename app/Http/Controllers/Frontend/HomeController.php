@@ -7,6 +7,7 @@ use App\Models\Product;
 use App\Models\Admin\Product\ProductCategory;
 use App\Models\Admin\Brand\Brand;
 use App\Models\FlashSale;
+use App\Models\Blog;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -21,9 +22,11 @@ class HomeController extends Controller
         $categories = collect();
         try {
             $categories = ProductCategory::whereNull('parent_id')
-                ->withCount(['products' => function ($query) {
-                    $query->where('status', 'Active');
-                }])
+                ->withCount([
+                    'products' => function ($query) {
+                        $query->where('status', 'Active');
+                    }
+                ])
                 ->orderBy('order')
                 ->limit(8)
                 ->get();
@@ -149,7 +152,7 @@ class HomeController extends Controller
             FlashSale::where('status', 'active')
                 ->where('end_time', '<', $now)
                 ->update(['status' => 'ended']);
-            
+
             // Prefer an active flash sale; if none, use the next scheduled one
             $flashSale = FlashSale::whereIn('status', ['active', 'scheduled'])
                 ->where('end_time', '>=', $now)
@@ -157,7 +160,7 @@ class HomeController extends Controller
                 ->orderByDesc('is_featured')
                 ->orderBy('start_time')
                 ->first();
-            
+
             if ($flashSale) {
                 $flashSaleProducts = $flashSale->products()
                     ->whereIn('status', ['active', 'Active'])
@@ -169,14 +172,27 @@ class HomeController extends Controller
             // Flash sale table might not exist yet
         }
 
+        // Get latest 3 published blogs
+        $latestBlogs = collect();
+        try {
+            $latestBlogs = Blog::published()
+                ->with('author')
+                ->latest()
+                ->limit(3)
+                ->get();
+        } catch (\Exception $e) {
+            // Blog table might not exist yet or error occurred
+        }
+
         return view('frontend.home', compact(
-            'categories', 
-            'featuredProducts', 
-            'newArrivals', 
+            'categories',
+            'featuredProducts',
+            'newArrivals',
             'bestSellers',
             'brands',
             'flashSale',
-            'flashSaleProducts'
+            'flashSaleProducts',
+            'latestBlogs'
         ));
     }
 }
