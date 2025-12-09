@@ -2,28 +2,29 @@
     // Fallback dummy image
     $dummyImage = asset('frontend/assets/images/shop/KHPP-SA21 - 1.png');
 
-    // Get product image (same logic as working product-card.blade.php)
-    $productImagePath = null;
-    $secondImagePath = null; // New logic for second image
-
-    if (isset($product->cover_image) && $product->cover_image) {
-        $productImagePath = $product->cover_image;
-    } elseif ($product->images && $product->images->count() > 0) {
-        $img = $product->images->where('is_cover', true)->first() ?? $product->images->first();
-        $productImagePath = $img->path ?? $img->image ?? null;
+    // Get all valid images
+    $images = collect();
+    
+    // 1. Prioritize images relationship
+    if (isset($product->images) && $product->images && $product->images instanceof \Illuminate\Support\Collection && $product->images->count() > 0) {
+        // Sort by cover image first, then others
+        $images = $product->images->sortByDesc('is_cover');
+    } 
+    // 2. Fallback to direct attribute if no images in relationship
+    elseif (isset($product->cover_image) && $product->cover_image) {
+        $images->push((object)['path' => $product->cover_image]);
     } elseif (isset($product->coverImage) && $product->coverImage) {
-        $productImagePath = $product->coverImage->path ?? $product->coverImage->image ?? null;
+        $images->push($product->coverImage);
     }
 
-    // Try to find a second image for hover effect
-    if ($product->images && $product->images->count() > 1) {
-        // Exclude the main image if possible, otherwise just take the second one
-        $secondImg = $product->images->where('path', '!=', $productImagePath)->first();
-        if ($secondImg) {
-            $secondImagePath = $secondImg->path ?? $secondImg->image ?? null;
-        }
+    // Ensure we have at least one image (dummy if needed)
+    if ($images->isEmpty()) {
+        $images->push((object)['path' => null]); // Will trigger dummy image
     }
 
+    $uniqueImages = $images->unique(function ($item) {
+        return $item->path ?? $item->image ?? '';
+    });
 
     // Get price
     $price = $product->price ?? 0;
@@ -45,35 +46,161 @@
     $isNew = $product->created_at && $product->created_at->diffInDays(now()) < 30;
 @endphp
 
-<div class="col-lg-3 col-md-4 col-sm-6">
+@once
+    <style>
+        .property-single-boxarea {
+            position: relative;
+        }
+        
+        .property-list-img-area {
+            position: relative;
+            z-index: 1;
+        }
+
+        .product-card-swiper {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .product-card-swiper .swiper-wrapper {
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            display: flex; /* Ensure flex behavior */
+        }
+        
+        .product-card-swiper .swiper-slide {
+            width: 100%;
+            height: 100%;
+            flex-shrink: 0; /* Prevent shrinking */
+            position: relative;
+        }
+
+        .property-single-boxarea:hover .swiper-button-next,
+        .property-single-boxarea:hover .swiper-button-prev {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .product-card-swiper .swiper-button-next,
+        .product-card-swiper .swiper-button-prev {
+            width: 25px;
+            height: 25px;
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 50%;
+            color: #333;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            z-index: 10;
+        }
+
+        .product-card-swiper .swiper-button-next::after,
+        .product-card-swiper .swiper-button-prev::after {
+            font-size: 10px;
+            font-weight: bold;
+        }
+
+        .product-card-swiper .swiper-pagination-bullet {
+            background: #fff;
+            opacity: 0.6;
+        }
+
+        .product-card-swiper .swiper-pagination-bullet-active {
+            background: var(--primary-color, #0496ff);
+            opacity: 1;
+        }
+    </style>
+@endonce
+
+<div class="col-12 col-sm-6 col-md-4 col-lg-4">
     <div class="property-single-boxarea p-0" data-aos="fade-up" data-aos-duration="1000">
         <div class="property-list-img-area position-relative">
-            <a href="{{ route('product.show', $product->slug ?? $product->id) }}">
-                <div class="img1 position-relative overflow-hidden">
-                    @if($productImagePath)
-                        <img src="{{ asset('storage/' . $productImagePath) }}" alt="{{ $product->title ?? 'Product' }}"
-                            class="main-img transition-opacity" loading="lazy"
-                            onerror="this.onerror=null; this.src='{{ $dummyImage }}';">
-                    @else
-                        <img src="{{ $dummyImage }}" alt="{{ $product->title ?? 'Product' }}" class="main-img">
-                    @endif
+            <div class="img1 position-relative overflow-hidden" style="height: 300px;"> <!-- Increased height for shop page -->
+                
+                @php
+                    $swiperId = 'shop-swiper-' . ($product->id ?? uniqid());
+                @endphp
+                
+                @if($uniqueImages->count() > 1)
+                    <!-- Swiper Slider -->
+                    <div class="swiper product-card-swiper" id="{{ $swiperId }}">
+                        <div class="swiper-wrapper">
+                            @foreach($uniqueImages as $image)
+                                @php 
+                                    $path = $image->path ?? $image->image ?? null; 
+                                @endphp
+                                <div class="swiper-slide">
+                                    <a href="{{ route('product.show', $product->slug ?? $product->id) }}" class="d-block w-100 h-100">
+                                        @if($path)
+                                            <img src="{{ asset('storage/' . $path) }}" alt="{{ $product->title ?? 'Product' }}"
+                                                class="w-100 h-100 object-fit-cover" loading="lazy"
+                                                onerror="this.onerror=null; this.src='{{ $dummyImage }}';">
+                                        @else
+                                             <img src="{{ $dummyImage }}" alt="{{ $product->title ?? 'Product' }}"
+                                                class="w-100 h-100 object-fit-cover">
+                                        @endif
+                                    </a>
+                                </div>
+                            @endforeach
+                        </div>
+                        <div class="swiper-pagination" id="{{ $swiperId }}-pagination"></div>
+                        <div class="swiper-button-prev" id="{{ $swiperId }}-prev"></div>
+                        <div class="swiper-button-next" id="{{ $swiperId }}-next"></div>
+                    </div>
+                    
+                    <script>
+                        document.addEventListener('DOMContentLoaded', function() {
+                            new Swiper('#{{ $swiperId }}', {
+                                loop: false,
+                                slidesPerView: 1,
+                                spaceBetween: 0,
+                                pagination: {
+                                    el: '#{{ $swiperId }}-pagination',
+                                    clickable: true,
+                                    dynamicBullets: true,
+                                },
+                                navigation: {
+                                    nextEl: '#{{ $swiperId }}-next',
+                                    prevEl: '#{{ $swiperId }}-prev',
+                                },
+                                on: {
+                                    init: function() {
+                                        // Prevent link clicks when swiping
+                                        this.el.addEventListener('click', function(e) {
+                                            if (this.swiper && this.swiper.animating) {
+                                                e.preventDefault();
+                                                e.stopPropagation();
+                                            }
+                                        });
+                                    }
+                                }
+                            });
+                        });
+                    </script>
+                @else
+                    <!-- Static Image (Single) -->
+                    @php 
+                        $firstImage = $uniqueImages->first();
+                        $path = $firstImage->path ?? $firstImage->image ?? null;
+                    @endphp
+                    <a href="{{ route('product.show', $product->slug ?? $product->id) }}" class="d-block w-100 h-100">
+                        @if($path)
+                            <img src="{{ asset('storage/' . $path) }}" alt="{{ $product->title ?? 'Product' }}"
+                                class="w-100 h-100 object-fit-cover" loading="lazy"
+                                onerror="this.onerror=null; this.src='{{ $dummyImage }}';">
+                        @else
+                            <img src="{{ $dummyImage }}" alt="{{ $product->title ?? 'Product' }}"
+                                class="w-100 h-100 object-fit-cover">
+                        @endif
+                    </a>
+                @endif
 
-                    @if($secondImagePath)
-                        <img src="{{ asset('storage/' . $secondImagePath) }}" alt="{{ $product->title ?? 'Product' }}"
-                            class="hover-img position-absolute top-0 start-0 w-100 h-100" loading="lazy"
-                            style="opacity: 0; transition: opacity 0.4s ease-in-out; object-fit: cover;"
-                            onerror="this.style.display='none';">
-                    @endif
-                </div>
-            </a>
+            </div>
 
-            <style>
-                .property-single-boxarea:hover .hover-img {
-                    opacity: 1 !important;
-                }
-            </style>
-
-            <div class="position-absolute top-0 start-0 p-2 d-flex flex-wrap gap-1" style="z-index: 2;">
+            <div class="position-absolute top-0 start-0 p-2 d-flex flex-wrap gap-1" style="z-index: 2; pointer-events: none;">
                 @if($isNew)
                     <span class="badge bg-primary">New</span>
                 @endif

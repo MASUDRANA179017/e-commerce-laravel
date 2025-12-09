@@ -33,8 +33,6 @@
     <link rel="stylesheet" href="{{ asset('frontend/css/default-theme.css') }}" id="switch-color">
     <link rel="stylesheet" href="{{ asset('frontend/css/sticky-header.css') }}">
     <link rel="stylesheet" href="{{ asset('frontend/css/swiper-slider.css') }}">
-    <link rel="stylesheet" href="{{ asset('frontend/css/slick-slider.css') }}">
-    <link rel="stylesheet" href="{{ asset('frontend/css/owlcarousel.min.css') }}">
     <link rel="stylesheet" href="{{ asset('frontend/css/custom.css') }}">
     <link rel="stylesheet" href="{{ asset('frontend/css/qbit-bms-style.css') }}">
 
@@ -946,8 +944,6 @@
     <script src="{{ asset('frontend/js/ScrollToPlugin.min.js') }}"></script>
     <script src="{{ asset('frontend/js/ScrollTrigger.min.js') }}"></script>
     <script src="{{ asset('frontend/js/gsap.min.js') }}"></script>
-    <script src="{{ asset('frontend/js/owlcarousel.min.js') }}"></script>
-    <script src="{{ asset('frontend/js/slick-slider.js') }}"></script>
     <script src="{{ asset('frontend/js/swiper-slider.js') }}"></script>
 
     <!-- Polyfill for missing plugins and elements -->
