@@ -59,8 +59,8 @@
                 <div class="col-12 col-lg-6 mb-4 mb-lg-0">
                     <div class="product-images">
                         <!-- Main Image -->
-                        <div class="main-image mb-3 position-relative overflow-hidden rounded-4 bg-light"
-                            style="min-height: 450px;">
+                        <div class="main-image mb-3 position-relative overflow-hidden rounded-4 bg-light d-flex align-items-center justify-content-center"
+                            style="aspect-ratio: 1/1; max-height: 500px;">
                             @if($mainImage)
                                 <img src="{{ asset('storage/' . ($mainImage->path ?? $mainImage->image)) }}"
                                     alt="{{ $product->title }}" class="img-fluid w-100" id="mainProductImage"

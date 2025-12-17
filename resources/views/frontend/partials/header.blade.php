@@ -161,6 +161,101 @@
 </header>
 <!-- Header End -->
 
+<!-- Mobile Menu Sidebar -->
+<div class="mobile-menu-overlay" id="mobileMenuOverlay" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1001; opacity: 0; visibility: hidden; transition: all 0.3s;"></div>
+<div class="mobile-menu-sidebar" id="mobileMenuSidebar" style="position: fixed; top: 0; left: -300px; width: 300px; height: 100%; background: #fff; z-index: 1002; transition: all 0.3s; overflow-y: auto; box-shadow: 2px 0 10px rgba(0,0,0,0.1);">
+    <div class="p-3 border-bottom d-flex align-items-center justify-content-between">
+        <h5 class="m-0 fw-bold">Menu</h5>
+        <button class="btn-close" id="closeMobileMenu"></button>
+    </div>
+    <div class="p-3">
+        <!-- Mobile Search -->
+        <form action="{{ route('shop.index') }}" method="GET" class="mb-4">
+            <div class="input-group">
+                <input type="text" name="search" class="form-control" placeholder="Search..." value="{{ request('search') }}">
+                <button class="btn btn-primary" type="submit"><i class="fa-solid fa-magnifying-glass"></i></button>
+            </div>
+        </form>
+
+        <!-- Mobile Nav Links -->
+        <ul class="list-unstyled d-flex flex-column gap-3">
+            <li>
+                <a href="{{ route('home') }}" class="text-dark text-decoration-none fw-medium d-block py-2 {{ request()->routeIs('home') ? 'text-primary' : '' }}">Home</a>
+            </li>
+            <li>
+                <div class="d-flex align-items-center justify-content-between cursor-pointer" data-bs-toggle="collapse" data-bs-target="#mobileShopDropdown">
+                    <a href="{{ route('shop.index') }}" class="text-dark text-decoration-none fw-medium py-2 {{ request()->routeIs('shop.*') ? 'text-primary' : '' }}">Shop</a>
+                    <i class="fa-solid fa-chevron-down text-muted fs-12"></i>
+                </div>
+                <div class="collapse ps-3 mt-2" id="mobileShopDropdown">
+                    <ul class="list-unstyled d-flex flex-column gap-2 border-start ps-3 border-2">
+                        @php
+                            try {
+                                $navCategories = \App\Models\Admin\Product\ProductCategory::whereNull('parent_id')->where('show_on_menu', true)->orderBy('order')->limit(8)->get();
+                            } catch (\Exception $e) {
+                                $navCategories = collect();
+                            }
+                        @endphp
+                        @foreach($navCategories as $category)
+                            <li>
+                                <a href="{{ route('shop.index', ['category' => $category->name]) }}" class="text-secondary text-decoration-none fs-14 d-block py-1">{{ $category->name }}</a>
+                            </li>
+                        @endforeach
+                        <li>
+                            <a href="{{ route('shop.index') }}" class="text-primary text-decoration-none fs-14 d-block py-1 fw-medium">View All Categories</a>
+                        </li>
+                    </ul>
+                </div>
+            </li>
+            <li>
+                <a href="{{ route('frontend.about') }}" class="text-dark text-decoration-none fw-medium d-block py-2 {{ request()->routeIs('frontend.about') ? 'text-primary' : '' }}">About</a>
+            </li>
+            <li>
+                <a href="{{ route('blog.index') }}" class="text-dark text-decoration-none fw-medium d-block py-2 {{ request()->routeIs('blog.*') ? 'text-primary' : '' }}">Blog</a>
+            </li>
+            <li>
+                <a href="{{ route('frontend.contact') }}" class="text-dark text-decoration-none fw-medium d-block py-2 {{ request()->routeIs('frontend.contact') ? 'text-primary' : '' }}">Contact</a>
+            </li>
+        </ul>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const mobileMenuToggle = document.querySelector('.mobile-menu-toggle');
+        const mobileMenuOverlay = document.getElementById('mobileMenuOverlay');
+        const mobileMenuSidebar = document.getElementById('mobileMenuSidebar');
+        const closeMobileMenu = document.getElementById('closeMobileMenu');
+        
+        function openMenu() {
+            mobileMenuOverlay.style.opacity = '1';
+            mobileMenuOverlay.style.visibility = 'visible';
+            mobileMenuSidebar.style.left = '0';
+        }
+        
+        function closeMenu() {
+            mobileMenuOverlay.style.opacity = '0';
+            mobileMenuOverlay.style.visibility = 'hidden';
+            mobileMenuSidebar.style.left = '-300px';
+        }
+        
+        if(mobileMenuToggle) {
+            mobileMenuToggle.addEventListener('click', function(e) {
+                e.preventDefault();
+                openMenu();
+            });
+        }
+        
+        if(closeMobileMenu) {
+            closeMobileMenu.addEventListener('click', closeMenu);
+        }
+        
+        if(mobileMenuOverlay) {
+            mobileMenuOverlay.addEventListener('click', closeMenu);
+        }
+    });
+</script>
+
 <style>
     /* Navigation Hover Effects */
     .nav-link:hover {

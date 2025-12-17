@@ -449,7 +449,7 @@ class ProductController extends Controller
         }
 
         // Map UI status to DB enum value
-        $dbStatus = $status === 'active' ? 'Active' : 'Inactive';
+        $dbStatus = $status === 'active' ? 'Active' : 'Draft';
 
         try {
             DB::table('products')

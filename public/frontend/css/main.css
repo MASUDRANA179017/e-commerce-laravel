@@ -1842,7 +1842,7 @@ padding: 15px 40px;
   top: 0px;
   bottom: 0px;
   inset-inline-start: 0px;
-  width: 50%;
+  width: 60%;
   height: 100%;
   border-radius: inherit;
   background-color: var(--apece-primary);
@@ -17910,7 +17910,7 @@ width: 100%;
 }
 .subscribe-six-button {
   position: absolute;
-  right: 5%;
+  right: 50%;
   top: 50%;
   transform: translateY(-50%);
   overflow: hidden;
@@ -19905,7 +19905,7 @@ background-position: top center;
   padding: 120px 0 120px;
   position: relative;
   z-index: 1;
-  width: 80%;
+  width: 100%;
   border-radius: 30px;
   overflow: hidden;
   margin: auto;

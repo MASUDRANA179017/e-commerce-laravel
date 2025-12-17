@@ -66,7 +66,7 @@
   --apece-primary: #aecc00;
   --apece-secondary:#FE4F2D;
   --apece-title: #015551;
-  --apece-title-span #0079FF;
+  --apece-title-span: #0079FF;
   --apece-dark-bg: ;
   --apece-success: rgba(159, 211, 105, 1) !important;
 
@@ -19905,7 +19905,7 @@ background-position: top center;
   padding: 120px 0 120px;
   position: relative;
   z-index: 1;
-  width: 80%;
+  width: 100%;
   border-radius: 30px;
   overflow: hidden;
   margin: auto;

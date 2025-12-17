@@ -11,7 +11,7 @@
                     @if(isset($isEdit) && $isEdit)
                         Edit product details, media, attributes and variants
                     @else
-                        Category কনফিগ, Media Rule ও Variant Rule অনুযায়ী ফর্ম ডাইনামিক হবে
+                        Form will be dynamic based on Category Config, Media Rule, and Variant Rule.
                     @endif
                 </div>
             </div>
@@ -66,7 +66,7 @@
                                         <label class="form-label">Product Title <span class="req">*</span></label>
                                         <input id="title" class="form-control" placeholder="e.g., Basic Tee for Men"
                                             value="{{ isset($product) && $product ? $product->title : '' }}" required>
-                                        <div class="form-text">Slug auto-generate হবে (নিচে এডিট করতে পারবেন)</div>
+                                        <div class="form-text">Slug will be auto-generated (you can edit it below)</div>
                                     </div>
                                     <div class="col-md-6">
                                         <label class="form-label">Brand</label>
@@ -90,7 +90,7 @@
                                     <div class="col-md-4">
                                         <label class="form-label">Regular Price <span class="req">*</span></label>
                                         <div class="input-group">
-                                            <span class="input-group-text">৳</span>
+                                            <span class="input-group-text">Tk</span>
                                             <input id="regularPrice" type="number" step="0.01" min="0" class="form-control" placeholder="0.00"
                                                 value="{{ isset($product) && $product && isset($product->price) ? $product->price : '' }}">
                                         </div>
@@ -98,7 +98,7 @@
                                     <div class="col-md-4">
                                         <label class="form-label">Sale Price</label>
                                         <div class="input-group">
-                                            <span class="input-group-text">৳</span>
+                                            <span class="input-group-text">Tk</span>
                                             <input id="salePrice" type="number" step="0.01" min="0" class="form-control" placeholder="0.00"
                                                 value="{{ isset($product) && $product && isset($product->sale_price) ? $product->sale_price : '' }}">
                                         </div>
@@ -117,7 +117,7 @@
                                         <div class="d-flex gap-2 mt-2">
                                             <button class="select-btn-info" id="btnAssignCats"><i
                                                     class="bx bx-sitemap me-1"></i>Assign Categories</button>
-                                            <span class="small-muted">Primary category থেকে কনফিগ এপ্লাই হবে</span>
+                                            <span class="small-muted">Configuration will be applied from the Primary category</span>
                                         </div>
                                         <select id="category" class="form-select mt-2 d-none"></select>
                                     </div>
@@ -143,7 +143,7 @@
                                                 id="btnVariantRulePreview" title="Preview rule"><i
                                                     class="bx bx-show"></i></button>
                                         </div>
-                                        <div class="form-text">রুল সিলেক্ট করলে Variant axes অটো সেট হবে</div>
+                                        <div class="form-text">Variant axes will be set automatically upon rule selection</div>
                                     </div>
 
                                     <div class="col-md-4">
@@ -174,7 +174,7 @@
                             </div>
                             <div class="panel-body">
                                 <div class="d-flex flex-column gap-2" id="catConfigBox">
-                                    <div class="small-muted">Primary category সিলেক্ট করুন…</div>
+                                    <div class="small-muted">Select Primary category...</div>
                                 </div>
                                 <hr>
                                 <div class="mb-2">
@@ -189,7 +189,7 @@
                                             id="btnMediaRulePreview2" title="Preview rule"><i
                                                 class="bx bx-show"></i></button>
                                     </div>
-                                    <div class="form-text">Rule অনুযায়ী variant-wise image টগল হবে</div>
+                                    <div class="form-text">Variant-wise images will be toggled based on the Rule</div>
                                 </div>
                                 <div>
                                     <label class="form-label">Slug</label>
@@ -227,7 +227,7 @@
                         <div class="panel">
                             <div class="panel-header d-flex justify-content-between align-items-center">
                                 <h5 class="panel-title">Gallery</h5>
-                                <div class="small-muted">Max 8 images (ডেমো)</div>
+                                <div class="small-muted">Max 8 images (Demo)</div>
                             </div>
                             <div class="panel-body">
                                 <div class="drop mb-2">
@@ -264,7 +264,7 @@
                                             min="1" max="20">
                                     </div>
                                 </div>
-                                <div class="small-muted mt-2">এই সেটিং Media Rule/Category থেকে প্রি-ফিল হয়</div>
+                                <div class="small-muted mt-2">This setting is pre-filled from Media Rule/Category</div>
                             </div>
                         </div>
                     </div>
@@ -280,7 +280,7 @@
                                     id="pillSet">None</span></span></div>
                     </div>
                     <div class="panel-body" id="attrFields">
-                        <div class="small-muted">Attribute set সিলেক্ট করলে ফিল্ড আসবে…</div>
+                        <div class="small-muted">Fields will appear upon selecting an Attribute set...</div>
                     </div>
                 </div>
             </div>
@@ -314,7 +314,7 @@
                                 <tbody></tbody>
                             </table>
                         </div>
-                        <div id="noVariantNote" class="small-muted">No variants yet. Rule/axes সিলেক্ট করে Generate করুন।
+                        <div id="noVariantNote" class="small-muted">No variants yet. Select Rule/axes and click Generate.
                         </div>
                     </div>
                 </div>
@@ -333,7 +333,7 @@
                 <div class="modal-body">
                     <div class="d-flex justify-content-between align-items-center mb-2">
                         <input id="catSearch" class="form-control form-control-sm" placeholder="Search category path…">
-                        <div class="small-muted ms-2">প্রাইমারি বাছাই করতে রেডিও সিলেক্ট করুন</div>
+                        <div class="small-muted ms-2">Select radio to choose Primary</div>
                     </div>
                     <div id="catList" class="row g-2"></div>
                 </div>
@@ -687,7 +687,7 @@
           if (!catChips) return;
           catChips.innerHTML = '';
           if (selectedCats.size === 0) {
-              catChips.innerHTML = `<span class="small-muted">কোনো ক্যাটাগরি অ্যাসাইন করা হয়নি</span>`;
+              catChips.innerHTML = `<span class="small-muted">No category assigned</span>`;
               return;
           }
           [...selectedCats].forEach(sl => {
@@ -780,7 +780,7 @@
 
       $('#btnCatSave')?.addEventListener('click', () => {
           if (selectedCats.size === 0) {
-              alert('কমপক্ষে একটি ক্যাটাগরি সিলেক্ট করুন');
+              alert('Please select at least one category');
               return;
           }
           if (!primaryCat) primaryCat = [...selectedCats][0];
@@ -1412,7 +1412,7 @@
           }
           if (selectedCats.size === 0) {
               openTab('#tab-basic');
-              alert('কমপক্ষে একটি ক্যাটাগরি লাগবে');
+              alert('At least one category is required');
               return false;
           }
           return true;

@@ -250,8 +250,8 @@
         <section id="countdownSection" class="countdown-eight-area"
             data-background="{{ $flashSale->banner_image ? asset('storage/' . $flashSale->banner_image) : asset('frontend/assets/images/shop/Ad-1.jpg') }}">
             <div class="container">
-                <div class="row align-items-center justify-content-between">
-                    <div class="col-xl-6 col-lg-8">
+                <div class="row align-items-center justify-content-center">
+                    <div class="col-xl-8 col-lg-10 text-center">
                         <div class="countdown-eight-wrapper" data-aos="fade-up" data-aos-duration="1000" data-aos-delay="200">
                             <div class="section-eight-wrapper">
                                 <h6 class="section-eight-subtitle d-inline-block">
@@ -270,7 +270,7 @@
                                     </div>
                                 @endif
                             </div>
-                            <div class="countdown-eight-timer" id="countdown"
+                            <div class="countdown-eight-timer d-flex justify-content-center" id="countdown"
                                 data-end-time="{{ $flashSale->end_time->timestamp * 1000 }}">
                                 <ul>
                                     <li><span id="days">00</span>Days</li>
@@ -292,8 +292,8 @@
         <section id="countdownSection" class="countdown-eight-area"
             data-background="{{ asset('frontend/assets/images/shop/Ad-1.jpg') }}">
             <div class="container">
-                <div class="row align-items-center justify-content-between">
-                    <div class="col-xl-6 col-lg-8">
+                <div class="row align-items-center justify-content-center">
+                    <div class="col-xl-8 col-lg-10 text-center">
                         <div class="countdown-eight-wrapper" data-aos="fade-up" data-aos-duration="1000" data-aos-delay="200">
                             <div class="section-eight-wrapper">
                                 <h6 class="section-eight-subtitle d-inline-block">Special Offers</h6>
@@ -417,6 +417,76 @@
             </div>
         </div>
     </section>
+
+    <!-- Latest Blog Posts Section -->
+    @if(isset($latestBlogs) && $latestBlogs->count() > 0)
+    <section class="blog-eight-area pt-100 pb-70 bg-light">
+        <div class="container">
+            <div class="row">
+                <div class="col-12 text-center">
+                    <div class="section-eight-wrapper mb-50" data-aos="fade-up" data-aos-duration="1000">
+                        <h6 class="section-eight-subtitle d-inline-block text-primary">From Our Blog</h6>
+                        <h2 class="section-eight-title title-animation">Latest News & Articles</h2>
+                        <p class="section-eight-paragraph mt-2">Stay updated with the latest trends, tips, and insights</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="row justify-content-center">
+                @foreach($latestBlogs as $blog)
+                    <div class="col-xl-4 col-lg-4 col-md-6">
+                        <div class="blog-eight-item mb-30 bg-white rounded-4 overflow-hidden shadow-sm h-100 d-flex flex-column" data-aos="fade-up" data-aos-duration="1000" data-aos-delay="{{ 200 + ($loop->index * 100) }}">
+                            <div class="blog-eight-thumb position-relative overflow-hidden">
+                                <a href="{{ route('blog.show', $blog->slug) }}" class="d-block w-100">
+                                    @if($blog->featured_image)
+                                        <img src="{{ asset('storage/' . $blog->featured_image) }}" 
+                                             alt="{{ $blog->title }}" 
+                                             class="w-100" 
+                                             style="height: 250px; object-fit: cover; transition: transform 0.5s ease;">
+                                    @else
+                                        <div class="w-100 bg-secondary d-flex align-items-center justify-content-center" style="height: 250px;">
+                                            <i class="bx bx-image text-white" style="font-size: 48px;"></i>
+                                        </div>
+                                    @endif
+                                </a>
+                                @if($blog->category)
+                                    <span class="badge bg-primary position-absolute top-0 start-0 m-3">{{ $blog->category }}</span>
+                                @endif
+                            </div>
+                            <div class="blog-eight-content p-4 d-flex flex-column flex-grow-1">
+                                <div class="blog-meta mb-2 text-muted small">
+                                    <span class="me-3"><i class="fa-regular fa-calendar me-1"></i> {{ $blog->formatted_date }}</span>
+                                    <span><i class="fa-regular fa-clock me-1"></i> {{ $blog->reading_time }} min read</span>
+                                </div>
+                                <h4 class="mb-3">
+                                    <a href="{{ route('blog.show', $blog->slug) }}" class="text-dark text-decoration-none fw-bold hover-primary">
+                                        {{ Str::limit($blog->title, 60) }}
+                                    </a>
+                                </h4>
+                                @if($blog->excerpt)
+                                    <p class="mb-4 text-muted">{{ Str::limit($blog->excerpt, 100) }}</p>
+                                @endif
+                                <div class="mt-auto">
+                                    <a href="{{ route('blog.show', $blog->slug) }}" class="btn--primary p-2 px-4 w-100 text-center">
+                                        Read More <i class="fa-solid fa-arrow-right ms-2"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                @endforeach
+            </div>
+            
+            <div class="row">
+                <div class="col-12 text-center mt-4">
+                    <a href="{{ route('blog.index') }}" class="btn btn-outline-primary rounded-pill px-5 py-2 fw-bold">
+                        View All Articles <i class="fa-solid fa-arrow-right ms-2"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+    @endif
 
     <!-- FAQ Section -->
     <section class="faq-eight-area">

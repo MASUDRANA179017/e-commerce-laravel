@@ -115,10 +115,10 @@
     </style>
 @endonce
 
-<div class="col-12 col-sm-6 col-md-3 col-lg-3">
-    <div class="property-single-boxarea p-0" data-aos="fade-up" data-aos-duration="1000">
+<div class="col-6 col-md-4 col-lg-3">
+    <div class="property-single-boxarea p-0 h-100" data-aos="fade-up" data-aos-duration="1000">
         <div class="property-list-img-area position-relative">
-            <div class="img1 position-relative overflow-hidden" style="height: 400px;"> 
+            <div class="img1 position-relative overflow-hidden" style="aspect-ratio: 1/1;"> 
                 
                 @php
                     $swiperId = 'shop-swiper-' . ($product->id ?? uniqid());
