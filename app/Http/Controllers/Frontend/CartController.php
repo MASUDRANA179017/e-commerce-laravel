@@ -90,7 +90,7 @@ class CartController extends Controller
             return redirect()->route('checkout.index');
         }
 
-        if ($request->ajax()) {
+        if ($request->ajax() || $request->expectsJson()) {
             return response()->json([
                 'success' => true,
                 'message' => 'Product added to cart!',
@@ -100,24 +100,25 @@ class CartController extends Controller
         }
 
         return back()->with('success', 'Product added to cart!');
-        } catch (\Illuminate\Validation\ValidationException $e) {
-            if ($request->ajax() || $request->expectsJson()) {
-                return response()->json([
-                    'success' => false,
-                    'message' => $e->errors()['product_id'][0] ?? 'Validation failed',
-                ], 422);
-            }
-            throw $e;
-        } catch (\Exception $e) {
-            if ($request->ajax() || $request->expectsJson()) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Something went wrong. Please try again.',
-                    'error' => config('app.debug') ? $e->getMessage() : null,
-                ], 500);
-            }
-            throw $e;
+    } catch (\Illuminate\Validation\ValidationException $e) {
+        if ($request->ajax() || $request->expectsJson()) {
+            return response()->json([
+                'success' => false,
+                'message' => $e->errors()['product_id'][0] ?? 'Validation failed',
+            ], 422);
         }
+        throw $e;
+    } catch (\Exception $e) {
+        \Illuminate\Support\Facades\Log::error('Add to cart error: ' . $e->getMessage() . "\n" . $e->getTraceAsString());
+        if ($request->ajax() || $request->expectsJson()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Something went wrong. Please try again.',
+                'error' => config('app.debug') ? $e->getMessage() : null,
+            ], 500);
+        }
+        throw $e;
+    }
     }
 
     /**

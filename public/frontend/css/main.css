@@ -110,8 +110,8 @@ html {
 
 body {
   font-family: var(--template-font);
-  font-size: 16px;
-  line-height: 26px;
+  font-size: 18px;
+  line-height: 28px;
   font-weight: 400;
   color: var(--template-color);
   background-color: var(--template-bg);
@@ -274,9 +274,9 @@ select,
 label,
 blockquote,
 span {
-  font-size: 15px;
-  line-height: 30px;
-  font-weight: 300;
+  font-size: 16px;
+  line-height: 28px;
+  font-weight: 400;
   color: var(--template-color);
   vertical-align: middle;
   text-align: left;
@@ -285,37 +285,37 @@ span {
 a,
 button {
   font-size: 16px;
-  line-height: 20px;
+  line-height: 24px;
 }
 
 h1 {
-  font-size: 30px;
-  line-height: 40px;
+  font-size: 36px;
+  line-height: 1.2;
 }
 
 h2 {
-  font-size: 30px;
-  line-height: 40px;
+  font-size: 32px;
+  line-height: 1.3;
 }
 
 h3 {
-  font-size: 24px;
-  line-height: 34px;
+  font-size: 28px;
+  line-height: 1.3;
 }
 
 h4 {
-  font-size: 20px;
-  line-height: 30px;
+  font-size: 24px;
+  line-height: 1.4;
 }
 
 h5 {
   font-size: 20px;
-  line-height: 30px;
+  line-height: 1.4;
 }
 
 h6 {
   font-size: 18px;
-  line-height: 28px;
+  line-height: 1.4;
 }
 
 h1 a,
@@ -348,8 +348,8 @@ h6 {
   font-family: var(--nunito);
 }
 p {
-font-size: 15px;
-  line-height: 25px;
+  font-size: 16px;
+  line-height: 28px;
   font-weight: 400;
   color: var(--bs-gray-600);
   text-align: justify;
@@ -22018,4 +22018,186 @@ padding: 7px 10px;
    bottom: -100px;
    height: 0;
    }
-</style>
+
+/* Responsive Headings and Text */
+@media only screen and (max-width: 767px) {
+  h1 {
+    font-size: 28px !important;
+    line-height: 1.3;
+  }
+  h2 {
+    font-size: 24px !important;
+    line-height: 1.3;
+  }
+  h3 {
+    font-size: 20px !important;
+    line-height: 1.4;
+  }
+  h4 {
+    font-size: 18px !important;
+    line-height: 1.4;
+  }
+  h5 {
+    font-size: 16px !important;
+    line-height: 1.5;
+  }
+  h6 {
+    font-size: 14px !important;
+    line-height: 1.5;
+  }
+  body {
+    font-size: 16px;
+    line-height: 26px;
+  }
+  
+  /* Fix Product Card Layout on Mobile */
+  .property-details {
+      padding: 8px 10px;
+      margin: 0 10px 10px;
+      background: #f8f9fa;
+      border-radius: 8px;
+      border-left: none; /* Remove border accent for cleaner look */
+  }
+  .property-details ul {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin: 0;
+      padding: 0;
+  }
+  .property-details ul li {
+      font-size: 14px;
+      font-weight: 600;
+  }
+  .property-details ul li i {
+      display: none; /* Hide icons to save space */
+  }
+  .property-single-content h4 {
+      font-size: 15px !important;
+      line-height: 1.3 !important;
+      margin-bottom: 5px !important;
+      height: 40px; /* Limit height to 2 lines */
+      overflow: hidden;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+  }
+  
+  /* Mobile Button Area Redesign - Icons Only */
+  .property-single-boxarea .btn-area1 {
+      visibility: visible !important;
+      opacity: 1 !important;
+      bottom: auto !important; /* Changed from 0 to auto to respect flow */
+      height: auto !important;
+      position: relative !important;
+      padding: 0 2px 0px; 
+      display: flex !important;
+      flex-wrap: nowrap;
+      justify-content: center;
+      align-items: center;
+      gap: 5px;
+  }
+
+  /* Refine Mobile Font Sizes for Product Card */
+  .property-details span {
+      font-size: 12px !important;
+  }
+  .property-details i {
+      font-size: 13px !important;
+  }
+  .property-single-content h4 a {
+      font-size: 13px !important;
+      line-height: 1.2;
+  }
+
+  /* Common Style for All Mobile Action Buttons */
+  .property-single-boxarea .btn-area1 a,
+  .property-single-boxarea .btn-area1 button {
+      flex: 0 0 30px !important; /* Smaller size */
+      width: 30px !important;
+      height: 30px !important;
+      padding: 0 !important;
+      margin: 0 !important;
+      border-radius: 50% !important; /* Circle shape */
+      display: flex !important;
+      align-items: center;
+      justify-content: center;
+      font-size: 0 !important; /* Hide text */
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+      transition: all 0.3s ease;
+  }
+
+  /* Show icons inside buttons */
+  .property-single-boxarea .btn-area1 a i,
+  .property-single-boxarea .btn-area1 button i {
+      font-size: 13px !important; /* Smaller icon size */
+      display: block !important;
+      margin: 0 !important;
+  }
+
+  /* View Button - Blue */
+  .property-single-boxarea .btn-area1 a.action-btn-success {
+      display: flex !important; /* Show it again */
+      background-color: #0d6efd !important;
+      color: #fff !important;
+      border: none !important;
+  }
+  .property-single-boxarea .btn-area1 a.action-btn-success:hover {
+      background-color: #0b5ed7 !important;
+      color: #fff !important;
+  }
+
+  /* Wishlist Button - Red */
+  .property-single-boxarea .btn-area1 .add-to-wishlist {
+      background-color: #dc3545 !important;
+      color: #fff !important;
+      border: none !important;
+  }
+  .property-single-boxarea .btn-area1 .add-to-wishlist:hover {
+      background-color: #bb2d3b !important;
+      color: #fff !important;
+  }
+ 
+  /* Add to Cart Button - Green */
+  .property-single-boxarea .btn-area1 .add-to-cart {
+      background-color: #28a745 !important;
+      color: #fff !important;
+      border: none !important;
+  }
+  .property-single-boxarea .btn-area1 .add-to-cart:hover {
+      background-color: #218838 !important;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 15px rgba(40, 167, 69, 0.3);
+  }
+}
+
+/* Utility Classes for Cart & General Use */
+.hover-lift {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.hover-lift:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.1) !important;
+}
+
+.grayscale-hover i {
+    filter: grayscale(100%);
+    opacity: 0.6;
+    transition: all 0.3s ease;
+}
+.grayscale-hover:hover i {
+    filter: grayscale(0%);
+    opacity: 1;
+}
+
+.letter-spacing-1 {
+    letter-spacing: 1px;
+}
+
+.hover-primary {
+    transition: color 0.2s ease;
+}
+.hover-primary:hover {
+    color: var(--primary-color, #0d6efd) !important;
+}
+

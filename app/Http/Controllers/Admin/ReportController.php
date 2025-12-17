@@ -27,7 +27,13 @@ class ReportController extends Controller
 
     public function inventory()
     {
-        return view('admin.reports.inventory');
+        $total_products = Product::count();
+        $low_stock = Product::where('stock_quantity', '<', 10)->count();
+        $out_of_stock = Product::where('stock_quantity', '<=', 0)->count();
+        $in_stock = Product::where('stock_quantity', '>', 0)->count();
+        $products = Product::select('id', 'title', 'sku', 'stock_quantity', 'price', 'status')->latest()->get();
+
+        return view('admin.reports.inventory', compact('total_products', 'low_stock', 'out_of_stock', 'in_stock', 'products'));
     }
 
     public function inventoryData(Request $request)

@@ -115,8 +115,8 @@
     </style>
 @endonce
 
-<div class="col-6 col-md-4 col-lg-3">
-    <div class="property-single-boxarea p-0 h-100" data-aos="fade-up" data-aos-duration="1000">
+<div class="col-6 col-md-4 col-lg-3 mb-5">
+    <div class="property-single-boxarea p-0 d-flex flex-column" data-aos="fade-up" data-aos-duration="1000">
         <div class="property-list-img-area position-relative">
             <div class="img1 position-relative overflow-hidden" style="aspect-ratio: 1/1;"> 
                 
@@ -220,18 +220,18 @@
             @endif
         </div>
 
-        <div class="property-single-content">
-            <h4 class="title-animation">
+        <div class="property-single-content flex-grow-0 ">
+            <h4 class="title-animation ">
                 <a href="{{ route('product.show', $product->slug ?? $product->id) }}">
                     {{ Str::limit($product->title ?? 'Product', 40) }}
                 </a>
+                <p class="m-0 p-0"><i class='bx bxs-tag p-2'></i>{{ $categoryName }}</p>
             </h4>
-            <p class="m-0"><i class='bx bxs-tag me-1'></i>{{ $categoryName }}</p>
         </div>
 
         <div class="property-details">
-            <ul class="d-flex align-items-center">
-                <li class="w-50">
+            <ul class="d-flex align-items-center justify-content-between">
+                <li class="d-flex align-items-center">
                     <i class='bx bx-coin-stack me-1'></i>
                     @if($isOnSale)
                         <span class="text-danger fw-bold">৳{{ number_format($salePrice, 0) }}</span>
@@ -240,8 +240,8 @@
                         <span class="fw-bold">৳{{ number_format($price, 0) }}</span>
                     @endif
                 </li>
-                <li class="w-50">
-                    <i class='bx bx-package me-1'></i>
+                <li class="d-flex align-items-center justify-content-end text-nowrap">
+                    <i class='bx bx-package me-0'></i>
                     @if($inStock)
                         <span class="text-success">In Stock</span>
                     @else
@@ -251,7 +251,7 @@
             </ul>
         </div>
 
-        <div class="mt-0 pt-0 btn-area1 text-center d-flex align-items-center justify-content-center">
+        <div class="mt-0 pt-0 pb-2 btn-area1 text-center d-flex align-items-center justify-content-center">
             <a href="{{ route('product.show', $product->slug ?? $product->id) }}"
                 class="action-btn-success p-3 h-30px w-auto rounded-3">
                 <i class="bx bx-show fs-15 me-1"></i>View

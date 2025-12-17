@@ -25,7 +25,7 @@
                         <span class="material-symbols-outlined text-white">inventory_2</span>
                     </div>
                     <div>
-                        <h4 class="mb-0 fw-bold">0</h4>
+                        <h4 class="mb-0 fw-bold">{{ $total_products ?? 0 }}</h4>
                         <span class="text-muted">Total Products</span>
                     </div>
                 </div>
@@ -40,7 +40,7 @@
                         <span class="material-symbols-outlined text-white">warning</span>
                     </div>
                     <div>
-                        <h4 class="mb-0 fw-bold">0</h4>
+                        <h4 class="mb-0 fw-bold">{{ $low_stock ?? 0 }}</h4>
                         <span class="text-muted">Low Stock</span>
                     </div>
                 </div>
@@ -55,7 +55,7 @@
                         <span class="material-symbols-outlined text-white">error</span>
                     </div>
                     <div>
-                        <h4 class="mb-0 fw-bold">0</h4>
+                        <h4 class="mb-0 fw-bold">{{ $out_of_stock ?? 0 }}</h4>
                         <span class="text-muted">Out of Stock</span>
                     </div>
                 </div>
@@ -70,7 +70,7 @@
                         <span class="material-symbols-outlined text-white">check_circle</span>
                     </div>
                     <div>
-                        <h4 class="mb-0 fw-bold">0</h4>
+                        <h4 class="mb-0 fw-bold">{{ $in_stock ?? 0 }}</h4>
                         <span class="text-muted">In Stock</span>
                     </div>
                 </div>
@@ -95,14 +95,36 @@
                                 <th class="ps-3">Product</th>
                                 <th>SKU</th>
                                 <th>Stock</th>
+                                <th>Price</th>
                                 <th>Status</th>
-                                <th>Value</th>
                             </tr>
                         </thead>
                         <tbody>
+                            @forelse($products as $product)
                             <tr>
-                                <td colspan="5" class="text-center py-4 text-muted">No data available</td>
+                                <td class="ps-3 fw-medium">{{ $product->title }}</td>
+                                <td>{{ $product->sku ?? 'N/A' }}</td>
+                                <td>
+                                    @if($product->stock_quantity <= 0)
+                                        <span class="badge bg-danger">Out of Stock</span>
+                                    @elseif($product->stock_quantity < 10)
+                                        <span class="badge bg-warning text-dark">{{ $product->stock_quantity }} (Low)</span>
+                                    @else
+                                        <span class="badge bg-success">{{ $product->stock_quantity }}</span>
+                                    @endif
+                                </td>
+                                <td>৳{{ number_format($product->price, 2) }}</td>
+                                <td>
+                                    <span class="badge {{ $product->status == 'active' ? 'bg-success' : 'bg-secondary' }}">
+                                        {{ ucfirst($product->status) }}
+                                    </span>
+                                </td>
                             </tr>
+                            @empty
+                            <tr>
+                                <td colspan="5" class="text-center py-4 text-muted">No products found</td>
+                            </tr>
+                            @endforelse
                         </tbody>
                     </table>
                 </div>
