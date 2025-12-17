@@ -73,25 +73,6 @@
     
     /* Badge Styles - Using qbit-badge classes from qbit-bms-style.css */
     
-    /* Status Toggle */
-    .status-toggle-wrapper { display: flex; align-items: center; gap: 8px; }
-    .product-toggle-switch { position: relative; display: inline-block; width: 44px; height: 24px; }
-    .product-toggle-switch input { opacity: 0; width: 0; height: 0; }
-    .product-slider {
-        position: absolute; cursor: pointer;
-        top: 0; left: 0; right: 0; bottom: 0;
-        background-color: #e2e8f0;
-        transition: .3s; border-radius: 24px;
-    }
-    .product-slider:before {
-        position: absolute; content: "";
-        height: 18px; width: 18px; left: 3px; bottom: 3px;
-        background-color: white; transition: .3s;
-        border-radius: 50%; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-    }
-    input:checked + .product-slider { background: linear-gradient(135deg, #7367f0 0%, #4A2A85 100%); }
-    input:checked + .product-slider:before { transform: translateX(20px); }
-    
     /* Info Badges - Media counts */
     .info-badge {
         display: inline-flex; align-items: center; gap: 6px;
@@ -231,20 +212,6 @@
     </div>
 
     <!-- Stats Row - Using custom counter styles -->
-    @php
-        $totalCount = is_countable($products) ? count($products) : 0;
-        $activeCount = 0;
-        $inactiveCount = 0;
-        if ($products) {
-            foreach ($products as $prod) {
-                if (isset($prod->status) && strtolower($prod->status) === 'active') {
-                    $activeCount++;
-                } else {
-                    $inactiveCount++;
-                }
-            }
-        }
-    @endphp
     <div class="col-xl-4 col-md-6 mb-4">
         <div class="custom-counter-inner counter-bg-1">
             <svg class="bottom-svg" viewBox="0 0 80 60" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -255,7 +222,7 @@
                     <i class="fas fa-box fs-20" style="color: #4B89DC;"></i>
                 </div>
                 <div>
-                    <h3 class="fw-700 fs-24 mb-0">{{ $totalCount }}</h3>
+                    <h3 class="fw-700 fs-24 mb-0">{{ $totalProducts }}</h3>
                     <p class="mb-0 fs-13 text-muted">Total Products</p>
                 </div>
             </div>
@@ -271,7 +238,7 @@
                     <i class="fas fa-check-circle fs-20" style="color: #8CC052;"></i>
                 </div>
                 <div>
-                    <h3 class="fw-700 fs-24 mb-0">{{ $activeCount }}</h3>
+                    <h3 class="fw-700 fs-24 mb-0">{{ $activeProducts }}</h3>
                     <p class="mb-0 fs-13 text-muted">Active Products</p>
                 </div>
             </div>
@@ -287,7 +254,7 @@
                     <i class="fas fa-times-circle fs-20" style="color: #3BAEDA;"></i>
                 </div>
                 <div>
-                    <h3 class="fw-700 fs-24 mb-0">{{ $inactiveCount }}</h3>
+                    <h3 class="fw-700 fs-24 mb-0">{{ $inactiveProducts }}</h3>
                     <p class="mb-0 fs-13 text-muted">Inactive Products</p>
                 </div>
             </div>
@@ -310,290 +277,192 @@
             <div class="card-body p-0">
                 <div class="table-responsive">
                     <table class="table products-table" id="productsTable">
-                        <thead>
-                            <tr>
-                                <th style="width: 60px;">SL</th>
-                                <th>Product</th>
-                                <th>Brand</th>
-                                <th>Category</th>
-                                <th>Status</th>
-                                <th>Media</th>
-                                <th class="text-end">Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @forelse($products as $index => $p)
-                            <tr>
-                                <td>
-                                    <span class="qbit-badge-gray">{{ $index + 1 }}</span>
-                                </td>
-                                <td>
-                                    <div class="product-info">
-                                        @php
-                                            $coverImg = null;
-                                            if (isset($p->id)) {
-                                                $images = \DB::table('product_images')
-                                                    ->where('product_id', $p->id)
-                                                    ->get();
-                                                $coverImg = $images->where('is_cover', 1)->first() ?? $images->first();
-                                            }
-                                        @endphp
-                                        @if($coverImg && $coverImg->path)
-                                            <img src="{{ asset('storage/' . $coverImg->path) }}" alt="{{ $p->title }}" class="product-thumb">
-                                        @else
-                                            <div class="product-thumb-placeholder">
-                                                <i class="fas fa-image"></i>
+                            <thead>
+                                <tr>
+                                    <th scope="col">ID</th>
+                                    <th scope="col">Product</th>
+                                    <th scope="col">Brand</th>
+                                    <th scope="col">Category</th>
+                                    <th scope="col">Status</th>
+                                    <th scope="col">Media</th>
+                                    <th scope="col">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach($products as $key => $product)
+                                <tr>
+                                    <td>{{ $key + 1 }}</td>
+                                    <td>
+                                        <div class="product-info">
+                                            @if($product->cover_image_url)
+                                                <img src="{{ $product->cover_image_url }}" alt="{{ $product->title }}" class="product-thumb">
+                                            @else
+                                                <div class="product-thumb-placeholder"><i class="fas fa-image"></i></div>
+                                            @endif
+                                            <div>
+                                                <div class="product-name" title="{{ $product->title }}">{{ $product->title }}</div>
+                                                <div class="product-sku">SKU: {{ $product->sku ?? 'N/A' }}</div>
                                             </div>
-                                        @endif
-                                        <div>
-                                            <div class="product-name" title="{{ $p->title }}">{{ $p->title }}</div>
-                                            <div class="product-sku">SKU: {{ $p->sku ?? 'N/A' }}</div>
                                         </div>
-                                    </div>
-                                </td>
-                                <td>
-                                    @if($p->brand_name)
-                                        <span class="qbit-badge-purple"><i class="bx bx-tag"></i> {{ $p->brand_name }}</span>
-                                    @else
-                                        <span class="text-muted">-</span>
-                                    @endif
-                                </td>
-                                <td>
-                                    @if($p->category_name)
-                                        <span class="qbit-badge-info"><i class="bx bx-folder"></i> {{ $p->category_name }}</span>
-                                    @else
-                                        <span class="text-muted">-</span>
-                                    @endif
-                                </td>
-                                <td>
-                                    <div class="status-toggle-wrapper">
-                                        <label class="product-toggle-switch">
-                                            <input type="checkbox" class="product-status-toggle"
-                                                data-product-id="{{ $p->id }}"
-                                                {{ strtolower($p->status) === 'active' ? 'checked' : '' }}>
-                                            <span class="product-slider"></span>
-                                        </label>
-                                    </div>
-                                </td>
-                                <td>
-                                    <div class="d-flex gap-2">
-                                        <button class="info-badge info-badge-images btn-view-images" data-product-id="{{ $p->id }}">
-                                            <i class="fas fa-image"></i>
-                                            <span>{{ $p->images_count ?? 0 }}</span>
-                                        </button>
-                                        <button class="info-badge info-badge-variants btn-view-variants" data-product-id="{{ $p->id }}">
-                                            <i class="fas fa-layer-group"></i>
-                                            <span>{{ $p->variants_count ?? 0 }}</span>
-                                        </button>
-                                    </div>
-                                </td>
-                                <td>
-                                    <div class="d-flex align-items-center gap-1">
-                                        <button type="button" class="action-btn-info btn-view-product" data-product-id="{{ $p->id }}" title="View Product">
-                                            <i class="fas fa-eye"></i>
-                                        </button>
-                                        <a href="{{ route('admin.product.edit', $p->id) }}" class="action-btn-success" title="Edit Product">
-                                            <i class="fas fa-edit"></i>
-                                        </a>
-                                        <form action="{{ route('admin.product.destroy', $p->id) }}" method="POST" class="d-inline delete-form">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="button" class="action-btn-danger btn-delete" title="Delete Product">
-                                                <i class="fas fa-trash-alt"></i>
+                                    </td>
+                                    <td>{{ $product->brand_name ?? 'No Brand' }}</td>
+                                    <td>{{ $product->category_name ?? 'No Category' }}</td>
+                                    <td>
+                                        <div class="form-check form-switch d-flex justify-content-center">
+                                            <input class="form-check-input toggle-status" type="checkbox" role="switch" 
+                                                data-id="{{ $product->id }}" {{ $product->status === 'Active' ? 'checked' : '' }}>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="d-flex gap-2">
+                                            <button class="info-badge info-badge-images btn-view-images" data-product-id="{{ $product->id }}">
+                                                <i class="fas fa-images me-1"></i>{{ $product->images_count }}
                                             </button>
-                                        </form>
-                                    </div>
-                                </td>
-                            </tr>
-                            @empty
-                            <tr>
-                                <td colspan="7">
-                                    <div class="empty-state">
-                                        <div class="empty-state-icon">
-                                            <i class="fas fa-box-open"></i>
+                                            <button class="info-badge info-badge-variants btn-view-variants" data-product-id="{{ $product->id }}">
+                                                <i class="fas fa-layer-group me-1"></i>{{ $product->variants_count }}
+                                            </button>
                                         </div>
-                                        <h5>No Products Found</h5>
-                                        <p>Start by adding your first product to the catalog</p>
-                                        <a href="{{ route('admin.product-create.index') }}" class="create-btn-base">
-                                            <i class="fas fa-plus me-2"></i>Add Product
-                                        </a>
-                                    </div>
-                                </td>
-                            </tr>
-                            @endforelse
-                        </tbody>
-                    </table>
+                                    </td>
+                                    <td>
+                                        <div class="btn-group">
+                                            <a href="{{ route('admin.product.edit', $product->id) }}" class="btn btn-sm btn-primary">
+                                                <i class="bi bi-pencil-square"></i>
+                                            </a>
+                                            <button class="btn btn-sm btn-danger deleteProduct" data-id="{{ $product->id }}">
+                                                <i class="bi bi-trash"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
 
-<!-- Modal for Viewing Images -->
-<div class="modal fade" id="productImagesModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-lg modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title"><i class="fas fa-images me-2"></i>Product Images</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
-            <div class="modal-body">
-                <div id="productImagesContainer" class="d-flex flex-wrap justify-content-center gap-3">
-                    <!-- Images will load dynamically here -->
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
+    <!-- Modals -->
+    @include('admin.product.all_products.modals')
 
-<!-- Modal for Viewing Variants -->
-<div class="modal fade" id="productVariantsModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-lg modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title"><i class="fas fa-layer-group me-2"></i>Product Variants</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
-            <div class="modal-body">
-                <div id="productVariantsContainer" class="table-responsive">
-                    <!-- Variants will load dynamically -->
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Modal for Product Details -->
-<div class="modal fade" id="productDetailsModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
-        <div class="modal-content product-details-modal">
-            <div class="modal-header">
-                <h5 class="modal-title"><i class="fas fa-box-open me-2"></i>Product Details</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
-            <div class="modal-body p-0">
-                <div id="productDetailsContainer">
-                    <!-- Product details will load dynamically -->
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="create-btn-white" data-bs-dismiss="modal">
-                    <i class="fas fa-times me-2"></i>Close
-                </button>
-                <a href="#" id="editProductBtn" class="create-btn-base">
-                    <i class="fas fa-edit me-2"></i>Edit Product
-                </a>
-            </div>
-        </div>
-    </div>
-</div>
 @endsection
 
 @push('scripts')
 <script>
 document.addEventListener("DOMContentLoaded", function() {
-    // DataTable Initialization
-    var table = $('#productsTable').DataTable({
-        responsive: true,
-        pageLength: 10,
-        language: {
-            search: "",
-            searchPlaceholder: "Search products...",
-            lengthMenu: "Show _MENU_ products",
-            info: "Showing _START_ to _END_ of _TOTAL_ products",
-            paginate: {
-                previous: '<i class="fas fa-chevron-left"></i>',
-                next: '<i class="fas fa-chevron-right"></i>'
-            }
-        },
-        dom: '<"top"l>rt<"bottom d-flex justify-content-between align-items-center"ip><"clear">',
-        order: [[0, 'asc']]
-    });
+    // Check if jQuery is loaded
+    if (typeof jQuery === 'undefined') {
+        console.error('jQuery is not loaded!');
+        alert('Critical Error: jQuery is missing. The product table cannot load.');
+        return;
+    }
+
+    // Check if DataTables is loaded
+    if (!$.fn.DataTable) {
+        console.error('DataTables is not loaded!');
+        alert('Critical Error: DataTables library is missing.');
+        return;
+    }
+
+    console.log('Initializing Client-Side DataTable...');
+    
+    // Global error handler for DataTables to prevent alerts
+    $.fn.dataTable.ext.errMode = 'throw'; // Log to console instead of alert
+
+    var table = $('#productsTable')
+        .DataTable({
+            responsive: true,
+            width: "100%",
+            language: {
+                search: "",
+                searchPlaceholder: "Search products...",
+                emptyTable: "No products found",
+                zeroRecords: "No matching products found"
+            },
+            dom: '<"top"l>rt<"bottom d-flex justify-content-between align-items-center"ip><"clear">',
+            order: [[1, 'asc']]
+        });
 
     // Custom search
     $('#productTitleSearch').on('keyup', function() {
         table.search(this.value).draw();
     });
 
-    // Toggle Status
-    document.querySelectorAll('.product-status-toggle').forEach(checkbox => {
-        checkbox.addEventListener('change', function() {
-            const productId = this.dataset.productId;
-            const status = this.checked ? 'active' : 'inactive';
-            const token = "{{ csrf_token() }}";
+    // 🟢 Status Toggle Handler (Delegate event for DataTables)
+    $(document).on('change', '.toggle-status', function() {
+        let isChecked = $(this).is(':checked');
+        let status = isChecked ? 'active' : 'inactive';
+        let productId = $(this).data('id');
+        let $toggle = $(this);
 
-            fetch(`/admin/product/update-status/${productId}`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': token,
-                    'Accept': 'application/json'
-                },
-                body: JSON.stringify({ status })
-            })
-            .then(res => res.json())
-            .then(data => {
-                if (data.ok) {
-                    Swal.fire({
-                        toast: true,
-                        position: 'top-end',
-                        icon: 'success',
-                        title: data.message || 'Status updated successfully',
-                        showConfirmButton: false,
-                        timer: 2000
-                    });
-                    // Reload the DataTable to update status display
-                    $('#productsTable').DataTable().ajax.reload();
+        // Debugging
+        console.log(`Toggling product ${productId} to ${status}`);
+
+        $.ajax({
+            url: `/admin/product/${productId}/update-status`,
+            type: 'POST',
+            data: {
+                status: status,
+                _token: '{{ csrf_token() }}'
+            },
+            success: function(response) {
+                console.log('Success:', response);
+                if (response.ok) {
+                    toastr.success(response.message);
                 } else {
-                    this.checked = !this.checked;
+                    toastr.error(response.message || 'Update failed');
+                    // Revert toggle if failed
+                    $toggle.prop('checked', !isChecked);
                 }
-            })
-            .catch(() => {
-                this.checked = !this.checked;
-            });
+            },
+            error: function(xhr) {
+                console.error('Error:', xhr);
+                toastr.error('Something went wrong. Please try again.');
+                // Revert toggle if error
+                $toggle.prop('checked', !isChecked);
+            }
         });
     });
 
-    // Delete Button
-    document.querySelectorAll(".btn-delete").forEach(button => {
-        button.addEventListener("click", function(e) {
-            e.preventDefault();
-            const productId = this.dataset.id;
-            const token = "{{ csrf_token() }}";
+    // 🟢 Delete Button (Delegate event for DataTables)
+    $(document).on('click', '.deleteProduct', function(e) {
+        e.preventDefault();
+        const productId = $(this).data('id');
+        const token = "{{ csrf_token() }}";
 
-            Swal.fire({
-                title: "Delete Product?",
-                text: "This action cannot be undone!",
-                icon: "warning",
-                showCancelButton: true,
-                confirmButtonColor: "#ef4444",
-                cancelButtonColor: "#6b7280",
-                confirmButtonText: '<i class="fas fa-trash me-2"></i>Yes, delete it!',
-                cancelButtonText: '<i class="fas fa-times me-2"></i>Cancel',
-                reverseButtons: true
-            }).then(result => {
-                if (result.isConfirmed) {
-                    fetch(`/admin/delete-product/${productId}`, {
-                        method: 'DELETE',
-                        headers: {
-                            'X-CSRF-TOKEN': token,
-                            'Accept': 'application/json'
-                        }
-                    })
-                    .then(res => res.json())
-                    .then(data => {
+        Swal.fire({
+            title: "Delete Product?",
+            text: "This action cannot be undone!",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#ef4444",
+            cancelButtonColor: "#6b7280",
+            confirmButtonText: '<i class="fas fa-trash me-2"></i>Yes, delete it!',
+            cancelButtonText: '<i class="fas fa-times me-2"></i>Cancel',
+            reverseButtons: true
+        }).then(result => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    url: `/admin/delete-product/${productId}`,
+                    type: 'DELETE',
+                    headers: {
+                        'X-CSRF-TOKEN': token,
+                        'Accept': 'application/json'
+                    },
+                    success: function(data) {
                         if (data.success) {
                             Swal.fire('Deleted!', data.message || 'Product deleted successfully', 'success');
                             $('#productsTable').DataTable().ajax.reload();
                         } else {
                             Swal.fire('Error!', data.message || 'Failed to delete product', 'error');
                         }
-                    })
-                    .catch(() => {
+                    },
+                    error: function() {
                         Swal.fire('Error!', 'Failed to delete product', 'error');
-                    });
-                }
-            });
+                    }
+                });
+            }
         });
     });
 

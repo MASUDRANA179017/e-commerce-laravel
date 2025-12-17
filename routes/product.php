@@ -48,13 +48,13 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
     */
     Route::get('/all-products', [ProductController::class, 'allProducts'])->name('product.all');
 
-    // Update product status (Active/Inactive toggle)
-    Route::post('/product/update-status/{id}', [ProductController::class, 'updateStatus'])
-        ->name('product.update-status');
-
     // Delete Product (Dynamic delete)
     Route::delete('/delete-product/{id}', [ProductController::class, 'destroy'])
         ->name('product.destroy');
+
+    // Update Status
+    Route::post('/product/{id}/update-status', [ProductController::class, 'updateStatus'])
+        ->name('product.updateStatus');
 
     // images
     Route::get('/product/{id}/images', [ProductController::class, 'getImages'])->name('product.images');

@@ -25,9 +25,10 @@
         <div class="card">
             <div class="card-body">
                 <div class="table-responsive">
-                    <table class="table table-hover">
+                    <table class="table table-hover" id="blogsTable">
                         <thead>
                             <tr>
+                                <th>SL</th>
                                 <th>Image</th>
                                 <th>Title</th>
                                 <th>Category</th>
@@ -39,78 +40,46 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @forelse($blogs as $blog)
-                                <tr>
-                                    <td>
-                                        @if($blog->featured_image)
-                                            <img src="{{ asset('storage/' . $blog->featured_image) }}" alt="{{ $blog->title }}"
-                                                style="width: 60px; height: 60px; object-fit: cover; border-radius: 4px;">
-                                        @else
-                                            <div
-                                                style="width: 60px; height: 60px; background: #e9ecef; border-radius: 4px; display: flex; align-items: center; justify-content: center;">
-                                                <i class="bx bx-image" style="font-size: 24px; color: #6c757d;"></i>
-                                            </div>
-                                        @endif
-                                    </td>
-                                    <td>
-                                        <strong>{{ Str::limit($blog->title, 50) }}</strong>
-                                        @if($blog->excerpt)
-                                            <br><small class="text-muted">{{ Str::limit($blog->excerpt, 60) }}</small>
-                                        @endif
-                                    </td>
-                                    <td>
-                                        @if($blog->category)
-                                            <span class="badge bg-info">{{ $blog->category }}</span>
-                                        @else
-                                            <span class="text-muted">-</span>
-                                        @endif
-                                    </td>
-                                    <td>{{ $blog->author->name ?? 'Unknown' }}</td>
-                                    <td>
-                                        @if($blog->is_published)
-                                            <span class="badge bg-success">Published</span>
-                                        @else
-                                            <span class="badge bg-warning">Draft</span>
-                                        @endif
-                                    </td>
-                                    <td>{{ number_format($blog->views) }}</td>
-                                    <td>{{ $blog->formatted_date }}</td>
-                                    <td>
-                                        <div class="btn-group" role="group">
-                                            <a href="{{ route('admin.blogs.edit', $blog) }}"
-                                                class="btn btn-sm btn-outline-primary" title="Edit">
-                                                <i class="bx bx-edit"></i>
-                                            </a>
-                                            <form action="{{ route('admin.blogs.destroy', $blog) }}" method="POST"
-                                                class="d-inline"
-                                                onsubmit="return confirm('Are you sure you want to delete this blog post?');">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button type="submit" class="btn btn-sm btn-outline-danger" title="Delete">
-                                                    <i class="bx bx-trash"></i>
-                                                </button>
-                                            </form>
-                                        </div>
-                                    </td>
-                                </tr>
-                            @empty
-                                <tr>
-                                    <td colspan="8" class="text-center py-5">
-                                        <i class="bx bx-file" style="font-size: 48px; color: #ccc;"></i>
-                                        <p class="mt-2 text-muted">No blog posts yet. Create your first post!</p>
-                                    </td>
-                                </tr>
-                            @endforelse
+                            <!-- DataTables -->
                         </tbody>
                     </table>
                 </div>
-
-                @if($blogs->hasPages())
-                    <div class="mt-4">
-                        {{ $blogs->links() }}
-                    </div>
-                @endif
             </div>
         </div>
     </div>
+
+@push('scripts')
+<script>
+    $(document).ready(function() {
+        $('#blogsTable').DataTable({
+            processing: true,
+            serverSide: true,
+            ajax: "{{ route('admin.blogs.index') }}",
+            columns: [
+                { data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false },
+                { data: 'image', name: 'image', orderable: false, searchable: false },
+                { data: 'title', name: 'title' },
+                { data: 'category', name: 'category' },
+                { data: 'author', name: 'author.name' },
+                { data: 'status', name: 'is_published' },
+                { data: 'views', name: 'views' },
+                { data: 'created_at', name: 'created_at' },
+                { data: 'action', name: 'action', orderable: false, searchable: false }
+            ],
+            language: {
+                search: "",
+                searchPlaceholder: "Search blogs...",
+                lengthMenu: "Show _MENU_ entries",
+                info: "Showing _START_ to _END_ of _TOTAL_ entries",
+                paginate: {
+                    previous: '<i class="bx bx-chevron-left"></i>',
+                    next: '<i class="bx bx-chevron-right"></i>'
+                }
+            },
+            dom: '<"top"l>rt<"bottom d-flex justify-content-between align-items-center"ip><"clear">',
+            order: [[7, 'desc']] // Order by Published/Created Date
+        });
+    });
+</script>
+@endpush
 @endsection

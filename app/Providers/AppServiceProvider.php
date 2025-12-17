@@ -24,11 +24,15 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        if (Schema::hasTable('business_setups') && Schema::hasTable('products')) {
-            // Use first() to avoid throwing during migrations when no BusinessSetup row exists yet.
-            $business_setups = BusinessSetup::first();
-            view()->share('business_setup', $business_setups ?? null);
-        } else {
+        try {
+            if (Schema::hasTable('business_setups') && Schema::hasTable('products')) {
+                // Use first() to avoid throwing during migrations when no BusinessSetup row exists yet.
+                $business_setups = BusinessSetup::first();
+                view()->share('business_setup', $business_setups ?? null);
+            } else {
+                view()->share('business_setup', null);
+            }
+        } catch (\Exception $e) {
             view()->share('business_setup', null);
         }
     }

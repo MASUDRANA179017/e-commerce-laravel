@@ -15,7 +15,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
-use Log;
+use Illuminate\Support\Facades\Log;
 use Spatie\Permission\Models\Role;
 use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Facades\Storage;
@@ -52,10 +52,7 @@ class UserController extends Controller
                 $query->where('status', $request->status);
             }
 
-            // Now fetch the data
-            $data = $query->get();
-
-            return DataTables::of($data)
+            return DataTables::of($query)
                 ->addIndexColumn()
                 ->addColumn('user_info', function ($row) {
                     $avatar = $row->avatar ? asset('storage/' . $row->avatar) : asset('assets/img/avatar-1.jpg');

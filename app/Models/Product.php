@@ -6,9 +6,11 @@ use App\Models\Admin\Brand\Brand;
 use App\Models\Admin\Product\ProductCategory;
 use App\Models\Catalog\AttributeSet;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Product extends Model
 {
+    use SoftDeletes;
     //
     protected $fillable = [
         'brand_id','attribute_set_id','variant_rule_id',
@@ -66,7 +68,10 @@ class Product extends Model
 
     public function brand()         { return $this->belongsTo(Brand::class); }
     public function attributeSet()  { return $this->belongsTo(AttributeSet::class); }
-    public function variantRule()   { return $this->belongsTo(VariantRule::class); }
+    // public function variantRule()
+    // {
+    //     return $this->belongsTo(VariantRule::class);
+    // }
 
     public function categories() {
         return $this->belongsToMany(ProductCategory::class, 'product_category_map', 'product_id', 'category_id')

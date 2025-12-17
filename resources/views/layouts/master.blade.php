@@ -45,7 +45,9 @@
     <link rel="stylesheet" href="{{ asset('assets/css/remixicon.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/css/simplebar.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/css/qbit-bms-style.css') }}">
-    <link rel="stylesheet" href="{{ asset('assets/plugins/DataTables/datatables.min.css') }}">
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.5/css/dataTables.bootstrap5.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.5.0/css/responsive.bootstrap5.min.css">
+    {{-- <link rel="stylesheet" href="{{ asset('assets/plugins/DataTables/datatables.min.css') }}"> --}}
     <link rel="stylesheet" href="{{ asset('assets/css/style.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/css/others.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/css/style.css.map') }}">
@@ -54,13 +56,6 @@
 
 </head>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.css" />
-<!-- <<<<<<< HEAD -->
-<script src="{{ asset('assets/js/jquery.min.js') }}"></script>
-
-    <script src="{{ asset('assets/js/jquery.min.js') }}"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://cdn.tiny.cloud/1/r2met6mrh50htc9yymzlqn3o0rbrfr511tjh46e0ucvylnq5/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
-<!-- >>>>>>> 6b94703d277c9c717752d3c6994fa2f7a4e1eeb7 -->
 
 @stack('styles')
 </head>
@@ -424,20 +419,21 @@
         </div>
     </div>
     <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    {{-- <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"> --}}
 
     <!-- jQuery (required for DataTables AJAX) -->
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
 
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
-    <!-- DataTables JS -->
+    <!-- DataTables JS (CDN) -->
     <script src="https://cdn.datatables.net/1.13.5/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.5/js/dataTables.bootstrap5.min.js"></script>
+    <script src="https://cdn.datatables.net/responsive/2.5.0/js/dataTables.responsive.min.js"></script>
+    <script src="https://cdn.datatables.net/responsive/2.5.0/js/responsive.bootstrap5.min.js"></script>
 
-
-    <script src="{{ asset('assets/js/bootstrap.bundle.min.js') }}"></script>
+    {{-- <script src="{{ asset('assets/js/bootstrap.bundle.min.js') }}"></script> --}}
     <script src="{{ asset('assets/js/apexcharts.min.js') }}"></script>
     <script src="{{ asset('assets/js/clipboard.min.js') }}"></script>
     {{--
@@ -458,10 +454,18 @@
     <script src="{{ asset('assets/js/simplebar.min.js') }}"></script>
     <script src="{{ asset('assets/js/swiper-bundle.min.js') }}"></script>
     <script src="{{ asset('assets/js/world-merc.js') }}"></script>
-    <script src="{{ asset('assets/plugins/DataTables/datatables.min.js') }}"></script>
     <script src="{{ asset('assets/js/custom/custom.js') }}"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
     <script>
+        // Configure Toastr
+        toastr.options = {
+            "closeButton": true,
+            "progressBar": true,
+            "positionClass": "toast-top-right",
+            "timeOut": "3000"
+        };
+
         $(document).on('click', '.menu-toggle', function (e) {
             e.preventDefault();
             $(this).next('.menu-sub').toggle();

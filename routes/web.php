@@ -70,19 +70,6 @@ Route::prefix('admin')->group(function () {
     Route::post('units/toggle-status/{id}', [UnitController::class, 'toggleStatus'])->name('admin.units.toggleStatus');
 });
 
-
-
-
-
-
-
-
-
-
-
-
-
-
 require __DIR__.'/auth.php';
 require __DIR__.'/admin.php';
 require __DIR__.'/user-management.php';
