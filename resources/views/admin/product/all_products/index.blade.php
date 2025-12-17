@@ -542,6 +542,8 @@ document.addEventListener("DOMContentLoaded", function() {
                         showConfirmButton: false,
                         timer: 2000
                     });
+                    // Reload the DataTable to update status display
+                    $('#productsTable').DataTable().ajax.reload();
                 } else {
                     this.checked = !this.checked;
                 }
@@ -556,7 +558,8 @@ document.addEventListener("DOMContentLoaded", function() {
     document.querySelectorAll(".btn-delete").forEach(button => {
         button.addEventListener("click", function(e) {
             e.preventDefault();
-            const form = this.closest(".delete-form");
+            const productId = this.dataset.id;
+            const token = "{{ csrf_token() }}";
 
             Swal.fire({
                 title: "Delete Product?",
@@ -569,7 +572,27 @@ document.addEventListener("DOMContentLoaded", function() {
                 cancelButtonText: '<i class="fas fa-times me-2"></i>Cancel',
                 reverseButtons: true
             }).then(result => {
-                if (result.isConfirmed) form.submit();
+                if (result.isConfirmed) {
+                    fetch(`/admin/delete-product/${productId}`, {
+                        method: 'DELETE',
+                        headers: {
+                            'X-CSRF-TOKEN': token,
+                            'Accept': 'application/json'
+                        }
+                    })
+                    .then(res => res.json())
+                    .then(data => {
+                        if (data.success) {
+                            Swal.fire('Deleted!', data.message || 'Product deleted successfully', 'success');
+                            $('#productsTable').DataTable().ajax.reload();
+                        } else {
+                            Swal.fire('Error!', data.message || 'Failed to delete product', 'error');
+                        }
+                    })
+                    .catch(() => {
+                        Swal.fire('Error!', 'Failed to delete product', 'error');
+                    });
+                }
             });
         });
     });
@@ -675,14 +698,20 @@ document.addEventListener("DOMContentLoaded", function() {
                     let imagesHtml = '';
                     if (images.length > 0) {
                         imagesHtml = `
-                            <div class="product-main-image">
+                            <div class="product-main-image" style="position: relative;">
                                 <img src="${images[0].url}" alt="${p.title}" id="mainProductImage">
+                                <button class="btn btn-sm btn-danger delete-image-btn" data-image-id="${images[0].id}" data-product-id="${p.id}" style="position: absolute; top: 10px; right: 10px;">
+                                    <i class="fas fa-trash"></i>
+                                </button>
                             </div>
                             ${images.length > 1 ? `
                                 <div class="product-thumbnails">
                                     ${images.map((img, index) => `
-                                        <div class="product-thumb-item ${index === 0 ? 'active' : ''}" data-image="${img.url}">
+                                        <div class="product-thumb-item ${index === 0 ? 'active' : ''}" data-image="${img.url}" style="position: relative;">
                                             <img src="${img.url}" alt="Thumbnail ${index + 1}">
+                                            <button class="btn btn-sm btn-danger delete-image-btn" data-image-id="${img.id}" data-product-id="${p.id}" style="position: absolute; top: 2px; right: 2px; padding: 2px 4px;">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
                                         </div>
                                     `).join('')}
                                 </div>
@@ -818,7 +847,48 @@ document.addEventListener("DOMContentLoaded", function() {
 
         modal.show();
     });
+
+    // Delete Image
+    $(document).on('click', '.delete-image-btn', function() {
+        const imageId = $(this).data('image-id');
+        const productId = $(this).data('product-id');
+        const token = "{{ csrf_token() }}";
+
+        Swal.fire({
+            title: 'Delete Image?',
+            text: 'This action cannot be undone!',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Yes, delete it!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                fetch(`/admin/product/${productId}/image/${imageId}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'X-CSRF-TOKEN': token,
+                        'Accept': 'application/json'
+                    }
+                })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success) {
+                        Swal.fire('Deleted!', data.message, 'success');
+                        // Reload the modal
+                        $('.btn-view-product[data-product-id="' + productId + '"]').click();
+                        // Reload the DataTable to update counts
+                        $('#productsTable').DataTable().ajax.reload();
+                    } else {
+                        Swal.fire('Error!', data.message || 'Failed to delete image', 'error');
+                    }
+                })
+                .catch(() => {
+                    Swal.fire('Error!', 'Failed to delete image', 'error');
+                });
+            }
+        });
+    });
 });
-</script>
 @endpush
 

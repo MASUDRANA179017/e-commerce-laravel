@@ -14,7 +14,7 @@ class BusinessSetupSeeder extends Seeder
     public function run(): void
     {
          BusinessSetup::create([
-            'company_name'                => 'QBit Technologies Ltd.',
+            'company_name'                => ' Technologies Ltd.',
             'company_type'                => 'Private Limited Company',
             'industry'                    => 'Software Development',
             'establishment_date'          => '2020-01-15',

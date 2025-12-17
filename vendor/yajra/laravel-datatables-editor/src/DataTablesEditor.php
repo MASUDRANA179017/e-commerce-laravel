@@ -25,6 +25,7 @@ abstract class DataTablesEditor
     use Concerns\WithEditAction;
 
     use Concerns\WithForceDeleteAction;
+    use Concerns\WithReadAction;
 
     /** @use \Yajra\DataTables\Concerns\WithRemoveAction<TModel> */
     use Concerns\WithRemoveAction;
@@ -50,6 +51,7 @@ abstract class DataTablesEditor
         'upload',
         'forceDelete',
         'restore',
+        'read',
     ];
 
     /**
@@ -93,6 +95,11 @@ abstract class DataTablesEditor
      * Current request data that is being processed.
      */
     protected array $currentData = [];
+
+    public function __invoke(): JsonResponse
+    {
+        return $this->process();
+    }
 
     /**
      * Process dataTables editor action request.

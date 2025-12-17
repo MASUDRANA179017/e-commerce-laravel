@@ -2,7 +2,15 @@
 
 ## [Unreleased](https://github.com/yajra/laravel-datatables-editor/compare/v11.0.0...master)
 
-## v12.1.5 - 2025-04-010
+## v12.3.0 - 2025-10-03
+
+- feat: Editor as route action #100
+
+## v12.2.0 - 2025-10-01
+
+- feat: editor read action server side handler #99
+
+## v12.1.5 - 2025-04-10
 
 - fix: rules generic model parameter #98
 

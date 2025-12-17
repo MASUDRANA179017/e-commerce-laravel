@@ -1389,7 +1389,7 @@
               variant_rule_id: $('#variantRule')?.value || null,
               attributes: attrsPayload,
               variant_wise_image: $('#variantWiseImage')?.checked || false,
-              deleted_images: [...STATE.DELETED_IMAGES],
+              // deleted_images: [...STATE.DELETED_IMAGES], // Removed since images are deleted immediately
               variants,
               sizeChart: $('#sizeChart')?.value || null,
               seo: {
@@ -1424,10 +1424,31 @@
           const item = btn.closest('.gallery-item');
           if (!item) return;
           const id = item.dataset.imageId;
-          if (id) {
-              STATE.DELETED_IMAGES.add(id);
-          }
-          item.remove();
+          if (!id) return;
+
+          // Confirm deletion
+          if (!confirm('Are you sure you want to delete this image?')) return;
+
+          // AJAX delete
+          fetch(`/admin/product/{{ $product->id ?? 0 }}/image/${id}`, {
+              method: 'DELETE',
+              headers: {
+                  'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                  'Accept': 'application/json'
+              }
+          })
+          .then(res => res.json())
+          .then(data => {
+              if (data.success) {
+                  item.remove();
+                  alert('Image deleted successfully');
+              } else {
+                  alert('Failed to delete image: ' + (data.message || 'Unknown error'));
+              }
+          })
+          .catch(() => {
+              alert('Failed to delete image');
+          });
       };
       
       window.setCover = function(btn) {

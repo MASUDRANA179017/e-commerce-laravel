@@ -433,7 +433,9 @@ abstract class DataTableAbstract implements DataTable
         if (is_array($key)) {
             $this->appends = $key;
         } else {
-            $this->appends[$key] = value($value);
+            /** @var int|string $arrayKey */
+            $arrayKey = is_int($key) || is_string($key) ? $key : (string) $key;
+            $this->appends[$arrayKey] = value($value);
         }
 
         return $this;
@@ -730,8 +732,14 @@ abstract class DataTableAbstract implements DataTable
         }
 
         $this->columnSearch();
+        $this->columnControlSearch();
         $this->searchPanesSearch();
         $this->filteredCount();
+    }
+
+    public function columnControlSearch(): void
+    {
+        // Not implemented in the abstract class.
     }
 
     /**
