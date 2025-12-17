@@ -7,6 +7,9 @@ use Illuminate\Support\Facades\Route;
 
 Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () {
 
+    // Move data route to top to avoid conflicts
+    Route::get('/get-all-products-data', [ProductController::class, 'allProductsData'])->name('product.all.data');
+
     /*
     |--------------------------------------------------------------------------
     | Product Category Routes
@@ -47,6 +50,7 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
     |--------------------------------------------------------------------------
     */
     Route::get('/all-products', [ProductController::class, 'allProducts'])->name('product.all');
+    // Route::get('/get-all-products-data', [ProductController::class, 'allProductsData'])->name('product.all.data'); // Moved to top
 
     // Delete Product (Dynamic delete)
     Route::delete('/delete-product/{id}', [ProductController::class, 'destroy'])

@@ -1,8 +1,8 @@
 <div class="sidebar-area" id="sidebar-area">
     <div class="logo position-relative">
-        <a href="{{ route('admin.dashboard') }}" class="d-flex align-items-center text-decoration-none position-relative">
-            <img src="{{ asset('assets/images/QBit-Tech_Fevicon.png') }}" class="h-37px" alt="logo-icon">
-            <span class="logo-text fw-bold text-dark"><img src="{{ asset('assets/images/QBit-BMS_Logo-3.png') }}" class="h-20px" alt="logo-icon"></span>
+        <a href="{{ route('dashboard') }}" class="d-flex align-items-center text-decoration-none position-relative">
+            <img src="{{ asset('assets/images/landing/logo.svg') }}" class="h-37px" alt="logo-icon">
+            <!-- <span class="logo-text fw-bold text-dark ms-2">QBit Ecommerce</span> -->
         </a>
         <button class="sidebar-burger-menu bg-transparent p-0 border-0 opacity-0 z-n1 position-absolute top-50 end-0 translate-middle-y" id="sidebar-burger-menu">
             <i data-feather="x"></i>

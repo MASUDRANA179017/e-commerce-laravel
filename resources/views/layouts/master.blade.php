@@ -100,61 +100,61 @@
                                                 class="notification-menu d-flex flex-wrap justify-content-between gap-4">
                                                 <a href="https://www.figma.com/" target="_blank"
                                                     class="dropdown-item p-0 text-center">
-                                                    <img src="assets/images/figma.svg" class="wh-25"
-                                                        alt="united-states">
+                                                    <img src="{{ asset('assets/images/all-icon.svg') }}" class="wh-25"
+                                                        alt="Figma">
                                                     <span>Figma</span>
                                                 </a>
                                                 <a href="https://www.dribbble.com/" target="_blank"
                                                     class="dropdown-item p-0 text-center">
-                                                    <img src="assets/images/dribbble.svg" class="wh-25"
-                                                        alt="united-states">
+                                                    <img src="{{ asset('assets/images/all-icon.svg') }}" class="wh-25"
+                                                        alt="Dribbble">
                                                     <span>Dribbble</span>
                                                 </a>
                                                 <a href="https://www.spotify.com/" target="_blank"
                                                     class="dropdown-item p-0 text-center">
-                                                    <img src="assets/images/spotify.svg" class="wh-25"
-                                                        alt="united-states">
+                                                    <img src="{{ asset('assets/images/all-icon.svg') }}" class="wh-25"
+                                                        alt="Spotify">
                                                     <span>Spotify</span>
                                                 </a>
                                                 <a href="https://www.github.com/" target="_blank"
                                                     class="dropdown-item p-0 text-center">
-                                                    <img src="assets/images/github.svg" class="wh-25"
-                                                        alt="united-states">
+                                                    <img src="{{ asset('assets/images/all-icon.svg') }}" class="wh-25"
+                                                        alt="Github">
                                                     <span>Github</span>
                                                 </a>
                                                 <a href="https://www.google.com/drive/" target="_blank"
                                                     class="dropdown-item p-0 text-center">
-                                                    <img src="assets/images/gdrive.svg" class="wh-25"
-                                                        alt="united-states">
+                                                    <img src="{{ asset('assets/images/all-icon.svg') }}" class="wh-25"
+                                                        alt="GDrive">
                                                     <span>GDrive</span>
                                                 </a>
                                                 <a href="https://www.trello.com/" target="_blank"
                                                     class="dropdown-item p-0 text-center">
-                                                    <img src="assets/images/trello.svg" class="wh-25"
-                                                        alt="united-states">
+                                                    <img src="{{ asset('assets/images/all-icon.svg') }}" class="wh-25"
+                                                        alt="Trello">
                                                     <span>Trello</span>
                                                 </a>
                                                 <a href="https://www.slak.com/" target="_blank"
                                                     class="dropdown-item p-0 text-center">
-                                                    <img src="assets/images/slak.svg" class="wh-25" alt="united-states">
+                                                    <img src="{{ asset('assets/images/all-icon.svg') }}" class="wh-25" alt="Slak">
                                                     <span>Slak</span>
                                                 </a>
                                                 <a href="https://www.pinterest.com/" target="_blank"
                                                     class="dropdown-item p-0 text-center">
-                                                    <img src="assets/images/pinterest.svg" class="wh-25"
-                                                        alt="united-states">
+                                                    <img src="{{ asset('assets/images/all-icon.svg') }}" class="wh-25"
+                                                        alt="Pinterest">
                                                     <span>Pinterest</span>
                                                 </a>
                                                 <a href="https://www.facebook.com/" target="_blank"
                                                     class="dropdown-item p-0 text-center">
-                                                    <img src="assets/images/facebook.svg" class="wh-25"
-                                                        alt="united-states">
+                                                    <img src="{{ asset('assets/images/all-icon.svg') }}" class="wh-25"
+                                                        alt="Facebook">
                                                     <span>Facebook</span>
                                                 </a>
                                                 <a href="https://www.linkedin.com/" target="_blank"
                                                     class="dropdown-item p-0 text-center">
-                                                    <img src="assets/images/linkedin.svg" class="wh-25"
-                                                        alt="united-states">
+                                                    <img src="{{ asset('assets/images/all-icon.svg') }}" class="wh-25"
+                                                        alt="Linkedin">
                                                     <span>Linkedin</span>
                                                 </a>
                                             </div>
@@ -303,7 +303,7 @@
                                             data-bs-toggle="dropdown">
                                             <div class="flex-shrink-0">
                                                 <img class="administrator rounded-circle" style="width: 40px; height: 40px; object-fit: cover;" 
-                                                    src="{{ Auth::user()->image ? asset('storage/' . Auth::user()->image) : asset('assets/images/user-161.png') }}"
+                                                    src="{{ Auth::user()->image ? asset('storage/' . Auth::user()->image) : asset('assets/images/andrew-rashel.png') }}"
                                                     alt="{{ Auth::user()->name }}">
                                             </div>
                                             <div class="flex-grow-1 ms-2">
@@ -324,7 +324,7 @@
                                             <div class="d-flex align-items-center info">
                                                 <div class="flex-shrink-0">
                                                     <img class="rounded-circle wh-30 administrator" style="width: 40px; height: 40px; object-fit: cover;"
-                                                        src="{{ Auth::user()->image ? asset('storage/' . Auth::user()->image) : asset('assets/images/administrator.jpg') }}" 
+                                                        src="{{ Auth::user()->image ? asset('storage/' . Auth::user()->image) : asset('assets/images/andrew-rashel.png') }}" 
                                                         alt="{{ Auth::user()->name }}">
                                                 </div>
                                                 <div class="flex-grow-1 ms-2">

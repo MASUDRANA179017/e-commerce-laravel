@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin\Product;
 
 use App\Http\Controllers\Controller;
+use App\Models\Product;
 use App\Models\Admin\Brand\Brand;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -116,134 +117,98 @@ class ProductController extends Controller
     }
 
     /**
-     * 📦 All Products (for DataTables & Blade)
+     * � All Products Data (JSON for DataTables)
      */
-    public function allProducts(Request $request)
+    public function allProductsData(Request $request)
     {
-        Log::info('Entered allProducts. Ajax: ' . ($request->ajax() ? 'yes' : 'no') . ', Draw: ' . ($request->has('draw') ? 'yes' : 'no'));
+        Log::info('Entered allProductsData (Dedicated JSON Route)');
+        
+        try {
+            $query = Product::with(['brand'])
+                ->withCount(['images', 'variants'])
+                ->with(['categories' => function($q) {
+                    $q->wherePivot('is_primary', true);
+                }])
+                ->select('products.*');
 
-        // Base Query (with joins)
-        $query = DB::table('products')
-            ->leftJoin('brands', 'products.brand_id', '=', 'brands.id')
-            ->leftJoin('product_category_map as pcm', function ($join) {
-                $join->on('products.id', '=', 'pcm.product_id')
-                    ->where('pcm.is_primary', true);
-            })
-            ->leftJoin('product_categories as pc', 'pcm.category_id', '=', 'pc.id')
-            ->whereNull('products.deleted_at')
-            ->select(
-                'products.id',
-                'products.title',
-                'products.sku',
-                'brands.name as brand_name',
-                'pc.name as category_name',
-                'products.status',
-                'products.created_at'
-            )
-            ->orderBy('products.created_at', 'desc');
+            return DataTables::of($query)
+                ->addIndexColumn()
+                ->addColumn('product_info', function ($row) {
+                    $coverImg = $row->images->sortByDesc('is_cover')->first(); 
+                    $title = e($row->title);
+                    $sku = e($row->sku ?? 'N/A');
 
-        // Check if it's an AJAX request (DataTables Server-Side)
-        if ($request->ajax() || $request->wantsJson() || $request->has('draw')) {
-            try {
-                // Log the count for debugging
-                $count = $query->count();
-                Log::info('DataTables Query Count: ' . $count);
+                    $imageHtml = $coverImg && $coverImg->path ?
+                        '<img src="' . asset('storage/' . $coverImg->path) . '" alt="' . $title . '" class="product-thumb">' :
+                        '<div class="product-thumb-placeholder"><i class="fas fa-image"></i></div>';
 
-                $dt = DataTables::of($query)
-                    ->addIndexColumn()
-                    ->addColumn('product_info', function ($row) {
-                        // Get cover image
-                        $coverImg = DB::table('product_images')
-                            ->where('product_id', $row->id)
-                            ->where('is_cover', 1)
-                            ->first();
-
-                        $coverImg = $coverImg ?: DB::table('product_images')
-                            ->where('product_id', $row->id)
-                            ->first();
-
-                        $title = e($row->title); // Escape title
-                        $sku = e($row->sku ?? 'N/A');
-
-                        $imageHtml = $coverImg && $coverImg->path ?
-                            '<img src="' . asset('storage/' . $coverImg->path) . '" alt="' . $title . '" class="product-thumb">' :
-                            '<div class="product-thumb-placeholder"><i class="fas fa-image"></i></div>';
-
-                        return '
-                            <div class="product-info">
-                                ' . $imageHtml . '
-                                <div>
-                                    <div class="product-name" title="' . $title . '">' . $title . '</div>
-                                    <div class="product-sku">SKU: ' . $sku . '</div>
-                                </div>
-                            </div>';
-                    })
-                    ->addColumn('brand_name', function($row) {
-                        return e($row->brand_name ?? 'No Brand');
-                    })
-                    ->addColumn('category_name', function($row) {
-                        return e($row->category_name ?? 'No Category');
-                    })
-                    ->addColumn('status', function ($row) {
-                        $checked = $row->status === 'Active' ? 'checked' : '';
-                        return '
-                            <div class="form-check form-switch d-flex justify-content-center">
-                                <input class="form-check-input toggle-status" type="checkbox" role="switch" 
-                                    data-id="' . $row->id . '" ' . $checked . '>
-                            </div>';
-                    })
-                    ->addColumn('media', function ($row) {
-                        // Recalculate counts per row (less efficient but safer for now)
-                        $imagesCount = DB::table('product_images')->where('product_id', $row->id)->count();
-                        $variantsCount = DB::table('product_variants')->where('product_id', $row->id)->count();
-                        
-                        $imagesBtn = '<button class="info-badge info-badge-images btn-view-images" data-product-id="' . $row->id . '"><i class="fas fa-images me-1"></i>' . $imagesCount . '</button>';
-                        $variantsBtn = '<button class="info-badge info-badge-variants btn-view-variants" data-product-id="' . $row->id . '"><i class="fas fa-layer-group me-1"></i>' . $variantsCount . '</button>';
-                        return '<div class="d-flex gap-2">' . $imagesBtn . ' ' . $variantsBtn . '</div>';
-                    })
-                    ->addColumn('action', function ($row) {
+                    return '
+                        <div class="product-info">
+                            ' . $imageHtml . '
+                            <div>
+                                <div class="product-name" title="' . $title . '">' . $title . '</div>
+                                <div class="product-sku">SKU: ' . $sku . '</div>
+                            </div>
+                        </div>';
+                })
+                ->addColumn('brand_name', function($row) {
+                    return $row->brand ? e($row->brand->name) : 'No Brand';
+                })
+                ->addColumn('category_name', function($row) {
+                    $primaryCat = $row->categories->first();
+                    return $primaryCat ? e($primaryCat->name) : 'No Category';
+                })
+                ->addColumn('status', function ($row) {
+                    $checked = $row->status === 'Active' ? 'checked' : '';
+                    return '
+                        <div class="form-check form-switch d-flex justify-content-center">
+                            <input class="form-check-input toggle-status" type="checkbox" role="switch" 
+                                data-id="' . $row->id . '" ' . $checked . '>
+                        </div>';
+                })
+                ->addColumn('media', function ($row) {
+                    $imagesCount = $row->images_count;
+                    $variantsCount = $row->variants_count;
+                    
+                    $imagesBtn = '<button class="info-badge info-badge-images btn-view-images" data-product-id="' . $row->id . '"><i class="fas fa-images me-1"></i>' . $imagesCount . '</button>';
+                    $variantsBtn = '<button class="info-badge info-badge-variants btn-view-variants" data-product-id="' . $row->id . '"><i class="fas fa-layer-group me-1"></i>' . $variantsCount . '</button>';
+                    return '<div class="d-flex gap-2">' . $imagesBtn . ' ' . $variantsBtn . '</div>';
+                })
+                ->addColumn('action', function ($row) {
                         return '
                             <div class="btn-group">
-                                <a href="' . route('admin.product.edit', $row->id) . '" class="btn btn-sm btn-primary">
-                                    <i class="bi bi-pencil-square"></i>
+                                <button class="btn btn-sm btn-info btn-view-product" data-product-id="' . $row->id . '" title="View Details">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                                <a href="' . route('admin.product.edit', $row->id) . '" class="btn btn-sm btn-primary" title="Edit Product">
+                                    <i class="fas fa-edit"></i>
                                 </a>
-                                <button class="btn btn-sm btn-danger deleteProduct" data-id="' . $row->id . '">
-                                    <i class="bi bi-trash"></i>
+                                <button class="btn btn-sm btn-danger deleteProduct" data-id="' . $row->id . '" title="Delete Product">
+                                    <i class="fas fa-trash"></i>
                                 </button>
                             </div>';
                     })
-                    ->rawColumns(['product_info', 'status', 'media', 'action']);
-
-                $json = $dt->make(true);
-                // Log::info('DataTables Response: ' . substr($json->content(), 0, 1000)); // Log first 1000 chars
-                return $json;
-            } catch (\Exception $e) {
-                Log::error('DataTables Error: ' . $e->getMessage());
-                return response()->json(['error' => 'Internal Server Error: ' . $e->getMessage()], 500);
-            }
+                ->rawColumns(['product_info', 'status', 'media', 'action'])
+                ->make(true);
+        } catch (\Exception $e) {
+            Log::error('DataTables Error: ' . $e->getMessage());
+            return response()->json(['error' => 'Internal Server Error: ' . $e->getMessage()], 500);
         }
+    }
 
-        // Normal View Load - Fetch data for Client-Side rendering fallback
-        $products = $query->get();
-        
-        // Enhance products with extra data needed for view
-        foreach ($products as $row) {
-            // Cover Image
-            $coverImg = DB::table('product_images')->where('product_id', $row->id)->where('is_cover', 1)->first();
-            $coverImg = $coverImg ?: DB::table('product_images')->where('product_id', $row->id)->first();
-            $row->cover_image_url = $coverImg && $coverImg->path ? asset('storage/' . $coverImg->path) : null;
-            
-            // Counts
-            $row->images_count = DB::table('product_images')->where('product_id', $row->id)->count();
-            $row->variants_count = DB::table('product_variants')->where('product_id', $row->id)->count();
-        }
+    /**
+     * 📦 All Products (View Only)
+     */
+    public function allProducts(Request $request)
+    {
+        Log::info('Entered allProducts (View)');
 
-        // Calculate stats for the view
-        $totalProducts = DB::table('products')->whereNull('deleted_at')->count();
-        $activeProducts = DB::table('products')->whereNull('deleted_at')->where('status', 'Active')->count();
-        $inactiveProducts = DB::table('products')->whereNull('deleted_at')->where('status', '!=', 'Active')->count();
+        // Calculate stats using Eloquent
+        $totalProducts = Product::count();
+        $activeProducts = Product::where('status', 'Active')->count();
+        $inactiveProducts = Product::where('status', '!=', 'Active')->count();
 
-        return view('admin.product.all_products.index', compact('totalProducts', 'activeProducts', 'inactiveProducts', 'products'));
+        return view('admin.product.all_products.index', compact('totalProducts', 'activeProducts', 'inactiveProducts'));
     }
 
     /**

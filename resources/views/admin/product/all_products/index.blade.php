@@ -289,52 +289,7 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach($products as $key => $product)
-                                <tr>
-                                    <td>{{ $key + 1 }}</td>
-                                    <td>
-                                        <div class="product-info">
-                                            @if($product->cover_image_url)
-                                                <img src="{{ $product->cover_image_url }}" alt="{{ $product->title }}" class="product-thumb">
-                                            @else
-                                                <div class="product-thumb-placeholder"><i class="fas fa-image"></i></div>
-                                            @endif
-                                            <div>
-                                                <div class="product-name" title="{{ $product->title }}">{{ $product->title }}</div>
-                                                <div class="product-sku">SKU: {{ $product->sku ?? 'N/A' }}</div>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td>{{ $product->brand_name ?? 'No Brand' }}</td>
-                                    <td>{{ $product->category_name ?? 'No Category' }}</td>
-                                    <td>
-                                        <div class="form-check form-switch d-flex justify-content-center">
-                                            <input class="form-check-input toggle-status" type="checkbox" role="switch" 
-                                                data-id="{{ $product->id }}" {{ $product->status === 'Active' ? 'checked' : '' }}>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <div class="d-flex gap-2">
-                                            <button class="info-badge info-badge-images btn-view-images" data-product-id="{{ $product->id }}">
-                                                <i class="fas fa-images me-1"></i>{{ $product->images_count }}
-                                            </button>
-                                            <button class="info-badge info-badge-variants btn-view-variants" data-product-id="{{ $product->id }}">
-                                                <i class="fas fa-layer-group me-1"></i>{{ $product->variants_count }}
-                                            </button>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <div class="btn-group">
-                                            <a href="{{ route('admin.product.edit', $product->id) }}" class="btn btn-sm btn-primary">
-                                                <i class="bi bi-pencil-square"></i>
-                                            </a>
-                                            <button class="btn btn-sm btn-danger deleteProduct" data-id="{{ $product->id }}">
-                                                <i class="bi bi-trash"></i>
-                                            </button>
-                                        </div>
-                                    </td>
-                                </tr>
-                                @endforeach
+                                <!-- DataTables will populate this -->
                             </tbody>
                         </table>
                     </div>
@@ -365,21 +320,57 @@ document.addEventListener("DOMContentLoaded", function() {
         return;
     }
 
-    console.log('Initializing Client-Side DataTable...');
+    console.log('Initializing Server-Side DataTable...');
     
     // Global error handler for DataTables to prevent alerts
-    $.fn.dataTable.ext.errMode = 'throw'; // Log to console instead of alert
+    $.fn.dataTable.ext.errMode = 'none';
+    $('#productsTable').on('error.dt', function(e, settings, techNote, message) {
+        console.error('DataTables Error:', message);
+        toastr.error('Failed to load product data. Please check console for details.');
+    });
+    
+    // Log the URL we are trying to hit
+    const ajaxUrl = "{{ route('admin.product.all.data') }}";
+    console.log('DataTables AJAX URL:', ajaxUrl);
 
     var table = $('#productsTable')
         .DataTable({
+            processing: true,
+            serverSide: true,
+            ajax: {
+                url: ajaxUrl,
+                type: 'GET',
+                data: function(d) {
+                    d.type = 'datatable';
+                },
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                error: function(xhr, error, thrown) {
+                    console.error('DataTables Ajax Error Response:', xhr.responseText);
+                    console.error('DataTables Ajax Error Status:', xhr.status);
+                    console.error('DataTables Ajax Error:', error);
+                    toastr.error('Server error loading products: ' + (xhr.statusText || error));
+                }
+            },
             responsive: true,
             width: "100%",
             language: {
                 search: "",
                 searchPlaceholder: "Search products...",
                 emptyTable: "No products found",
-                zeroRecords: "No matching products found"
+                zeroRecords: "No matching products found",
+                processing: '<div class="spinner-border text-primary" role="status"><span class="visually-hidden">Loading...</span></div>'
             },
+            columns: [
+                { data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false },
+                { data: 'product_info', name: 'title' },
+                { data: 'brand_name', name: 'brand.name', orderable: false },
+                { data: 'category_name', name: 'category_name', orderable: false, searchable: false },
+                { data: 'status', name: 'status', orderable: false, searchable: false },
+                { data: 'media', name: 'media', orderable: false, searchable: false },
+                { data: 'action', name: 'action', orderable: false, searchable: false }
+            ],
             dom: '<"top"l>rt<"bottom d-flex justify-content-between align-items-center"ip><"clear">',
             order: [[1, 'asc']]
         });
@@ -389,38 +380,37 @@ document.addEventListener("DOMContentLoaded", function() {
         table.search(this.value).draw();
     });
 
-    // 🟢 Status Toggle Handler (Delegate event for DataTables)
+    // 🟢 Status Toggle Handler
     $(document).on('change', '.toggle-status', function() {
         let isChecked = $(this).is(':checked');
         let status = isChecked ? 'active' : 'inactive';
         let productId = $(this).data('id');
         let $toggle = $(this);
-
-        // Debugging
-        console.log(`Toggling product ${productId} to ${status}`);
+        
+        // Disable to prevent multiple clicks
+        $toggle.prop('disabled', true);
 
         $.ajax({
             url: `/admin/product/${productId}/update-status`,
             type: 'POST',
             data: {
                 status: status,
-                _token: '{{ csrf_token() }}'
+                _token: $('meta[name="csrf-token"]').attr('content')
             },
             success: function(response) {
-                console.log('Success:', response);
+                $toggle.prop('disabled', false);
                 if (response.ok) {
                     toastr.success(response.message);
                 } else {
                     toastr.error(response.message || 'Update failed');
-                    // Revert toggle if failed
-                    $toggle.prop('checked', !isChecked);
+                    $toggle.prop('checked', !isChecked); // Revert
                 }
             },
             error: function(xhr) {
-                console.error('Error:', xhr);
-                toastr.error('Something went wrong. Please try again.');
-                // Revert toggle if error
-                $toggle.prop('checked', !isChecked);
+                $toggle.prop('disabled', false);
+                console.error('Status Update Error:', xhr);
+                toastr.error('Connection error. Please try again.');
+                $toggle.prop('checked', !isChecked); // Revert
             }
         });
     });
@@ -759,5 +749,6 @@ document.addEventListener("DOMContentLoaded", function() {
         });
     });
 });
+</script>
 @endpush
 
