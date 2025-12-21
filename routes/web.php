@@ -17,8 +17,15 @@ use App\Http\Controllers\Admin\UnitController;
 require __DIR__.'/frontend.php';
 
 Route::get('/dashboard', function () {
-    return view('dashboard');
+    if (auth()->user()->hasRole(['Super Admin', 'Admin'])) {
+        return view('dashboard');
+    }
+    return redirect()->route('user.dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
+
+Route::get('/user/dashboard', [App\Http\Controllers\Frontend\DashboardController::class, 'index'])
+    ->middleware(['auth', 'verified'])
+    ->name('user.dashboard');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
