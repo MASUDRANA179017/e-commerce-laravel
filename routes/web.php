@@ -27,6 +27,14 @@ Route::get('/user/dashboard', [App\Http\Controllers\Frontend\DashboardController
     ->middleware(['auth', 'verified'])
     ->name('user.dashboard');
 
+Route::get('/user/account-details', [App\Http\Controllers\Frontend\DashboardController::class, 'accountDetails'])
+    ->middleware(['auth', 'verified'])
+    ->name('user.account-details');
+
+Route::post('/user/account-details', [App\Http\Controllers\Frontend\DashboardController::class, 'updateAccountDetails'])
+    ->middleware(['auth', 'verified'])
+    ->name('user.account-details.update');
+
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');

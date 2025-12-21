@@ -235,7 +235,7 @@
                         <input type="text" name="username" id="username" value="{{ old('username') }}" class="form-control custom-input @error('username') is-invalid @enderror" placeholder="Enter your username" required autofocus>
                         <span class="input-group-text custom-input"><i class='bx bx-user'></i></span>
                     </div>
-                    @error('email')
+                    @error('username')
                         <span class="invalid-feedback" role="alert">
                             <strong>{{ $message }}</strong>
                         </span>
