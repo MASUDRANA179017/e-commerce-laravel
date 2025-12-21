@@ -45,17 +45,17 @@
                         <div class="row">
                             <div class="col-md-6 mb-3">
                                 <label class="form-label">First Name <span class="text-danger">*</span></label>
-                                <input type="text" name="first_name" class="form-control @error('first_name') is-invalid @enderror" value="{{ old('first_name', auth()->user()->first_name ?? '') }}" required>
+                                <input type="text" name="first_name" class="form-control @error('first_name') is-invalid @enderror" value="{{ old('first_name', optional($lastOrder)->first_name ?? auth()->user()->first_name ?? '') }}" required>
                                 @error('first_name')<div class="invalid-feedback">{{ $message }}</div>@enderror
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label class="form-label">Last Name <span class="text-danger">*</span></label>
-                                <input type="text" name="last_name" class="form-control @error('last_name') is-invalid @enderror" value="{{ old('last_name', auth()->user()->last_name ?? '') }}" required>
+                                <input type="text" name="last_name" class="form-control @error('last_name') is-invalid @enderror" value="{{ old('last_name', optional($lastOrder)->last_name ?? auth()->user()->last_name ?? '') }}" required>
                                 @error('last_name')<div class="invalid-feedback">{{ $message }}</div>@enderror
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label class="form-label">Email Address <span class="text-danger">*</span></label>
-                                <input type="email" name="email" class="form-control @error('email') is-invalid @enderror" value="{{ old('email', auth()->user()->email ?? '') }}" required>
+                                <input type="email" name="email" class="form-control @error('email') is-invalid @enderror" value="{{ old('email', optional($lastOrder)->email ?? auth()->user()->email ?? '') }}" required>
                                 @error('email')<div class="invalid-feedback">{{ $message }}</div>@enderror
                             </div>
                             @guest
@@ -67,29 +67,29 @@
                             @endguest
                             <div class="col-md-6 mb-3">
                                 <label class="form-label">Phone Number <span class="text-danger">*</span></label>
-                                <input type="tel" name="phone" class="form-control @error('phone') is-invalid @enderror" value="{{ old('phone', $lastOrder->phone ?? $user->phone ?? '') }}" required>
+                                <input type="tel" name="phone" class="form-control @error('phone') is-invalid @enderror" value="{{ old('phone', optional($lastOrder)->phone ?? auth()->user()->phone ?? '') }}" required>
                                 @error('phone')<div class="invalid-feedback">{{ $message }}</div>@enderror
                             </div>
                             <div class="col-12 mb-3">
                                 <label class="form-label">Street Address <span class="text-danger">*</span></label>
-                                <input type="text" name="address" class="form-control @error('address') is-invalid @enderror" placeholder="House number and street name" value="{{ old('address', $lastOrder->address ?? $user->address ?? '') }}" required>
+                                <input type="text" name="address" class="form-control @error('address') is-invalid @enderror" placeholder="House number and street name" value="{{ old('address', optional($lastOrder)->address ?? auth()->user()->address ?? '') }}" required>
                                 @error('address')<div class="invalid-feedback">{{ $message }}</div>@enderror
                             </div>
                             <div class="col-12 mb-3">
-                                <input type="text" name="address2" class="form-control" placeholder="Apartment, suite, unit, etc. (optional)" value="{{ old('address2', $lastOrder->address2 ?? '') }}">
+                                <input type="text" name="address2" class="form-control" placeholder="Apartment, suite, unit, etc. (optional)" value="{{ old('address2', optional($lastOrder)->address2 ?? '') }}">
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label class="form-label">City <span class="text-danger">*</span></label>
-                                <input type="text" name="city" class="form-control @error('city') is-invalid @enderror" value="{{ old('city', $lastOrder->city ?? '') }}" required>
+                                <input type="text" name="city" class="form-control @error('city') is-invalid @enderror" value="{{ old('city', optional($lastOrder)->city ?? '') }}" required>
                                 @error('city')<div class="invalid-feedback">{{ $message }}</div>@enderror
                             </div>
                             <div class="col-md-3 mb-3">
                                 <label class="form-label">State/Region</label>
-                                <input type="text" name="state" class="form-control" value="{{ old('state', $lastOrder->state ?? '') }}">
+                                <input type="text" name="state" class="form-control" value="{{ old('state', optional($lastOrder)->state ?? '') }}">
                             </div>
                             <div class="col-md-3 mb-3">
                                 <label class="form-label">Zip Code <span class="text-danger">*</span></label>
-                                <input type="text" name="zip_code" class="form-control @error('zip_code') is-invalid @enderror" value="{{ old('zip_code', $lastOrder->zip_code ?? '') }}" required>
+                                <input type="text" name="zip_code" class="form-control @error('zip_code') is-invalid @enderror" value="{{ old('zip_code', optional($lastOrder)->zip_code ?? '') }}" required>
                                 @error('zip_code')<div class="invalid-feedback">{{ $message }}</div>@enderror
                             </div>
                             <div class="col-12 mb-3">

@@ -50,6 +50,17 @@ class User extends Authenticatable
         'password' => 'hashed',
     ];
 
+    public function getFirstNameAttribute()
+    {
+        return explode(' ', trim($this->name))[0];
+    }
+
+    public function getLastNameAttribute()
+    {
+        $parts = explode(' ', trim($this->name));
+        return count($parts) > 1 ? implode(' ', array_slice($parts, 1)) : '';
+    }
+
     public function departmentname()
     {
         return $this->belongsTo(Department::class, 'department');

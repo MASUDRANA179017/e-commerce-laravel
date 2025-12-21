@@ -46,7 +46,7 @@ class CheckoutController extends Controller
             $lastOrder = Order::where('user_id', $user->id)->latest()->first();
         }
 
-        return view('frontend.checkout', compact('cartItems', 'subtotal', 'discount', 'shipping', 'total', 'lastOrder'));
+        return view('frontend.checkout', compact('cartItems', 'subtotal', 'discount', 'shipping', 'total', 'lastOrder', 'user'));
     }
 
     /**
