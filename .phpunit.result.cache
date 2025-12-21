@@ -1,0 +1,1 @@
+{"version":2,"defects":{"Tests\\Feature\\GuestCheckoutTest::test_guest_can_checkout_and_account_is_created":7},"times":{"Tests\\Feature\\GuestCheckoutTest::test_guest_can_view_checkout_page":0.107,"Tests\\Feature\\GuestCheckoutTest::test_guest_can_checkout_and_account_is_created":0.141}}

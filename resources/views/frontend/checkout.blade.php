@@ -58,6 +58,13 @@
                                 <input type="email" name="email" class="form-control @error('email') is-invalid @enderror" value="{{ old('email', auth()->user()->email ?? '') }}" required>
                                 @error('email')<div class="invalid-feedback">{{ $message }}</div>@enderror
                             </div>
+                            @guest
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Password <span class="text-danger">*</span></label>
+                                <input type="password" name="password" class="form-control @error('password') is-invalid @enderror" required placeholder="Create a password">
+                                @error('password')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                            </div>
+                            @endguest
                             <div class="col-md-6 mb-3">
                                 <label class="form-label">Phone Number <span class="text-danger">*</span></label>
                                 <input type="tel" name="phone" class="form-control @error('phone') is-invalid @enderror" value="{{ old('phone', auth()->user()->phone ?? '') }}" required>
@@ -104,7 +111,7 @@
                                 <label class="form-check-label d-flex align-items-center w-100" for="cod">
                                     <i class="fa-solid fa-money-bill-wave fa-2x text-success me-3"></i>
                                     <div>
-                                        <strong>Cash on Delivery</strong>
+                                        <p>Cash on Delivery</p>
                                         <small class="d-block text-muted">Pay when you receive your order</small>
                                     </div>
                                 </label>
@@ -115,7 +122,7 @@
                                 <label class="form-check-label d-flex align-items-center w-100" for="bank">
                                     <i class="fa-solid fa-building-columns fa-2x text-primary me-3"></i>
                                     <div>
-                                        <strong>Bank Transfer</strong>
+                                        <p>Bank Transfer</p>
                                         <small class="d-block text-muted">Direct bank transfer to our account</small>
                                     </div>
                                 </label>
@@ -126,7 +133,7 @@
                                 <label class="form-check-label d-flex align-items-center w-100" for="card">
                                     <i class="fa-solid fa-credit-card fa-2x text-info me-3"></i>
                                     <div>
-                                        <strong>Credit/Debit Card</strong>
+                                        <p>Credit/Debit Card</p>
                                         <small class="d-block text-muted">Visa, Mastercard, American Express</small>
                                     </div>
                                 </label>
@@ -137,7 +144,7 @@
                                 <label class="form-check-label d-flex align-items-center w-100" for="bkash">
                                     <i class="fa-solid fa-mobile-screen fa-2x text-danger me-3"></i>
                                     <div>
-                                        <strong>Mobile Banking</strong>
+                                        <p>Mobile Banking</p>
                                         <small class="d-block text-muted">bKash, Nagad, Rocket</small>
                                     </div>
                                 </label>

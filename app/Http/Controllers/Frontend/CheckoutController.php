@@ -5,8 +5,11 @@ namespace App\Http\Controllers\Frontend;
 use App\Http\Controllers\Controller;
 use App\Models\Order;
 use App\Models\OrderItem;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 
 class CheckoutController extends Controller
@@ -51,7 +54,7 @@ class CheckoutController extends Controller
      */
     public function process(Request $request)
     {
-        $request->validate([
+        $rules = [
             'first_name' => 'required|string|max:255',
             'last_name' => 'required|string|max:255',
             'email' => 'required|email|max:255',
@@ -61,7 +64,14 @@ class CheckoutController extends Controller
             'zip_code' => 'required|string|max:20',
             'payment_method' => 'required|in:cod,bank_transfer,card,bkash,nagad,rocket',
             'terms' => 'required|accepted',
-        ]);
+        ];
+
+        if (!auth()->check()) {
+            $rules['email'] = 'required|email|max:255|unique:users,email';
+            $rules['password'] = 'required|string|min:8';
+        }
+
+        $request->validate($rules);
 
         $cartItems = session()->get('cart', []);
 
@@ -77,12 +87,37 @@ class CheckoutController extends Controller
         try {
             DB::beginTransaction();
 
+            $userId = auth()->id();
+
+            if (!$userId) {
+                // Create user
+                $user = User::create([
+                    'name' => $request->first_name . ' ' . $request->last_name,
+                    'username' => explode('@', $request->email)[0] . rand(1000, 9999),
+                    'email' => $request->email,
+                    'phone' => $request->phone,
+                    'address' => $request->address,
+                    'password' => Hash::make($request->password),
+                    'is_active' => true,
+                ]);
+
+                // Auto-verify email so they can access dashboard immediately
+                $user->email_verified_at = now();
+                $user->save();
+
+                // Assign role if possible (assuming 'User' or 'Customer' role exists, checking existing roles)
+                // For now, we will just login the user.
+                
+                Auth::login($user);
+                $userId = $user->id;
+            }
+
             // Generate unique order number
             $orderNumber = 'ORD-' . date('Ymd') . '-' . strtoupper(Str::random(6));
 
             // Create the order
             $order = Order::create([
-                'user_id' => auth()->id(),
+                'user_id' => $userId,
                 'order_number' => $orderNumber,
                 'first_name' => $request->first_name,
                 'last_name' => $request->last_name,

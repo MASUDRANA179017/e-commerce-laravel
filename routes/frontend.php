@@ -55,8 +55,8 @@ Route::prefix('wishlist')->name('wishlist.')->group(function () {
     Route::post('/move-to-cart/{productId}', [WishlistController::class, 'moveToCart'])->name('moveToCart');
 });
 
-// Checkout Routes (requires auth)
-Route::middleware('auth')->prefix('checkout')->name('checkout.')->group(function () {
+// Checkout Routes
+Route::prefix('checkout')->name('checkout.')->group(function () {
     Route::get('/', [CheckoutController::class, 'index'])->name('index');
     Route::post('/process', [CheckoutController::class, 'process'])->name('process');
     Route::get('/success/{order}', [CheckoutController::class, 'success'])->name('success');
