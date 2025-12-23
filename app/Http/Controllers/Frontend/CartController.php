@@ -57,12 +57,25 @@ class CartController extends Controller
 
         $quantity = $request->quantity ?? 1;
         $cart = session()->get('cart', []);
-        $rowId = 'product_' . $product->id;
+        $variantId = $request->variant_id ?? null;
+        $rowId = 'product_' . $product->id . ($variantId ? '_v_' . $variantId : '');
 
         // Determine price
         $price = $product->sale_price && $product->sale_price < $product->price 
             ? $product->sale_price 
             : $product->price;
+
+        $variantLabel = $request->variant ?? null;
+        if ($variantId) {
+            $v = \App\Models\ProductVariant::with(['options.attribute', 'options.term'])->find($variantId);
+            if ($v) {
+                $variantLabel = $v->options->map(function ($opt) {
+                    $an = $opt->attribute->name ?? 'Option';
+                    $tn = $opt->term->name ?? '';
+                    return $an . ': ' . $tn;
+                })->join(' | ');
+            }
+        }
 
         // Check if product already in cart
         if (isset($cart[$rowId])) {
@@ -77,7 +90,7 @@ class CartController extends Controller
                 'options' => [
                     'image' => $product->cover_image ?? null,
                     'slug' => $product->slug ?? $product->id,
-                    'variant' => $request->variant ?? null,
+                    'variant' => $variantLabel,
                     'sku' => $product->sku ?? null,
                 ]
             ];
@@ -96,6 +109,7 @@ class CartController extends Controller
                 'message' => 'Product added to cart!',
                 'cartCount' => array_sum(array_column($cart, 'qty')),
                 'cartTotal' => $this->calculateSubtotal($cart),
+                'addedItem' => array_merge($cart[$rowId], ['rowId' => $rowId]),
             ]);
         }
 

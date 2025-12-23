@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Frontend;
 
 use App\Http\Controllers\Controller;
 use App\Models\Product;
+use App\Models\ProductVariant;
 use Illuminate\Http\Request;
 
 class ProductController extends Controller
@@ -71,6 +72,26 @@ class ProductController extends Controller
         }
 
         return view('frontend.product-details', compact('product', 'relatedProducts'));
+    }
+
+    public function variants($id)
+    {
+        $variants = ProductVariant::with(['options.attribute', 'options.term'])
+            ->where('product_id', $id)
+            ->get()
+            ->map(function ($variant) {
+                $name = $variant->options->map(function ($opt) {
+                    $an = $opt->attribute->name ?? 'Option';
+                    $tn = $opt->term->name ?? '';
+                    return $an . ': ' . $tn;
+                })->join(' | ');
+                return [
+                    'id' => $variant->id,
+                    'name' => $name ?: 'Default',
+                    'sku' => $variant->sku,
+                ];
+            });
+        return response()->json(['variants' => $variants]);
     }
 
     /**

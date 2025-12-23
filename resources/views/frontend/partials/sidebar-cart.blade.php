@@ -542,6 +542,14 @@ window.updateCartQty = function(rowId, change) {
             if (typeof showToast === 'function') {
                 showToast('success', 'Cart updated!');
             }
+            try {
+                if (window.__CART_ITEMS__ && window.__CART_ITEMS__[rowId]) {
+                    window.__CART_ITEMS__[rowId].qty = newQty;
+                }
+                if (typeof data.subtotal === 'number') {
+                    window.__CART_SUBTOTAL__ = data.subtotal;
+                }
+            } catch (e) {}
         } else {
             // Revert UI on failure
             qtyValueEl.textContent = currentQty;
@@ -610,8 +618,23 @@ window.removeFromCart = function(rowId) {
                 showToast('success', 'Item removed from cart!');
             }
             // If cart is empty, show empty state
+            try {
+                if (window.__CART_ITEMS__ && window.__CART_ITEMS__[rowId]) {
+                    delete window.__CART_ITEMS__[rowId];
+                }
+                if (typeof data.subtotal === 'number') {
+                    window.__CART_SUBTOTAL__ = data.subtotal;
+                }
+            } catch (e) {}
             if (data.cartCount === 0) {
-                location.reload();
+                var list = document.querySelector('#sidebarCart .cart-items-list');
+                if (list) list.remove();
+                var body = document.querySelector('#sidebarCart .sidebar-cart-body');
+                if (body) {
+                    body.innerHTML = '<div class="empty-cart"><div class="empty-cart-icon"><i class="fa-solid fa-cart-shopping"></i></div><h5>Your cart is empty</h5><p>Looks like you haven\'t added any items to your cart yet.</p><a href="/shop" class="btn-shop-now"><i class="fa-solid fa-bag-shopping me-2"></i> Start Shopping</a></div>';
+                }
+                var footer = document.querySelector('#sidebarCart .sidebar-cart-footer');
+                if (footer) footer.remove();
             }
         }
     })

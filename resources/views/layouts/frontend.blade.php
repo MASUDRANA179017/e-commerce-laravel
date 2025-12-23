@@ -1060,6 +1060,11 @@
                             var list = document.querySelector('#sidebarCart .cart-items-list');
                             var body = document.querySelector('#sidebarCart .sidebar-cart-body');
                             var headerCount = document.querySelector('#sidebarCart .cart-items-count');
+                            
+                            // Remove empty cart message if present
+                            var emptyCart = document.querySelector('#sidebarCart .empty-cart');
+                            if (emptyCart) emptyCart.remove();
+
                             if (data.addedItem) {
                                 if (!list) {
                                     if (body) body.innerHTML = '<div class="cart-items-list"></div>';
@@ -1107,6 +1112,40 @@
                                     list.insertAdjacentHTML('afterbegin', html);
                                 }
                                 if (headerCount) headerCount.textContent = data.cartCount + (data.cartCount === 1 ? ' Item' : ' Items');
+
+                                // Update Footer
+                                var footer = document.querySelector('#sidebarCart .sidebar-cart-footer');
+                                var subtotal = data.cartTotal || 0;
+                                var shippingHtml = '';
+                                if (subtotal >= 5000) {
+                                    shippingHtml = '<i class="fa-solid fa-circle-check text-success me-1"></i> You qualify for <strong>FREE shipping</strong>!';
+                                } else {
+                                    shippingHtml = '<i class="fa-solid fa-truck me-1"></i> Add ৳' + (5000 - subtotal).toLocaleString() + ' more for <strong>FREE shipping</strong>';
+                                }
+
+                                if (!footer && body) {
+                                    var footerHtml = '<div class="sidebar-cart-footer">' +
+                                        '<div class="cart-subtotal">' +
+                                            '<span>Subtotal:</span>' +
+                                            '<span class="subtotal-amount">৳' + subtotal.toLocaleString() + '</span>' +
+                                        '</div>' +
+                                        '<p class="shipping-note">' + shippingHtml + '</p>' +
+                                        '<div class="cart-buttons">' +
+                                            '<a href="/cart" class="btn-view-cart">' +
+                                                '<i class="fa-solid fa-cart-shopping me-2"></i> View Cart' +
+                                            '</a>' +
+                                            '<a href="/checkout" class="btn-checkout">' +
+                                                '<i class="fa-solid fa-lock me-2"></i> Checkout' +
+                                            '</a>' +
+                                        '</div>' +
+                                    '</div>';
+                                    body.insertAdjacentHTML('afterend', footerHtml);
+                                } else if (footer) {
+                                    var subEl = footer.querySelector('.subtotal-amount');
+                                    if (subEl) subEl.textContent = '৳' + subtotal.toLocaleString();
+                                    var shipEl = footer.querySelector('.shipping-note');
+                                    if (shipEl) shipEl.innerHTML = shippingHtml;
+                                }
                             }
                         } catch (e) {}
 
@@ -1116,6 +1155,21 @@
                                 openSidebarCart();
                             }
                         }, 300);
+                        
+                        try {
+                            if (window.__CART_ITEMS__ && data.addedItem && data.addedItem.rowId) {
+                                window.__CART_ITEMS__[data.addedItem.rowId] = {
+                                    id: data.addedItem.id,
+                                    name: data.addedItem.name,
+                                    price: data.addedItem.price,
+                                    qty: data.addedItem.qty,
+                                    options: data.addedItem.options || {}
+                                };
+                                if (typeof data.cartTotal === 'number') {
+                                    window.__CART_SUBTOTAL__ = data.cartTotal;
+                                }
+                            }
+                        } catch (e) {}
                     } else {
                         showToast('error', data.message || 'Failed to add product to cart');
                     }

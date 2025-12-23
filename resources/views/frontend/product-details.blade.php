@@ -224,52 +224,54 @@
                             @csrf
                             <input type="hidden" name="product_id" value="{{ $product->id }}">
 
-                            @if($product->variants && $product->variants->count() > 0)
-                            @php
-                                $axes = [];
-                                foreach ($product->variants as $v) {
-                                    foreach ($v->options as $opt) {
-                                        $an = $opt->attribute->name ?? 'Option';
-                                        $tn = $opt->term->name ?? '';
-                                        $tid = $opt->term->id ?? null;
-                                        if (!isset($axes[$an])) $axes[$an] = [];
-                                        if ($tid && !isset($axes[$an][$tid])) $axes[$an][$tid] = $tn;
-                                    }
-                                }
-                            @endphp
-                            <div class="mb-4">
-                                <label class="mb-2 fw-bold">Choose Options:</label>
-                                <div class="d-flex flex-column gap-3">
-                                    @foreach($axes as $attrName => $terms)
-                                        <div>
-                                            <div class="small text-muted mb-1">{{ $attrName }}</div>
-                                            <div class="d-flex flex-wrap gap-2" data-attr="{{ $attrName }}">
-                                                @foreach($terms as $tid => $tname)
-                                                    <button type="button" class="btn btn-sm btn-outline-secondary variant-chip"
-                                                        data-attr="{{ $attrName }}" data-term-id="{{ $tid }}">{{ $tname }}</button>
-                                                @endforeach
-                                            </div>
+                            <div class="row align-items-end mb-4">
+                                @if($product->variants && $product->variants->count() > 0)
+                                    @php
+                                        $axes = [];
+                                        foreach ($product->variants as $v) {
+                                            foreach ($v->options as $opt) {
+                                                $an = $opt->attribute->name ?? 'Option';
+                                                $tn = $opt->term->name ?? '';
+                                                $tid = $opt->term->id ?? null;
+                                                if (!isset($axes[$an])) $axes[$an] = [];
+                                                if ($tid && !isset($axes[$an][$tid])) $axes[$an][$tid] = $tn;
+                                            }
+                                        }
+                                    @endphp
+                                    <div class="col-md-7">
+                                        <label class="mb-2 fw-bold">Choose Options:</label>
+                                        <div class="d-flex flex-column gap-3">
+                                            @foreach($axes as $attrName => $terms)
+                                                <div>
+                                                    <div class="small text-muted mb-1">{{ $attrName }}</div>
+                                                    <div class="d-flex flex-wrap gap-2" data-attr="{{ $attrName }}">
+                                                        @foreach($terms as $tid => $tname)
+                                                            <button type="button" class="btn btn-sm btn-outline-secondary variant-chip"
+                                                                data-attr="{{ $attrName }}" data-term-id="{{ $tid }}">{{ $tname }}</button>
+                                                        @endforeach
+                                                    </div>
+                                                </div>
+                                            @endforeach
                                         </div>
-                                    @endforeach
-                                </div>
-                                <input type="hidden" name="variant_id" id="variant_id" value="">
-                                <input type="hidden" name="variant" id="variant_name" value="">
-                            </div>
-                            @endif
+                                        <input type="hidden" name="variant_id" id="variant_id" value="">
+                                        <input type="hidden" name="variant" id="variant_name" value="">
+                                    </div>
+                                @endif
 
-                            <!-- Quantity Selector -->
-                            <div class="quantity-selector d-flex align-items-center gap-3 mb-4">
-                                <label class="mb-0 fw-bold">Quantity:</label>
-                                <div class="input-group" style="width: 150px;">
-                                    <button type="button" class="btn btn-outline-secondary" onclick="decreaseQty()">
-                                        <i class="fa-solid fa-minus"></i>
-                                    </button>
-                                    <input type="number" name="quantity" id="quantity"
-                                        class="form-control text-center fw-bold" value="1" min="1"
-                                        max="{{ $stockQty > 0 ? $stockQty : 99 }}" readonly>
-                                    <button type="button" class="btn btn-outline-secondary" onclick="increaseQty()">
-                                        <i class="fa-solid fa-plus"></i>
-                                    </button>
+                                <!-- Quantity Selector -->
+                                <div class="{{ ($product->variants && $product->variants->count() > 0) ? 'col-md-5' : 'col-md-12' }}">
+                                    <label class="mb-2 fw-bold">Quantity:</label>
+                                    <div class="input-group">
+                                        <button type="button" class="btn btn-outline-secondary" onclick="decreaseQty()">
+                                            <i class="fa-solid fa-minus"></i>
+                                        </button>
+                                        <input type="number" name="quantity" id="quantity"
+                                            class="form-control text-center fw-bold" value="1" min="1"
+                                            max="{{ $stockQty > 0 ? $stockQty : 99 }}" readonly>
+                                        <button type="button" class="btn btn-outline-secondary" onclick="increaseQty()">
+                                            <i class="fa-solid fa-plus"></i>
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
 
