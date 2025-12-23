@@ -45,8 +45,8 @@
 
           <div class="mb-3">
             <label class="form-label">SKU Prefix</label>
-            <input type="text" class="form-control" id="skuPrefix" placeholder="e.g., TSHRT">
-            <div class="form-hint">Will be used when generating SKUs (e.g., <span class="kbd">TSHRT-RED-M</span>)</div>
+            <input type="text" class="form-control" id="skuPrefix" placeholder="e.g., T-SHIRT">
+            <div class="form-hint">Will be used when generating SKUs (e.g., <span class="kbd">T-SHIRT-RED-M</span>)</div>
           </div>
 
           <div class="mb-3">
