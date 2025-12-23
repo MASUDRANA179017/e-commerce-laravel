@@ -70,6 +70,12 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
     Route::get('/product/{id}/images', [ProductController::class, 'getImages'])->name('product.images');
     Route::get('/product/{id}/variants', [ProductController::class, 'getVariants'])->name('product.variants');
     Route::get('/product/{id}/details', [ProductController::class, 'getProductDetails'])->name('product.details');
+    
+    // Barcode
+    Route::get('/product/barcode-list', [ProductController::class, 'barcodeList'])->name('product.barcode.list');
+    Route::get('/product/{id}/barcode', [ProductController::class, 'barcode'])->name('product.barcode');
+    Route::post('/product/barcode/print', [ProductController::class, 'printBarcode'])->name('product.barcode.print');
+    Route::post('/product/barcode/print-all', [ProductController::class, 'printAllBarcodes'])->name('product.barcode.print_all');
 
 });
 

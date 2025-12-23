@@ -11,6 +11,7 @@ use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Schema;
 use Yajra\DataTables\Facades\DataTables;
+use Picqer\Barcode\BarcodeGeneratorPNG;
 
 class ProductController extends Controller
 {
@@ -190,20 +191,29 @@ class ProductController extends Controller
                     $variantsBtn = '<button class="info-badge info-badge-variants btn-view-variants" data-product-id="' . $row->id . '"><i class="fas fa-layer-group me-1"></i>' . $variantsCount . '</button>';
                     return '<div class="d-flex gap-2">' . $imagesBtn . ' ' . $variantsBtn . '</div>';
                 })
-                ->addColumn('action', function ($row) {
+                ->addColumn('action', function ($row) use ($request) {
+                    if ($request->has('barcode_mode')) {
                         return '
-                            <div class="btn-group">
-                                <button class="btn btn-sm btn-info btn-view-product" data-product-id="' . $row->id . '" title="View Details">
-                                    <i class="fas fa-eye"></i>
-                                </button>
-                                <a href="' . route('admin.product.edit', $row->id) . '" class="btn btn-sm btn-primary" title="Edit Product">
-                                    <i class="fas fa-edit"></i>
-                                </a>
-                                <button class="btn btn-sm btn-danger deleteProduct" data-id="' . $row->id . '" title="Delete Product">
-                                    <i class="fas fa-trash"></i>
-                                </button>
-                            </div>';
-                    })
+                            <a href="' . route('admin.product.barcode', $row->id) . '" class="btn btn-sm btn-secondary" title="Generate Barcode">
+                                <i class="fas fa-barcode me-1"></i> Generate
+                            </a>';
+                    }
+                    return '
+                        <div class="btn-group">
+                            <button class="btn btn-sm btn-info btn-view-product" data-product-id="' . $row->id . '" title="View Details">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                            <a href="' . route('admin.product.edit', $row->id) . '" class="btn btn-sm btn-primary" title="Edit Product">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                            <a href="' . route('admin.product.barcode', $row->id) . '" class="btn btn-sm btn-secondary" title="Barcode">
+                                <i class="fas fa-barcode"></i>
+                            </a>
+                            <button class="btn btn-sm btn-danger deleteProduct" data-id="' . $row->id . '" title="Delete Product">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>';
+                })
                 ->rawColumns(['product_info', 'status', 'media', 'action'])
                 ->make(true);
         } catch (\Exception $e) {
@@ -646,55 +656,30 @@ class ProductController extends Controller
      */
     public function getProductDetails($id)
     {
-        // Fetch product with brand
-        $product = DB::table('products')
-            ->leftJoin('brands', 'products.brand_id', '=', 'brands.id')
-            ->leftJoin('product_category_map as pcm', function ($join) {
-                $join->on('products.id', '=', 'pcm.product_id')
-                    ->where('pcm.is_primary', true);
-            })
-            ->leftJoin('product_categories as pc', 'pcm.category_id', '=', 'pc.id')
-            ->where('products.id', $id)
-            ->select(
-                'products.*',
-                'brands.name as brand_name',
-                'pc.name as category_name'
-            )
-            ->first();
-
-        if (!$product) {
-            return response()->json(['success' => false, 'message' => 'Product not found'], 404);
-        }
-
-        // Fetch images
-        $images = DB::table('product_images')
-            ->where('product_id', $id)
-            ->orderByDesc('is_cover')
-            ->orderBy('sort_order', 'asc')
-            ->get(['id', 'path', 'is_cover'])
-            ->map(fn($img) => [
+        $product = Product::with(['brand', 'categories', 'images', 'variants.options.attribute', 'variants.options.term'])->findOrFail($id);
+        
+        $images = $product->images->map(function ($img) {
+            return [
                 'id' => $img->id,
                 'url' => asset('storage/' . $img->path),
-                'is_cover' => $img->is_cover,
-            ]);
+                'is_cover' => $img->is_cover
+            ];
+        });
 
-        // Fetch variants with options
-        $variants = \App\Models\ProductVariant::with(['options.attribute', 'options.term'])
-            ->where('product_id', $id)
-            ->get()
-            ->map(function ($variant) {
-                $combination = $variant->options->map(function ($opt) {
-                    return "{$opt->attribute->name}: {$opt->term->name}";
-                })->join(' | ');
-
-                return [
-                    'id' => $variant->id,
-                    'name' => $combination ?: 'Default',
-                    'sku' => $variant->sku,
-                    'price' => $variant->price ?? null,
-                    'stock' => $variant->stock ?? null,
-                ];
-            });
+        $variants = $product->variants->map(function ($v) {
+            return [
+                'id' => $v->id,
+                'sku' => $v->sku,
+                'price' => $v->price,
+                'stock' => $v->stock_quantity,
+                'options' => $v->options->map(function ($opt) {
+                    return [
+                        'attribute' => $opt->attribute->name,
+                        'value' => $opt->term->name
+                    ];
+                })
+            ];
+        });
 
         return response()->json([
             'success' => true,
@@ -702,6 +687,108 @@ class ProductController extends Controller
             'images' => $images,
             'variants' => $variants,
         ]);
+    }
+
+    /**
+     * 🏷️ Barcode Settings Page
+     */
+    public function barcode($id)
+    {
+        $product = Product::findOrFail($id);
+        return view('admin.product.barcode.index', compact('product'));
+    }
+
+    /**
+     * 🖨️ Print Barcode
+     */
+    public function printBarcode(Request $request)
+    {
+        $request->validate([
+            'id' => 'required|exists:products,id',
+            'quantity' => 'required|integer|min:1|max:100',
+            'type' => 'required|string',
+        ]);
+
+        $product = Product::findOrFail($request->id);
+        $quantity = $request->quantity;
+        $type = $request->type;
+
+        $generator = new BarcodeGeneratorPNG();
+        $barcodeData = $product->sku;
+        
+        // Default to Code 128
+        $barcodeType = $generator::TYPE_CODE_128;
+        $error = null;
+
+        if ($type === 'UPC-A') {
+            // Validate UPC-A: Must be numeric. 11 or 12 digits.
+            if (is_numeric($barcodeData) && (strlen($barcodeData) == 11 || strlen($barcodeData) == 12)) {
+                $barcodeType = $generator::TYPE_UPC_A;
+            } else {
+                $error = "SKU '{$barcodeData}' is not a valid UPC-A code (must be 11 or 12 digits numeric). Falling back to Code 128.";
+                // Fallback to Code 128
+                $barcodeType = $generator::TYPE_CODE_128;
+            }
+        }
+
+        try {
+            $barcode = base64_encode($generator->getBarcode($barcodeData, $barcodeType));
+        } catch (\Exception $e) {
+            $error = "Error generating barcode: " . $e->getMessage();
+            $barcode = base64_encode($generator->getBarcode($barcodeData, $generator::TYPE_CODE_128));
+        }
+
+        return view('admin.product.barcode.print', compact('product', 'quantity', 'barcode', 'type', 'error'));
+    }
+
+    /**
+     * 📋 Barcode List Page
+     */
+    public function barcodeList()
+    {
+        return view('admin.product.barcode.list');
+    }
+
+    /**
+     * 🖨️ Print All Barcodes
+     */
+    public function printAllBarcodes(Request $request)
+    {
+        $request->validate([
+            'quantity' => 'required|integer|min:1|max:100',
+        ]);
+
+        $quantity = $request->quantity;
+        // Fetch all active products with SKU
+        $products = Product::where('status', 'Active')->whereNotNull('sku')->where('sku', '!=', '')->get();
+        
+        $generator = new BarcodeGeneratorPNG();
+        $items = [];
+
+        foreach ($products as $product) {
+            $barcodeData = $product->sku;
+            
+            // Default to Code 128
+            $barcodeType = $generator::TYPE_CODE_128;
+
+            // Check UPC-A eligibility (numeric, 11 or 12 digits)
+            if (is_numeric($barcodeData) && (strlen($barcodeData) == 11 || strlen($barcodeData) == 12)) {
+                $barcodeType = $generator::TYPE_UPC_A;
+            }
+
+            try {
+                $barcode = base64_encode($generator->getBarcode($barcodeData, $barcodeType));
+                $items[] = [
+                    'product' => $product,
+                    'barcode' => $barcode,
+                    'quantity' => $quantity
+                ];
+            } catch (\Exception $e) {
+                continue;
+            }
+        }
+
+        return view('admin.product.barcode.print_multi', compact('items', 'quantity'));
     }
 }
 

@@ -43,7 +43,7 @@
             </li>
 
             <!-- Products -->
-            <li class="menu-item {{ request()->routeIs('admin.product.*') || request()->routeIs('admin.product-create.*') ? 'open active' : '' }}">
+            <li class="menu-item {{ request()->routeIs('admin.users.products.*') || request()->routeIs('admin.product-create.*') || request()->routeIs('admin.product.all') || request()->routeIs('admin.product.category.*') || request()->routeIs('admin.product.barcode.*') ? 'open active' : '' }}">
                 <a href="javascript:void(0);" class="menu-link menu-toggle">
                     <span class="material-symbols-outlined menu-icon">inventory_2</span>
                     <span class="title">Products</span>
@@ -57,6 +57,9 @@
                     </li>
                     <li class="menu-item {{ request()->routeIs('admin.product.category.index') ? 'active' : '' }}">
                         <a href="{{ route('admin.product.category.index') }}" class="menu-link">Categories</a>
+                    </li>
+                    <li class="menu-item {{ request()->routeIs('admin.product.barcode.list') ? 'active' : '' }}">
+                        <a href="{{ route('admin.product.barcode.list') }}" class="menu-link">Barcode Generator</a>
                     </li>
                 </ul>
             </li>
