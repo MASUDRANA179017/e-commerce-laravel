@@ -88,79 +88,6 @@
                                         </button>
                                     </form>
                                 </li>
-                                <li>
-                                    <div class="dropdown notifications apps">
-                                        <button class="btn btn-secondary border-0 p-0 position-relative" type="button"
-                                            data-bs-toggle="dropdown" aria-expanded="false">
-                                            <span class="material-symbols-outlined">apps</span>
-                                        </button>
-                                        <div class="dropdown-menu dropdown-lg p-0 border-0 py-4 px-3 max-h-312"
-                                            data-simplebar>
-                                            <div
-                                                class="notification-menu d-flex flex-wrap justify-content-between gap-4">
-                                                <a href="https://www.figma.com/" target="_blank"
-                                                    class="dropdown-item p-0 text-center">
-                                                    <img src="{{ asset('assets/images/all-icon.svg') }}" class="wh-25"
-                                                        alt="Figma">
-                                                    <span>Figma</span>
-                                                </a>
-                                                <a href="https://www.dribbble.com/" target="_blank"
-                                                    class="dropdown-item p-0 text-center">
-                                                    <img src="{{ asset('assets/images/all-icon.svg') }}" class="wh-25"
-                                                        alt="Dribbble">
-                                                    <span>Dribbble</span>
-                                                </a>
-                                                <a href="https://www.spotify.com/" target="_blank"
-                                                    class="dropdown-item p-0 text-center">
-                                                    <img src="{{ asset('assets/images/all-icon.svg') }}" class="wh-25"
-                                                        alt="Spotify">
-                                                    <span>Spotify</span>
-                                                </a>
-                                                <a href="https://www.github.com/" target="_blank"
-                                                    class="dropdown-item p-0 text-center">
-                                                    <img src="{{ asset('assets/images/all-icon.svg') }}" class="wh-25"
-                                                        alt="Github">
-                                                    <span>Github</span>
-                                                </a>
-                                                <a href="https://www.google.com/drive/" target="_blank"
-                                                    class="dropdown-item p-0 text-center">
-                                                    <img src="{{ asset('assets/images/all-icon.svg') }}" class="wh-25"
-                                                        alt="GDrive">
-                                                    <span>GDrive</span>
-                                                </a>
-                                                <a href="https://www.trello.com/" target="_blank"
-                                                    class="dropdown-item p-0 text-center">
-                                                    <img src="{{ asset('assets/images/all-icon.svg') }}" class="wh-25"
-                                                        alt="Trello">
-                                                    <span>Trello</span>
-                                                </a>
-                                                <a href="https://www.slak.com/" target="_blank"
-                                                    class="dropdown-item p-0 text-center">
-                                                    <img src="{{ asset('assets/images/all-icon.svg') }}" class="wh-25" alt="Slak">
-                                                    <span>Slak</span>
-                                                </a>
-                                                <a href="https://www.pinterest.com/" target="_blank"
-                                                    class="dropdown-item p-0 text-center">
-                                                    <img src="{{ asset('assets/images/all-icon.svg') }}" class="wh-25"
-                                                        alt="Pinterest">
-                                                    <span>Pinterest</span>
-                                                </a>
-                                                <a href="https://www.facebook.com/" target="_blank"
-                                                    class="dropdown-item p-0 text-center">
-                                                    <img src="{{ asset('assets/images/all-icon.svg') }}" class="wh-25"
-                                                        alt="Facebook">
-                                                    <span>Facebook</span>
-                                                </a>
-                                                <a href="https://www.linkedin.com/" target="_blank"
-                                                    class="dropdown-item p-0 text-center">
-                                                    <img src="{{ asset('assets/images/all-icon.svg') }}" class="wh-25"
-                                                        alt="Linkedin">
-                                                    <span>Linkedin</span>
-                                                </a>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </li>
                             </ul>
                         </div>
                     </div>
@@ -190,110 +117,49 @@
                                         <button class="btn btn-secondary border-0 p-0 position-relative badge"
                                             type="button" data-bs-toggle="dropdown" aria-expanded="false">
                                             <span class="material-symbols-outlined">notifications</span>
+                                            @if(auth()->check() && auth()->user()->unreadNotifications->count() > 0)
+                                                <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="font-size: 0.6rem;">
+                                                    {{ auth()->user()->unreadNotifications->count() }}
+                                                </span>
+                                            @endif
                                         </button>
                                         <div class="dropdown-menu dropdown-lg p-0 border-0 p-0 dropdown-menu-end">
                                             <div class="d-flex justify-content-between align-items-center title">
                                                 <span class="fw-semibold fs-15 text-secondary">Notifications <span
-                                                        class="fw-normal text-body fs-14">(03)</span></span>
-                                                <button class="p-0 m-0 bg-transparent border-0 fs-14 text-primary">Clear
-                                                    All</button>
+                                                        class="fw-normal text-body fs-14">({{ auth()->check() ? auth()->user()->unreadNotifications->count() : 0 }})</span></span>
+                                                @if(auth()->check() && auth()->user()->unreadNotifications->count() > 0)
+                                                    <a href="{{ route('user.notifications.read.all') }}" class="p-0 m-0 bg-transparent border-0 fs-14 text-primary text-decoration-none">Clear All</a>
+                                                @endif
                                             </div>
 
                                             <div class="max-h-217" data-simplebar>
-                                                <div class="notification-menu">
-                                                    <a href="notification.html" class="dropdown-item">
-                                                        <div class="d-flex align-items-center">
-                                                            <div class="flex-shrink-0">
-                                                                <i
-                                                                    class="material-symbols-outlined text-primary">sms</i>
-                                                            </div>
-                                                            <div class="flex-grow-1 ms-3">
-                                                                <p>You have requested to <span
-                                                                        class="fw-semibold">withdrawal</span></p>
-                                                                <span class="fs-13">2 hrs ago</span>
-                                                            </div>
+                                                @if(auth()->check())
+                                                    @forelse(auth()->user()->unreadNotifications as $notification)
+                                                        <div class="notification-menu">
+                                                            <a href="{{ route('user.notifications.read', $notification->id) }}" class="dropdown-item">
+                                                                <div class="d-flex align-items-center">
+                                                                    <div class="flex-shrink-0">
+                                                                        @if(isset($notification->data['image']) && $notification->data['image'])
+                                                                            <img src="{{ $notification->data['image'] }}" class="rounded-circle" style="width: 40px; height: 40px; object-fit: cover;" alt="Product">
+                                                                        @else
+                                                                            <i class="material-symbols-outlined text-primary">notifications</i>
+                                                                        @endif
+                                                                    </div>
+                                                                    <div class="flex-grow-1 ms-3">
+                                                                        <p class="mb-0 fw-bold">{{ $notification->data['title'] ?? 'Notification' }}</p>
+                                                                        <p class="mb-0 fs-13 text-muted text-truncate" style="max-width: 200px;">{{ $notification->data['message'] ?? '' }}</p>
+                                                                        <span class="fs-12 text-muted">{{ $notification->created_at->diffForHumans() }}</span>
+                                                                    </div>
+                                                                </div>
+                                                            </a>
                                                         </div>
-                                                    </a>
-                                                </div>
-                                                <div class="notification-menu unseen">
-                                                    <a href="notification.html" class="dropdown-item">
-                                                        <div class="d-flex align-items-center">
-                                                            <div class="flex-shrink-0">
-                                                                <i
-                                                                    class="material-symbols-outlined text-info">person</i>
-                                                            </div>
-                                                            <div class="flex-grow-1 ms-3">
-                                                                <p>A new user added in Trezo</p>
-                                                                <span class="fs-13">3 hrs ago</span>
-                                                            </div>
+                                                    @empty
+                                                        <div class="notification-menu p-3 text-center text-muted">
+                                                            <p class="mb-0">No new notifications</p>
                                                         </div>
-                                                    </a>
-                                                </div>
-                                                <div class="notification-menu">
-                                                    <a href="notification.html" class="dropdown-item">
-                                                        <div class="d-flex align-items-center">
-                                                            <div class="flex-shrink-0">
-                                                                <i
-                                                                    class="material-symbols-outlined text-success">mark_email_unread</i>
-                                                            </div>
-                                                            <div class="flex-grow-1 ms-3">
-                                                                <p>You have requested to <span
-                                                                        class="fw-semibold">withdrawal</span></p>
-                                                                <span class="fs-13">1 day ago</span>
-                                                            </div>
-                                                        </div>
-                                                    </a>
-                                                </div>
-                                                <div class="notification-menu">
-                                                    <a href="notification.html" class="dropdown-item">
-                                                        <div class="d-flex align-items-center">
-                                                            <div class="flex-shrink-0">
-                                                                <i
-                                                                    class="material-symbols-outlined text-primary">sms</i>
-                                                            </div>
-                                                            <div class="flex-grow-1 ms-3">
-                                                                <p>You have requested to <span
-                                                                        class="fw-semibold">withdrawal</span></p>
-                                                                <span class="fs-13">2 hrs ago</span>
-                                                            </div>
-                                                        </div>
-                                                    </a>
-                                                </div>
-                                                <div class="notification-menu unseen">
-                                                    <a href="notification.html" class="dropdown-item">
-                                                        <div class="d-flex align-items-center">
-                                                            <div class="flex-shrink-0">
-                                                                <i
-                                                                    class="material-symbols-outlined text-info">person</i>
-                                                            </div>
-                                                            <div class="flex-grow-1 ms-3">
-                                                                <p>A new user added in Trezo</p>
-                                                                <span class="fs-13">3 hrs ago</span>
-                                                            </div>
-                                                        </div>
-                                                    </a>
-                                                </div>
-                                                <div class="notification-menu">
-                                                    <a href="notification.html" class="dropdown-item">
-                                                        <div class="d-flex align-items-center">
-                                                            <div class="flex-shrink-0">
-                                                                <i
-                                                                    class="material-symbols-outlined text-success">mark_email_unread</i>
-                                                            </div>
-                                                            <div class="flex-grow-1 ms-3">
-                                                                <p>You have requested to <span
-                                                                        class="fw-semibold">withdrawal</span></p>
-                                                                <span class="fs-13">1 day ago</span>
-                                                            </div>
-                                                        </div>
-                                                    </a>
-                                                </div>
+                                                    @endforelse
+                                                @endif
                                             </div>
-
-                                            <a href="notification.html"
-                                                class="dropdown-item text-center text-primary d-block view-all fw-medium rounded-bottom-3">
-                                                <span>See All Notifications </span>
-                                            </a>
                                         </div>
                                     </div>
                                 </li>
@@ -341,50 +207,6 @@
                                                     </a>
                                                 </li>
                                                 <li>
-                                                    <a class="dropdown-item admin-item-link d-flex align-items-center text-body"
-                                                        href="{{ route('dashboard') }}">
-                                                        <i class="material-symbols-outlined">chat</i>
-                                                        <span class="ms-2">Messages</span>
-                                                    </a>
-                                                </li>
-                                                <li>
-                                                    <a class="dropdown-item admin-item-link d-flex align-items-center text-body"
-                                                        href="{{ route('dashboard') }}">
-                                                        <i class="material-symbols-outlined">format_list_bulleted </i>
-                                                        <span class="ms-2">My Task</span>
-                                                    </a>
-                                                </li>
-                                                <li>
-                                                    <a class="dropdown-item admin-item-link d-flex align-items-center text-body"
-                                                        href="{{ route('dashboard') }}">
-                                                        <i class="material-symbols-outlined">credit_card </i>
-                                                        <span class="ms-2">Billing</span>
-                                                    </a>
-                                                </li>
-                                            </ul>
-                                            <ul class="admin-link ps-0 mb-0 list-unstyled">
-                                                <li>
-                                                    <a class="dropdown-item admin-item-link d-flex align-items-center text-body"
-                                                        href="{{ route('admin.users.business-setup.index') }}">
-                                                        <i class="material-symbols-outlined">settings </i>
-                                                        <span class="ms-2">Settings</span>
-                                                    </a>
-                                                </li>
-                                                <li>
-                                                    <a class="dropdown-item admin-item-link d-flex align-items-center text-body"
-                                                        href="{{ route('dashboard') }}">
-                                                        <i class="material-symbols-outlined">support</i>
-                                                        <span class="ms-2">Support</span>
-                                                    </a>
-                                                </li>
-                                                <li>
-                                                    <a class="dropdown-item admin-item-link d-flex align-items-center text-body"
-                                                        href="{{ route('login') }}">
-                                                        <i class="material-symbols-outlined">lock</i>
-                                                        <span class="ms-2">Lock Screen</span>
-                                                    </a>
-                                                </li>
-                                                <li>
                                                     <form method="POST" action="{{ route('logout') }}" class="m-0" id="logout-form">
                                                         @csrf
                                                         <button type="submit" class="dropdown-item admin-item-link d-flex align-items-center text-body border-0 bg-transparent w-100 text-start" style="cursor: pointer;">
@@ -418,8 +240,6 @@
             <!-- End Footer Area -->
         </div>
     </div>
-    <!-- Bootstrap CSS -->
-    {{-- <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"> --}}
 
     <!-- jQuery (required for DataTables AJAX) -->
     <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
@@ -433,11 +253,8 @@
     <script src="https://cdn.datatables.net/responsive/2.5.0/js/dataTables.responsive.min.js"></script>
     <script src="https://cdn.datatables.net/responsive/2.5.0/js/responsive.bootstrap5.min.js"></script>
 
-    {{-- <script src="{{ asset('assets/js/bootstrap.bundle.min.js') }}"></script> --}}
     <script src="{{ asset('assets/js/apexcharts.min.js') }}"></script>
     <script src="{{ asset('assets/js/clipboard.min.js') }}"></script>
-    {{--
-    <script src="{{ asset('assets/js/data-table.js') }}"></script> --}}
     <script src="{{ asset('assets/js/dragdrop.js') }}"></script>
     <script src="{{ asset('assets/js/echarts.js') }}"></script>
     <script src="{{ asset('assets/js/feather.min.js') }}"></script>
@@ -466,26 +283,38 @@
             "timeOut": "3000"
         };
 
+        @if(Session::has('success'))
+            toastr.success("{{ Session::get('success') }}");
+        @endif
+
+        @if(Session::has('error'))
+            toastr.error("{{ Session::get('error') }}");
+        @endif
+
+        @if(Session::has('info'))
+            toastr.info("{{ Session::get('info') }}");
+        @endif
+
+        @if(Session::has('warning'))
+            toastr.warning("{{ Session::get('warning') }}");
+        @endif
+
+        @if($errors->any())
+            @foreach($errors->all() as $error)
+                toastr.error("{{ $error }}");
+            @endforeach
+        @endif
+
         $(document).on('click', '.menu-toggle', function (e) {
             e.preventDefault();
             $(this).next('.menu-sub').toggle();
             $(this).parent().toggleClass('open');
         });
-
+        
         document.getElementById('header-burger-menu').addEventListener('click', function () {
             document.getElementById('sidebar-area').classList.toggle('collapsed');
         });
     </script>
-
     @stack('scripts')
-    @auth
-
-
-        <script>
-            window.userId = {{ auth()->id() }};
-        </script>
-    @endauth
 </body>
-
-
 </html>

@@ -4,6 +4,9 @@ namespace App\Http\Controllers\Admin\Product;
 
 use App\Http\Controllers\Controller;
 use App\Models\Product;
+use App\Models\User;
+use App\Notifications\ProductNotification;
+use Illuminate\Support\Facades\Notification;
 use App\Models\Admin\Brand\Brand;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -208,6 +211,9 @@ class ProductController extends Controller
                             </a>
                             <a href="' . route('admin.product.barcode', $row->id) . '" class="btn btn-sm btn-secondary" title="Barcode">
                                 <i class="fas fa-barcode"></i>
+                            </a>
+                            <a href="' . route('admin.product.notification', $row->id) . '" class="btn btn-sm btn-warning" title="Notification">
+                                <i class="fas fa-bell"></i>
                             </a>
                             <button class="btn btn-sm btn-danger deleteProduct" data-id="' . $row->id . '" title="Delete Product">
                                 <i class="fas fa-trash"></i>
@@ -789,6 +795,55 @@ class ProductController extends Controller
         }
 
         return view('admin.product.barcode.print_multi', compact('items', 'quantity'));
+    }
+
+    /**
+     * 🔔 Product Notification Page
+     */
+    public function notification($id)
+    {
+        $product = Product::findOrFail($id);
+        return view('admin.product.notification.index', compact('product'));
+    }
+
+    /**
+     * 📨 Send Product Notification
+     */
+    public function sendNotification(Request $request, $id)
+    {
+        $request->validate([
+            'title' => 'required|string|max:255',
+            'message' => 'required|string',
+            'audience' => 'required|in:all,customers',
+        ]);
+
+        $product = Product::findOrFail($id);
+        
+        $users = collect();
+        
+        if ($request->audience === 'all') {
+            $users = User::where('is_active', true)->get();
+        } elseif ($request->audience === 'customers') {
+            // Try to find users with Customer role
+            try {
+                $users = User::role('Customer')->where('is_active', true)->get();
+            } catch (\Exception $e) {
+                // Fallback if role doesn't exist or error
+                $users = User::where('is_active', true)->get();
+            }
+        }
+
+        if ($users->isEmpty()) {
+            return redirect()->back()->with('error', 'No users found for the selected audience.');
+        }
+
+        // Send Notification
+        try {
+            Notification::send($users, new ProductNotification($product, $request->title, $request->message));
+            return redirect()->back()->with('success', 'Notification sent successfully to ' . $users->count() . ' users!');
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Failed to send notification: ' . $e->getMessage());
+        }
     }
 }
 

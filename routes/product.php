@@ -77,6 +77,10 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
     Route::post('/product/barcode/print', [ProductController::class, 'printBarcode'])->name('product.barcode.print');
     Route::post('/product/barcode/print-all', [ProductController::class, 'printAllBarcodes'])->name('product.barcode.print_all');
 
+    // Notification
+    Route::get('/product/{id}/notification', [ProductController::class, 'notification'])->name('product.notification');
+    Route::post('/product/{id}/notification/send', [ProductController::class, 'sendNotification'])->name('product.notification.send');
+
 });
 
 

@@ -1236,6 +1236,28 @@
 
     </script>
 
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            @if(Session::has('success'))
+                showToast('success', "{{ Session::get('success') }}");
+            @endif
+            @if(Session::has('error'))
+                showToast('error', "{{ Session::get('error') }}");
+            @endif
+            @if(Session::has('info'))
+                showToast('success', "{{ Session::get('info') }}");
+            @endif
+            @if(Session::has('warning'))
+                showToast('error', "{{ Session::get('warning') }}");
+            @endif
+            @if($errors->any())
+                @foreach($errors->all() as $error)
+                    showToast('error', "{{ $error }}");
+                @endforeach
+            @endif
+        });
+    </script>
+
     @stack('scripts')
 </body>
 

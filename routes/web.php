@@ -33,7 +33,14 @@ Route::get('/user/account-details', [App\Http\Controllers\Frontend\DashboardCont
 
 Route::post('/user/account-details', [App\Http\Controllers\Frontend\DashboardController::class, 'updateAccountDetails'])
     ->middleware(['auth', 'verified'])
-    ->name('user.account-details.update');
+    ->name('user.account.update');
+
+// User Notification Routes
+Route::prefix('user/notifications')->name('user.notifications.')->controller(\App\Http\Controllers\User\NotificationController::class)->middleware(['auth', 'verified'])->group(function () {
+    Route::get('/mark-as-read/{id}', 'markAsRead')->name('read');
+    Route::get('/mark-all-read', 'markAllAsRead')->name('read.all');
+    Route::delete('/{id}', 'destroy')->name('destroy');
+});
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

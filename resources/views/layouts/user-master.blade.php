@@ -117,30 +117,48 @@
                                         <button class="btn btn-secondary border-0 p-0 position-relative badge"
                                             type="button" data-bs-toggle="dropdown" aria-expanded="false">
                                             <span class="material-symbols-outlined">notifications</span>
+                                            @if(auth()->check() && auth()->user()->unreadNotifications->count() > 0)
+                                                <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="font-size: 0.6rem;">
+                                                    {{ auth()->user()->unreadNotifications->count() }}
+                                                </span>
+                                            @endif
                                         </button>
                                         <div class="dropdown-menu dropdown-lg p-0 border-0 p-0 dropdown-menu-end">
                                             <div class="d-flex justify-content-between align-items-center title">
                                                 <span class="fw-semibold fs-15 text-secondary">Notifications <span
-                                                        class="fw-normal text-body fs-14">(0)</span></span>
-                                                <button class="p-0 m-0 bg-transparent border-0 fs-14 text-primary">Clear
-                                                    All</button>
+                                                        class="fw-normal text-body fs-14">({{ auth()->check() ? auth()->user()->unreadNotifications->count() : 0 }})</span></span>
+                                                @if(auth()->check() && auth()->user()->unreadNotifications->count() > 0)
+                                                    <a href="{{ route('user.notifications.read.all') }}" class="p-0 m-0 bg-transparent border-0 fs-14 text-primary text-decoration-none">Clear All</a>
+                                                @endif
                                             </div>
 
                                             <div class="max-h-217" data-simplebar>
-                                                <!-- Notifications here -->
-                                                <div class="notification-menu">
-                                                    <a href="#" class="dropdown-item">
-                                                        <div class="d-flex align-items-center">
-                                                            <div class="flex-shrink-0">
-                                                                <i class="material-symbols-outlined text-primary">sms</i>
-                                                            </div>
-                                                            <div class="flex-grow-1 ms-3">
-                                                                <p>Welcome to your dashboard!</p>
-                                                                <span class="fs-13">Just now</span>
-                                                            </div>
+                                                @if(auth()->check())
+                                                    @forelse(auth()->user()->unreadNotifications as $notification)
+                                                        <div class="notification-menu">
+                                                            <a href="{{ route('user.notifications.read', $notification->id) }}" class="dropdown-item">
+                                                                <div class="d-flex align-items-center">
+                                                                    <div class="flex-shrink-0">
+                                                                        @if(isset($notification->data['image']) && $notification->data['image'])
+                                                                            <img src="{{ $notification->data['image'] }}" class="rounded-circle" style="width: 40px; height: 40px; object-fit: cover;" alt="Product">
+                                                                        @else
+                                                                            <i class="material-symbols-outlined text-primary">notifications</i>
+                                                                        @endif
+                                                                    </div>
+                                                                    <div class="flex-grow-1 ms-3">
+                                                                        <p class="mb-0 fw-bold">{{ $notification->data['title'] ?? 'Notification' }}</p>
+                                                                        <p class="mb-0 fs-13 text-muted text-truncate" style="max-width: 200px;">{{ $notification->data['message'] ?? '' }}</p>
+                                                                        <span class="fs-12 text-muted">{{ $notification->created_at->diffForHumans() }}</span>
+                                                                    </div>
+                                                                </div>
+                                                            </a>
                                                         </div>
-                                                    </a>
-                                                </div>
+                                                    @empty
+                                                        <div class="notification-menu p-3 text-center text-muted">
+                                                            <p class="mb-0">No new notifications</p>
+                                                        </div>
+                                                    @endforelse
+                                                @endif
                                             </div>
                                         </div>
                                     </div>
@@ -269,6 +287,28 @@
             "positionClass": "toast-top-right",
             "timeOut": "3000"
         };
+
+        @if(Session::has('success'))
+            toastr.success("{{ Session::get('success') }}");
+        @endif
+
+        @if(Session::has('error'))
+            toastr.error("{{ Session::get('error') }}");
+        @endif
+
+        @if(Session::has('info'))
+            toastr.info("{{ Session::get('info') }}");
+        @endif
+
+        @if(Session::has('warning'))
+            toastr.warning("{{ Session::get('warning') }}");
+        @endif
+
+        @if($errors->any())
+            @foreach($errors->all() as $error)
+                toastr.error("{{ $error }}");
+            @endforeach
+        @endif
 
         $(document).on('click', '.menu-toggle', function (e) {
             e.preventDefault();
