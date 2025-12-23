@@ -468,9 +468,7 @@
                 </div>
                 <div class="row">
                     @foreach($relatedProducts as $relatedProduct)
-                        <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
-                            @include('frontend.partials.product-card-template', ['product' => $relatedProduct])
-                        </div>
+                        @include('frontend.partials.product-card-template', ['product' => $relatedProduct])
                     @endforeach
                 </div>
             </div>
