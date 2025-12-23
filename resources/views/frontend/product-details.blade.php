@@ -224,6 +224,39 @@
                             @csrf
                             <input type="hidden" name="product_id" value="{{ $product->id }}">
 
+                            @if($product->variants && $product->variants->count() > 0)
+                            @php
+                                $axes = [];
+                                foreach ($product->variants as $v) {
+                                    foreach ($v->options as $opt) {
+                                        $an = $opt->attribute->name ?? 'Option';
+                                        $tn = $opt->term->name ?? '';
+                                        $tid = $opt->term->id ?? null;
+                                        if (!isset($axes[$an])) $axes[$an] = [];
+                                        if ($tid && !isset($axes[$an][$tid])) $axes[$an][$tid] = $tn;
+                                    }
+                                }
+                            @endphp
+                            <div class="mb-4">
+                                <label class="mb-2 fw-bold">Choose Options:</label>
+                                <div class="d-flex flex-column gap-3">
+                                    @foreach($axes as $attrName => $terms)
+                                        <div>
+                                            <div class="small text-muted mb-1">{{ $attrName }}</div>
+                                            <div class="d-flex flex-wrap gap-2" data-attr="{{ $attrName }}">
+                                                @foreach($terms as $tid => $tname)
+                                                    <button type="button" class="btn btn-sm btn-outline-secondary variant-chip"
+                                                        data-attr="{{ $attrName }}" data-term-id="{{ $tid }}">{{ $tname }}</button>
+                                                @endforeach
+                                            </div>
+                                        </div>
+                                    @endforeach
+                                </div>
+                                <input type="hidden" name="variant_id" id="variant_id" value="">
+                                <input type="hidden" name="variant" id="variant_name" value="">
+                            </div>
+                            @endif
+
                             <!-- Quantity Selector -->
                             <div class="quantity-selector d-flex align-items-center gap-3 mb-4">
                                 <label class="mb-0 fw-bold">Quantity:</label>
@@ -520,18 +553,60 @@
             border-color: transparent;
         }
 
-        .quantity-selector .form-control {
-            border-left: none;
-            border-right: none;
+        .variant-chip {
+            min-width: 44px;
+            border-radius: 8px;
+        }
+        .variant-chip.active {
+            background-color: #0496ff;
+            border-color: #0496ff;
+            color: #fff;
         }
 
         .quantity-selector .btn {
+            z-index: 1;
+        }
+
+        .quantity-selector .input-group {
+            width: 160px !important;
+        }
+        .quantity-selector .form-control {
+            border: 1px solid #ced4da;
+            border-radius: 6px;
+            height: 40px;
+        }
+        .quantity-selector .btn {
+            height: 40px;
+            width: 40px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .delivery-info {
+            position: relative;
             z-index: 1;
         }
     </style>
 @endpush
 
 @push('scripts')
+    @php
+        $variantsData = ($product->variants && $product->variants->count() > 0)
+            ? $product->variants->map(function($v){
+                return [
+                    'id' => $v->id,
+                    'label' => $v->combination_key ?? ($v->sku ?? ''),
+                    'pairs' => $v->options->map(function($opt){
+                        return [
+                            'attr' => optional($opt->attribute)->name ?? 'Option',
+                            'term_id' => optional($opt->term)->id,
+                        ];
+                    })->toArray(),
+                ];
+            })->toArray()
+            : [];
+    @endphp
     <script>
         function changeMainImage(element, src) {
             document.getElementById('mainProductImage').src = src;
@@ -569,5 +644,57 @@
             form.appendChild(input);
             form.submit();
         });
+
+        document.getElementById('variant_id')?.addEventListener('change', function() {
+            var t = this.options[this.selectedIndex]?.text || '';
+            var hidden = document.getElementById('variant_name');
+            if (hidden) hidden.value = t;
+        });
+        
+        (function initVariantChips(){
+            var chips = document.querySelectorAll('.variant-chip');
+            if (!chips.length) return;
+            var selected = {};
+            chips.forEach(function(chip){
+                chip.addEventListener('click', function(){
+                    var attr = this.dataset.attr;
+                    var tid = this.dataset.termId;
+                    // toggle selection per attr
+                    document.querySelectorAll('.variant-chip[data-attr="' + attr + '"]').forEach(function(c){
+                        c.classList.remove('active');
+                        c.classList.remove('btn-primary');
+                        c.classList.add('btn-outline-secondary');
+                    });
+                    this.classList.add('active');
+                    this.classList.remove('btn-outline-secondary');
+                    this.classList.add('btn-primary');
+                    selected[attr] = tid;
+                    // find matching variant by selected terms
+                    var variants = @json($variantsData);
+                    var matchId = null, matchLabel = '';
+                    variants.forEach(function(v){
+                        var ok = true;
+                        // every selected attr must be present in this variant
+                        for (var a in selected) {
+                            var wantTid = selected[a];
+                            if (!v.pairs.some(function(p){ return p.attr === a && String(p.term_id) === String(wantTid); })) {
+                                ok = false; break;
+                            }
+                        }
+                        if (ok) { matchId = v.id; matchLabel = v.label; }
+                    });
+                    if (matchId) {
+                        document.getElementById('variant_id').value = matchId;
+                        document.getElementById('variant_name').value = matchLabel;
+                    }
+                });
+            });
+            // preselect first chip per attribute
+            var groups = document.querySelectorAll('[data-attr]');
+            groups.forEach(function(group){
+                var first = group.querySelector('.variant-chip');
+                if (first) first.click();
+            });
+        })();
     </script>
 @endpush

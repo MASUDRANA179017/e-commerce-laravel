@@ -28,6 +28,7 @@ Route::get('/flash-sale', [FlashSaleController::class, 'index'])->name('flash-sa
 // Shop / Products
 Route::get('/shop', [ShopController::class, 'index'])->name('shop.index');
 Route::get('/product/{slug}', [ProductController::class, 'show'])->name('product.show');
+Route::get('/product/{id}/variants', [ProductController::class, 'variants'])->name('product.variants');
 
 // Product Reviews (requires auth)
 Route::post('/product/{id}/review', [ProductController::class, 'storeReview'])

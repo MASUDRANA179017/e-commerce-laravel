@@ -970,6 +970,20 @@
     <script src="{{ asset('frontend/js/custom.js') }}"></script>
 
     <script>
+        (function bootstrapCart(){
+            try {
+                @php
+                    $__cart = session('cart', []);
+                    $__subtotal = 0;
+                    foreach ($__cart as $__it) {
+                        $__subtotal += (($__it['price'] ?? 0) * ($__it['qty'] ?? 1));
+                    }
+                @endphp
+                window.__CART_ITEMS__ = @json($__cart);
+                window.__CART_SUBTOTAL__ = @json($__subtotal);
+            } catch (e) {}
+        })();
+
         // Toast Notification Function
         function showToast(type, message) {
             document.querySelectorAll('.toast-notification').forEach(t => t.remove());
@@ -1015,7 +1029,20 @@
                     'Accept': 'application/json',
                     'X-Requested-With': 'XMLHttpRequest'
                 },
-                body: JSON.stringify({ product_id: productId, quantity: 1 })
+                body: JSON.stringify((function(){
+                    var payload = { product_id: productId, quantity: 1 };
+                    var scope = btn.closest('.product-card') || document;
+                    var vidEl = scope.querySelector('[name=\"variant_id\"]');
+                    var vnameEl = scope.querySelector('[name=\"variant\"]');
+                    var qtyEl = scope.querySelector('[name=\"quantity\"]');
+                    if (vidEl && vidEl.value) payload.variant_id = vidEl.value;
+                    if (vnameEl && vnameEl.value) payload.variant = vnameEl.value;
+                    if (qtyEl && qtyEl.value) {
+                        var q = parseInt(qtyEl.value);
+                        payload.quantity = isNaN(q) || q < 1 ? 1 : q;
+                    }
+                    return payload;
+                })())
             })
                 .then(response => response.json())
                 .then(data => {
@@ -1028,6 +1055,60 @@
                             el.textContent = data.cartCount;
                         });
                         showToast('success', data.message || 'Product added to cart!');
+
+                        try {
+                            var list = document.querySelector('#sidebarCart .cart-items-list');
+                            var body = document.querySelector('#sidebarCart .sidebar-cart-body');
+                            var headerCount = document.querySelector('#sidebarCart .cart-items-count');
+                            if (data.addedItem) {
+                                if (!list) {
+                                    if (body) body.innerHTML = '<div class="cart-items-list"></div>';
+                                    list = document.querySelector('#sidebarCart .cart-items-list');
+                                }
+                                var item = data.addedItem;
+                                var img = item.options && item.options.image ? ('/storage/' + item.options.image) : '{{ asset('frontend/assets/images/shop/KHPP-SA21 - 1.png') }}';
+                                var slug = item.options && item.options.slug ? item.options.slug : (item.id || '');
+                                var html = ''
+                                    + '<div class="sidebar-cart-item" data-row-id="' + item.rowId + '" data-product-id="' + (item.id || '') + '">'
+                                    +   '<div class="cart-item-img">'
+                                     +     '<img src="' + img + '" alt="' + (item.name || '') + '">'
+                                    +   '</div>'
+                                    +   '<div class="cart-item-info">'
+                                    +     '<h6 class="cart-item-title">'
+                                     +       '<a href="/product/' + slug + '">' + (item.name || '') + '</a>'
+                                    +     '</h6>'
+                                    +     (item.options && item.options.variant ? ('<small class=\"text-muted d-block mb-1\">Variant: ' + item.options.variant + '</small>') : '')
+                                    +     '<div class="cart-item-price">'
+                                    +       '<span class="price">৳' + (parseInt(item.price) || 0) + '</span>'
+                                    +       '<span class="multiply">×</span>'
+                                    +       '<span class="qty">' + (parseInt(item.qty) || 1) + '</span>'
+                                    +       '<span class="total">= ৳' + ((parseInt(item.price) || 0) * (parseInt(item.qty) || 1)).toLocaleString() + '</span>'
+                                    +     '</div>'
+                                    +     '<div class="cart-item-actions">'
+                                    +       '<div class="qty-selector">'
+                                    +         '<button type="button" class="qty-btn" onclick="updateCartQty(\'' + item.rowId + '\', -1)"><i class="fa-solid fa-minus"></i></button>'
+                                    +         '<span class="qty-value" id="qty-' + item.rowId + '">' + (parseInt(item.qty) || 1) + '</span>'
+                                    +         '<button type="button" class="qty-btn" onclick="updateCartQty(\'' + item.rowId + '\', 1)"><i class="fa-solid fa-plus"></i></button>'
+                                    +       '</div>'
+                                    +       '<div class="variant-selector">'
+                                    +         '<button type="button" class="qty-btn" onclick="openVariantSelector(\'' + item.rowId + '\')" title="Change Variant"><i class="fa-solid fa-sliders"></i></button>'
+                                    +       '</div>'
+                                    +       '<button type="button" class="remove-btn" onclick="removeFromCart(\'' + item.rowId + '\')" title="Remove"><i class="fa-solid fa-trash-can"></i></button>'
+                                    +     '</div>'
+                                    +     '<div class="variant-select-wrap mt-2" style="display:none;">'
+                                    +       '<select class="form-select form-select-sm variant-select"></select>'
+                                    +       '<button type="button" class="btn btn-sm btn-primary mt-2" onclick="applyVariantChange(\'' + item.rowId + '\')">Apply</button>'
+                                    +     '</div>'
+                                    +   '</div>'
+                                    + '</div>';
+                                if (list) {
+                                    var existing = list.querySelector('.sidebar-cart-item[data-row-id=\"' + item.rowId + '\"]');
+                                    if (existing) existing.remove();
+                                    list.insertAdjacentHTML('afterbegin', html);
+                                }
+                                if (headerCount) headerCount.textContent = data.cartCount + (data.cartCount === 1 ? ' Item' : ' Items');
+                            }
+                        } catch (e) {}
 
                         // Open cart sidebar after a brief delay
                         setTimeout(function () {

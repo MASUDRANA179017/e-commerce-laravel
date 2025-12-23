@@ -35,7 +35,7 @@
         @if(count($cart) > 0)
         <div class="cart-items-list">
             @foreach($cart as $rowId => $item)
-            <div class="sidebar-cart-item" data-row-id="{{ $rowId }}">
+            <div class="sidebar-cart-item" data-row-id="{{ $rowId }}" data-product-id="{{ $item['id'] }}">
                 <div class="cart-item-img">
                     @php
                         $cartItemImage = $item['options']['image'] ?? null;
@@ -53,6 +53,9 @@
                             {{ Str::limit($item['name'], 28) }}
                         </a>
                     </h6>
+                    @if(!empty($item['options']['variant']))
+                        <small class="text-muted d-block mb-1">Variant: {{ $item['options']['variant'] }}</small>
+                    @endif
                     <div class="cart-item-price">
                         <span class="price">৳{{ number_format($item['price'], 0) }}</span>
                         <span class="multiply">×</span>
@@ -69,9 +72,19 @@
                                 <i class="fa-solid fa-plus"></i>
                             </button>
                         </div>
+                        <div class="variant-selector">
+                            <button type="button" class="qty-btn" onclick="openVariantSelector('{{ $rowId }}')"
+                                title="Change Variant">
+                                <i class="fa-solid fa-sliders"></i>
+                            </button>
+                        </div>
                         <button type="button" class="remove-btn" onclick="removeFromCart('{{ $rowId }}')" title="Remove">
                             <i class="fa-solid fa-trash-can"></i>
                         </button>
+                    </div>
+                    <div class="variant-select-wrap mt-2" style="display:none;">
+                        <select class="form-select form-select-sm variant-select"></select>
+                        <button type="button" class="btn btn-sm btn-primary mt-2" onclick="applyVariantChange('{{ $rowId }}')">Apply</button>
                     </div>
                 </div>
             </div>
@@ -480,15 +493,21 @@ var closeSidebarCart = window.closeSidebarCart;
 
 // Update cart quantity
 window.updateCartQty = function(rowId, change) {
-    var qtyEl = document.getElementById('qty-' + rowId);
-    if (!qtyEl) return;
-    
-    var currentQty = parseInt(qtyEl.textContent);
+    var qtyValueEl = document.getElementById('qty-' + rowId);
+    if (!qtyValueEl) return;
+    var itemRoot = document.querySelector('.sidebar-cart-item[data-row-id="' + rowId + '"]');
+    var priceEl = itemRoot ? itemRoot.querySelector('.cart-item-price .price') : null;
+    var displayQtyEl = itemRoot ? itemRoot.querySelector('.cart-item-price .qty') : null;
+    var totalEl = itemRoot ? itemRoot.querySelector('.cart-item-price .total') : null;
+    var currentQty = parseInt(qtyValueEl.textContent);
     var newQty = currentQty + change;
     if (newQty < 1) newQty = 1;
-    
-    // Update UI immediately
-    qtyEl.textContent = newQty;
+    qtyValueEl.textContent = newQty;
+    if (displayQtyEl) displayQtyEl.textContent = newQty;
+    if (priceEl && totalEl) {
+        var unitPrice = parseFloat((priceEl.textContent || '0').replace(/[^\d.]/g, '')) || 0;
+        totalEl.textContent = '= ৳' + (unitPrice * newQty).toLocaleString();
+    }
     
     var csrfToken = document.querySelector('meta[name="csrf-token"]');
     if (!csrfToken) return;
@@ -498,7 +517,8 @@ window.updateCartQty = function(rowId, change) {
         headers: {
             'Content-Type': 'application/json',
             'X-CSRF-TOKEN': csrfToken.content,
-            'Accept': 'application/json'
+            'Accept': 'application/json',
+            'X-Requested-With': 'XMLHttpRequest'
         },
         body: JSON.stringify({ quantity: newQty })
     })
@@ -514,16 +534,33 @@ window.updateCartQty = function(rowId, change) {
             if (subtotalEl) {
                 subtotalEl.textContent = '৳' + data.subtotal.toLocaleString();
             }
+            // Sync item total from server if provided
+            if (totalEl && typeof data.itemTotal === 'number') {
+                totalEl.textContent = '= ৳' + data.itemTotal.toLocaleString();
+            }
             // Show toast if available
             if (typeof showToast === 'function') {
                 showToast('success', 'Cart updated!');
+            }
+        } else {
+            // Revert UI on failure
+            qtyValueEl.textContent = currentQty;
+            if (displayQtyEl) displayQtyEl.textContent = currentQty;
+            if (priceEl && totalEl) {
+                var unitPrice2 = parseFloat((priceEl.textContent || '0').replace(/[^\d.]/g, '')) || 0;
+                totalEl.textContent = '= ৳' + (unitPrice2 * currentQty).toLocaleString();
             }
         }
     })
     .catch(function(e) { 
         console.error('Error:', e);
         // Revert UI on error
-        qtyEl.textContent = currentQty;
+        qtyValueEl.textContent = currentQty;
+        if (displayQtyEl) displayQtyEl.textContent = currentQty;
+        if (priceEl && totalEl) {
+            var unitPrice3 = parseFloat((priceEl.textContent || '0').replace(/[^\d.]/g, '')) || 0;
+            totalEl.textContent = '= ৳' + (unitPrice3 * currentQty).toLocaleString();
+        }
     });
 };
 
@@ -543,7 +580,8 @@ window.removeFromCart = function(rowId) {
         method: 'DELETE',
         headers: {
             'X-CSRF-TOKEN': csrfToken.content,
-            'Accept': 'application/json'
+            'Accept': 'application/json',
+            'X-Requested-With': 'XMLHttpRequest'
         }
     })
     .then(function(r) { return r.json(); })
@@ -583,6 +621,75 @@ window.removeFromCart = function(rowId) {
             itemEl.style.opacity = '1';
             itemEl.style.pointerEvents = 'auto';
         }
+    });
+};
+
+// Load and open variant selector
+window.openVariantSelector = function(rowId) {
+    var itemEl = document.querySelector('.sidebar-cart-item[data-row-id="' + rowId + '"]');
+    if (!itemEl) return;
+    var wrap = itemEl.querySelector('.variant-select-wrap');
+    var select = itemEl.querySelector('.variant-select');
+    var productId = itemEl.dataset.productId;
+    if (!wrap || !select || !productId) return;
+    wrap.style.display = 'block';
+    if (select.options.length > 0) return;
+    fetch('/product/' + productId + '/variants', {
+        method: 'GET',
+        headers: { 'Accept': 'application/json' }
+    })
+    .then(function(r){ return r.json(); })
+    .then(function(data){
+        var variants = (data && data.variants) ? data.variants : [];
+        variants.forEach(function(v){
+            var opt = document.createElement('option');
+            opt.value = v.id;
+            opt.textContent = v.name || (v.sku || ('Variant ' + v.id));
+            select.appendChild(opt);
+        });
+    });
+};
+
+// Apply selected variant: add new item with selected variant and remove old
+window.applyVariantChange = function(rowId) {
+    var itemEl = document.querySelector('.sidebar-cart-item[data-row-id="' + rowId + '"]');
+    if (!itemEl) return;
+    var select = itemEl.querySelector('.variant-select');
+    var qtyEl = itemEl.querySelector('.qty-value');
+    var productId = itemEl.dataset.productId;
+    var csrfToken = document.querySelector('meta[name="csrf-token"]');
+    if (!select || !qtyEl || !productId || !csrfToken) return;
+    var variantId = select.value;
+    var qty = parseInt(qtyEl.textContent) || 1;
+
+    fetch('/cart/add', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': csrfToken.content,
+            'Accept': 'application/json',
+            'X-Requested-With': 'XMLHttpRequest'
+        },
+        body: JSON.stringify({ product_id: productId, variant_id: variantId, quantity: qty })
+    })
+    .then(function(r){ return r.json(); })
+    .then(function(addData){
+        if (addData && addData.success) {
+            return fetch('/cart/remove/' + rowId, {
+                method: 'DELETE',
+                headers: {
+                    'X-CSRF-TOKEN': csrfToken.content,
+                    'Accept': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            }).then(function(r){ return r.json(); })
+              .then(function(remData){
+                  location.reload();
+              });
+        }
+    })
+    .catch(function(e){
+        console.error('Variant change error:', e);
     });
 };
 
