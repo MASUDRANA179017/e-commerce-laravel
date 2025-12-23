@@ -9,7 +9,7 @@
             <table class="table table-bordered" id="unitsTable">
                 <thead>
                     <tr>
-                        <th>SL</th>
+                        <th>SL No</th>
                         <th>Unit Name</th>
                         <th>Status</th>
                         <th>Action</th>
