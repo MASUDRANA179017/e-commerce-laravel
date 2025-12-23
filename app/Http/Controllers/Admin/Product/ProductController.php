@@ -75,6 +75,18 @@ class ProductController extends Controller
             ->where('product_id', $id)
             ->get();
 
+        // Get product attribute terms map for preselection on edit
+        $productAttrRows = DB::table('product_attribute_terms')
+            ->where('product_id', $id)
+            ->get(['attribute_id', 'term_id']);
+        $productAttrMap = [];
+        foreach ($productAttrRows as $row) {
+            $aid = (string) $row->attribute_id;
+            $tid = (string) $row->term_id;
+            if (!isset($productAttrMap[$aid])) $productAttrMap[$aid] = [];
+            $productAttrMap[$aid][] = $tid;
+        }
+
         $assignedCats = DB::table('product_category_map as pcm')
             ->join('product_categories as pc', 'pcm.category_id', '=', 'pc.id')
             ->where('pcm.product_id', $id)
@@ -98,6 +110,7 @@ class ProductController extends Controller
             'product' => $product,
             'productImages' => $productImages,
             'productVariants' => $productVariants,
+            'productAttrMap' => $productAttrMap,
             'isEdit' => true,
         ]);
     }
@@ -541,14 +554,18 @@ class ProductController extends Controller
     {
         $images = DB::table('product_images')
             ->where('product_id', $id)
+            ->orderByDesc('is_cover')
             ->orderBy('sort_order', 'asc')
-            ->get(['path']);
+            ->get(['id', 'path', 'is_cover'])
+            ->map(function ($img) {
+                return [
+                    'id' => $img->id,
+                    'url' => asset('storage/' . $img->path),
+                    'is_cover' => (bool) $img->is_cover,
+                ];
+            });
 
-        $imageUrls = $images->map(function ($img) {
-            return asset('storage/' . $img->path);
-        });
-
-        return response()->json($imageUrls);
+        return response()->json(['images' => $images]);
     }
 
     /**

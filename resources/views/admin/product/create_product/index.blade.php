@@ -516,7 +516,8 @@
     const SERVER_DATA = {
         isEdit: {{ $isEdit ? 'true' : 'false' }},
         product: @json($product ?? null),
-        productVariants: @json($productVariants ?? [])
+        productVariants: @json($productVariants ?? []),
+        productAttributes: @json($productAttrMap ?? new \stdClass())
     };
 
     /* ===== State ===== */
@@ -1539,14 +1540,10 @@
                   renderCatChips();
               }
               
-              if (primaryCat) {
-                  applyPrimaryConfig();
-              }
-              if (setSel?.value) await refreshVariantRuleForSet(); // pre-lock if needed
-        
-        if (SERVER_DATA.isEdit && SERVER_DATA.productVariants.length) {
-            renderExistingVariants(SERVER_DATA.productVariants);
-        }
+          if (primaryCat) {
+              applyPrimaryConfig();
+          }
+          if (setSel?.value) await refreshVariantRuleForSet(); // pre-lock if needed
           } catch (err) {
               console.error('Bootstrap load failed:', err);
           }
@@ -1556,20 +1553,50 @@
       // Load existing product data when editing
       @if(isset($isEdit) && $isEdit && isset($product) && $product)
       (async function loadEditData() {
-          @if(isset($product->attribute_set_id) && $product->attribute_set_id)
-          if (setSel) {
-              setSel.value = '{{ $product->attribute_set_id }}';
-              renderAttrFields();
-              await refreshVariantRuleForSet();
+          const wantSet = '{{ isset($product->attribute_set_id) ? $product->attribute_set_id : '' }}';
+          const wantRule = '{{ isset($product->variant_rule_id) ? $product->variant_rule_id : '' }}';
+          
+          // Wait until dropdowns are populated
+          const waitForSelects = async () => {
+            const hasSets = () => setSel && setSel.options && setSel.options.length > 1;
+            const hasRulesReady = () => varRuleSel && varRuleSel.options && varRuleSel.options.length >= 1;
+            let tries = 0;
+            while (!hasSets() && tries < 60) { await new Promise(r => setTimeout(r, 100)); tries++; }
+            return true;
+          };
+          await waitForSelects();
+          
+          if (setSel && wantSet) {
+              setSel.value = String(wantSet);
+              setSel.dispatchEvent(new Event('change'));
           }
-          @endif
-          @if(isset($product->variant_rule_id) && $product->variant_rule_id)
-          if (varRuleSel) {
-              varRuleSel.value = '{{ $product->variant_rule_id }}';
+          await refreshVariantRuleForSet();
+          
+          // Wait for rules to populate after fetch
+          let tries2 = 0;
+          while (varRuleSel && (!varRuleSel.options || varRuleSel.options.length <= 1) && tries2 < 40) {
+              await new Promise(r => setTimeout(r, 100));
+              tries2++;
+          }
+          if (varRuleSel && wantRule) {
+              varRuleSel.value = String(wantRule);
               varRuleSel.dispatchEvent(new Event('change'));
           }
-          @endif
-  
+          
+          const pv = SERVER_DATA.productVariants || [];
+          if (pv.length && setSel && String(setSel.value) === String(wantSet)) {
+              renderExistingVariants(pv);
+          }
+          
+          // Pre-check saved attribute terms
+          const saved = SERVER_DATA.productAttributes || {};
+          $$('.term-check').forEach(c => {
+              const aid = String(c.dataset.attr);
+              const tid = String(c.value);
+              const list = saved[aid] || [];
+              if (Array.isArray(list) && list.some(x => String(x) === tid)) c.checked = true;
+          });
+
           // Load existing images into gallery
           @if(isset($productImages) && count($productImages) > 0)
           const existingImages = @json($productImages);
