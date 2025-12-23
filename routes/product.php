@@ -62,7 +62,7 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
 
     // images
     Route::get('/product/{id}/images', [ProductController::class, 'getImages'])->name('product.images');
-    Route::delete('/product/{productId}/image/{imageId}', [ProductController::class, 'deleteImage'])->name('product.deleteImage');
+    Route::delete('/product/image/{id}', [ProductController::class, 'deleteImage'])->name('product.image.delete');
     Route::get('/product/{id}/image-count', [ProductController::class, 'imageCount']);
 
 

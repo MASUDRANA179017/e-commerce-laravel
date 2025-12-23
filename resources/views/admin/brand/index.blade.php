@@ -152,10 +152,17 @@
                 var $ = function (s) { return document.querySelector(s) }, $$ = function (s) { return Array.prototype.slice.call(document.querySelectorAll(s)) };
                 var toast = Swal.mixin({ toast: true, position: 'top-end', timer: 1600, showConfirmButton: false });
                 function slugify(s) { return (s || '').toString().trim().toLowerCase().replace(/[\s_]+/g, '-').replace(/[^a-z0-9\-]/g, '').replace(/\-+/g, '-').replace(/^\-+|\-+$/g, ''); }
+                function placeholderUrl(text, size) {
+                    var s = size || 36;
+                    var t = (String(text || '').slice(0, 2) || 'B').toUpperCase();
+                    var svg = "<svg xmlns='http://www.w3.org/2000/svg' width='" + s + "' height='" + s + "'><rect width='100%' height='100%' fill='#EEE'/><text x='50%' y='50%' dominant-baseline='middle' text-anchor='middle' font-size='" + Math.round(s * 0.5) + "' fill='#888' font-family='Arial, sans-serif'>" + t + "</text></svg>";
+                    return 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(svg);
+                }
 
                
 
                 var PRESETS = @json($brands); // Laravel blade directive
+                var pre = $('#bmLogoPreview'); if (pre) pre.src = placeholderUrl('LOGO', 64);
 
                 function renderPresetCards() {
                     var wrap = $('#preset-source'); wrap.innerHTML = '';
@@ -164,7 +171,7 @@
                         var h = ''; h += '<div class="attr-head"><div><div class="attr-name">' + group.cat + '</div><div class="small-muted">' + group.items.length + ' brands</div></div></div>';
                         h += '<div class="chips" data-cat="' + group.cat + '">';
                         group.items.forEach(function (b) {
-                            h += '<div class="chip" data-name="' + b.name + '" data-country="' + (b.country || '') + '"><img class="brand-logo" src="https://via.placeholder.com/36?text=' + encodeURIComponent((b.name[0] || 'B').toUpperCase()) + '" alt=""><span>' + b.name + '</span></div>';
+                            h += '<div class="chip" data-name="' + b.name + '" data-country="' + (b.country || '') + '"><img class="brand-logo" src="' + placeholderUrl((b.name[0] || 'B'), 36) + '" alt=""><span>' + b.name + '</span></div>';
                         });
                         h += '</div>'; card.innerHTML = h;
                         new Sortable(card.querySelector('.chips'), { group: { name: 'brandshare', pull: 'clone', put: false }, sort: false, animation: 150 });
@@ -184,7 +191,7 @@
                 function rowHTML(b) {
                     var w = b.website ? '<a href="' + b.website + '" target="_blank">Visit</a>' : '';
                     return '<tr data-id="' + b.id + '">' +
-                        '<td><img class="brand-logo" src="' + (b.logo || 'https://via.placeholder.com/64?text=LOGO') + '" alt=""></td>' +
+                        '<td><img class="brand-logo" src="' + (b.logo || placeholderUrl('LOGO', 64)) + '" alt=""></td>' +
                         '<td><span class="fw-semibold">' + b.name + '</span></td>' +
                         '<td class="kbd">' + b.slug + '</td>' +
                         '<td>' + (b.country || '') + '</td>' +

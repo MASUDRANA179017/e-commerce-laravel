@@ -83,9 +83,6 @@
     </section>
 
     <!-- Category Section -->
-    @php
-        $categories = \App\Models\Admin\Product\ProductCategory::take(4)->get();
-    @endphp
     <section class="ministrie-eight-area">
         <div class="container-fluid">
             <div class="d-flex align-items-center justify-content-between">
@@ -152,25 +149,6 @@
     </section>
 
     <!-- Featured Products Section -->
-    @php
-        $featuredProducts = \App\Models\Product::with(['images', 'coverImage', 'categories', 'brand'])
-            ->whereIn('status', ['active', 'Active', 1])
-            ->where('featured', 1)
-            ->take(8)
-            ->get();
-
-        $newArrivals = \App\Models\Product::with(['images', 'coverImage', 'categories', 'brand'])
-            ->whereIn('status', ['active', 'Active', 1])
-            ->orderBy('created_at', 'desc')
-            ->take(8)
-            ->get();
-
-        $topSelling = \App\Models\Product::with(['images', 'coverImage', 'categories', 'brand'])
-            ->whereIn('status', ['active', 'Active', 1])
-            ->orderBy('id', 'desc')
-            ->take(8)
-            ->get();
-    @endphp
     <section class="team ff-team difference-two">
         <div class="container-fluid">
             <div class="d-flex align-items-center justify-content-between">
@@ -222,7 +200,7 @@
                     <!-- Top Selling Tab -->
                     <div class="difference-two__content-single" id="topselling">
                         <div class="row">
-                            @foreach($topSelling as $product)
+                            @foreach($bestSellers as $product)
                                 @include('frontend.partials.product-card-template', ['product' => $product])
                             @endforeach
                         </div>

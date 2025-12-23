@@ -198,28 +198,10 @@
 // const BUSINESSES = [
 //   "Clothing","Phone","Laptop","Electronic Item","Organic Food","Eyewear","Cosmetic","Gadget","Gift Item","Sports Item","Adventure Gear Item","Animal Food & Accessories"
 // ];
- const BUSINESSES = @json($categories);
+  const BUSINESSES = @json($categories);
 
 
-const ATTRIBUTE_SETS = [
-  {
-    id:"clo_basic",
-    name:"Clothing — Color + Size",
-    business:"Clothing",
-    attributes:[
-      { id:"color", name:"Color", code:"CLR", terms:[
-        {id:"red", name:"Red", code:"RED"},
-        {id:"blue", name:"Blue", code:"BLU"},
-        {id:"black", name:"Black", code:"BLK"}
-      ]},
-      { id:"size", name:"Size", code:"SIZE", terms:[
-        {id:"s", name:"S", code:"S"},
-        {id:"m", name:"M", code:"M"},
-        {id:"l", name:"L", code:"L"}
-      ]}
-    ]
-  }
-];
+const ATTRIBUTE_SETS = @json($attribute_sets);
 
 /** =========================
  * State
@@ -267,7 +249,20 @@ function populateBusinesses(){
 }
 function getSelectedAttrSet(){
   const id = $('#attrSetSelect').value;
-  return ATTRIBUTE_SETS.find(s => s.id===id) || null;
+  return ATTRIBUTE_SETS.find(s => String(s.id)===String(id)) || null;
+}
+function populateAttrSets(bizId){
+  const sel = $('#attrSetSelect');
+  if (!sel) return;
+  sel.innerHTML = '<option value="">Select attribute set</option>';
+  let list = bizId ? ATTRIBUTE_SETS.filter(s => String(s.category_id)===String(bizId)) : ATTRIBUTE_SETS.slice();
+  if (bizId && list.length === 0) {
+    list = ATTRIBUTE_SETS.slice();
+  }
+  list.forEach(s => {
+    const op = document.createElement('option'); op.value = s.id; op.textContent = s.name; sel.appendChild(op);
+  });
+  sel.disabled = list.length === 0;
 }
 function buildLabelFromOptions(opts){
   return opts.map(o => `${o.attrName}: ${o.termName}`).join(' / ');
@@ -355,14 +350,10 @@ document.querySelector('#variantHeader [data-title-input]').addEventListener('ke
 document.addEventListener('change', (ev) => {
   if(ev.target.id === 'bizSelect'){
     const biz = ev.target.value;
-    // Populate attribute sets for business
-    const sel = $('#attrSetSelect'); sel.innerHTML = '<option value=\"\">Select attribute set</option>';
-    ATTRIBUTE_SETS.filter(s => s.business===biz).forEach(s => {
-      const op = document.createElement('option'); op.value = s.id; op.textContent = s.name; sel.appendChild(op);
-    });
-    sel.disabled = !biz;
+    populateAttrSets(biz || null);
     // Badge
-    $('#bizBadge').textContent = biz || "";
+    const cat = BUSINESSES.find(b => String(b.id)===String(biz));
+    $('#bizBadge').textContent = (cat ? cat.name : "") || "";
     $('#bizBadge').style.display = biz ? 'inline-block':'none';
     $('#attrSetBadge').style.display = 'none';
   }
@@ -469,6 +460,7 @@ document.getElementById('btnSave').addEventListener('click', () => {
   if(!biz) return alert('Business Category is required.');
   if(!set) return alert('Attribute Set is required.');
   const media = Array.from(document.querySelectorAll('#mediaRules option:checked')).map(o => o.value);
+  if (!variants.length) { alert('Generate variants first.'); return; }
   const payload = {
     name,
     sku_prefix: document.getElementById('skuPrefix').value.trim(),
@@ -490,16 +482,85 @@ document.getElementById('btnSave').addEventListener('click', () => {
       }))
     }))
   };
-  console.log('SAVE VARIANT SET (mock):', payload);
-  alert('Variant Set saved (mock). Wire this button to your backend to persist.');
+  fetch('{{ route('admin.users.varient-build.store') }}', {
+    method: 'POST',
+    headers: {
+      'Accept': 'application/json',
+      'X-Requested-With': 'XMLHttpRequest',
+      'X-CSRF-TOKEN': (document.querySelector('meta[name="csrf-token"]')?.content || ''),
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(payload)
+  }).then(async (res) => {
+    if(!res.ok){
+      let err = {};
+      let text = '';
+      try { err = await res.json(); } catch { try { text = await res.text(); } catch {} }
+      if (window.toastr && typeof toastr.error === 'function') {
+        toastr.error((err && err.message) || text || 'Failed to save Variant Set.');
+      } else {
+        alert((err && err.message) || text || 'Failed to save Variant Set.');
+      }
+      return;
+    }
+    const out = await res.json().catch(()=>null);
+    if (window.toastr && typeof toastr.success === 'function') {
+      toastr.success((out && out.message) || 'Variant Set saved');
+    } else {
+      alert((out && out.message) || 'Variant Set saved');
+    }
+    variants = [];
+    renderVariantsTable();
+  }).catch(() => alert('Failed to save Variant Set.'));
 });
 
 /** =========================
  * Init
  * ========================= */
 populateBusinesses();
+populateAttrSets(null);
 renderRulesPreview();
 renderVariantsTable();
 </script>
+
+<!-- Assign Categories Modal (inline) -->
+<div class="modal fade" id="assignCategoriesModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title"><i class="bx bx-category-alt me-2"></i>Assign Categories</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <div class="mb-2 small-muted">Pick a business category context:</div>
+        <select id="assignBizSelect" class="form-select">
+          <option value="">— Select —</option>
+        </select>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-primary" data-bs-dismiss="modal">Done</button>
+      </div>
+    </div>
+  </div>
+  <script>
+    (function(){
+      const sel = document.getElementById('assignBizSelect');
+      (BUSINESSES||[]).forEach(b => {
+        const op = document.createElement('option'); op.value = b.id; op.textContent = b.name; sel.appendChild(op);
+      });
+      sel.addEventListener('change', () => {
+        const val = sel.value;
+        if (val) {
+          const bizSel = document.getElementById('bizSelect');
+          if (bizSel) {
+            const changed = String(bizSel.value) !== String(val);
+            bizSel.value = val;
+            if (changed) bizSel.dispatchEvent(new Event('change'));
+          }
+        }
+      });
+    })();
+  </script>
+</div>
 
 @endpush

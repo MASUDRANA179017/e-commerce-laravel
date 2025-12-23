@@ -7,8 +7,9 @@ use App\Models\Product;
 use App\Models\Admin\Brand\Brand;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Str;
+use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Schema;
 use Yajra\DataTables\Facades\DataTables;
 
 class ProductController extends Controller
@@ -30,6 +31,8 @@ class ProductController extends Controller
             'isEdit' => false,
         ]);
     }
+
+
 
     /**
      * ✏️ Product Edit Page
@@ -245,191 +248,236 @@ class ProductController extends Controller
      */
     public function store(Request $request)
     {
-        $payload = json_decode($request->input('data', '{}'), true);
-        Log::info($payload);
+        try {
+            $payload = json_decode($request->input('data', '{}'), true);
+            Log::info($payload);
 
-        // Check if this is an update (product_id provided)
-        $existingProductId = $payload['product_id'] ?? $request->input('product_id') ?? null;
-        $isUpdate = !empty($existingProductId);
+            // Check if this is an update (product_id provided)
+            $existingProductId = $payload['product_id'] ?? $request->input('product_id') ?? null;
+            $isUpdate = !empty($existingProductId);
 
-        return DB::transaction(function () use ($request, $payload, $existingProductId, $isUpdate) {
-            $slug = $payload['slug'] ?? Str::slug($payload['title'] ?? (string) Str::uuid());
-
-            $productData = [
-                'brand_id' => $payload['brand_id'] ?? null,
-                'attribute_set_id' => $payload['attribute_set_id'] ?? null,
-                'variant_rule_id' => $payload['variant_rule_id'] ?? null,
-                'title' => $payload['title'] ?? '',
-                'slug' => $slug,
-                'sku' => $payload['sku'] ?? null,
-                'short_desc' => $payload['short_desc'] ?? null,
-                'price' => $payload['price'] ?? 0,
-                'sale_price' => $payload['sale_price'] ?? null,
-                'stock_quantity' => $payload['stock_quantity'] ?? 0,
-                'status' => $payload['status'] ?? 'Draft',
-                'featured' => (bool) ($payload['featured'] ?? false),
-                'allow_backorder' => (bool) ($payload['allow_backorder'] ?? false),
-                'variant_wise_image' => (bool) ($payload['variant_wise_image'] ?? false),
-                'seo_title' => $payload['seo']['title'] ?? null,
-                'seo_desc' => $payload['seo']['desc'] ?? null,
-                'seo_keys' => $payload['seo']['keys'] ?? null,
-                'updated_at' => now(),
-            ];
-
-            if ($isUpdate) {
-                // Update existing product
-                DB::table('products')->where('id', $existingProductId)->update($productData);
-                $productId = $existingProductId;
-
-                // Clear existing category mappings for update
-                DB::table('product_category_map')->where('product_id', $productId)->delete();
-
-                // Clear existing attributes for update
-                DB::table('product_attribute_terms')->where('product_id', $productId)->delete();
-
-                // Clear existing variants for update (optional - you may want to keep them)
-                // DB::table('product_variant_options')->whereIn('variant_id', 
-                //     DB::table('product_variants')->where('product_id', $productId)->pluck('id')
-                // )->delete();
-                // DB::table('product_variants')->where('product_id', $productId)->delete();
-            } else {
-                // Create new product
-                $productData['created_at'] = now();
-                $productId = DB::table('products')->insertGetId($productData);
-            }
-
-            // 🔗 Category mapping
-            $catPaths = $payload['categories'] ?? [];
-            $primaryPath = $payload['primary_category'] ?? null;
-
-            $catIds = [];
-            foreach ($catPaths as $p) {
-                if (is_numeric($p)) {
-                    $catIds[] = (int) $p;
-                    continue;
+            return DB::transaction(function () use ($request, $payload, $existingProductId, $isUpdate) {
+                $slug = $payload['slug'] ?? Str::slug($payload['title'] ?? (string) Str::uuid());
+                
+                // Ensure unique slug
+                $originalSlug = $slug;
+                $counter = 1;
+                while (DB::table('products')->where('slug', $slug)->when($existingProductId, function($q) use ($existingProductId) {
+                    return $q->where('id', '!=', $existingProductId);
+                })->exists()) {
+                    $slug = $originalSlug . '-' . $counter++;
                 }
-                if ($id = $this->resolveCategoryIdFromPath((string) $p))
-                    $catIds[] = $id;
-            }
-            $catIds = array_values(array_unique($catIds));
 
-            $primaryId = null;
-            if ($primaryPath) {
-                $primaryId = is_numeric($primaryPath)
-                    ? (int) $primaryPath
-                    : $this->resolveCategoryIdFromPath((string) $primaryPath);
-            }
-            if ($primaryId && !in_array($primaryId, $catIds, true))
-                $catIds[] = $primaryId;
+                // Normalize status to DB enum values
+                $inStatus = $payload['status'] ?? 'Draft';
+                $dbStatus = match (strtolower((string) $inStatus)) {
+                    'active'   => 'Active',
+                    'draft'    => 'Draft',
+                    'archived' => 'Archived',
+                    default    => ($inStatus ?: 'Draft'),
+                };
 
-            foreach ($catIds as $cid) {
-                DB::table('product_category_map')->insert([
-                    'product_id' => $productId,
-                    'category_id' => $cid,
-                    'is_primary' => ($primaryId === $cid),
-                ]);
-            }
+                $productData = [
+                    'brand_id' => $payload['brand_id'] ?? null,
+                    'attribute_set_id' => $payload['attribute_set_id'] ?? null,
+                    'variant_rule_id' => $payload['variant_rule_id'] ?? null,
+                    'title' => $payload['title'] ?? '',
+                    'slug' => $slug,
+                    'sku' => $payload['sku'] ?? null,
+                    'short_desc' => $payload['short_desc'] ?? null,
+                    'price' => $payload['price'] ?? 0,
+                    'sale_price' => $payload['sale_price'] ?? null,
+                    'stock_quantity' => $payload['stock_quantity'] ?? 0,
+                    'status' => $dbStatus,
+                    'featured' => (bool) ($payload['featured'] ?? false),
+                    'allow_backorder' => (bool) ($payload['allow_backorder'] ?? false),
+                    'variant_wise_image' => (bool) ($payload['variant_wise_image'] ?? false),
+                    'seo_title' => $payload['seo']['title'] ?? null,
+                    'seo_desc' => $payload['seo']['desc'] ?? null,
+                    'seo_keys' => $payload['seo']['keys'] ?? null,
+                    'updated_at' => now(),
+                ];
 
-            // 🗑️ Delete Removed Images
-            $deletedImages = $payload['deleted_images'] ?? [];
-            if (!empty($deletedImages)) {
-                $imgsToDelete = DB::table('product_images')->whereIn('id', $deletedImages)->get();
-                foreach ($imgsToDelete as $img) {
-                    if ($img->path && \Illuminate\Support\Facades\Storage::disk('public')->exists($img->path)) {
-                        \Illuminate\Support\Facades\Storage::disk('public')->delete($img->path);
-                    }
+                if ($isUpdate) {
+                    // Update existing product
+                    DB::table('products')->where('id', $existingProductId)->update($productData);
+                    $productId = $existingProductId;
+
+                    // Clear existing category mappings for update
+                    DB::table('product_category_map')->where('product_id', $productId)->delete();
+
+                    // Clear existing attributes for update
+                    DB::table('product_attribute_terms')->where('product_id', $productId)->delete();
+
+                    // Clear existing variants for update
+                    DB::table('product_variant_options')->whereIn('variant_id', 
+                        DB::table('product_variants')->where('product_id', $productId)->pluck('id')
+                    )->delete();
+                    DB::table('product_variants')->where('product_id', $productId)->delete();
+                } else {
+                    // Create new product
+                    $productData['created_at'] = now();
+                    $productId = DB::table('products')->insertGetId($productData);
                 }
-                DB::table('product_images')->whereIn('id', $deletedImages)->delete();
-            }
 
-            // 🖼️ Gallery Images
-            $galleryFiles = $request->file('gallery');
-            $galleryFiles = is_array($galleryFiles) ? $galleryFiles : ($galleryFiles ? [$galleryFiles] : []);
-            $coverIdx = (int) $request->input('gallery_cover_index', 0);
+                // 🔗 Category mapping
+                $catPaths = $payload['categories'] ?? [];
+                $primaryPath = $payload['primary_category'] ?? null;
 
-            // Only process images if new files are uploaded
-            if (count($galleryFiles) > 0) {
-                // Get current max sort order for existing images
-                $maxSort = DB::table('product_images')
-                    ->where('product_id', $productId)
-                    ->max('sort_order') ?? -1;
-                $sort = $maxSort + 1;
-
-                foreach ($galleryFiles as $idx => $file) {
-                    if (!($file instanceof \Illuminate\Http\UploadedFile) || !$file->isValid())
+                $catIds = [];
+                foreach ($catPaths as $p) {
+                    if (is_numeric($p)) {
+                        $catIds[] = (int) $p;
                         continue;
-                    $path = $file->store('product/images', 'public');
-                    DB::table('product_images')->insert([
+                    }
+                    if ($id = $this->resolveCategoryIdFromPath((string) $p))
+                        $catIds[] = $id;
+                }
+                $catIds = array_values(array_unique($catIds));
+
+                $primaryId = null;
+                if ($primaryPath) {
+                    $primaryId = is_numeric($primaryPath)
+                        ? (int) $primaryPath
+                        : $this->resolveCategoryIdFromPath((string) $primaryPath);
+                }
+                if ($primaryId && !in_array($primaryId, $catIds, true))
+                    $catIds[] = $primaryId;
+
+                foreach ($catIds as $cid) {
+                    DB::table('product_category_map')->insert([
                         'product_id' => $productId,
-                        'path' => $path,
-                        'is_cover' => (!$isUpdate && (string) $idx === (string) $coverIdx) ? 1 : 0,
-                        'sort_order' => $sort++,
+                        'category_id' => $cid,
+                        'is_primary' => ($primaryId === $cid),
                     ]);
                 }
-            }
 
-            // ⚙️ Attributes
-            foreach (($payload['attributes'] ?? []) as $row) {
-                $aid = $row['attribute_id'] ?? null;
-                foreach (($row['term_ids'] ?? []) as $tid) {
-                    if ($aid && $tid) {
-                        DB::table('product_attribute_terms')->insert([
+                // 🗑️ Delete Removed Images
+                $deletedImages = $payload['deleted_images'] ?? [];
+                if (!empty($deletedImages)) {
+                    $imgsToDelete = DB::table('product_images')->whereIn('id', $deletedImages)->get();
+                    foreach ($imgsToDelete as $img) {
+                        if ($img->path && \Illuminate\Support\Facades\Storage::disk('public')->exists($img->path)) {
+                            \Illuminate\Support\Facades\Storage::disk('public')->delete($img->path);
+                        }
+                    }
+                    DB::table('product_images')->whereIn('id', $deletedImages)->delete();
+                }
+
+                // 🖼️ Gallery Images
+                $galleryFiles = $request->file('gallery');
+                $galleryFiles = is_array($galleryFiles) ? $galleryFiles : ($galleryFiles ? [$galleryFiles] : []);
+                $coverIdx = (int) $request->input('gallery_cover_index', 0);
+
+                // Only process images if new files are uploaded
+                if (count($galleryFiles) > 0) {
+                    // Get current max sort order for existing images
+                    $maxSort = DB::table('product_images')
+                        ->where('product_id', $productId)
+                        ->max('sort_order') ?? -1;
+                    $sort = $maxSort + 1;
+
+                    foreach ($galleryFiles as $idx => $file) {
+                        if (!($file instanceof \Illuminate\Http\UploadedFile) || !$file->isValid())
+                            continue;
+                        $path = $file->store('product/images', 'public');
+                        DB::table('product_images')->insert([
                             'product_id' => $productId,
-                            'attribute_id' => (int) $aid,
-                            'term_id' => (int) $tid,
+                            'path' => $path,
+                            'is_cover' => (!$isUpdate && (string) $idx === (string) $coverIdx) ? 1 : 0,
+                            'sort_order' => $sort++,
                         ]);
                     }
                 }
-            }
 
-            // 🧩 Variants
-            $wantImages = (bool) ($payload['variant_wise_image'] ?? false);
-            $files = $request->file('variant_images', []);
-            $variants = $payload['variants'] ?? [];
-
-            foreach ($variants as $i => $v) {
-                $pairs = array_map(
-                    fn($o) => [(int) ($o['attribute_id'] ?? $o[0]), (int) ($o['term_id'] ?? $o[1])],
-                    $v['options'] ?? ($v['map'] ?? [])
-                );
-                usort($pairs, fn($a, $b) => $a[0] <=> $b[0]);
-                $combo = implode('|', array_map(fn($p) => "{$p[0]}:{$p[1]}", $pairs));
-
-                $variantId = DB::table('product_variants')->insertGetId([
-                    'product_id' => $productId,
-                    'sku' => $v['sku'] ?? Str::upper(Str::random(8)),
-                    'combination_key' => $combo,
-                    'active' => true,
-                    'created_at' => now(),
-                    'updated_at' => now(),
-                ]);
-
-                foreach ($pairs as [$attrId, $termId]) {
-                    DB::table('product_variant_options')->insert([
-                        'variant_id' => $variantId,
-                        'attribute_id' => $attrId,
-                        'term_id' => $termId,
-                    ]);
+                // ⚙️ Attributes
+                foreach (($payload['attributes'] ?? []) as $row) {
+                    $aid = $row['attribute_id'] ?? null;
+                    foreach (($row['term_ids'] ?? []) as $tid) {
+                        if ($aid && $tid) {
+                            DB::table('product_attribute_terms')->insert([
+                                'product_id' => $productId,
+                                'attribute_id' => (int) $aid,
+                                'term_id' => (int) $tid,
+                            ]);
+                        }
+                    }
                 }
 
-                if ($wantImages && isset($files[$i]) && $files[$i] && $files[$i]->isValid()) {
-                    $path = $files[$i]->store('product/variants', 'public');
-                    DB::table('product_variant_images')->insert([
-                        'variant_id' => $variantId,
-                        'path' => $path,
+                // 🧩 Variants
+                $wantImages = (bool) ($payload['variant_wise_image'] ?? false);
+                $files = $request->file('variant_images', []);
+                $variants = $payload['variants'] ?? [];
+
+                $usedSkus = [];
+                foreach ($variants as $i => $v) {
+                    $pairs = array_map(
+                        fn($o) => [(int) ($o['attribute_id'] ?? $o[0]), (int) ($o['term_id'] ?? $o[1])],
+                        $v['options'] ?? ($v['map'] ?? [])
+                    );
+                    if (empty($pairs)) {
+                        continue;
+                    }
+                    usort($pairs, fn($a, $b) => $a[0] <=> $b[0]);
+                    $combo = implode('|', array_map(fn($p) => "{$p[0]}:{$p[1]}", $pairs));
+
+                    $sku = trim($v['sku'] ?? '');
+                    if ($sku === '') {
+                        $sku = Str::upper(Str::random(8));
+                    }
+                    $baseSku = $sku;
+                    $suffix = 1;
+                    while (isset($usedSkus[$sku]) || DB::table('product_variants')->where('sku', $sku)->exists()) {
+                        $sku = $baseSku . '-' . $suffix++;
+                        if ($suffix > 100) break;
+                    }
+                    $usedSkus[$sku] = true;
+
+                    $variantId = DB::table('product_variants')->insertGetId([
+                        'product_id' => $productId,
+                        'sku' => $sku,
+                        'combination_key' => $combo,
+                        'active' => true,
                         'created_at' => now(),
                         'updated_at' => now(),
                     ]);
-                }
-            }
 
+                    foreach ($pairs as [$attrId, $termId]) {
+                        DB::table('product_variant_options')->insert([
+                            'variant_id' => $variantId,
+                            'attribute_id' => $attrId,
+                            'term_id' => $termId,
+                        ]);
+                    }
+
+                    if ($wantImages && isset($files[$i]) && $files[$i] && $files[$i]->isValid()) {
+                        $path = $files[$i]->store('product/variants', 'public');
+                        if (Schema::hasTable('product_variant_images')) {
+                            DB::table('product_variant_images')->insert([
+                                'variant_id' => $variantId,
+                                'path' => $path,
+                                'created_at' => now(),
+                                'updated_at' => now(),
+                            ]);
+                        }
+                    }
+                }
+
+                return response()->json([
+                    'ok' => true,
+                    'product_id' => $productId,
+                    'message' => $isUpdate ? 'Product updated successfully!' : 'Product created successfully!',
+                    'is_update' => $isUpdate
+                ], $isUpdate ? 200 : 201);
+            });
+        } catch (\Exception $e) {
+            Log::error('Store product error: ' . $e->getMessage());
+            Log::error($e->getTraceAsString());
             return response()->json([
-                'ok' => true,
-                'product_id' => $productId,
-                'message' => $isUpdate ? 'Product updated successfully!' : 'Product created successfully!',
-                'is_update' => $isUpdate
-            ], $isUpdate ? 200 : 201);
-        });
+                'ok' => false,
+                'message' => 'Failed to save product: ' . $e->getMessage()
+            ], 500);
+        }
     }
 
     /**
@@ -496,16 +544,41 @@ class ProductController extends Controller
             ->orderBy('sort_order', 'asc')
             ->get(['path']);
 
-        if ($images->isEmpty()) {
-            return response()->json(['images' => []]);
-        }
+        $imageUrls = $images->map(function ($img) {
+            return asset('storage/' . $img->path);
+        });
 
-        $formatted = $images->map(fn($img) => [
-            'url' => asset('storage/' . $img->path)
-        ]);
-
-        return response()->json(['images' => $formatted]);
+        return response()->json($imageUrls);
     }
+
+    /**
+     * 🗑️ Delete Product Image
+     */
+    public function deleteImage($id)
+    {
+        try {
+            $image = DB::table('product_images')->where('id', $id)->first();
+            
+            if (!$image) {
+                return response()->json(['success' => false, 'message' => 'Image not found'], 404);
+            }
+
+            // Delete file from storage
+            if ($image->path && \Illuminate\Support\Facades\Storage::disk('public')->exists($image->path)) {
+                \Illuminate\Support\Facades\Storage::disk('public')->delete($image->path);
+            }
+
+            // Delete record from DB
+            DB::table('product_images')->where('id', $id)->delete();
+
+            return response()->json(['success' => true, 'message' => 'Image deleted successfully']);
+        } catch (\Exception $e) {
+            Log::error('Delete image error: ' . $e->getMessage());
+            return response()->json(['success' => false, 'message' => 'Failed to delete image'], 500);
+        }
+    }
+
+
 
     /**
      * 🧩 Fetch Product Variants (for modal)

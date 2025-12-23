@@ -115,19 +115,37 @@ class BrandController extends Controller
 
     public function destroy($id)
     {
-        $brand = Brand::findOrFail($id);
+        try {
+            $brand = Brand::findOrFail($id);
 
-        // পুরানো logo delete করবো
-        if ($brand->logo) {
-            $this->handleFileDelete($brand->logo);
+            // Purano logo delete korbo
+            if ($brand->logo) {
+                $this->handleFileDelete($brand->logo);
+            }
+
+            $brand->delete();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Brand deleted successfully!'
+            ]);
+        } catch (\Illuminate\Database\QueryException $e) {
+            if ($e->getCode() == "23000") {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Cannot delete this brand because it is associated with other records (e.g. products).'
+                ], 500);
+            }
+            return response()->json([
+                'success' => false,
+                'message' => 'Database error occurred.'
+            ], 500);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Something went wrong: ' . $e->getMessage()
+            ], 500);
         }
-
-        $brand->delete();
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Brand deleted successfully!'
-        ]);
     }
 
      // Toggle Featured

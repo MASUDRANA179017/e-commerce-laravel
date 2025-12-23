@@ -55,7 +55,7 @@ class HomeController extends Controller
         try {
             $featuredProducts = Product::where('status', 'Active')
                 ->where('featured', true)
-                ->with(['images', 'brand'])
+                ->with(['images', 'brand', 'categories'])
                 ->latest()
                 ->limit(8)
                 ->get();
@@ -88,7 +88,7 @@ class HomeController extends Controller
         try {
             $newArrivals = Product::where('status', 'Active')
                 ->where('created_at', '>=', now()->subDays(30))
-                ->with(['images', 'brand'])
+                ->with(['images', 'brand', 'categories'])
                 ->latest()
                 ->limit(8)
                 ->get();
@@ -120,7 +120,7 @@ class HomeController extends Controller
         $bestSellers = collect();
         try {
             $bestSellers = Product::where('status', 'Active')
-                ->with(['images', 'brand'])
+                ->with(['images', 'brand', 'categories'])
                 ->inRandomOrder()
                 ->limit(8)
                 ->get();

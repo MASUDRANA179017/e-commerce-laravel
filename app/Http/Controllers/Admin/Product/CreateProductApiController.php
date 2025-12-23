@@ -10,6 +10,7 @@ use App\Models\Catalog\AttributeTerm;
 use App\Models\Catalog\Category;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 use Log;
 
 class CreateProductApiController extends Controller
@@ -74,46 +75,59 @@ class CreateProductApiController extends Controller
     }
 
     // POST /product/get/varient-rules  body:{attribute_set_id}
-    // returns [ { id, name, axes:[attribute_id,...], note } ]
-    // DB does not contain a variant_rules table. We derive axes from AttributeSetItem.is_variant=1.
+// returns [ { id, name, set_of_rules:[attribute_id,...] } ]
+// Derives axes from AttributeSetItem.is_variant=1 and gracefully includes DB rules if table exists.
 public function variantRules(Request $request)
 {
-
     $setId = (int) $request->input('attribute_set_id');
     if (!$setId) {
         return response()->json(['message' => 'attribute_set_id required'], 422);
     }
 
-    $set = AttributeSet::find($setId);
+    $set = AttributeSet::with('items')->find($setId);
     if (!$set) {
         return response()->json([]);
     }
 
-   
+    $rows = [];
 
-    $rules = DB::table('variant_rules')
-        ->select('id', 'category_id', 'category_name', 'set_of_rules', 'status')
-        ->where('category_id', $set->category_id)
-        ->get()
-        ->map(function ($r) use ($set) {
-            $decoded = $r->set_of_rules ? json_decode($r->set_of_rules, true) : [];
+    // Derived rule from attribute set items
+    $axes = $set->items
+        ->where('is_variant', true)
+        ->pluck('attribute_id')
+        ->unique()
+        ->values()
+        ->all();
 
-            return [
-                'id'            => $r->id,
-                'category_id'   => $r->category_id,
-                'category_name' => $r->category_name,
-                'set_of_rules'  => $decoded,
-                'status'        => $r->status,
-                'derived_rule'  => [
-                    'id'   => $set->id,
-                    'name' => 'Derived from Attribute Set',
-                    'note' => 'Axes come from items marked is_variant=1 in this set.',
-                ],
-            ];
-        });
-    // Log::info( $rules->toArray());
+    if (!empty($axes)) {
+        $rows[] = [
+            'id'           => $set->id,
+            'name'         => 'Derived from Attribute Set',
+            'set_of_rules' => $axes,
+        ];
+    }
 
-    return response()->json($rules);
+    if (Schema::hasTable('variant_rules')) {
+        try {
+            $dbRules = DB::table('variant_rules')
+                ->select('id', 'category_id', 'category_name', 'set_of_rules', 'status')
+                ->where('category_id', $set->category_id)
+                ->get()
+                ->map(function ($r) {
+                    return [
+                        'id'           => $r->id,
+                        'name'         => $r->category_name ?: ('Rule ' . $r->id),
+                        'set_of_rules' => $r->set_of_rules ? json_decode($r->set_of_rules, true) : [],
+                    ];
+                })
+                ->toArray();
+            $rows = array_merge($rows, $dbRules);
+        } catch (\Throwable $e) {
+            Log::warning('variant_rules query failed: ' . $e->getMessage());
+        }
+    }
+
+    return response()->json($rows);
 }
 
 

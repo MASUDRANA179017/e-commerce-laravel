@@ -73,5 +73,6 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
 
     Route::prefix('varient-build')->name('users.')->controller(VarientBuildController::class)->group(function () {
         Route::get('/', 'index')->name('varient-build.index');
+        Route::post('/store', 'store')->name('varient-build.store');
     });
 });

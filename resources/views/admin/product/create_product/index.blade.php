@@ -512,8 +512,15 @@
       });
       const BOOT = window.PRODUCT_BOOTSTRAP || null;
 
-      /* ===== State ===== */
-      const STATE = {
+      /* ===== Server Data ===== */
+    const SERVER_DATA = {
+        isEdit: {{ $isEdit ? 'true' : 'false' }},
+        product: @json($product ?? null),
+        productVariants: @json($productVariants ?? [])
+    };
+
+    /* ===== State ===== */
+    const STATE = {
           CATS: [],
           ATTRS: {},
           ATTR_SETS: {},
@@ -843,7 +850,7 @@
           vRows.forEach((tr, i) => {
               const inp = tr.querySelector('.v-img');
               const file = inp?.files?.[0];
-              if (file) fd.append('variant_images[]', file, file.name); // <<< CHANGED
+              if (file) fd.append(`variant_images[${i}]`, file, file.name); 
           });
 
           // structured data (no files)
@@ -893,9 +900,11 @@
           });
 
           if (!res.ok) {
-              const err = await res.json().catch(() => ({}));
-              console.error('SAVE ERROR', err);
-              alert(err.message || 'Save failed.');
+              let err = {};
+              let text = '';
+              try { err = await res.json(); } catch { try { text = await res.text(); } catch {} }
+              console.error('SAVE ERROR', Object.keys(err).length ? err : text);
+              alert((err && err.message) || text || 'Save failed.');
               return;
           }
         //   const out = await res.json().catch(() => null);
@@ -1101,7 +1110,6 @@
           }));
           if (list.length) {
               varRuleSel.value = String(list[0].id);
-              varRuleSel.setAttribute('disabled', '');
               varRuleSel.dispatchEvent(new Event('change'));
           }
       }
@@ -1146,8 +1154,8 @@
       });
 
       varRuleSel?.addEventListener('change', () => {
-          const chosen = (STATE.RULES.variant || []).find(x => String(x.id) === String(varRuleSel.value));
-          if (!chosen) {
+          const axes = getSelectedRuleAxes();
+          if (!axes.length) {
               pickableAxes = [];
               renderAxesChips();
               return;
@@ -1164,8 +1172,7 @@
           const raw = setObj.attrs ?? setObj.items ?? [];
           const allowed = new Set((Array.isArray(raw) ? raw : Array.from(raw)).map(String));
 
-          // axes already mapped to attribute IDs in normalizeRules()
-          pickableAxes = (chosen.axes || []).filter(id => allowed.has(String(id)));
+          pickableAxes = axes.filter(id => allowed.has(String(id)));
           renderAxesChips();
 
           // just help the user: pre-check terms for these axes (generation still needs the button)
@@ -1260,12 +1267,46 @@
       }
 
       function axisTitle(pair) {
-          return pair.map(([aid, tid]) => {
-              const a = STATE.ATTRS[aid],
-                    t = (a?.terms || []).find(x => String(x.id) === String(tid));
-              return `${a?.name||aid}: ${t?.name||tid}`;
-          }).join(' / ');
-      }
+        return pair.map(([aid, tid]) => {
+            const a = STATE.ATTRS[aid],
+                  t = (a?.terms || []).find(x => String(x.id) === String(tid));
+            return `${a?.name||aid}: ${t?.name||tid}`;
+        }).join(' / ');
+    }
+
+    function renderExistingVariants(variants) {
+        const tbody = $('#variantTable tbody');
+        if (!tbody || !variants.length) return;
+        tbody.innerHTML = '';
+        const wantImg = $('#variantWiseImage')?.checked;
+
+        variants.forEach(v => {
+            // combination_key: "attrId:termId|attrId:termId"
+            if (!v.combination_key) return;
+            
+            const pair = v.combination_key.split('|').map(p => {
+                const [aid, tid] = p.split(':');
+                return [aid, tid];
+            });
+
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                    <td>${axisTitle(pair)}</td>
+                    <td><input class="form-control form-control-sm v-sku" value="${v.sku || ''}" placeholder="AUTO"></td>
+                    <td class="vimg-cell ${wantImg?'':'hidden'}"><input type="file" accept="image/*" class="form-control form-control-sm v-img"></td>
+                    <td class="text-end">
+                        <button type="button" class="action-btn-secondary me-1 v-dup" title="Duplicate"><i class="bx bx-copy"></i></button>
+                        <button type="button" class="action-btn-danger v-del" title="Delete"><i class="bx bx-trash"></i></button>
+                    </td>`;
+
+            tr.dataset.variant = JSON.stringify(pair);
+            tbody.appendChild(tr);
+        });
+
+        $('#noVariantNote')?.classList.add('hidden');
+        $('#skuSingle')?.setAttribute('disabled', '');
+        toggleVariantImageColumn();
+    }
 
       function resetVariants() {
           const tb = $('#variantTable tbody');
@@ -1294,7 +1335,7 @@
           const axes = (pickableAxes && pickableAxes.length) ? pickableAxes.slice() :
               getSelectedRuleAxes();
           if (!axes.length) {
-              alert('No variant rule axes resolved.');
+              toastr.warning('No variant rule axes resolved. Please select a Variant Rule or add axes manually.');
               return;
           }
 
@@ -1430,7 +1471,7 @@
           if (!confirm('Are you sure you want to delete this image?')) return;
 
           // AJAX delete
-          fetch(`/admin/product/{{ $product->id ?? 0 }}/image/${id}`, {
+          fetch(`/admin/product/image/${id}`, {
               method: 'DELETE',
               headers: {
                   'X-CSRF-TOKEN': '{{ csrf_token() }}',
@@ -1441,13 +1482,13 @@
           .then(data => {
               if (data.success) {
                   item.remove();
-                  alert('Image deleted successfully');
+                  toastr.success('Image deleted successfully');
               } else {
-                  alert('Failed to delete image: ' + (data.message || 'Unknown error'));
+                  toastr.error('Failed to delete image: ' + (data.message || 'Unknown error'));
               }
           })
           .catch(() => {
-              alert('Failed to delete image');
+              toastr.error('Failed to delete image');
           });
       };
       
@@ -1502,6 +1543,10 @@
                   applyPrimaryConfig();
               }
               if (setSel?.value) await refreshVariantRuleForSet(); // pre-lock if needed
+        
+        if (SERVER_DATA.isEdit && SERVER_DATA.productVariants.length) {
+            renderExistingVariants(SERVER_DATA.productVariants);
+        }
           } catch (err) {
               console.error('Bootstrap load failed:', err);
           }
@@ -1510,29 +1555,21 @@
 
       // Load existing product data when editing
       @if(isset($isEdit) && $isEdit && isset($product) && $product)
-      (function loadEditData() {
-          // Pre-select attribute set if exists
+      (async function loadEditData() {
           @if(isset($product->attribute_set_id) && $product->attribute_set_id)
-          setTimeout(() => {
-              const setSel = document.getElementById('attrSet');
-              if (setSel) {
-                  setSel.value = '{{ $product->attribute_set_id }}';
-                  setSel.dispatchEvent(new Event('change'));
-              }
-          }, 500);
+          if (setSel) {
+              setSel.value = '{{ $product->attribute_set_id }}';
+              renderAttrFields();
+              await refreshVariantRuleForSet();
+          }
           @endif
-
-          // Pre-select variant rule if exists
           @if(isset($product->variant_rule_id) && $product->variant_rule_id)
-          setTimeout(() => {
-              const varRuleSel = document.getElementById('variantRule');
-              if (varRuleSel) {
-                  varRuleSel.value = '{{ $product->variant_rule_id }}';
-                  varRuleSel.dispatchEvent(new Event('change'));
-              }
-          }, 800);
+          if (varRuleSel) {
+              varRuleSel.value = '{{ $product->variant_rule_id }}';
+              varRuleSel.dispatchEvent(new Event('change'));
+          }
           @endif
-
+  
           // Load existing images into gallery
           @if(isset($productImages) && count($productImages) > 0)
           const existingImages = @json($productImages);

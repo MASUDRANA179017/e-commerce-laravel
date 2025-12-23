@@ -29,13 +29,19 @@ class AttributeController extends Controller
                 'name' => $category->name,
             ],
             'attributes' => $attributes->map(function($a){
+                $fields = $a->edit_fields ?? ['name','code'];
+                if (is_array($fields)) {
+                    $fields = array_values(array_unique(array_merge(['name'], $fields)));
+                } else {
+                    $fields = ['name','code'];
+                }
                 return [
                     'id'          => $a->id,
                     'slug'        => $a->slug,
                     'name'        => $a->name,
                     'code'        => $a->code,
                     'type'        => $a->type,
-                    'edit_fields' => $a->edit_fields ?? ['name','code'],
+                    'edit_fields' => $fields,
                     'terms'       => $a->terms->map(function($t){
                         return [
                             'id'         => $t->id,

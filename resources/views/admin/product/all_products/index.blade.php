@@ -723,7 +723,7 @@ document.addEventListener("DOMContentLoaded", function() {
             confirmButtonText: 'Yes, delete it!'
         }).then((result) => {
             if (result.isConfirmed) {
-                fetch(`/admin/product/${productId}/image/${imageId}`, {
+                fetch(`/admin/product/image/${imageId}`, {
                     method: 'DELETE',
                     headers: {
                         'X-CSRF-TOKEN': token,
