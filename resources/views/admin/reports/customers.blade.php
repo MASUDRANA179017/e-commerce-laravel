@@ -7,13 +7,18 @@
     <div class="col-12 mb-4">
         <div class="d-flex align-items-center justify-content-between flex-wrap gap-3">
             <h3 class="fw-bold mb-0">Customer Analytics</h3>
-            <nav style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb">
-                <ol class="breadcrumb mb-0">
-                    <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">Dashboard</a></li>
-                    <li class="breadcrumb-item active">Customer Analytics</li>
-                </ol>
-            </nav>
+            <div class="d-flex gap-2">
+                <a href="{{ route('admin.reports.export', ['type' => 'customers'] + request()->query()) }}" class="select-btn-info text-decoration-none">
+                    <span class="material-symbols-outlined fs-14">download</span> Export
+                </a>
+            </div>
         </div>
+        <nav style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb">
+            <ol class="breadcrumb mb-0">
+                <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">Dashboard</a></li>
+                <li class="breadcrumb-item active">Customer Analytics</li>
+            </ol>
+        </nav>
     </div>
 
     <!-- Stats -->
@@ -25,7 +30,7 @@
                         <span class="material-symbols-outlined text-primary">group</span>
                     </div>
                     <div>
-                        <h4 class="mb-0 fw-bold">0</h4>
+                        <h4 class="mb-0 fw-bold">{{ $totalCustomers }}</h4>
                         <span class="text-muted">Total Customers</span>
                     </div>
                 </div>
@@ -40,7 +45,7 @@
                         <span class="material-symbols-outlined text-success">person_add</span>
                     </div>
                     <div>
-                        <h4 class="mb-0 fw-bold">0</h4>
+                        <h4 class="mb-0 fw-bold">{{ $newCustomers }}</h4>
                         <span class="text-muted">New This Month</span>
                     </div>
                 </div>
@@ -55,7 +60,7 @@
                         <span class="material-symbols-outlined text-info">repeat</span>
                     </div>
                     <div>
-                        <h4 class="mb-0 fw-bold">0</h4>
+                        <h4 class="mb-0 fw-bold">{{ $returningCustomers }}</h4>
                         <span class="text-muted">Returning Customers</span>
                     </div>
                 </div>
@@ -82,7 +87,7 @@
     var options = {
         series: [{
             name: 'New Customers',
-            data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+            data: @json($customerCounts)
         }],
         chart: {
             type: 'bar',
@@ -95,7 +100,7 @@
         },
         dataLabels: { enabled: false },
         xaxis: {
-            categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+            categories: @json($months)
         }
     };
     if (document.querySelector("#customerChart")) {

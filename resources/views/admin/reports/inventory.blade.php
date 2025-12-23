@@ -83,9 +83,9 @@
         <div class="card border-0">
             <div class="card-header bg-white d-flex align-items-center justify-content-between">
                 <h5 class="mb-0 fw-bold">Inventory Status</h5>
-                <button class="select-btn-info">
+                <a href="{{ route('admin.reports.export', ['type' => 'inventory'] + request()->query()) }}" class="select-btn-info text-decoration-none">
                     <span class="material-symbols-outlined fs-14">download</span> Export
-                </button>
+                </a>
             </div>
             <div class="card-body p-0">
                 <div class="table-responsive">
@@ -127,6 +127,9 @@
                             @endforelse
                         </tbody>
                     </table>
+                </div>
+                <div class="p-3">
+                    {{ $products->links() }}
                 </div>
             </div>
         </div>

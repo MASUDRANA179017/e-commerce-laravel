@@ -23,7 +23,7 @@
                 <div class="d-flex align-items-center justify-content-between">
                     <div>
                         <span class="text-muted d-block mb-1">Total Sales</span>
-                        <h4 class="fw-bold mb-0 text-primary">৳0.00</h4>
+                        <h4 class="fw-bold mb-0 text-primary">৳{{ number_format($totalSales, 2) }}</h4>
                     </div>
                     <span class="material-symbols-outlined fs-1 text-primary opacity-50">payments</span>
                 </div>
@@ -36,7 +36,7 @@
                 <div class="d-flex align-items-center justify-content-between">
                     <div>
                         <span class="text-muted d-block mb-1">Total Orders</span>
-                        <h4 class="fw-bold mb-0 text-success">0</h4>
+                        <h4 class="fw-bold mb-0 text-success">{{ number_format($totalOrders) }}</h4>
                     </div>
                     <span class="material-symbols-outlined fs-1 text-success opacity-50">shopping_cart</span>
                 </div>
@@ -49,7 +49,7 @@
                 <div class="d-flex align-items-center justify-content-between">
                     <div>
                         <span class="text-muted d-block mb-1">Avg Order Value</span>
-                        <h4 class="fw-bold mb-0 text-info">৳0.00</h4>
+                        <h4 class="fw-bold mb-0 text-info">৳{{ number_format($avgOrderValue, 2) }}</h4>
                     </div>
                     <span class="material-symbols-outlined fs-1 text-info opacity-50">trending_up</span>
                 </div>
@@ -62,7 +62,7 @@
                 <div class="d-flex align-items-center justify-content-between">
                     <div>
                         <span class="text-muted d-block mb-1">Products Sold</span>
-                        <h4 class="fw-bold mb-0 text-warning">0</h4>
+                        <h4 class="fw-bold mb-0 text-warning">{{ number_format($productsSold) }}</h4>
                     </div>
                     <span class="material-symbols-outlined fs-1 text-warning opacity-50">inventory_2</span>
                 </div>
@@ -73,16 +73,16 @@
     <!-- Sales Chart -->
     <div class="col-12 mb-4">
         <div class="card border-0">
-            <div class="card-header bg-white d-flex align-items-center justify-content-between">
+            <div class="card-header bg-white d-flex align-items-center justify-content-between flex-wrap gap-2">
                 <h5 class="mb-0 fw-bold">Sales Overview</h5>
-                <div class="d-flex gap-2">
-                    <input type="date" class="form-control form-control-sm">
-                    <input type="date" class="form-control form-control-sm">
-                    <button class="create-btn-base">Apply</button>
-                    <button class="select-btn-info">
+                <form action="{{ route('admin.reports.sales') }}" method="GET" class="d-flex gap-2">
+                    <input type="date" name="start_date" class="form-control form-control-sm" value="{{ $startDate->format('Y-m-d') }}">
+                    <input type="date" name="end_date" class="form-control form-control-sm" value="{{ $endDate->format('Y-m-d') }}">
+                    <button type="submit" class="create-btn-base">Apply</button>
+                    <a href="{{ route('admin.reports.export', ['type' => 'sales'] + request()->query()) }}" class="select-btn-info text-decoration-none">
                         <span class="material-symbols-outlined fs-14">download</span> Export
-                    </button>
-                </div>
+                    </a>
+                </form>
             </div>
             <div class="card-body">
                 <div id="salesChart" style="height: 400px;"></div>
@@ -107,9 +107,19 @@
                             </tr>
                         </thead>
                         <tbody>
+                            @forelse($topProducts as $product)
+                            <tr>
+                                <td class="ps-3">
+                                    <div class="fw-bold text-dark">{{ $product->name }}</div>
+                                </td>
+                                <td>{{ $product->total_sold }}</td>
+                                <td>৳{{ number_format($product->total_revenue, 2) }}</td>
+                            </tr>
+                            @empty
                             <tr>
                                 <td colspan="3" class="text-center py-4 text-muted">No data available</td>
                             </tr>
+                            @endforelse
                         </tbody>
                     </table>
                 </div>
@@ -132,9 +142,17 @@
                             </tr>
                         </thead>
                         <tbody>
+                            @forelse($topCategories as $category)
+                            <tr>
+                                <td class="ps-3">{{ $category->name }}</td>
+                                <td>{{ $category->total_sold }}</td>
+                                <td>৳{{ number_format($category->total_revenue, 2) }}</td>
+                            </tr>
+                            @empty
                             <tr>
                                 <td colspan="3" class="text-center py-4 text-muted">No data available</td>
                             </tr>
+                            @endforelse
                         </tbody>
                     </table>
                 </div>
@@ -149,7 +167,7 @@
     var options = {
         series: [{
             name: 'Sales',
-            data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+            data: @json($salesData)
         }],
         chart: {
             type: 'area',
@@ -164,7 +182,14 @@
             gradient: { shadeIntensity: 1, opacityFrom: 0.4, opacityTo: 0.1 }
         },
         xaxis: {
-            categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+            categories: @json($months)
+        },
+        tooltip: {
+            y: {
+                formatter: function (val) {
+                    return "৳" + val.toLocaleString()
+                }
+            }
         }
     };
     if (document.querySelector("#salesChart")) {
@@ -172,4 +197,3 @@
     }
 </script>
 @endpush
-
