@@ -166,6 +166,14 @@ class CheckoutController extends Controller
 
             DB::commit();
 
+            // Notify Admins
+            try {
+                $admins = User::role(['Admin', 'Super Admin'])->get();
+                \Illuminate\Support\Facades\Notification::send($admins, new \App\Notifications\NewOrderNotification($order));
+            } catch (\Exception $e) {
+                \Log::error('Failed to send order notification: ' . $e->getMessage());
+            }
+
             // Clear cart
             session()->forget('cart');
             session()->forget('discount');
