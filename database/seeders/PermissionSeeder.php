@@ -62,6 +62,9 @@ class PermissionSeeder extends Seeder
         $adminRole = Role::firstOrCreate(['name' => 'Admin']);
         $adminRole->syncPermissions(['dashboard.view', 'users.view', 'projects.view', 'tasks.view']);
 
+        // Create Customer Role
+        Role::firstOrCreate(['name' => 'Customer']);
+
         // Create a regular user
         $user = User::firstOrCreate(
             ['email' => 'user@example.com'],
@@ -72,6 +75,6 @@ class PermissionSeeder extends Seeder
                 'is_active' => 1,
             ]
         );
-        $user->assignRole('Admin');
+        $user->assignRole('Customer');
     }
 }
