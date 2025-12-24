@@ -1,15 +1,16 @@
 @extends('layouts.master')
 
 @section('content')
+<meta name="csrf-token" content="{{ csrf_token() }}">
 <div class="container py-5">
     <div class="card shadow-sm border-0 rounded-4 p-3">
         <div class="card-body">
             <h4 class="card-title mb-3 text-primary">Units</h4>
-            <button id="addUnitBtn" class="btn btn-success mb-3">Add Unit</button>
+            <button id="addUnitBtn" class="btn btn-primary mb-3">+ Add Unit</button>
             <table class="table table-bordered" id="unitsTable">
                 <thead>
                     <tr>
-                        <th>SL</th>
+                        <th>SL No</th>
                         <th>Unit Name</th>
                         <th>Status</th>
                         <th>Action</th>
@@ -52,10 +53,17 @@
 </div>
 @endsection
 
-@section('scripts')
-<!-- Make sure jQuery and Bootstrap bundle are loaded first -->
+@push('scripts')
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
 $(document).ready(function () {
+
+    // Setup CSRF token header for all AJAX
+    $.ajaxSetup({
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        }
+    });
 
     // Initialize DataTable
     var table = $('#unitsTable').DataTable({
@@ -71,7 +79,7 @@ $(document).ready(function () {
                 orderable:false, 
                 searchable:false,
                 render: function(data){
-                    return data == 1 ? 'Active' : 'Inactive';
+                    return data == 1 ? '<span class="badge bg-success">Active</span>' : '<span class="badge bg-secondary">Inactive</span>';
                 }
             },
             {data: 'action', name: 'action', orderable:false, searchable:false},
@@ -82,15 +90,15 @@ $(document).ready(function () {
     var unitModalEl = document.getElementById('unitModal');
     var unitModal = new bootstrap.Modal(unitModalEl);
 
-    // Open modal on button click
+    // Open modal on Add button click
     $('#addUnitBtn').click(function(){
         $('#unitForm').trigger("reset");
         $('#unit_id').val('');
-        $('.modal-title').text('Add Unit'); // reset modal title
+        $('.modal-title').text('Add Unit');
         unitModal.show();
     });
 
-    // Submit Unit Form
+    // Submit Unit Form (Add/Edit)
     $('#unitForm').submit(function(e){
         e.preventDefault();
         $.ajax({
@@ -99,14 +107,25 @@ $(document).ready(function () {
             data: $(this).serialize(),
             success: function(response){
                 unitModal.hide();
-                table.ajax.reload();
-                alert(response.success);
+                table.ajax.reload(null, false);
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Success',
+                    text: response.success,
+                    confirmButtonText: 'OK'
+                });
             },
             error: function(xhr){
-                let errors = xhr.responseJSON.errors;
+                let errors = xhr.responseJSON.errors || {};
                 let msg = '';
-                $.each(errors, function(key, value){ msg += value + "\n"; });
-                alert(msg);
+                $.each(errors, function(key, value){
+                    msg += value + '<br>';
+                });
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Validation Error',
+                    html: msg || 'Something went wrong!'
+                });
             }
         });
     });
@@ -114,7 +133,7 @@ $(document).ready(function () {
     // Edit Unit
     $(document).on('click', '.edit-unit', function(){
         var id = $(this).data('id');
-        $.get("units/edit/"+id, function(data){
+        $.get("{{ url('admin/units/edit') }}/"+id, function(data){
             $('#unitForm').trigger("reset");
             $('#unit_id').val(data.id);
             $('#name').val(data.name);
@@ -124,22 +143,42 @@ $(document).ready(function () {
         });
     });
 
-    // Delete Unit
+    // Delete Unit with SweetAlert confirmation
     $(document).on('click', '.delete-unit', function(){
-        if(confirm("Are you sure?")){
-            var id = $(this).data('id');
-            $.ajax({
-                url: "units/delete/"+id,
-                type: "DELETE",
-                data: {_token: "{{ csrf_token() }}"},
-                success: function(response){
-                    table.ajax.reload();
-                    alert(response.success);
-                }
-            });
-        }
+        var id = $(this).data('id');
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "You won't be able to revert this!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Yes, delete it!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    url: "{{ url('admin/units/delete') }}/"+id,
+                    type: "DELETE",
+                    success: function(response){
+                        table.ajax.reload(null, false);
+                        Swal.fire(
+                            'Deleted!',
+                            response.success,
+                            'success'
+                        );
+                    },
+                    error: function(){
+                        Swal.fire(
+                            'Error!',
+                            'Something went wrong while deleting.',
+                            'error'
+                        );
+                    }
+                });
+            }
+        });
     });
 
 });
 </script>
-@endsection
+@endpush
