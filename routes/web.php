@@ -16,6 +16,17 @@ use App\Http\Controllers\Admin\UnitController;
 */
 require __DIR__.'/frontend.php';
 
+// Temporary Debug Route for Root
+Route::get('/', function () {
+    try {
+        return app(\App\Http\Controllers\Frontend\HomeController::class)->index();
+    } catch (\Throwable $e) {
+        return response('Error: ' . $e->getMessage() . ' in ' . $e->getFile() . ':' . $e->getLine(), 500);
+    }
+})->name('home-debug');
+
+
+
 Route::get('/dashboard', function () {
     if (auth()->user()->hasRole(['Super Admin', 'Admin'])) {
         return view('dashboard');

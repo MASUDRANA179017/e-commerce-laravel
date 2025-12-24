@@ -20,7 +20,10 @@ use Illuminate\Support\Facades\Route;
 */
 
 // Home Page
-Route::get('/', [HomeController::class, 'index'])->name('home');
+// Route::get('/', [HomeController::class, 'index'])->name('home');
+// Route::get('/', function () {
+//     return 'Root Route Works';
+// });
 
 // Flash Sale page
 Route::get('/flash-sale', [FlashSaleController::class, 'index'])->name('flash-sale.index');
