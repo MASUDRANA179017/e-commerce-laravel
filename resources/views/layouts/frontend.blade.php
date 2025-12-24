@@ -600,7 +600,7 @@
                             <nav class="navbar p-0">
                                 <!-- Brand -->
                                 <div class="navbar-logo">
-                                    <a href="{{ route('home') }}" aria-label="Home">
+                                    <a href="{{ url('/') }}" aria-label="Home">
                                         <img src="{{ $business_setup && $business_setup->logo ? asset('storage/' . $business_setup->logo) : asset('frontend/assets/images/logo.png') }}"
                                             alt="{{ config('app.name') }}" height="50">
                                     </a>
@@ -611,8 +611,8 @@
                                         <nav class="navbar__menu d-none d-xl-block" aria-label="Primary">
                                             <ul class="navbar__list">
                                                 <li class="navbar__item nav-fade">
-                                                    <a href="{{ route('home') }}"
-                                                        class="{{ request()->routeIs('home') ? 'active' : '' }}">Home</a>
+                                                    <a href="{{ url('/') }}"
+                                                        class="{{ request()->is('/') ? 'active' : '' }}">Home</a>
                                                 </li>
                                                 <li class="navbar__item nav-fade">
                                                     <a href="{{ route('shop.index') }}"
@@ -684,7 +684,7 @@
             <nav class="mobile-menu__wrapper" aria-label="Mobile">
                 <div class="mobile-menu__header nav-fade">
                     <div class="logo">
-                        <a href="{{ route('home') }}">
+                        <a href="{{ url('/') }}">
                             <img src="{{ $business_setup && $business_setup->logo ? asset('storage/' . $business_setup->logo) : asset('frontend/assets/images/logo.png') }}"
                                 alt="{{ config('app.name') }}">
                         </a>
@@ -898,7 +898,7 @@
                         <div class="col-12 col-lg-6">
                             <div class="footer-two__copyright-inner text-center text-lg-start">
                                 <p>Copyright &copy; <span id="copyrightYear">{{ date('Y') }}</span> <a
-                                        href="{{ route('home') }}">{{ config('app.name') }}</a>. All rights reserved.
+                                        href="{{ url('/') }}">{{ config('app.name') }}</a>. All rights reserved.
                                 </p>
                             </div>
                         </div>
