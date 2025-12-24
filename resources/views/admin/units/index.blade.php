@@ -9,7 +9,7 @@
             <table class="table table-bordered" id="unitsTable">
                 <thead>
                     <tr>
-                        <th>SL</th>
+                        <th>SL No</th>
                         <th>Unit Name</th>
                         <th>Status</th>
                         <th>Action</th>
@@ -19,6 +19,9 @@
         </div>
     </div>
 </div>
+
+
+
 
 <!-- Add/Edit Unit Modal -->
 <div class="modal fade" id="unitModal" tabindex="-1">
