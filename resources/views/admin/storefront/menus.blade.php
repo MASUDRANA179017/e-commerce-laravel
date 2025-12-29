@@ -49,59 +49,65 @@
                     <span class="material-symbols-outlined fs-14">add</span> Add Item
                 </button>
             </div>
+
             <div class="card-body">
                 <div class="menu-items">
-                    <div class="menu-item p-3 bg-light rounded mb-2 d-flex align-items-center justify-content-between">
-                        <div class="d-flex align-items-center gap-3">
-                            <span class="material-symbols-outlined text-muted cursor-move">drag_indicator</span>
-                            <span class="fw-medium">Home</span>
-                            <small class="text-muted">/</small>
+
+                    {{-- MENU ITEM --}}
+                    @foreach (['Home' => '/', 'Shop' => '/shop', 'About' => '/about', 'Contact' => '/contact'] as $name => $url)
+                        <div class="menu-item p-3 bg-light rounded mb-2 d-flex align-items-center justify-content-between">
+                            <div class="d-flex align-items-center gap-3">
+                                <span class="material-symbols-outlined text-muted cursor-move">drag_indicator</span>
+                                <span class="fw-medium">{{ $name }}</span>
+                                <small class="text-muted">{{ $url }}</small>
+                            </div>
+
+                            <div class="d-flex gap-2">
+                                <button class="action-btn-success">
+                                    <span class="material-symbols-outlined fs-14">edit</span> Edit
+                                </button>
+                                <button class="action-btn-danger">
+                                    <span class="material-symbols-outlined fs-14">delete</span> Delete
+                                </button>
+                            </div>
                         </div>
-                        <div class="d-flex gap-1">
-                            <button class="action-btn-success">Edit</button>
-                            <button class="action-btn-danger">Delete</button>
-                        </div>
-                    </div>
-                    <div class="menu-item p-3 bg-light rounded mb-2 d-flex align-items-center justify-content-between">
-                        <div class="d-flex align-items-center gap-3">
-                            <span class="material-symbols-outlined text-muted cursor-move">drag_indicator</span>
-                            <span class="fw-medium">Shop</span>
-                            <small class="text-muted">/shop</small>
-                        </div>
-                        <div class="d-flex gap-1">
-                            <button class="action-btn-success">Edit</button>
-                            <button class="action-btn-danger">Delete</button>
-                        </div>
-                    </div>
-                    <div class="menu-item p-3 bg-light rounded mb-2 d-flex align-items-center justify-content-between">
-                        <div class="d-flex align-items-center gap-3">
-                            <span class="material-symbols-outlined text-muted cursor-move">drag_indicator</span>
-                            <span class="fw-medium">About</span>
-                            <small class="text-muted">/about</small>
-                        </div>
-                        <div class="d-flex gap-1">
-                            <button class="action-btn-success">Edit</button>
-                            <button class="action-btn-danger">Delete</button>
-                        </div>
-                    </div>
-                    <div class="menu-item p-3 bg-light rounded mb-2 d-flex align-items-center justify-content-between">
-                        <div class="d-flex align-items-center gap-3">
-                            <span class="material-symbols-outlined text-muted cursor-move">drag_indicator</span>
-                            <span class="fw-medium">Contact</span>
-                            <small class="text-muted">/contact</small>
-                        </div>
-                        <div class="d-flex gap-1">
-                            <button class="action-btn-success">Edit</button>
-                            <button class="action-btn-danger">Delete</button>
-                        </div>
-                    </div>
+                    @endforeach
+
                 </div>
             </div>
+
             <div class="card-footer bg-white">
                 <button class="create-btn-base">Save Menu</button>
             </div>
         </div>
     </div>
 </div>
-@endsection
 
+{{-- FIXED BUTTON STYLES --}}
+<style>
+.action-btn-success,
+.action-btn-danger {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 6px 12px;
+    font-size: 13px;
+    line-height: 1.4;
+    min-width: 70px;
+    border-radius: 6px;
+    border: none;
+    white-space: nowrap;
+    cursor: pointer;
+}
+
+.action-btn-success {
+    background-color: #e6f7ee;
+    color: #198754;
+}
+
+.action-btn-danger {
+    background-color: #fdecea;
+    color: #dc3545;
+}
+</style>
+@endsection
