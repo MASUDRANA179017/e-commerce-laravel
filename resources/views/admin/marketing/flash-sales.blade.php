@@ -233,6 +233,9 @@
 @endsection
 
 @push('scripts')
+<!-- Include SweetAlert2 CDN if not already included -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
 <script>
 // Active countdown timer
 @if(isset($activeFlashSale) && $activeFlashSale)
@@ -304,15 +307,31 @@ document.getElementById('flashSaleForm').addEventListener('submit', function(e) 
     .then(res => res.json())
     .then(result => {
         if (result.success) {
-            alert(result.message);
-            location.reload();
+            Swal.fire({
+                icon: 'success',
+                title: 'Success!',
+                text: result.message || 'Flash sale saved successfully.',
+                timer: 2000,
+                timerProgressBar: true,
+                showConfirmButton: false
+            }).then(() => {
+                location.reload();
+            });
         } else {
-            alert(result.message || 'Error saving flash sale');
+            Swal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: result.message || 'Error saving flash sale.',
+            });
         }
     })
     .catch(err => {
         console.error(err);
-        alert('Error saving flash sale');
+        Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'Error saving flash sale.',
+        });
     });
 });
 
@@ -357,9 +376,22 @@ function toggleStatus(id) {
     .then(res => res.json())
     .then(result => {
         if (result.success) {
-            location.reload();
+            Swal.fire({
+                icon: 'success',
+                title: 'Success!',
+                text: result.message || 'Status updated successfully.',
+                timer: 2000,
+                timerProgressBar: true,
+                showConfirmButton: false
+            }).then(() => {
+                location.reload();
+            });
         } else {
-            alert(result.message || 'Error updating status');
+            Swal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: result.message || 'Error updating status.',
+            });
         }
     });
 }
@@ -378,9 +410,22 @@ function deleteFlashSale(id) {
     .then(res => res.json())
     .then(result => {
         if (result.success) {
-            location.reload();
+            Swal.fire({
+                icon: 'success',
+                title: 'Deleted!',
+                text: result.message || 'Flash sale deleted successfully.',
+                timer: 2000,
+                timerProgressBar: true,
+                showConfirmButton: false
+            }).then(() => {
+                location.reload();
+            });
         } else {
-            alert(result.message || 'Error deleting flash sale');
+            Swal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: result.message || 'Error deleting flash sale.',
+            });
         }
     });
 }
