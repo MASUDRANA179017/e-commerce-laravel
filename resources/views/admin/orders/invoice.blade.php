@@ -22,11 +22,11 @@
 </div>
 
 {{-- Printable invoice area --}}
-<div class="invoice-print-area">
-    <div class="row">
-        <div class="col-12">
-            <div class="card border-0">
-                <div class="card-body p-5">
+<div class="invoice-print-area d-flex flex-column" style="min-height: 100vh;">
+    <div class="row flex-grow-1">
+        <div class="col-12 d-flex flex-column">
+            <div class="card border-0 flex-grow-1 d-flex flex-column">
+                <div class="card-body p-5 flex-grow-1">
                     <!-- Invoice Header -->
                     <div class="row mb-5">
                         <div class="col-6">
@@ -60,7 +60,7 @@
                     </div>
 
                     <!-- Invoice Items -->
-                    <div class="table-responsive mb-4">
+                    <div class="table-responsive invoice-table-container mb-4">
                         <table class="table table-bordered">
                             <thead class="bg-light">
                                 <tr>
@@ -106,22 +106,22 @@
                             </tfoot>
                         </table>
                     </div>
-
-                    <!-- Notes -->
-                    <div class="row">
-                        <div class="col-8">
-                            <h6 class="fw-bold">Notes:</h6>
-                            <p class="text-muted">
-                                {{ $order->notes ?? 'Thank you for your purchase. Please make payment within 7 days.' }}
-                            </p>
-                        </div>
-                        <div class="col-4 text-end">
-                            <p class="mb-0"><strong>Payment Method:</strong> {{ ucfirst($order->payment_method) }}</p>
-                            <p class="mb-0"><strong>Payment Status:</strong> {{ ucfirst($order->payment_status) }}</p>
-                        </div>
-                    </div>
-
                 </div>
+
+                {{-- Notes and Payment info fixed at bottom --}}
+                <div class="card-footer bg-white mt-auto d-print-flex justify-content-between flex-wrap">
+                    <div class="col-8">
+                        <h6 class="fw-bold">Notes:</h6>
+                        <p class="text-muted mb-0">
+                            {{ $order->notes ?? 'Thank you for your purchase. Please make payment within 7 days.' }}
+                        </p>
+                    </div>
+                    <div class="col-4 text-end">
+                        <p class="mb-0"><strong>Payment Method:</strong> {{ ucfirst($order->payment_method) }}</p>
+                        <p class="mb-0"><strong>Payment Status:</strong> {{ ucfirst($order->payment_status) }}</p>
+                    </div>
+                </div>
+
             </div>
         </div>
     </div>
@@ -149,6 +149,32 @@
         top: 0;
         width: 100%;
         background: #fff;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+    }
+
+    /* Flex container to push footer to bottom */
+    .card {
+        border: none !important;
+        box-shadow: none !important;
+        display: flex;
+        flex-direction: column;
+        flex-grow: 1;
+    }
+
+    .card-body {
+        flex-grow: 1;
+    }
+
+    .card-footer {
+        margin-top: auto;
+        padding-top: 1rem;
+        padding-bottom: 1rem;
+        border-top: 1px solid #ddd;
+        display: flex !important;
+        justify-content: space-between;
+        flex-wrap: wrap;
     }
 
     /* Hide admin UI */
@@ -156,15 +182,28 @@
         display: none !important;
     }
 
-    /* Remove card shadows and borders */
-    .card {
-        border: none !important;
-        box-shadow: none !important;
-    }
-
     @page {
         size: A4;
         margin: 12mm;
+    }
+}
+
+/* Light shadow box around invoice items table */
+.invoice-table-container {
+    background: #fff;
+    padding: 1rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    border: 1px solid #e0e0e0;
+}
+
+/* Remove shadows and background for print */
+@media print {
+    .invoice-table-container {
+        box-shadow: none !important;
+        border: none !important;
+        padding: 0;
+        background: transparent !important;
     }
 }
 </style>
