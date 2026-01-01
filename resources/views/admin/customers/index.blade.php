@@ -77,7 +77,7 @@
             </div>
             <div class="card-body p-0">
                 <div class="table-responsive">
-                    <table class="table table-hover mb-0">
+                    <table id="customers-table" class="table table-hover mb-0" style="width:100%">
                         <thead class="bg-light">
                             <tr>
                                 <th class="ps-3">
@@ -93,53 +93,7 @@
                                 <th class="text-end pe-3">Actions</th>
                             </tr>
                         </thead>
-                        <tbody>
-                            @forelse($customers ?? [] as $customer)
-                            <tr>
-                                <td class="ps-3">
-                                    <input type="checkbox" class="form-check-input">
-                                </td>
-                                <td>
-                                    <div class="d-flex align-items-center gap-2">
-                                        <div class="wh-40 rounded-circle bg-primary bg-opacity-10 d-flex align-items-center justify-content-center">
-                                            <span class="text-primary fw-bold">{{ strtoupper(substr($customer->name, 0, 1)) }}</span>
-                                        </div>
-                                        <span class="fw-medium">{{ $customer->name }}</span>
-                                    </div>
-                                </td>
-                                <td>{{ $customer->email }}</td>
-                                <td>{{ $customer->phone ?? '-' }}</td>
-                                <td>0</td>
-                                <td>৳0.00</td>
-                                <td>
-                                    <span class="qbit-badge-success"><i class="bx bx-check-circle"></i> Active</span>
-                                </td>
-                                <td>{{ $customer->created_at->format('M d, Y') }}</td>
-                                <td class="text-end pe-3">
-                                    <div class="d-flex align-items-center justify-content-end gap-1">
-                                        <a href="{{ route('admin.customers.show', $customer->id) }}" class="action-btn-info" title="View Details"><i class="fas fa-eye"></i></a>
-                                        <a href="#" class="action-btn-success btn-edit" data-id="{{ $customer->id }}" title="Edit"><i class="fas fa-edit"></i></a>
-                                        <form action="{{ route('admin.customers.destroy', $customer->id) }}" method="POST" class="delete-customer-form" style="display:inline-block;">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit" class="action-btn-danger btn-delete btn btn-link p-0" title="Delete">
-                                                <i class="fas fa-trash"></i>
-                                            </button>
-                                        </form>
-                                    </div>
-                                </td>
-                            </tr>
-                            @empty
-                            <tr>
-                                <td colspan="9" class="text-center py-5">
-                                    <div class="text-muted">
-                                        <span class="material-symbols-outlined fs-1 d-block mb-2">group</span>
-                                        <p class="mb-0">No customers found</p>
-                                    </div>
-                                </td>
-                            </tr>
-                            @endforelse
-                        </tbody>
+                        <tbody></tbody>
                     </table>
                 </div>
             </div>
@@ -152,6 +106,98 @@
     </div>
 </div>
 
+<script>
+    (function(){
+        var csrf = document.querySelector('meta[name="csrf-token"]')
+            ? document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+            : '';
+
+        function clearErrors(form){
+            form.querySelectorAll('.ajax-error').forEach(function(el){ el.remove(); });
+            form.querySelectorAll('.is-invalid').forEach(function(el){ el.classList.remove('is-invalid'); });
+        }
+
+        function showFieldErrors(form, errors){
+            Object.keys(errors).forEach(function(field){
+                var input = form.querySelector('[name="'+field+'"]') || form.querySelector('[name="'+field+'[]"]');
+                if (!input) return;
+                input.classList.add('is-invalid');
+                var err = document.createElement('div');
+                err.className = 'invalid-feedback ajax-error';
+                err.innerText = errors[field][0];
+                if (input.parentNode) input.parentNode.appendChild(err);
+            });
+        }
+
+        async function ajaxSubmit(form){
+            clearErrors(form);
+            var btn = form.querySelector('button[type=submit]');
+            if (btn) btn.disabled = true;
+            var formData = new FormData(form);
+            var method = (form.getAttribute('method') || 'POST').toUpperCase();
+            var action = form.getAttribute('action');
+
+            var opts = {
+                method: method,
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'X-CSRF-TOKEN': csrf
+                },
+                body: formData
+            };
+
+            try {
+                var res = await fetch(action, opts);
+                if (res.status === 422) {
+                    var json = await res.json();
+                    if (json.errors) showFieldErrors(form, json.errors);
+                } else if (res.ok) {
+                    // success
+                    var modalEl = form.closest('.modal');
+                    if (modalEl) {
+                        try { // Bootstrap 5
+                            if (typeof bootstrap !== 'undefined') {
+                                var inst = bootstrap.Modal.getInstance(modalEl) || new bootstrap.Modal(modalEl);
+                                inst.hide();
+                            } else if (window.jQuery) {
+                                $(modalEl).modal('hide');
+                            }
+                        } catch (e) { console.warn(e); }
+                    }
+                    form.reset();
+                    try {
+                        if (window.customersTable && typeof window.customersTable.ajax.reload === 'function') {
+                            window.customersTable.ajax.reload(null, false);
+                        } else if (window.$ && window.$.fn && window.$('#customers-table').DataTable) {
+                            window.$('#customers-table').DataTable().ajax.reload(null, false);
+                        }
+                    } catch (e) { console.warn('Could not reload DataTable', e); }
+                } else {
+                    var txt = await res.text();
+                    console.error('Unexpected response', res.status, txt);
+                }
+            } catch (err) {
+                console.error('Request failed', err);
+            } finally {
+                if (btn) btn.disabled = false;
+            }
+        }
+
+        // Intercept submits inside customer modals (add/edit). Works for dynamically-loaded edit form too.
+        document.addEventListener('submit', function(e){
+            var form = e.target;
+            if (!form) return;
+            if (form.closest('#addCustomerModal') || form.closest('#editCustomerModal')) {
+                e.preventDefault();
+                ajaxSubmit(form);
+            }
+        });
+
+        // optional: attach to add form directly if present on page
+        var addForm = document.getElementById('addCustomerForm');
+        if (addForm) addForm.setAttribute('data-ajax', '1');
+    })();
+</script>
 <!-- Add Customer Modal (loads create page in iframe) -->
 <div class="modal fade" id="addCustomerModal" tabindex="-1" aria-labelledby="addCustomerModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-xl modal-dialog-centered">
@@ -161,10 +207,10 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <form action="{{ route('admin.customers.store') }}" method="POST">
+                    <form id="addCustomerForm" action="{{ route('admin.customers.store') }}" method="POST">
                     @csrf
                     <div class="p-3">
-                        @include('admin.customers._form_fields')
+                        @include('admin.customers._form_fields', ['isEdit' => false])
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -189,7 +235,7 @@
                     @csrf
                     @method('PUT')
                     <div class="p-3">
-                        @include('admin.customers._form_fields')
+                        @include('admin.customers._form_fields', ['isEdit' => true])
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -207,47 +253,80 @@
 document.addEventListener('DOMContentLoaded', function(){
     var baseUrl = "{{ url('admin/customers') }}";
 
-    // Edit button opens modal and populates fields
-    document.querySelectorAll('.btn-edit').forEach(function(btn){
-        btn.addEventListener('click', function(e){
-            e.preventDefault();
-            var id = this.getAttribute('data-id');
-            if(!id) return;
-            fetch(baseUrl + '/' + id, { headers: { 'Accept': 'application/json' } })
-                .then(function(resp){ return resp.json(); })
-                .then(function(json){
-                    var c = json.customer;
-                    var form = document.getElementById('editCustomerForm');
-                    form.action = baseUrl + '/' + id;
-                    ['name','email','phone','address','zipcode','note','total_spent'].forEach(function(f){
-                        var el = form.querySelector('[name="'+f+'"]'); if(el) el.value = c[f] ?? '';
-                    });
-                    var pw = form.querySelector('[name="password"]'); if(pw) pw.value = '';
-                    var isActive = form.querySelector('[name="is_active"]'); if(isActive) isActive.checked = !!c.is_active;
-                    var modal = new bootstrap.Modal(document.getElementById('editCustomerModal'));
-                    modal.show();
-                }).catch(function(){ alert('Could not load customer data.'); });
-        });
+    // Initialize DataTable (Yajra server-side)
+    var customersTable = $('#customers-table').DataTable({
+        processing: true,
+        serverSide: true,
+        ajax: baseUrl + '/data',
+        columns: [
+            { data: null, orderable: false, searchable: false, render: function(){ return '<input type="checkbox" class="form-check-input">'; } },
+            { data: 'name', name: 'name' },
+            { data: 'email', name: 'email' },
+            { data: 'phone', name: 'phone' },
+            { data: 'orders', orderable: false, searchable: false },
+            { data: 'total_spent', name: 'total_spent' },
+            { data: 'is_active', name: 'is_active', render: function(data){ return data ? '<span class="qbit-badge-success"><i class="bx bx-check-circle"></i> Active</span>' : '<span class="qbit-badge-danger">Inactive</span>'; } },
+            { data: 'created_at', name: 'created_at' },
+            { data: 'actions', orderable: false, searchable: false }
+        ],
+        order: [[7, 'desc']],
+        drawCallback: function(){
+            // reattach handlers for edit/delete after table draw
+            attachRowHandlers();
+        }
     });
 
-    // Delete using SweetAlert2
-    document.querySelectorAll('.delete-customer-form').forEach(function(form){
-        form.addEventListener('submit', function(e){
-            e.preventDefault();
-            var frm = this;
-            if (typeof Swal === 'undefined') {
-                if (confirm('Are you sure you want to delete this customer?')) frm.submit();
-                return;
-            }
-            Swal.fire({
-                title: 'Are you sure?',
-                text: 'This cannot be undone.',
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonText: 'Yes, delete it'
-            }).then(function(result){ if(result.isConfirmed) frm.submit(); });
+    // attach handlers for edit/delete (will be called after draw)
+    function attachRowHandlers(){
+        document.querySelectorAll('.btn-edit').forEach(function(btn){
+            btn.removeEventListener('click', editHandler);
+            btn.addEventListener('click', editHandler);
         });
-    });
+
+        document.querySelectorAll('.delete-customer-form').forEach(function(form){
+            form.removeEventListener('submit', deleteHandler);
+            form.addEventListener('submit', deleteHandler);
+        });
+    }
+
+    function editHandler(e){
+        e.preventDefault();
+        var id = this.getAttribute('data-id');
+        if(!id) return;
+        fetch(baseUrl + '/' + id, { headers: { 'Accept': 'application/json' } })
+            .then(function(resp){ return resp.json(); })
+            .then(function(json){
+                var c = json.customer;
+                var form = document.getElementById('editCustomerForm');
+                form.action = baseUrl + '/' + id;
+                ['name','email','phone','address','zipcode','note','total_spent'].forEach(function(f){
+                    var el = form.querySelector('[name="'+f+'"]'); if(el) el.value = c[f] ?? '';
+                });
+                var pw = form.querySelector('[name="password"]'); if(pw) pw.value = '';
+                var isActive = form.querySelector('[name="is_active"]'); if(isActive) isActive.checked = !!c.is_active;
+                var modal = new bootstrap.Modal(document.getElementById('editCustomerModal'));
+                modal.show();
+            }).catch(function(){ alert('Could not load customer data.'); });
+    }
+
+    function deleteHandler(e){
+        e.preventDefault();
+        var frm = this;
+        if (typeof Swal === 'undefined') {
+            if (confirm('Are you sure you want to delete this customer?')) frm.submit();
+            return;
+        }
+        Swal.fire({
+            title: 'Are you sure?',
+            text: 'This cannot be undone.',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Yes, delete it'
+        }).then(function(result){ if(result.isConfirmed) frm.submit(); });
+    }
+
+    // initial attach
+    attachRowHandlers();
 });
 </script>
 @endpush

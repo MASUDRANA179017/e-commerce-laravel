@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Customer;
 use Illuminate\Http\Request;
+use Yajra\DataTables\Facades\DataTables;
 
 class CustomerController extends Controller
 {
@@ -17,8 +18,29 @@ class CustomerController extends Controller
 
     public function getData(Request $request)
     {
-        $customers = Customer::all();
-        return response()->json(['data' => $customers]);
+        $query = Customer::query();
+
+        return DataTables::of($query)
+            ->addColumn('orders', function ($c) {
+                return 0;
+            })
+            ->addColumn('total_spent', function ($c) {
+                return number_format($c->total_spent, 2);
+            })
+            ->addColumn('is_active', function ($c) {
+                return $c->is_active ? 1 : 0;
+            })
+            ->addColumn('actions', function ($c) {
+                $view = '<a href="' . route('admin.customers.show', $c->id) . '" class="action-btn-info" title="View Details"><i class="fas fa-eye"></i></a> ';
+                $view .= '<a href="#" class="action-btn-success btn-edit" data-id="' . $c->id . '" title="Edit"><i class="fas fa-edit"></i></a> ';
+                $view .= '<form action="' . route('admin.customers.destroy', $c->id) . '" method="POST" class="delete-customer-form" style="display:inline-block;">' . csrf_field() . method_field('DELETE') . '<button type="submit" class="action-btn-danger btn-delete btn btn-link p-0" title="Delete"><i class="fas fa-trash"></i></button></form>';
+                return $view;
+            })
+            ->rawColumns(['actions'])
+            ->editColumn('created_at', function ($c) {
+                return $c->created_at ? $c->created_at->format('M d, Y') : '';
+            })
+            ->make(true);
     }
 
     public function create()
@@ -33,7 +55,7 @@ class CustomerController extends Controller
             'email' => 'required|email|unique:customers,email',
             'phone' => 'required|string|max:50',
             'address' => 'required|string',
-            'password' => 'required|string|min:6',
+            'password' => 'required|string|min:6|confirmed',
             'zipcode' => 'nullable|string|max:50',
             'note' => 'nullable|string',
             'total_spent' => 'nullable|numeric',
@@ -55,6 +77,9 @@ class CustomerController extends Controller
         }
 
         Customer::create($data);
+        if ($request->ajax() || $request->wantsJson()) {
+            return response()->json(['success' => true, 'customer' => $data], 201);
+        }
 
         return redirect()->route('admin.customers.index')->with('success', 'Customer created successfully');
     }
@@ -82,7 +107,7 @@ class CustomerController extends Controller
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:customers,email,' . $cust->id,
             'phone' => 'required|string|max:50',
-            'password' => 'nullable|string|min:6',
+            'password' => 'nullable|string|min:6|confirmed',
             'address' => 'required|string',
             'zipcode' => 'nullable|string|max:50',
             'note' => 'nullable|string',
@@ -98,13 +123,17 @@ class CustomerController extends Controller
 
         $cust->update($data);
 
+        if ($request->ajax() || $request->wantsJson()) {
+            return response()->json(['success' => true, 'customer' => $cust]);
+        }
+
         return redirect()->route('admin.customers.index')->with('success', 'Customer updated successfully');
     }
 
     public function destroy($customer)
     {
         Customer::findOrFail($customer)->delete();
-        return response()->json(['success' => true]);
+        return redirect()->route('admin.customers.index')->with('success', 'Customer deleted successfully');
     }
 
     public function toggleStatus($customer)
