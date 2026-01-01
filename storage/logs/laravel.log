@@ -73,3 +73,4 @@
   'part' => 'contact_info',
   '_method' => 'PUT',
 )  
+[2026-01-01 06:17:33] local.INFO: Login attempt for user: {"attributes":{},"request":{},"query":{},"server":{},"files":{},"cookies":{},"headers":{}}  

@@ -1,1 +1,45 @@
-node_modules
+## Node
+node_modules/
+
+## Composer
+/vendor/
+
+## Laravel / PHP
+.env
+.env.*.local
+/public/storage
+/storage/*.key
+/storage/debugbar
+/bootstrap/cache/*.php
+
+## IDEs and editors
+.idea/
+.vscode/
+.vscode/*
+
+## Logs and runtime
+/storage/logs/
+/storage/framework/cache/data/
+/storage/framework/sessions/
+/storage/framework/views/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+.phpunit.result.cache
+
+## OS files
+.DS_Store
+Thumbs.db
+
+## Misc
+.sass-cache/
+.cache/
+.parcel-cache/
+/.pnp.*
+/.env.backup
+
+# Keep the default Laravel .gitignore behaviour: allow empty storage & bootstrap/cache
+!/storage/.gitignore
+!/bootstrap/cache/.gitignore
+
