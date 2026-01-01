@@ -22,41 +22,7 @@
                 <form action="{{ route('admin.customers.update', $customer->id ?? 0) }}" method="POST">
                     @csrf
                     @method('PUT')
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
-                            <label class="form-label">Full Name <span class="text-danger">*</span></label>
-                            <input type="text" name="name" class="form-control" value="{{ $customer->name ?? '' }}" required>
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <label class="form-label">Email <span class="text-danger">*</span></label>
-                            <input type="email" name="email" class="form-control" value="{{ $customer->email ?? '' }}" required>
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <label class="form-label">Customer Group</label>
-                            <select name="customer_group_id" class="form-select">
-                                <option value="">None</option>
-                                @foreach($groups as $group)
-                                    <option value="{{ $group->id }}" {{ $customer->customer_group_id == $group->id ? 'selected' : '' }}>
-                                        {{ $group->name }} ({{ $group->discount_percentage }}%)
-                                    </option>
-                                @endforeach
-                            </select>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
-                            <label class="form-label">Phone</label>
-                            <input type="text" name="phone" class="form-control" value="{{ $customer->phone ?? '' }}">
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <label class="form-label">New Password</label>
-                            <input type="password" name="password" class="form-control" placeholder="Leave blank to keep current">
-                        </div>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Address</label>
-                        <textarea name="address" class="form-control" rows="3">{{ $customer->address ?? '' }}</textarea>
-                    </div>
+                    @include('admin.customers._form_fields')
                     <button type="submit" class="create-btn-base">
                         <i class="fas fa-save me-2"></i>Update Customer
                     </button>

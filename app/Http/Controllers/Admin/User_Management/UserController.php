@@ -47,9 +47,9 @@ class UserController extends Controller
                 });
             }
 
-            // Apply status filter if status exists
+            // Apply status filter if status exists (frontend sends `status`)
             if ($request->filled('status')) {
-                $query->where('status', $request->status);
+                $query->where('is_active', $request->status);
             }
 
             return DataTables::of($query)
@@ -75,7 +75,7 @@ class UserController extends Controller
                 })
 
                 ->addColumn('status', function ($row) {
-                    $checked = $row->status == 1 ? 'checked' : '';
+                    $checked = $row->is_active == 1 ? 'checked' : '';
                     return '<div class="form-check form-switch d-flex justify-content-center">
                             <input class="form-check-input status-toggle" type="checkbox" data-id="' . $row->id . '" ' . $checked . '>
                         </div>';
@@ -117,8 +117,8 @@ class UserController extends Controller
             'email'         => 'required|string|email|max:255|unique:users',
             'phone'         => 'nullable|string|max:20',
             'password'      => 'required|string|min:8|confirmed',
-            'department'    => 'nullable|string|max:255',
-            'designation'   => 'nullable|string|max:255',
+            'department'    => 'nullable|exists:departments,id',
+            'designation'   => 'nullable|exists:designations,id',
             'role'          => 'required|exists:roles,id',
             'profile_image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:800',
         ]);
@@ -134,18 +134,18 @@ class UserController extends Controller
             $avatarPath = uploadFile($request->file('profile_image'), 'users/images');
         }
 
-        // Create user
+        // Create user (map department/designation to *_id columns)
         $user = User::create([
-            'name'        => $request->full_name,
-            'username'    => $request->username,
-            'email'       => $request->email,
-            'phone'       => $request->phone,
-            'department'  => $request->department,   // ✅ plain column
-            'designation' => $request->designation,  // ✅ plain column
-            'address'     => $request->address,
-            'status'      => $request->status ?? 1,
-            'image'      => $avatarPath,
-            'password'    => Hash::make($request->password),
+            'name'           => $request->full_name,
+            'username'       => $request->username,
+            'email'          => $request->email,
+            'phone'          => $request->phone,
+            'department_id'  => $request->department,
+            'designation_id' => $request->designation,
+            'address'        => $request->address,
+            'is_active'      => $request->status ?? 1,
+            'image'          => $avatarPath,
+            'password'       => Hash::make($request->password),
         ]);
 
         // Assign Role
@@ -166,43 +166,64 @@ class UserController extends Controller
 
         $validator = Validator::make($request->all(), [
             'name'     => 'required|string|max:255',
-            'username'      => 'nullable|string|max:255|unique:users,username,' . $user->id,
-            'email'         => 'required|string|email|max:255|unique:users,email,' . $user->id,
-            'password'      => 'nullable|string|min:8|confirmed',
+            'username' => 'nullable|string|max:255|unique:users,username,' . $user->id,
+            'email'    => 'required|string|email|max:255|unique:users,email,' . $user->id,
+            'password' => 'nullable|string|min:8|confirmed',
             'department'    => 'nullable|string|max:255',
             'designation'   => 'nullable|string|max:255',
-            'role'          => 'required|exists:roles,id',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:800',
+            'role'     => 'required|exists:roles,id',
+            'image'    => 'nullable|image|mimes:jpeg,png,jpg,gif|max:800',
         ]);
 
         if ($validator->fails()) {
             return response()->json(['errors' => $validator->errors()], 422);
         }
 
+        // Handle profile image upload (if any)
         $avatarPath = $user->image;
-
         if ($request->hasFile('profile_image')) {
-            if ($user->avatar && Storage::disk('public')->exists($user->image)) {
+            if ($user->image && Storage::disk('public')->exists($user->image)) {
                 Storage::disk('public')->delete($user->image);
             }
-
             $avatarPath = uploadFile($request->file('profile_image'), 'users/images');
         }
 
-        // Update user
-        $user->update([
-            'name'        => $request->name,
-            'username'    => $request->username,
-            'email'       => $request->email,
-            'phone'       => $request->phone,
-            'department'  => $request->department,
-            'designation' => $request->designation,
-            'address'     => $request->address,
-            'image'       => $avatarPath,
-        ]);
-        
+        // Build update payload only from request keys that exist in the model's fillable
+        $fillable = $user->getFillable();
+        $updateData = [];
+        $skipKeys = ['password', 'password_confirmation', '_token', '_method', 'profile_image'];
+        foreach ($request->all() as $k => $v) {
+            if (in_array($k, $skipKeys, true)) continue;
+            if (in_array($k, $fillable, true)) {
+                $updateData[$k] = $v;
+            }
+        }
+
+        // Map front-end `status` to DB `is_active` when provided
+        if ($request->has('status')) {
+            $updateData['is_active'] = $request->input('status');
+        }
+
+        // Map department/designation to *_id columns when provided
+        if ($request->has('department')) {
+            $updateData['department_id'] = $request->input('department');
+        }
+        if ($request->has('designation')) {
+            $updateData['designation_id'] = $request->input('designation');
+        }
+
+        // Ensure uploaded image path is applied when file provided
+        if ($request->hasFile('profile_image')) {
+            $updateData['image'] = $avatarPath;
+        }
+
+        // Handle password separately (hash)
         if ($request->filled('password')) {
-            $user->update(['password' => Hash::make($request->password)]);
+            $updateData['password'] = Hash::make($request->password);
+        }
+
+        if (!empty($updateData)) {
+            $user->update($updateData);
         }
 
         // Sync Role
@@ -268,8 +289,9 @@ class UserController extends Controller
 
     public function show($id)
     {
-        $user = User::with('roles','departmentname')->find($id);
+        $user = User::with('roles', 'departmentname', 'designationname')->find($id);
         if ($user) {
+            $user->setAttribute('image_url', $user->image ? asset('storage/' . $user->image) : asset('assets/img/avatar-1.jpg'));
             return response()->json($user);
         }
         return response()->json(['error' => 'User not found.'], 404);
@@ -353,7 +375,7 @@ class UserController extends Controller
     public function changeStatus(Request $request, $id)
     {
         $user = User::findOrFail($id);
-        $user->status = $request->status; // 1 বা 0 আসবে
+        $user->is_active = $request->status; // 1 বা 0 আসবে
         $user->save();
 
         return response()->json([
@@ -377,7 +399,7 @@ class UserController extends Controller
             'linkedin' => 'nullable|url',
             'github'   => 'nullable|url',
             'portfolio'=> 'nullable|url',
-            'status'   => 'nullable|boolean',
+            'is_active'   => 'nullable|boolean',
 
             'recovery_email' => 'nullable|email|max:255',
             'recovery_phone' => 'nullable|string|max:20',
@@ -412,7 +434,7 @@ class UserController extends Controller
                 'linkedin' => $request->linkedin,
                 'github'   => $request->github,
                 'portfolio'=> $request->portfolio,
-                'status'   => 1,
+                'is_active'   => 1,
             ]
         );
 
@@ -421,7 +443,7 @@ class UserController extends Controller
             [
                 'recovery_email' => $request->recovery_email,
                 'recovery_phone' => $request->recovery_phone,
-                'status'         =>  1,
+                'is_active'         =>  1,
             ]
         );
 
@@ -451,7 +473,7 @@ class UserController extends Controller
             ['user_id' => $userId],
             [
                 'settings' => $settings,
-                'status'   => 1
+                'is_active'   => 1
             ]
         );
 

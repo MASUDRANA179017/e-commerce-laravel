@@ -24,8 +24,8 @@ class User extends Authenticatable
         'email',
         'address',
         'phone',
-        'department',
-        'designation',
+        'department_id',
+        'designation_id',
         'is_active',
         'password',
         'customer_group_id',
@@ -64,12 +64,28 @@ class User extends Authenticatable
 
     public function departmentname()
     {
-        return $this->belongsTo(Department::class, 'department');
+        return $this->belongsTo(Department::class, 'department_id');
     }
 
     public function designationname()
     {
-        return $this->belongsTo(Designation::class, 'designation');
+        return $this->belongsTo(Designation::class, 'designation_id');
+    }
+
+    // Backwards-compatible attributes used by existing front-end code
+    public function getDepartmentAttribute()
+    {
+        return $this->department_id;
+    }
+
+    public function getDesignationAttribute()
+    {
+        return $this->designation_id;
+    }
+
+    public function getStatusAttribute()
+    {
+        return $this->is_active;
     }
     // Relation with UserSocialInfo
     public function socialInfo()

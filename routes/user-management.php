@@ -33,7 +33,7 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
         Route::get('/{user}/show', 'show')->name('show'); // Get a single user's data for editing
         Route::get('/{user}', 'edit')->name('edit'); // Update a user's details
         Route::put('/{user}', 'update')->name('update'); // Update a user's details
-        Route::delete('/{user}', 'destroy')->name('destroy'); // Delete a user
+        Route::delete('/{user}', 'destroy')->middleware("permission:users.delete")->name('destroy'); // Delete a user
         Route::post('/{user}/roles', 'assignRoles')->name('assign.roles'); // Assign roles to a user
         Route::post('/assign-roles', 'assignRoles')->name('admin.users.assignRoles');
 

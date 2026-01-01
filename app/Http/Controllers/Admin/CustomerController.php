@@ -4,35 +4,43 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
-use App\Models\CustomerGroup;
 use Illuminate\Http\Request;
+use Yajra\DataTables\Facades\DataTables;
 
 class CustomerController extends Controller
 {
     public function index(Request $request)
     {
-        $query = User::withCount('orders')
-            ->withSum('orders', 'total')
-            ->latest();
-
-        if ($request->filled('search')) {
-            $search = $request->search;
-            $query->where(function($q) use ($search) {
-                $q->where('name', 'like', "%{$search}%")
-                  ->orWhere('email', 'like', "%{$search}%")
-                  ->orWhere('phone', 'like', "%{$search}%");
-            });
-        }
-
-        $customers = $query->paginate(20)->withQueryString();
-
+        // Get all users as customers (adjust query based on your actual user structure)
+        $customers = User::paginate(20);
         return view('admin.customers.index', compact('customers'));
     }
 
     public function getData(Request $request)
     {
-        $customers = User::all();
-        return response()->json(['data' => $customers]);
+        $query = Customer::query();
+
+        return DataTables::of($query)
+            ->addColumn('orders', function ($c) {
+                return 0;
+            })
+            ->addColumn('total_spent', function ($c) {
+                return number_format($c->total_spent, 2);
+            })
+            ->addColumn('is_active', function ($c) {
+                return $c->is_active ? 1 : 0;
+            })
+            ->addColumn('actions', function ($c) {
+                $view = '<a href="' . route('admin.customers.show', $c->id) . '" class="action-btn-info" title="View Details"><i class="fas fa-eye"></i></a> ';
+                $view .= '<a href="#" class="action-btn-success btn-edit" data-id="' . $c->id . '" title="Edit"><i class="fas fa-edit"></i></a> ';
+                $view .= '<form action="' . route('admin.customers.destroy', $c->id) . '" method="POST" class="delete-customer-form" style="display:inline-block;">' . csrf_field() . method_field('DELETE') . '<button type="submit" class="action-btn-danger btn-delete btn btn-link p-0" title="Delete"><i class="fas fa-trash"></i></button></form>';
+                return $view;
+            })
+            ->rawColumns(['actions'])
+            ->editColumn('created_at', function ($c) {
+                return $c->created_at ? $c->created_at->format('M d, Y') : '';
+            })
+            ->make(true);
     }
 
     public function create()
@@ -47,55 +55,53 @@ class CustomerController extends Controller
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users',
             'password' => 'required|min:8',
-            'customer_group_id' => 'nullable|exists:customer_groups,id',
         ]);
 
-        $username = explode('@', $request->email)[0];
-        if (User::where('username', $username)->exists()) {
-            $username .= rand(100, 999);
-        }
-
-        $user = User::create([
+        User::create([
             'name' => $request->name,
             'username' => $username,
             'email' => $request->email,
             'password' => bcrypt($request->password),
-            'is_active' => true,
-            'customer_group_id' => $request->customer_group_id,
+            'role' => 'customer',
         ]);
-        
-        $user->assignRole('customer');
 
         return redirect()->route('admin.customers.index')->with('success', 'Customer created successfully');
     }
 
     public function show($customer)
     {
-        $customer = User::findOrFail($customer);
+        $customer = Customer::findOrFail($customer);
+        if (request()->wantsJson() || request()->ajax()) {
+            return response()->json(['customer' => $customer]);
+        }
+
         return view('admin.customers.show', compact('customer'));
     }
 
     public function edit($customer)
     {
         $customer = User::findOrFail($customer);
-        $groups = CustomerGroup::where('is_active', true)->get();
-        return view('admin.customers.edit', compact('customer', 'groups'));
+        return view('admin.customers.edit', compact('customer'));
     }
 
     public function update(Request $request, $customer)
     {
-        $customer = User::findOrFail($customer);
-        
+        $cust = Customer::findOrFail($customer);
         $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email,' . $customer->id,
-            'customer_group_id' => 'nullable|exists:customer_groups,id',
         ]);
 
-        $customer->update($request->only(['name', 'email', 'customer_group_id']));
+        $customer->update($request->only(['name', 'email']));
 
         if ($request->filled('password')) {
-            $customer->update(['password' => bcrypt($request->password)]);
+            $data['password'] = \Hash::make($request->password);
+        }
+
+        $cust->update($data);
+
+        if ($request->ajax() || $request->wantsJson()) {
+            return response()->json(['success' => true, 'customer' => $cust]);
         }
 
         return redirect()->route('admin.customers.index')->with('success', 'Customer updated successfully');
@@ -103,14 +109,15 @@ class CustomerController extends Controller
 
     public function destroy($customer)
     {
-        User::findOrFail($customer)->delete();
-        return response()->json(['success' => true]);
+        Customer::findOrFail($customer)->delete();
+        return redirect()->route('admin.customers.index')->with('success', 'Customer deleted successfully');
     }
 
     public function toggleStatus($customer)
     {
-        $customer = User::findOrFail($customer);
-        $customer->update(['is_active' => !$customer->is_active]);
+        $cust = Customer::findOrFail($customer);
+        $cust->is_active = !$cust->is_active;
+        $cust->save();
         return response()->json(['success' => true]);
     }
 
@@ -156,6 +163,30 @@ class CustomerController extends Controller
     {
         CustomerGroup::findOrFail($group)->delete();
         return redirect()->back()->with('success', 'Customer group deleted successfully');
+    }
+       public function login(Request $request)
+    {
+        log::info('Customer login attempt', ['email' => $request->input('email')]);
+        $credentials = $request->validate([
+            'email' => 'required|email',
+            'password' => 'required'
+        ]);
+
+        if (Auth::guard('customer')->attempt($credentials)) {
+            $request->session()->regenerate();
+            return redirect()->route('customer.dashboard');
+        }
+
+        return back()->withErrors(['email' => 'Invalid credentials']);
+    }
+
+    public function logout(Request $request)
+    {
+        Auth::guard('customer')->logout();
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+
+        return redirect()->route('customer.login');
     }
 }
 
