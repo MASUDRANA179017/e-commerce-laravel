@@ -173,6 +173,7 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
     Route::prefix('settings')->name('settings.')->group(function () {
         Route::get('/', [SettingsController::class, 'index'])->name('index');
         Route::post('/general', [SettingsController::class, 'updateGeneral'])->name('general');
+        Route::post('/store', [SettingsController::class, 'updateStoreInfo'])->name('store');
         Route::post('/email', [SettingsController::class, 'updateEmail'])->name('email');
         Route::post('/payment', [SettingsController::class, 'updatePayment'])->name('payment');
         Route::post('/shipping', [SettingsController::class, 'updateShipping'])->name('shipping');

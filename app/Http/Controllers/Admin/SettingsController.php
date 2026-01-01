@@ -17,8 +17,71 @@ class SettingsController extends Controller
 
     public function updateGeneral(Request $request)
     {
-        // Update general settings
+        $request->validate([
+            'system_name' => 'required|string|max:255',
+            'login_tagline' => 'nullable|string|max:255',
+            'footer_text' => 'nullable|string',
+            'copyright_text' => 'nullable|string',
+        ]);
+
+        $settings = BusinessSetup::first();
+        if (!$settings) {
+            return response()->json(['error' => 'Business Setup not found'], 404);
+        }
+
+        $settings->update($request->only([
+            'system_name',
+            'login_tagline',
+            'footer_text',
+            'copyright_text',
+        ]));
+
         return response()->json(['success' => true, 'message' => 'General settings updated']);
+    }
+
+    public function updateStoreInfo(Request $request)
+    {
+        $request->validate([
+            'company_name' => 'nullable|string|max:255',
+            'street_address' => 'nullable|string',
+            'official_contact_number' => 'nullable|string',
+            'whatsapp_number' => 'nullable|string',
+            'email_address' => 'nullable|string|email',
+            'logo' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'favicon' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+        ]);
+
+        $settings = BusinessSetup::first();
+        if (!$settings) {
+            return response()->json(['error' => 'Business Setup not found'], 404);
+        }
+
+        $data = $request->only([
+            'company_name',
+            'street_address',
+            'official_contact_number',
+            'whatsapp_number',
+            'email_address',
+        ]);
+
+        // Handle File Uploads
+        if ($request->hasFile('logo')) {
+            if ($settings->logo && \Storage::disk('public')->exists($settings->logo)) {
+                \Storage::disk('public')->delete($settings->logo);
+            }
+            $data['logo'] = $request->file('logo')->store('business_setup', 'public');
+        }
+
+        if ($request->hasFile('favicon')) {
+            if ($settings->favicon && \Storage::disk('public')->exists($settings->favicon)) {
+                \Storage::disk('public')->delete($settings->favicon);
+            }
+            $data['favicon'] = $request->file('favicon')->store('business_setup', 'public');
+        }
+
+        $settings->update($data);
+
+        return response()->json(['success' => true, 'message' => 'Store information updated']);
     }
 
     public function updateEmail(Request $request)
@@ -79,7 +142,25 @@ class SettingsController extends Controller
 
     public function updateSocial(Request $request)
     {
-        // Update social media settings
+        $request->validate([
+            'facebook_url' => 'nullable|url',
+            'twitter_url' => 'nullable|url',
+            'linkedin_url' => 'nullable|url',
+            'youtube_url' => 'nullable|url',
+        ]);
+
+        $settings = BusinessSetup::first();
+        if (!$settings) {
+            return response()->json(['error' => 'Business Setup not found'], 404);
+        }
+
+        $settings->update($request->only([
+            'facebook_url',
+            'twitter_url',
+            'linkedin_url',
+            'youtube_url',
+        ]));
+
         return response()->json(['success' => true, 'message' => 'Social settings updated']);
     }
 

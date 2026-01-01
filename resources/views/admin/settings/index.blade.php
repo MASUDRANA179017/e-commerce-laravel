@@ -56,16 +56,25 @@
                         <h5 class="mb-0 fw-bold">General Settings</h5>
                     </div>
                     <div class="card-body">
-                        <form>
+                        <form id="generalSettingsForm">
+                            @csrf
                             <div class="row">
                                 <div class="col-md-6 mb-3">
                                     <label class="form-label">Site Name</label>
-                                    <input type="text" class="form-control" value="GrowUp E-Commerce">
+                                    <input type="text" class="form-control" name="system_name" value="{{ $settings->system_name ?? 'GrowUp E-Commerce' }}">
                                 </div>
                                 <div class="col-md-6 mb-3">
-                                    <label class="form-label">Tagline</label>
-                                    <input type="text" class="form-control" value="Your Ultimate Shopping Destination">
+                                    <label class="form-label">Login Tagline</label>
+                                    <input type="text" class="form-control" name="login_tagline" value="{{ $settings->login_tagline ?? 'Your Ultimate Shopping Destination' }}">
                                 </div>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Footer Text (About Us)</label>
+                                <textarea class="form-control" name="footer_text" rows="3">{{ $settings->footer_text ?? '' }}</textarea>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Copyright Text</label>
+                                <input type="text" class="form-control" name="copyright_text" value="{{ $settings->copyright_text ?? '' }}">
                             </div>
                             <div class="row">
                                 <div class="col-md-6 mb-3">
@@ -103,29 +112,50 @@
                         <h5 class="mb-0 fw-bold">Store Information</h5>
                     </div>
                     <div class="card-body">
-                        <form>
+                        <form id="storeSettingsForm" enctype="multipart/form-data">
+                            @csrf
                             <div class="row mb-3">
                                 <div class="col-md-6">
                                     <label class="form-label">Logo</label>
-                                    <input type="file" class="form-control">
+                                    <input type="file" class="form-control" name="logo">
+                                    @if(isset($settings->logo))
+                                        <div class="mt-2">
+                                            <img src="{{ asset('storage/' . $settings->logo) }}" alt="Logo" height="50">
+                                        </div>
+                                    @endif
                                 </div>
                                 <div class="col-md-6">
                                     <label class="form-label">Favicon</label>
-                                    <input type="file" class="form-control">
+                                    <input type="file" class="form-control" name="favicon">
+                                    @if(isset($settings->favicon))
+                                        <div class="mt-2">
+                                            <img src="{{ asset('storage/' . $settings->favicon) }}" alt="Favicon" height="30">
+                                        </div>
+                                    @endif
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <div class="col-md-12">
+                                     <label class="form-label">Company Name</label>
+                                     <input type="text" class="form-control" name="company_name" value="{{ $settings->company_name ?? '' }}">
                                 </div>
                             </div>
                             <div class="mb-3">
                                 <label class="form-label">Store Address</label>
-                                <textarea class="form-control" rows="2">123 Commerce Street, Dhaka-1000, Bangladesh</textarea>
+                                <textarea class="form-control" name="street_address" rows="2">{{ $settings->street_address ?? '' }}</textarea>
                             </div>
                             <div class="row">
                                 <div class="col-md-6 mb-3">
                                     <label class="form-label">Phone</label>
-                                    <input type="text" class="form-control" value="+880 1713-269591">
+                                    <input type="text" class="form-control" name="official_contact_number" value="{{ is_array($settings->official_contact_number) ? ($settings->official_contact_number[0] ?? '') : ($settings->official_contact_number ?? '') }}">
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">WhatsApp</label>
+                                    <input type="text" class="form-control" name="whatsapp_number" value="{{ is_array($settings->whatsapp_number) ? ($settings->whatsapp_number[0] ?? '') : ($settings->whatsapp_number ?? '') }}">
                                 </div>
                                 <div class="col-md-6 mb-3">
                                     <label class="form-label">Email</label>
-                                    <input type="email" class="form-control" value="info@growup.com">
+                                    <input type="email" class="form-control" name="email_address" value="{{ is_array($settings->email_address) ? ($settings->email_address[0] ?? '') : ($settings->email_address ?? '') }}">
                                 </div>
                             </div>
                             <button type="submit" class="create-btn-base">Save Changes</button>
@@ -318,22 +348,23 @@
                         <h5 class="mb-0 fw-bold">Social Media Links</h5>
                     </div>
                     <div class="card-body">
-                        <form>
+                        <form id="socialSettingsForm">
+                            @csrf
                             <div class="mb-3">
                                 <label class="form-label"><i class="fab fa-facebook text-primary me-2"></i>Facebook</label>
-                                <input type="url" class="form-control" placeholder="https://facebook.com/yourpage">
+                                <input type="url" class="form-control" name="facebook_url" value="{{ $settings->facebook_url ?? '' }}" placeholder="https://facebook.com/yourpage">
                             </div>
                             <div class="mb-3">
                                 <label class="form-label"><i class="fab fa-twitter text-info me-2"></i>Twitter</label>
-                                <input type="url" class="form-control" placeholder="https://twitter.com/yourpage">
+                                <input type="url" class="form-control" name="twitter_url" value="{{ $settings->twitter_url ?? '' }}" placeholder="https://twitter.com/yourpage">
                             </div>
                             <div class="mb-3">
-                                <label class="form-label"><i class="fab fa-instagram text-danger me-2"></i>Instagram</label>
-                                <input type="url" class="form-control" placeholder="https://instagram.com/yourpage">
+                                <label class="form-label"><i class="fab fa-linkedin text-primary me-2"></i>LinkedIn</label>
+                                <input type="url" class="form-control" name="linkedin_url" value="{{ $settings->linkedin_url ?? '' }}" placeholder="https://linkedin.com/yourpage">
                             </div>
                             <div class="mb-3">
                                 <label class="form-label"><i class="fab fa-youtube text-danger me-2"></i>YouTube</label>
-                                <input type="url" class="form-control" placeholder="https://youtube.com/yourchannel">
+                                <input type="url" class="form-control" name="youtube_url" value="{{ $settings->youtube_url ?? '' }}" placeholder="https://youtube.com/yourchannel">
                             </div>
                             <button type="submit" class="create-btn-base">Save Changes</button>
                         </form>
@@ -377,42 +408,52 @@
 
 @push('scripts')
 <script>
-    document.getElementById('emailSettingsForm')?.addEventListener('submit', function(e) {
-        e.preventDefault();
-        const formData = new FormData(this);
-        fetch('{{ route("admin.settings.email") }}', {
-            method: 'POST',
-            headers: {
-                'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                'Accept': 'application/json'
-            },
-            body: formData
-        })
-        .then(res => res.json())
-        .then(data => {
-            if(data.success) {
-                if(typeof toastr !== 'undefined') {
-                    toastr.success(data.message);
+    function handleFormSubmit(formId, route) {
+        document.getElementById(formId)?.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const formData = new FormData(this);
+            fetch(route, {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                    'Accept': 'application/json'
+                },
+                body: formData
+            })
+            .then(res => res.json())
+            .then(data => {
+                if(data.success) {
+                    if(typeof toastr !== 'undefined') {
+                        toastr.success(data.message);
+                    } else {
+                        alert(data.message);
+                    }
+                    // Reload page if logo/favicon updated to show changes immediately if needed, 
+                    // or just rely on the user refreshing. 
+                    // For store settings which might change logo, a reload might be nice but let's stick to toastr for now.
                 } else {
-                    alert(data.message);
+                    if(typeof toastr !== 'undefined') {
+                        toastr.error(data.message || 'Something went wrong');
+                    } else {
+                        alert(data.message || 'Something went wrong');
+                    }
                 }
-            } else {
+            })
+            .catch(err => {
+                console.error(err);
                 if(typeof toastr !== 'undefined') {
-                    toastr.error(data.message || 'Something went wrong');
+                    toastr.error('Server Error');
                 } else {
-                    alert(data.message || 'Something went wrong');
+                    alert('Server Error');
                 }
-            }
-        })
-        .catch(err => {
-            console.error(err);
-            if(typeof toastr !== 'undefined') {
-                toastr.error('Server Error');
-            } else {
-                alert('Server Error');
-            }
+            });
         });
-    });
+    }
+
+    handleFormSubmit('generalSettingsForm', '{{ route("admin.settings.general") }}');
+    handleFormSubmit('storeSettingsForm', '{{ route("admin.settings.store") }}');
+    handleFormSubmit('emailSettingsForm', '{{ route("admin.settings.email") }}');
+    handleFormSubmit('socialSettingsForm', '{{ route("admin.settings.social") }}');
 </script>
 @endpush
 
