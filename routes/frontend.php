@@ -8,6 +8,7 @@ use App\Http\Controllers\Frontend\WishlistController;
 use App\Http\Controllers\Frontend\CheckoutController;
 use App\Http\Controllers\Frontend\ContactController;
 use App\Http\Controllers\Frontend\FlashSaleController;
+use App\Http\Controllers\Admin\CustomerController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -91,5 +92,13 @@ Route::get('/faq', function () {
 Route::prefix('blog')->name('blog.')->group(function () {
     Route::get('/', [\App\Http\Controllers\Frontend\BlogController::class, 'index'])->name('index');
     Route::get('/{slug}', [\App\Http\Controllers\Frontend\BlogController::class, 'show'])->name('show');
+});
+Route::prefix('customer')->name('customer.')->group(function () {
+
+    Route::post('login', [CustomerController::class, 'login']);
+
+    Route::middleware('auth:customer')->group(function () {
+        Route::post('logout', [CustomerController::class, 'logout'])->name('logout');
+    });
 });
 

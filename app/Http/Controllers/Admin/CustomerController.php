@@ -166,5 +166,29 @@ class CustomerController extends Controller
         // Delete customer group logic
         return response()->json(['success' => true]);
     }
+       public function login(Request $request)
+    {
+        log::info('Customer login attempt', ['email' => $request->input('email')]);
+        $credentials = $request->validate([
+            'email' => 'required|email',
+            'password' => 'required'
+        ]);
+
+        if (Auth::guard('customer')->attempt($credentials)) {
+            $request->session()->regenerate();
+            return redirect()->route('customer.dashboard');
+        }
+
+        return back()->withErrors(['email' => 'Invalid credentials']);
+    }
+
+    public function logout(Request $request)
+    {
+        Auth::guard('customer')->logout();
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+
+        return redirect()->route('customer.login');
+    }
 }
 
