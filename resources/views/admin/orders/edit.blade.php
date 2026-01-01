@@ -43,9 +43,17 @@
                             <label class="form-label">Address</label>
                             <input type="text" name="address" class="form-control" value="{{ $order->address ?? '' }}">
                         </div>
+                        <div class="col-12 mb-3">
+                            <label class="form-label">Address Line 2</label>
+                            <input type="text" name="address2" class="form-control" value="{{ $order->address2 ?? '' }}">
+                        </div>
                         <div class="col-md-6 mb-3">
                             <label class="form-label">City</label>
                             <input type="text" name="city" class="form-control" value="{{ $order->city ?? '' }}">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">State/Province</label>
+                            <input type="text" name="state" class="form-control" value="{{ $order->state ?? '' }}">
                         </div>
                         <div class="col-md-3 mb-3">
                             <label class="form-label">Zip Code</label>

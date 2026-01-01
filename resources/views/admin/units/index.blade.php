@@ -93,9 +93,13 @@ $(document).ready(function () {
     // Submit Unit Form
     $('#unitForm').submit(function(e){
         e.preventDefault();
+        var id = $('#unit_id').val();
+        var url = id ? "/admin/units/update/"+id : "{{ route('admin.units.store') }}";
+        var type = id ? "PUT" : "POST";
+
         $.ajax({
-            url: "{{ route('admin.units.store') }}",
-            method: "POST",
+            url: url,
+            type: type,
             data: $(this).serialize(),
             success: function(response){
                 unitModal.hide();
@@ -114,7 +118,7 @@ $(document).ready(function () {
     // Edit Unit
     $(document).on('click', '.edit-unit', function(){
         var id = $(this).data('id');
-        $.get("units/edit/"+id, function(data){
+        $.get("/admin/units/edit/"+id, function(data){
             $('#unitForm').trigger("reset");
             $('#unit_id').val(data.id);
             $('#name').val(data.name);
@@ -129,7 +133,7 @@ $(document).ready(function () {
         if(confirm("Are you sure?")){
             var id = $(this).data('id');
             $.ajax({
-                url: "units/delete/"+id,
+                url: "/admin/units/delete/"+id,
                 type: "DELETE",
                 data: {_token: "{{ csrf_token() }}"},
                 success: function(response){

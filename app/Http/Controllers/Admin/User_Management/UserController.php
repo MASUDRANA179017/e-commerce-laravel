@@ -198,12 +198,14 @@ class UserController extends Controller
             'department'  => $request->department,
             'designation' => $request->designation,
             'address'     => $request->address,
-            'status'      => $request->status ?? 1,
-            'image'      => $avatarPath,
-            'password'    => $request->password ? Hash::make($request->password) : $user->password,
+            'image'       => $avatarPath,
         ]);
+        
+        if ($request->filled('password')) {
+            $user->update(['password' => Hash::make($request->password)]);
+        }
 
-        // Update Role
+        // Sync Role
         $role = Role::find($request->role);
         if ($role) {
             $user->syncRoles([$role->name]);
@@ -302,11 +304,7 @@ class UserController extends Controller
     //     return response()->json(['success' => 'User updated successfully.']);
     // }
 
-    public function destroy($id)
-    {
-        User::find($id)->delete();
-        return response()->json(['success' => 'User deleted successfully.']);
-    }
+
 
     // In App/Http/Controllers/Admin/UserController.php
 
@@ -331,6 +329,24 @@ class UserController extends Controller
         $user->syncRoles([$roleName]); // must pass as array
 
         return response()->json(['success' => 'Role assigned successfully.']);
+    }
+
+    public function destroy($id)
+    {
+        $user = User::findOrFail($id);
+        
+        // Prevent deleting self
+        if ($user->id === Auth::id()) {
+            return response()->json(['error' => 'You cannot delete yourself.'], 403);
+        }
+
+        if ($user->image && Storage::disk('public')->exists($user->image)) {
+            Storage::disk('public')->delete($user->image);
+        }
+        
+        $user->delete();
+        
+        return response()->json(['success' => 'User deleted successfully.']);
     }
 
     // status change

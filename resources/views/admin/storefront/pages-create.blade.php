@@ -27,6 +27,13 @@
                             <input type="text" name="title" class="form-control" value="{{ old('title') }}" required>
                         </div>
                         <div class="mb-3">
+                            <label class="form-label">URL Slug (Optional)</label>
+                            <div class="input-group">
+                                <span class="input-group-text">/</span>
+                                <input type="text" name="slug" class="form-control" value="{{ old('slug') }}" placeholder="Leave empty to auto-generate from title">
+                            </div>
+                        </div>
+                        <div class="mb-3">
                             <label class="form-label">Content <span class="text-danger">*</span></label>
                             <textarea name="content" class="form-control" rows="15" id="pageContent">{{ old('content') }}</textarea>
                         </div>

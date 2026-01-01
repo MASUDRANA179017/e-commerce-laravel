@@ -141,33 +141,48 @@
                         <h5 class="mb-0 fw-bold">Email Settings</h5>
                     </div>
                     <div class="card-body">
-                        <form>
+                        <form id="emailSettingsForm">
+                            @csrf
                             <div class="mb-3">
                                 <label class="form-label">Mail Driver</label>
-                                <select class="form-select">
-                                    <option>SMTP</option>
-                                    <option>Mailgun</option>
-                                    <option>SendGrid</option>
+                                <select class="form-select" name="mail_mailer">
+                                    <option value="smtp" {{ ($settings->mail_mailer ?? '') == 'smtp' ? 'selected' : '' }}>SMTP</option>
+                                    <option value="mailgun" {{ ($settings->mail_mailer ?? '') == 'mailgun' ? 'selected' : '' }}>Mailgun</option>
+                                    <option value="sendgrid" {{ ($settings->mail_mailer ?? '') == 'sendgrid' ? 'selected' : '' }}>SendGrid</option>
                                 </select>
                             </div>
                             <div class="row">
                                 <div class="col-md-8 mb-3">
                                     <label class="form-label">SMTP Host</label>
-                                    <input type="text" class="form-control" placeholder="smtp.gmail.com">
+                                    <input type="text" class="form-control" name="mail_host" value="{{ $settings->mail_host ?? '' }}" placeholder="smtp.gmail.com">
                                 </div>
                                 <div class="col-md-4 mb-3">
                                     <label class="form-label">Port</label>
-                                    <input type="text" class="form-control" placeholder="587">
+                                    <input type="text" class="form-control" name="mail_port" value="{{ $settings->mail_port ?? '' }}" placeholder="587">
                                 </div>
                             </div>
                             <div class="row">
                                 <div class="col-md-6 mb-3">
                                     <label class="form-label">Username</label>
-                                    <input type="text" class="form-control">
+                                    <input type="text" class="form-control" name="mail_username" value="{{ $settings->mail_username ?? '' }}">
                                 </div>
                                 <div class="col-md-6 mb-3">
                                     <label class="form-label">Password</label>
-                                    <input type="password" class="form-control">
+                                    <input type="password" class="form-control" name="mail_password" value="{{ $settings->mail_password ?? '' }}">
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-4 mb-3">
+                                     <label class="form-label">Encryption</label>
+                                     <input type="text" class="form-control" name="mail_encryption" value="{{ $settings->mail_encryption ?? 'tls' }}" placeholder="tls">
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                     <label class="form-label">From Address</label>
+                                     <input type="email" class="form-control" name="mail_from_address" value="{{ $settings->mail_from_address ?? '' }}" placeholder="no-reply@example.com">
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                     <label class="form-label">From Name</label>
+                                     <input type="text" class="form-control" name="mail_from_name" value="{{ $settings->mail_from_name ?? '' }}" placeholder="My Store">
                                 </div>
                             </div>
                             <button type="submit" class="create-btn-base">Save Changes</button>
@@ -359,4 +374,45 @@
     </div>
 </div>
 @endsection
+
+@push('scripts')
+<script>
+    document.getElementById('emailSettingsForm')?.addEventListener('submit', function(e) {
+        e.preventDefault();
+        const formData = new FormData(this);
+        fetch('{{ route("admin.settings.email") }}', {
+            method: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                'Accept': 'application/json'
+            },
+            body: formData
+        })
+        .then(res => res.json())
+        .then(data => {
+            if(data.success) {
+                if(typeof toastr !== 'undefined') {
+                    toastr.success(data.message);
+                } else {
+                    alert(data.message);
+                }
+            } else {
+                if(typeof toastr !== 'undefined') {
+                    toastr.error(data.message || 'Something went wrong');
+                } else {
+                    alert(data.message || 'Something went wrong');
+                }
+            }
+        })
+        .catch(err => {
+            console.error(err);
+            if(typeof toastr !== 'undefined') {
+                toastr.error('Server Error');
+            } else {
+                alert('Server Error');
+            }
+        });
+    });
+</script>
+@endpush
 

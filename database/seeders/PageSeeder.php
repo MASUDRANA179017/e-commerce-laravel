@@ -9,35 +9,90 @@ class PageSeeder extends Seeder
 {
     /**
      * Run the database seeds.
-     *
-     * @return void
      */
-    public function run()
+    public function run(): void
     {
         $pages = [
             [
                 'title' => 'About Us',
                 'slug' => 'about-us',
-                'content' => '<h2>About Us</h2><p>Welcome to our online store! We are dedicated to providing you with the best shopping experience possible.</p><p>Our mission is to offer high-quality products at affordable prices, backed by exceptional customer service.</p><h3>Our Story</h3><p>Founded in 2024, we started as a small local business and have grown into a trusted e-commerce platform serving customers worldwide.</p><h3>Why Choose Us?</h3><ul><li>Quality Products</li><li>Fast Shipping</li><li>24/7 Customer Support</li><li>Secure Payments</li></ul>',
+                'content' => '<div class="about-section py-5">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-6 mb-4 mb-lg-0">
+                <img src="https://via.placeholder.com/600x400" alt="About Us" class="img-fluid rounded shadow">
+            </div>
+            <div class="col-lg-6">
+                <h2 class="mb-4">Welcome to Our Store</h2>
+                <p class="lead mb-4">We are a leading e-commerce platform providing high quality products to customers worldwide.</p>
+                <p class="mb-4">Our story begins with a simple vision: to make shopping easy, affordable, and enjoyable for everyone. We believe in quality, transparency, and exceptional customer service.</p>
+                <div class="row g-4 mt-2">
+                    <div class="col-sm-6">
+                        <div class="d-flex align-items-center">
+                            <i class="fa-solid fa-check-circle text-primary fs-4 me-3"></i>
+                            <div>
+                                <h6 class="mb-0">Quality Products</h6>
+                                <small class="text-muted">100% Genuine</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="d-flex align-items-center">
+                            <i class="fa-solid fa-truck-fast text-primary fs-4 me-3"></i>
+                            <div>
+                                <h6 class="mb-0">Fast Delivery</h6>
+                                <small class="text-muted">Global Shipping</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>',
                 'status' => true,
-                'meta_title' => 'About Us - Your Store',
-                'meta_description' => 'Learn more about our company and our mission.',
+                'meta_title' => 'About Us - Our Story',
+                'meta_description' => 'Learn about our company history and vision.'
             ],
             [
                 'title' => 'Terms & Conditions',
                 'slug' => 'terms-and-conditions',
-                'content' => '<h2>Terms and Conditions</h2><p>Welcome to our website. If you continue to browse and use this website, you are agreeing to comply with and be bound by the following terms and conditions of use.</p><h3>1. Introduction</h3><p>These terms and conditions govern your use of this website; by using this website, you accept these terms and conditions in full.</p><h3>2. License to use website</h3><p>Unless otherwise stated, we or our licensors own the intellectual property rights in the website and material on the website.</p><h3>3. Acceptable use</h3><p>You must not use this website in any way that causes, or may cause, damage to the website or impairment of the availability or accessibility of the website.</p>',
+                'content' => '<div class="terms-section py-4">
+    <h4>1. Introduction</h4>
+    <p>Welcome to our website. By accessing this website, you agree to be bound by these terms and conditions.</p>
+    
+    <h4>2. Use of Website</h4>
+    <p>You may not use this website for any unlawful purpose or in any way that interrupts, damages, or impairs the service.</p>
+    
+    <h4>3. Product Information</h4>
+    <p>We make every effort to display as accurately as possible the colors, features, specifications, and details of the products available on the Site.</p>
+    
+    <h4>4. Pricing and Payment</h4>
+    <p>All prices are subject to change without notice. We reserve the right to modify or discontinue the Service (or any part or content thereof) at any time.</p>
+</div>',
                 'status' => true,
                 'meta_title' => 'Terms & Conditions',
-                'meta_description' => 'Read our terms and conditions.',
+                'meta_description' => 'Read our terms and conditions.'
             ],
             [
                 'title' => 'Privacy Policy',
                 'slug' => 'privacy-policy',
-                'content' => '<h2>Privacy Policy</h2><p>Your privacy is important to us. It is our policy to respect your privacy regarding any information we may collect from you across our website.</p><h3>1. Information We Collect</h3><p>We only ask for personal information when we truly need it to provide a service to you. We collect it by fair and lawful means, with your knowledge and consent.</p><h3>2. How We Use Information</h3><p>We use the information we collect to operate and maintain our website, send you newsletters, and respond to your comments and questions.</p><h3>3. Security</h3><p>We take reasonable steps to protect the personal information that you provide to us.</p>',
+                'content' => '<div class="privacy-section py-4">
+    <h4>1. Information We Collect</h4>
+    <p>We collect information you provide directly to us, such as when you create an account, update your profile, or make a purchase.</p>
+    
+    <h4>2. How We Use Your Information</h4>
+    <p>We use the information we collect to provide, maintain, and improve our services, process transactions, and send you related information.</p>
+    
+    <h4>3. Information Sharing</h4>
+    <p>We do not share your personal information with third parties except as described in this policy.</p>
+    
+    <h4>4. Security</h4>
+    <p>We take reasonable measures to help protect information about you from loss, theft, misuse and unauthorized access.</p>
+</div>',
                 'status' => true,
                 'meta_title' => 'Privacy Policy',
-                'meta_description' => 'Read our privacy policy.',
+                'meta_description' => 'Read our privacy policy.'
             ],
         ];
 

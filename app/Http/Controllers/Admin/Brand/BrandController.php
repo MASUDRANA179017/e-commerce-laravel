@@ -90,19 +90,6 @@ class BrandController extends Controller
         ]);
     }
 
-    public function destroy($id)
-    {
-        $brand = Brand::find($id);
-        if ($brand) {
-            if ($brand->logo) {
-                $this->handleFileDelete($brand->logo);
-            }
-            $brand->delete();
-            return response()->json(['success' => true, 'message' => 'Brand deleted successfully']);
-        }
-        return response()->json(['success' => false, 'message' => 'Brand not found'], 404);
-    }
-
     public function getBrands()
     {
         $brands = Brand::orderBy('order', 'asc')->get();

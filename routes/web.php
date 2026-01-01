@@ -88,6 +88,7 @@ Route::prefix('admin')->group(function () {
     Route::get('units', [UnitController::class, 'index'])->name('admin.units.index');
     Route::post('units/store', [UnitController::class, 'store'])->name('admin.units.store');
     Route::get('units/edit/{id}', [UnitController::class, 'edit'])->name('admin.units.edit');
+    Route::put('units/update/{id}', [UnitController::class, 'update'])->name('admin.units.update');
     Route::delete('units/delete/{id}', [UnitController::class, 'destroy'])->name('admin.units.delete');
     Route::post('units/toggle-status/{id}', [UnitController::class, 'toggleStatus'])->name('admin.units.toggleStatus');
 });

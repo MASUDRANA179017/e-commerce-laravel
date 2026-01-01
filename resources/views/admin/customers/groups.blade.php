@@ -46,7 +46,7 @@
                                     </div>
                                 </td>
                                 <td>{{ $group->discount_percentage }}%</td>
-                                <td>0</td> <!-- Placeholder for members count if needed -->
+                                <td>{{ $group->customers_count }}</td>
                                 <td>
                                     @if($group->is_active)
                                         <span class="qbit-badge-success"><i class="bx bx-check-circle"></i> Active</span>

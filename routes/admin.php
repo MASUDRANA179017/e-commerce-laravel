@@ -48,7 +48,8 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
         Route::post('/{order}/status', [OrderController::class, 'updateStatus'])->name('update-status');
         Route::get('/{order}/invoice', [OrderController::class, 'invoice'])->name('invoice');
         Route::get('/{order}/print', [OrderController::class, 'printOrder'])->name('print');
-    });
+
+});
 
     /*
     |--------------------------------------------------------------------------

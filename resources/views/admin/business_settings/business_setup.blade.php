@@ -238,6 +238,12 @@
                 <h6 class="mb-0">Contact & Social</h6><span class="small-muted">address & hotline</span>
             </div>
         </div>
+        <div class="qb-wizard-tab" data-target="#tab-footer">
+            <div class="qb-wizard-tab-icon"><i class="bx bx-layout"></i></div>
+            <div>
+                <h6 class="mb-0">Footer Settings</h6><span class="small-muted">text & copyright</span>
+            </div>
+        </div>
         <div class="qb-wizard-tab" data-target="#tab-prefix">
             <div class="qb-wizard-tab-icon"><i class="bx bx-hash"></i></div>
             <div>
@@ -563,6 +569,66 @@
                 <div class="panel-footer text-end d-none"><button type="button"
                         class="btn btn-secondary btn-sm cancel-card-btn me-2">Cancel</button><button type="button"
                         class="btn btn-success btn-sm save-card-btn">Save</button></div>
+            </form>
+        </div>
+
+        <div class="tab-pane" id="tab-footer">
+            <form class="panel card-form" id="footerSettingsForm" data-part="footer_settings">
+                <div class="panel-header d-flex justify-content-between align-items-center">
+                    <h5 class="panel-title mb-0">Footer Settings</h5>
+                    <button type="button" class="select-btn-primary edit-card-btn">Edit</button>
+                </div>
+                <div class="panel-body">
+                    <div class="row g-3">
+                        <div class="col-lg-12">
+                            <div class="form-group">
+                                <label>Footer Text</label>
+                                <textarea name="footer_text" class="form-control" rows="4" disabled>{{ $business_setup->footer_text }}</textarea>
+                                <small class="text-muted">This text will appear in the footer description area.</small>
+                            </div>
+                        </div>
+                        <div class="col-lg-12">
+                            <div class="form-group">
+                                <label>Copyright Text</label>
+                                <input type="text" name="copyright_text" class="form-control" value="{{ $business_setup->copyright_text }}" disabled>
+                                <small class="text-muted">e.g., © 2025 GrowUp. All rights reserved.</small>
+                            </div>
+                        </div>
+                        <div class="col-lg-12">
+                            <div class="form-group">
+                                <label class="mb-2">Payment Methods</label>
+                                <div class="d-flex flex-wrap gap-3">
+                                    @php
+                                        $methods = [
+                                            'visa' => ['icon' => 'fab fa-cc-visa', 'label' => 'Visa', 'color' => '#1A1F71'],
+                                            'mastercard' => ['icon' => 'fab fa-cc-mastercard', 'label' => 'Mastercard', 'color' => '#EB001B'],
+                                            'paypal' => ['icon' => 'fab fa-cc-paypal', 'label' => 'PayPal', 'color' => '#003087'],
+                                            'amex' => ['icon' => 'fab fa-cc-amex', 'label' => 'Amex', 'color' => '#006FCF'],
+                                            'stripe' => ['icon' => 'fab fa-cc-stripe', 'label' => 'Stripe', 'color' => '#6772E5'],
+                                            'discover' => ['icon' => 'fab fa-cc-discover', 'label' => 'Discover', 'color' => '#FF6000'],
+                                            'jcb' => ['icon' => 'fab fa-cc-jcb', 'label' => 'JCB', 'color' => '#007940'],
+                                            'apple-pay' => ['icon' => 'fab fa-cc-apple-pay', 'label' => 'Apple Pay', 'color' => '#000000'],
+                                        ];
+                                        $selectedMethods = $business_setup->payment_methods ?? [];
+                                    @endphp
+                                    @foreach($methods as $key => $method)
+                            <div class="form-check form-check-inline p-2 border rounded">
+                                <input class="form-check-input" type="checkbox" name="payment_methods[]" value="{{ $key }}" id="pm_{{ $key }}" {{ in_array($key, $selectedMethods) ? 'checked' : '' }}>
+                                <label class="form-check-label d-flex align-items-center gap-2" for="pm_{{ $key }}">
+                                                <i class="{{ $method['icon'] }}" style="font-size: 24px; color: {{ $method['color'] }};"></i>
+                                                {{ $method['label'] }}
+                                            </label>
+                                        </div>
+                                    @endforeach
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="panel-footer text-end d-none">
+                    <button type="button" class="btn btn-secondary btn-sm cancel-card-btn me-2">Cancel</button>
+                    <button type="button" class="btn btn-success btn-sm save-card-btn">Save</button>
+                </div>
             </form>
         </div>
 

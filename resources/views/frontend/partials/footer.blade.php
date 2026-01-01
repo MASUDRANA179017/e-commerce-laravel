@@ -188,7 +188,7 @@
                     <form class="newsletter-form">
                         <div class="input-group" style="border-radius: 50px; overflow: hidden; box-shadow: 0 10px 40px rgba(0,0,0,0.2);">
                             <input type="email" class="form-control" placeholder="Enter your email address..." style="padding: 18px 25px; border: none; font-size: 14px;">
-                            <button type="submit" class="btn" style="background: #0496ff; color: #fff; padding: 0 35px; font-weight: 500;">
+                            <button type="submit" class="btn" style=" color: #fff; padding: 0 35px; font-weight: 500;">
                                 Subscribe <i class="fa-solid fa-arrow-right ms-2"></i>
                             </button>
                         </div>
@@ -203,18 +203,33 @@
                 <div class="col-lg-6 mb-3 mb-lg-0 text-center text-lg-start">
                     <span style="color: rgba(255,255,255,0.5); font-size: 14px;">We Accept:</span>
                     <div class="payment-methods d-inline-flex align-items-center gap-3 ms-3">
-                        <div style="width: 50px; height: 32px; background: #fff; border-radius: 5px; display: flex; align-items: center; justify-content: center;">
-                            <i class="fab fa-cc-visa" style="font-size: 24px; color: #1A1F71;"></i>
-                        </div>
-                        <div style="width: 50px; height: 32px; background: #fff; border-radius: 5px; display: flex; align-items: center; justify-content: center;">
-                            <i class="fab fa-cc-mastercard" style="font-size: 24px; color: #EB001B;"></i>
-                        </div>
-                        <div style="width: 50px; height: 32px; background: #fff; border-radius: 5px; display: flex; align-items: center; justify-content: center;">
-                            <i class="fab fa-cc-paypal" style="font-size: 24px; color: #003087;"></i>
-                        </div>
-                        <div style="width: 50px; height: 32px; background: #fff; border-radius: 5px; display: flex; align-items: center; justify-content: center;">
-                            <i class="fab fa-cc-amex" style="font-size: 24px; color: #006FCF;"></i>
-                        </div>
+                        @php
+                            $methods = [
+                                'visa' => ['icon' => 'fab fa-cc-visa', 'color' => '#1A1F71'],
+                                'mastercard' => ['icon' => 'fab fa-cc-mastercard', 'color' => '#EB001B'],
+                                'paypal' => ['icon' => 'fab fa-cc-paypal', 'color' => '#003087'],
+                                'amex' => ['icon' => 'fab fa-cc-amex', 'color' => '#006FCF'],
+                                'stripe' => ['icon' => 'fab fa-cc-stripe', 'color' => '#6772E5'],
+                                'discover' => ['icon' => 'fab fa-cc-discover', 'color' => '#FF6000'],
+                                'jcb' => ['icon' => 'fab fa-cc-jcb', 'color' => '#007940'],
+                                'apple-pay' => ['icon' => 'fab fa-cc-apple-pay', 'color' => '#000000'],
+                            ];
+                            $selectedMethods = $business_setup->payment_methods ?? [];
+                        @endphp
+                        @forelse($selectedMethods as $methodKey)
+                            @if(isset($methods[$methodKey]))
+                                <div style="width: 50px; height: 32px; background: #fff; border-radius: 5px; display: flex; align-items: center; justify-content: center;">
+                                    <i class="{{ $methods[$methodKey]['icon'] }}" style="font-size: 24px; color: {{ $methods[$methodKey]['color'] }};"></i>
+                                </div>
+                            @endif
+                        @empty
+                            <div style="width: 50px; height: 32px; background: #fff; border-radius: 5px; display: flex; align-items: center; justify-content: center;">
+                                <i class="fab fa-cc-visa" style="font-size: 24px; color: #1A1F71;"></i>
+                            </div>
+                            <div style="width: 50px; height: 32px; background: #fff; border-radius: 5px; display: flex; align-items: center; justify-content: center;">
+                                <i class="fab fa-cc-mastercard" style="font-size: 24px; color: #EB001B;"></i>
+                            </div>
+                        @endforelse
                     </div>
                 </div>
                 <div class="col-lg-6 text-center text-lg-end">
@@ -237,7 +252,11 @@
             <div class="row align-items-center">
                 <div class="col-md-6 text-center text-md-start mb-2 mb-md-0">
                     <p style="color: rgba(255,255,255,0.5); font-size: 14px; margin-bottom: 0;">
-                        © {{ date('Y') }} <span style="color: #0496ff;">GrowUp</span>. All Rights Reserved.
+                        @if($business_setup->copyright_text)
+                            {{ $business_setup->copyright_text }}
+                        @else
+                            © {{ date('Y') }} <span style="color: #0496ff;">{{ $business_setup->company_name ?? 'GrowUp' }}</span>. All Rights Reserved.
+                        @endif
                     </p>
                 </div>
                 <div class="col-md-6 text-center text-md-end">

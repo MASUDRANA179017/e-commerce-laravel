@@ -123,20 +123,25 @@
         <div class="card border-0">
             <div class="card-header bg-white d-flex align-items-center justify-content-between flex-wrap gap-3">
                 <h5 class="mb-0 fw-bold qb-card-header-title-14-600">Order List</h5>
-                <div class="d-flex gap-2 flex-wrap">
-                    <select class="form-select form-select-sm" style="width: auto;" id="filterStatus">
+                <form action="{{ route('admin.orders.index') }}" method="GET" class="d-flex gap-2 flex-wrap">
+                    <select class="form-select form-select-sm" style="width: auto;" name="status" onchange="this.form.submit()">
                         <option value="">All Status</option>
-                        <option value="pending">Pending</option>
-                        <option value="processing">Processing</option>
-                        <option value="shipped">Shipped</option>
-                        <option value="delivered">Delivered</option>
-                        <option value="cancelled">Cancelled</option>
+                        <option value="pending" {{ request('status') == 'pending' ? 'selected' : '' }}>Pending</option>
+                        <option value="processing" {{ request('status') == 'processing' ? 'selected' : '' }}>Processing</option>
+                        <option value="shipped" {{ request('status') == 'shipped' ? 'selected' : '' }}>Shipped</option>
+                        <option value="delivered" {{ request('status') == 'delivered' ? 'selected' : '' }}>Delivered</option>
+                        <option value="cancelled" {{ request('status') == 'cancelled' ? 'selected' : '' }}>Cancelled</option>
                     </select>
-                    <input type="text" class="form-control form-control-sm" placeholder="Search orders..." style="width: 200px;" id="searchOrder">
-                    <button class="create-btn-white" id="exportBtn">
+                    <div class="input-group input-group-sm" style="width: 250px;">
+                        <input type="text" class="form-control" name="search" value="{{ request('search') }}" placeholder="Search orders...">
+                        <button class="btn btn-outline-secondary" type="submit">
+                            <i class="bx bx-search"></i>
+                        </button>
+                    </div>
+                    <button type="button" class="create-btn-white" id="exportBtn">
                         <i class="bx bx-download me-1"></i> Export
                     </button>
-                </div>
+                </form>
             </div>
             <div class="card-body p-0">
                 <div class="table-responsive">
@@ -359,33 +364,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
     
-    // Filter by status
-    document.getElementById('filterStatus')?.addEventListener('change', function() {
-        const status = this.value;
-        const url = new URL(window.location);
-        if (status) {
-            url.searchParams.set('status', status);
-        } else {
-            url.searchParams.delete('status');
-        }
-        window.location = url;
-    });
-    
-    // Search orders
-    let searchTimeout;
-    document.getElementById('searchOrder')?.addEventListener('input', function() {
-        clearTimeout(searchTimeout);
-        const search = this.value;
-        searchTimeout = setTimeout(() => {
-            const url = new URL(window.location);
-            if (search) {
-                url.searchParams.set('search', search);
-            } else {
-                url.searchParams.delete('search');
-            }
-            window.location = url;
-        }, 500);
-    });
+    // Filter by status and Search are handled by form submission
 });
 </script>
 @endpush

@@ -312,7 +312,7 @@ class ProductController extends Controller
                     'variant_rule_id' => $payload['variant_rule_id'] ?? null,
                     'title' => $payload['title'] ?? '',
                     'slug' => $slug,
-                    'sku' => $payload['sku'] ?? null,
+                    'sku' => $payload['sku'] ?? 'SKU-' . strtoupper(Str::random(8)),
                     'short_desc' => $payload['short_desc'] ?? null,
                     'price' => $payload['price'] ?? 0,
                     'sale_price' => $payload['sale_price'] ?? null,
@@ -332,17 +332,20 @@ class ProductController extends Controller
                     DB::table('products')->where('id', $existingProductId)->update($productData);
                     $productId = $existingProductId;
 
-                    // Clear existing category mappings for update
-                    DB::table('product_category_map')->where('product_id', $productId)->delete();
+                    // Note: Categories are cleared only if new categories are provided (see below)
 
-                    // Clear existing attributes for update
-                    DB::table('product_attribute_terms')->where('product_id', $productId)->delete();
+                    // Clear existing attributes for update ONLY if attributes are provided
+                    if (isset($payload['attributes'])) {
+                        DB::table('product_attribute_terms')->where('product_id', $productId)->delete();
+                    }
 
-                    // Clear existing variants for update
-                    DB::table('product_variant_options')->whereIn('variant_id', 
-                        DB::table('product_variants')->where('product_id', $productId)->pluck('id')
-                    )->delete();
-                    DB::table('product_variants')->where('product_id', $productId)->delete();
+                    // Clear existing variants for update ONLY if variants are provided
+                    if (isset($payload['variants'])) {
+                        DB::table('product_variant_options')->whereIn('variant_id', 
+                            DB::table('product_variants')->where('product_id', $productId)->pluck('id')
+                        )->delete();
+                        DB::table('product_variants')->where('product_id', $productId)->delete();
+                    }
                 } else {
                     // Create new product
                     $productData['created_at'] = now();
@@ -351,6 +354,11 @@ class ProductController extends Controller
 
                 // 🔗 Category mapping
                 if (isset($payload['categories']) || isset($payload['primary_category'])) {
+                    // Only clear existing mappings if we are updating categories
+                    if ($isUpdate) {
+                        DB::table('product_category_map')->where('product_id', $productId)->delete();
+                    }
+
                     $catPaths = $payload['categories'] ?? [];
                     $primaryPath = $payload['primary_category'] ?? null;
 
@@ -360,16 +368,29 @@ class ProductController extends Controller
                             $catIds[] = (int) $p;
                             continue;
                         }
-                        if ($id = $this->resolveCategoryIdFromPath((string) $p))
+                        // Try path resolution
+                        if ($id = $this->resolveCategoryIdFromPath((string) $p)) {
                             $catIds[] = $id;
+                            continue;
+                        }
+                        // Try slug resolution
+                        $slugId = DB::table('product_categories')->where('slug', $p)->value('id');
+                        if ($slugId) {
+                            $catIds[] = $slugId;
+                        }
                     }
                     $catIds = array_values(array_unique($catIds));
 
                     $primaryId = null;
                     if ($primaryPath) {
-                        $primaryId = is_numeric($primaryPath)
-                            ? (int) $primaryPath
-                            : $this->resolveCategoryIdFromPath((string) $primaryPath);
+                        if (is_numeric($primaryPath)) {
+                            $primaryId = (int) $primaryPath;
+                        } else {
+                            $primaryId = $this->resolveCategoryIdFromPath((string) $primaryPath);
+                            if (!$primaryId) {
+                                $primaryId = DB::table('product_categories')->where('slug', $primaryPath)->value('id');
+                            }
+                        }
                     }
                     if ($primaryId && !in_array($primaryId, $catIds, true))
                         $catIds[] = $primaryId;

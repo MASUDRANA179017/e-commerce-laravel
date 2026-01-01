@@ -7,9 +7,9 @@
     <div class="col-12 mb-4">
         <div class="d-flex align-items-center justify-content-between flex-wrap gap-3">
             <h3 class="fw-bold mb-0">Purchase Orders</h3>
-            <button class="create-btn-base">
+            <a href="{{ route('admin.inventory.purchases.create') }}" class="create-btn-base text-decoration-none">
                 <span class="material-symbols-outlined fs-14">add</span> Create Purchase Order
-            </button>
+            </a>
         </div>
     </div>
 

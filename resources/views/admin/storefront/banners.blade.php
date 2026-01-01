@@ -137,6 +137,10 @@
                         <label class="form-label">Link (Optional)</label>
                         <input type="url" name="link" id="bannerLink" class="form-control" placeholder="https://...">
                     </div>
+                    <div class="mb-3 form-check">
+                        <input type="checkbox" class="form-check-input" id="bannerStatus" name="status" value="1" checked>
+                        <label class="form-check-label" for="bannerStatus">Active</label>
+                    </div>
                     <div class="mb-3">
                         <label class="form-label">Position</label>
                         <input type="number" name="position" id="bannerPosition" class="form-control" value="0">
@@ -160,6 +164,11 @@
 
 @push('scripts')
 <script>
+    $(document).on('click', '.edit-banner-btn', function() {
+        const banner = $(this).data('banner');
+        editBanner(banner);
+    });
+
     function editBanner(banner) {
         $('#modalTitle').text('Edit Banner');
         $('#bannerForm').attr('action', '{{ route("admin.storefront.banners.update", "") }}/' + banner.id);
@@ -168,6 +177,13 @@
         $('#bannerTitle').val(banner.title);
         $('#bannerLink').val(banner.link);
         $('#bannerPosition').val(banner.position);
+        
+        // Handle Status
+        if (banner.status) {
+            $('#bannerStatus').prop('checked', true);
+        } else {
+            $('#bannerStatus').prop('checked', false);
+        }
         
         // Image is optional on update
         $('#bannerImage').removeAttr('required');

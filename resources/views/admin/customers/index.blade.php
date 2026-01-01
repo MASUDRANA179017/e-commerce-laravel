@@ -69,7 +69,12 @@
             <div class="card-header bg-white d-flex align-items-center justify-content-between flex-wrap gap-3">
                 <h5 class="mb-0 fw-bold">Customer List</h5>
                 <div class="d-flex gap-2">
-                    <input type="text" class="form-control form-control-sm" placeholder="Search customers..." style="width: 200px;">
+                    <form action="{{ route('admin.customers.index') }}" method="GET" class="d-flex gap-2">
+                        <input type="text" name="search" value="{{ request('search') }}" class="form-control form-control-sm" placeholder="Search customers..." style="width: 200px;">
+                        <button type="submit" class="btn btn-sm btn-outline-secondary">
+                            <i class="fas fa-search"></i>
+                        </button>
+                    </form>
                     <button class="create-btn-base" data-bs-toggle="modal" data-bs-target="#addCustomerModal">
                         <span class="material-symbols-outlined fs-14">add</span> Add Customer
                     </button>
@@ -109,8 +114,8 @@
                                 </td>
                                 <td>{{ $customer->email }}</td>
                                 <td>{{ $customer->phone ?? '-' }}</td>
-                                <td>0</td>
-                                <td>৳0.00</td>
+                                <td>{{ $customer->orders_count ?? 0 }}</td>
+                                <td>৳{{ number_format($customer->orders_sum_total ?? 0, 2) }}</td>
                                 <td>
                                     <span class="qbit-badge-success"><i class="bx bx-check-circle"></i> Active</span>
                                 </td>

@@ -4,14 +4,28 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\Models\CustomerGroup;
 use Illuminate\Http\Request;
 
 class CustomerController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        // Get all users as customers (adjust query based on your actual user structure)
-        $customers = User::withCount('orders')->paginate(20);
+        $query = User::withCount('orders')
+            ->withSum('orders', 'total')
+            ->latest();
+
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                  ->orWhere('email', 'like', "%{$search}%")
+                  ->orWhere('phone', 'like', "%{$search}%");
+            });
+        }
+
+        $customers = $query->paginate(20)->withQueryString();
+
         return view('admin.customers.index', compact('customers'));
     }
 
@@ -23,7 +37,8 @@ class CustomerController extends Controller
 
     public function create()
     {
-        return view('admin.customers.create');
+        $groups = CustomerGroup::where('is_active', true)->get();
+        return view('admin.customers.create', compact('groups'));
     }
 
     public function store(Request $request)
@@ -32,14 +47,24 @@ class CustomerController extends Controller
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users',
             'password' => 'required|min:8',
+            'customer_group_id' => 'nullable|exists:customer_groups,id',
         ]);
 
-        User::create([
+        $username = explode('@', $request->email)[0];
+        if (User::where('username', $username)->exists()) {
+            $username .= rand(100, 999);
+        }
+
+        $user = User::create([
             'name' => $request->name,
+            'username' => $username,
             'email' => $request->email,
             'password' => bcrypt($request->password),
-            'role' => 'customer',
+            'is_active' => true,
+            'customer_group_id' => $request->customer_group_id,
         ]);
+        
+        $user->assignRole('customer');
 
         return redirect()->route('admin.customers.index')->with('success', 'Customer created successfully');
     }
@@ -53,7 +78,8 @@ class CustomerController extends Controller
     public function edit($customer)
     {
         $customer = User::findOrFail($customer);
-        return view('admin.customers.edit', compact('customer'));
+        $groups = CustomerGroup::where('is_active', true)->get();
+        return view('admin.customers.edit', compact('customer', 'groups'));
     }
 
     public function update(Request $request, $customer)
@@ -63,9 +89,10 @@ class CustomerController extends Controller
         $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email,' . $customer->id,
+            'customer_group_id' => 'nullable|exists:customer_groups,id',
         ]);
 
-        $customer->update($request->only(['name', 'email']));
+        $customer->update($request->only(['name', 'email', 'customer_group_id']));
 
         if ($request->filled('password')) {
             $customer->update(['password' => bcrypt($request->password)]);
@@ -89,7 +116,7 @@ class CustomerController extends Controller
 
     public function groups()
     {
-        $groups = CustomerGroup::latest()->get();
+        $groups = CustomerGroup::withCount('customers')->latest()->get();
         return view('admin.customers.groups', compact('groups'));
     }
 

@@ -31,7 +31,7 @@
                             <label class="form-label">URL Slug</label>
                             <div class="input-group">
                                 <span class="input-group-text">/</span>
-                                <input type="text" class="form-control" value="{{ $page->slug }}" readonly>
+                                <input type="text" name="slug" class="form-control" value="{{ old('slug', $page->slug) }}">
                             </div>
                         </div>
                         <div class="mb-3">

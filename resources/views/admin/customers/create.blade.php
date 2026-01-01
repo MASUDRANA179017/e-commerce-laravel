@@ -30,6 +30,15 @@
                             <label class="form-label">Email <span class="text-danger">*</span></label>
                             <input type="email" name="email" class="form-control" required>
                         </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Customer Group</label>
+                            <select name="customer_group_id" class="form-select">
+                                <option value="">None</option>
+                                @foreach($groups as $group)
+                                    <option value="{{ $group->id }}">{{ $group->name }} ({{ $group->discount_percentage }}%)</option>
+                                @endforeach
+                            </select>
+                        </div>
                     </div>
                     <div class="row">
                         <div class="col-md-6 mb-3">

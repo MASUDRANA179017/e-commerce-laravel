@@ -62,6 +62,9 @@ class BusinessSetup extends Model
         'theme_font_base_size',
         'theme_header_style',
         'theme_footer_style',
+        'footer_text',
+        'copyright_text',
+        'payment_methods',
         'updated_by',
     ];
 
@@ -71,6 +74,7 @@ protected $casts = [
   'whatsapp_number'         => 'array',
   'hotline_number'          => 'array',
   'email_address'           => 'array',
+  'payment_methods'         => 'array',
 ];
 
 

@@ -566,13 +566,13 @@
                                         </a>
                                     </li>
                                     <li>
-                                        <a class="fw-normal" href="tel:+8801700000000">
-                                            <i class="fa-solid fa-phone"></i> Sales: +880 1700-000000
+                                        <a class="fw-normal" href="tel:{{ $business_setup->official_contact_number[0] ?? '+8801700000000' }}">
+                                            <i class="fa-solid fa-phone"></i> Sales: {{ $business_setup->official_contact_number[0] ?? '+880 1700-000000' }}
                                         </a>
                                     </li>
                                     <li>
-                                        <a class="fw-normal" href="tel:+8801800000000">
-                                            <i class="fa-solid fa-headset"></i> Hotline: +880 1800-000000
+                                        <a class="fw-normal" href="tel:{{ $business_setup->hotline_number[0] ?? '+8801800000000' }}">
+                                            <i class="fa-solid fa-headset"></i> Hotline: {{ $business_setup->hotline_number[0] ?? '+880 1800-000000' }}
                                         </a>
                                     </li>
                                 </ul>

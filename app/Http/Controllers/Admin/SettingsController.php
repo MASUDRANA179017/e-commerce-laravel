@@ -5,11 +5,14 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
+use App\Models\Admin\Business_SetUp\BusinessSetup;
+
 class SettingsController extends Controller
 {
     public function index()
     {
-        return view('admin.settings.index');
+        $settings = BusinessSetup::first();
+        return view('admin.settings.index', compact('settings'));
     }
 
     public function updateGeneral(Request $request)
@@ -20,8 +23,34 @@ class SettingsController extends Controller
 
     public function updateEmail(Request $request)
     {
-        // Update email settings
-        return response()->json(['success' => true, 'message' => 'Email settings updated']);
+        $request->validate([
+            'mail_mailer' => 'required|string',
+            'mail_host' => 'required|string',
+            'mail_port' => 'required|numeric',
+            'mail_username' => 'nullable|string',
+            'mail_password' => 'nullable|string',
+            'mail_encryption' => 'nullable|string',
+            'mail_from_address' => 'required|email',
+            'mail_from_name' => 'required|string',
+        ]);
+
+        $settings = BusinessSetup::first();
+        if (!$settings) {
+            return response()->json(['error' => 'Business Setup not found'], 404);
+        }
+
+        $settings->update($request->only([
+            'mail_mailer',
+            'mail_host',
+            'mail_port',
+            'mail_username',
+            'mail_password',
+            'mail_encryption',
+            'mail_from_address',
+            'mail_from_name',
+        ]));
+
+        return response()->json(['success' => true, 'message' => 'Email settings updated successfully']);
     }
 
     public function updatePayment(Request $request)

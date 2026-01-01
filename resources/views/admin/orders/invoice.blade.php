@@ -14,6 +14,9 @@
                 <button class="create-btn-base" onclick="window.print()">
                     <i class="fas fa-print me-2"></i>Print Invoice
                 </button>
+                <a href="{{ route('admin.orders.edit', $order->id) }}" class="create-btn-base bg-warning border-warning text-dark">
+                    <i class="fas fa-edit me-2"></i>Edit Order
+                </a>
             </div>
         </div>
     </div>
@@ -24,10 +27,15 @@
                 <!-- Invoice Header -->
                 <div class="row mb-5">
                     <div class="col-6">
-                        <h2 class="fw-bold text-primary">GrowUp</h2>
-                        <p class="mb-0">E-Commerce Store</p>
-                        <p class="mb-0">Dhaka, Bangladesh</p>
-                        <p class="mb-0">info@growup.com</p>
+                        @if($business_setup && $business_setup->logo)
+                            <img src="{{ asset('storage/' . $business_setup->logo) }}" alt="{{ $business_setup->company_name }}" style="height: 50px;" class="mb-3">
+                        @else
+                            <h2 class="fw-bold text-primary">{{ $business_setup->company_name ?? 'GrowUp' }}</h2>
+                        @endif
+                        <p class="mb-0">{{ $business_setup->company_name ?? 'E-Commerce Store' }}</p>
+                        <p class="mb-0">{{ $business_setup->address ?? 'Dhaka, Bangladesh' }}</p>
+                        <p class="mb-0">{{ $business_setup->email ?? 'info@growup.com' }}</p>
+                        <p class="mb-0">{{ $business_setup->phone ?? '' }}</p>
                     </div>
                     <div class="col-6 text-end">
                         <h4 class="fw-bold">INVOICE</h4>

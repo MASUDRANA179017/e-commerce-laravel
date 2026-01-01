@@ -18,11 +18,22 @@ class PageController extends Controller
     {
         $page = Page::where('slug', 'about-us')->orWhere('slug', 'about')->first();
         if (!$page) {
-            // Fallback or create default if not exists, or show static view if exists
+            // Check if static view exists
             if (view()->exists('frontend.about')) {
                 return view('frontend.about');
             }
-            abort(404);
+            
+            // Fallback object
+            return view('frontend.page', ['page' => (object)[
+                'title' => 'About Us',
+                'content' => '<div class="text-center py-5">
+                    <h3>About Us</h3>
+                    <p class="lead">We are a leading e-commerce platform providing high quality products.</p>
+                    <p>Our story begins with a simple vision: to make shopping easy, affordable, and enjoyable for everyone.</p>
+                </div>',
+                'meta_title' => 'About Us',
+                'meta_description' => 'About our company'
+            ]]);
         }
         return view('frontend.page', compact('page'));
     }

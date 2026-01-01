@@ -79,6 +79,16 @@ class BusinessSetUpController extends Controller
                 $business->update(array_merge($validated, $dataToUpdate));
                 break;
 
+            case 'footer_settings':
+                $validated = $request->validate([
+                    'footer_text'    => 'nullable|string',
+                    'copyright_text' => 'nullable|string|max:255',
+                    'payment_methods' => 'nullable|array',
+                ]);
+                $validated['payment_methods'] = $request->input('payment_methods', []);
+                $business->update(array_merge($validated, $dataToUpdate));
+                break;
+
             case 'contact_info':
                 $request->validate([
                     'official_contact_number'   => 'array',

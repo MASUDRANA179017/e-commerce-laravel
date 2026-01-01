@@ -8,6 +8,7 @@ use App\Models\Admin\Product\ProductCategory;
 use App\Models\Admin\Brand\Brand;
 use App\Models\FlashSale;
 use App\Models\Blog;
+use App\Models\Banner;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -18,6 +19,17 @@ class HomeController extends Controller
      */
     public function index()
     {
+        // Get active hero sliders
+        $sliders = collect();
+        try {
+            $sliders = Banner::where('type', 'hero_slider')
+                ->where('status', true)
+                ->orderBy('position')
+                ->get();
+        } catch (\Exception $e) {
+            // Use empty collection
+        }
+
         // Get categories with active product counts
         $categories = collect();
         try {
@@ -185,6 +197,7 @@ class HomeController extends Controller
         }
 
         return view('frontend.home', compact(
+            'sliders',
             'categories',
             'featuredProducts',
             'newArrivals',

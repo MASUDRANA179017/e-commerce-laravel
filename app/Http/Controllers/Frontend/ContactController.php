@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Frontend;
 
 use App\Http\Controllers\Controller;
 use App\Models\ContactMessage;
+use App\Models\Admin\Business_SetUp\BusinessSetup;
 use Illuminate\Http\Request;
 
 class ContactController extends Controller
@@ -13,7 +14,8 @@ class ContactController extends Controller
      */
     public function index()
     {
-        return view('frontend.contact');
+        $business_setup = BusinessSetup::first();
+        return view('frontend.contact', compact('business_setup'));
     }
 
     /**

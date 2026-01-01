@@ -31,6 +31,9 @@ class OrderController extends Controller
                   ->orWhereHas('user', function($u) use ($search) {
                       $u->where('name', 'like', "%{$search}%")
                         ->orWhere('email', 'like', "%{$search}%");
+                  })
+                  ->orWhereHas('items', function($i) use ($search) {
+                      $i->where('product_name', 'like', "%{$search}%");
                   });
             });
         }
@@ -105,7 +108,9 @@ class OrderController extends Controller
             'email' => $request->email,
             'phone' => $request->phone,
             'address' => $request->address,
+            'address2' => $request->address2,
             'city' => $request->city,
+            'state' => $request->state,
             'zip_code' => $request->zip_code,
             'country' => $request->country,
             'status' => $request->status,

@@ -7,6 +7,29 @@
     <section class="banner-two">
         <div class="banner-two__slider swiper">
             <div class="swiper-wrapper">
+                @forelse($sliders as $slider)
+                <div class="swiper-slide">
+                    <div class="banner-two__slider-single">
+                        <div class="banner-two__slider-bg"
+                            data-background="{{ asset('storage/' . $slider->image) }}"></div>
+                        <div class="container">
+                            <div class="row">
+                                <div class="col-12 col-md-6 col-lg-7">
+                                    <div class="banner-two__slider-content">
+                                        <span class="sub-title-main text-white"><i class='bx bxs-tag'></i> {{ $slider->sub_title ?? 'New Arrival' }}</span>
+                                        <h1 class="title-animation text-white mb-0">{{ $slider->title }}</h1>
+                                        <p class="text-white mt-0 fs-13 text-white-50 mb-5">{{ $slider->description ?? 'Discover the latest trends in clothing, accessories, and more. Shop now for exclusive deals!' }}</p>
+                                        <div class="d-flex gap-2 mt-4">
+                                            <a href="{{ $slider->link ?? route('shop.index') }}" class="btn--primary p-2 px-5">Shop Now <i
+                                                    class="fa-solid fa-arrow-right"></i></a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                @empty
                 <div class="swiper-slide">
                     <div class="banner-two__slider-single">
                         <div class="banner-two__slider-bg"
@@ -30,53 +53,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="swiper-slide">
-                    <div class="banner-two__slider-single">
-                        <div class="banner-two__slider-bg"
-                            data-background="{{ asset('frontend/assets/images/web-banner-2.png') }}"></div>
-                        <div class="container">
-                            <div class="row">
-                                <div class="col-12 col-md-6 col-lg-7">
-                                    <div class="banner-two__slider-content">
-                                        <span class="sub-title-main text-white"><i class='bx bxs-star'></i>
-                                            Bestsellers</span>
-                                        <h1 class="title-animation text-white mb-0">Electronics & Gadgets</h1>
-                                        <p class="text-white mt-0 fs-13 text-white-50 mb-5">Find the best smartphones,
-                                            laptops, and smart devices. Get flexible payment options!</p>
-                                        <div class="d-flex gap-2 mt-4">
-                                            <a href="{{ route('shop.index') }}" class="btn--primary p-2 px-5">Explore Now <i
-                                                    class="fa-solid fa-arrow-right"></i></a>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="swiper-slide">
-                    <div class="banner-two__slider-single">
-                        <div class="banner-two__slider-bg"
-                            data-background="{{ asset('frontend/assets/images/web-banner-3.png') }}"></div>
-                        <div class="container">
-                            <div class="row">
-                                <div class="col-12 col-md-6 col-lg-7">
-                                    <div class="banner-two__slider-content">
-                                        <span class="sub-title-main text-white"><i class='bx bxs-shopping-bags'></i> Special
-                                            Offers</span>
-                                        <h1 class="title-animation text-white mb-0">Home & Living Essentials</h1>
-                                        <p class="text-white mt-0 fs-13 text-white-50 mb-5">High-quality furniture,
-                                            kitchenware, and decor to brighten up your home. Free delivery on select items!
-                                        </p>
-                                        <div class="d-flex gap-2 mt-4">
-                                            <a href="{{ route('shop.index') }}" class="btn--primary p-2 px-5">View Deals <i
-                                                    class="fa-solid fa-arrow-right"></i></a>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                @endforelse
             </div>
         </div>
         <div class="banner-six-slide-dot swiper-pagination"></div>

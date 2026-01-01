@@ -21,17 +21,22 @@ class StorefrontController extends Controller
     public function saveCustomizer(Request $request)
     {
         $business_setup = BusinessSetup::first();
-        if ($business_setup) {
-            $business_setup->update($request->only([
-                'theme_color_primary',
-                'theme_color_secondary',
-                'theme_color_accent',
-                'theme_font_primary',
-                'theme_font_base_size',
-                'theme_header_style',
-                'theme_footer_style',
-            ]));
+        if (!$business_setup) {
+            $business_setup = BusinessSetup::create([
+                'company_name' => 'My Company',
+            ]);
         }
+        
+        $business_setup->update($request->only([
+            'theme_color_primary',
+            'theme_color_secondary',
+            'theme_color_accent',
+            'theme_font_primary',
+            'theme_font_base_size',
+            'theme_header_style',
+            'theme_footer_style',
+        ]));
+        
         return response()->json(['success' => true, 'message' => 'Theme settings saved']);
     }
 
@@ -50,12 +55,13 @@ class StorefrontController extends Controller
     {
         $request->validate([
             'title' => 'required|string|max:255',
+            'slug' => 'nullable|string|max:255|unique:pages,slug',
             'content' => 'required',
         ]);
 
         Page::create([
             'title' => $request->title,
-            'slug' => Str::slug($request->title),
+            'slug' => $request->slug ? Str::slug($request->slug) : Str::slug($request->title),
             'content' => $request->content,
             'status' => true,
             'meta_title' => $request->meta_title,
@@ -77,11 +83,13 @@ class StorefrontController extends Controller
         
         $request->validate([
             'title' => 'required|string|max:255',
+            'slug' => 'nullable|string|max:255|unique:pages,slug,' . $id,
             'content' => 'required',
         ]);
 
         $page->update([
             'title' => $request->title,
+            'slug' => $request->slug ? Str::slug($request->slug) : $page->slug,
             'content' => $request->content,
             'status' => $request->has('status'),
             'meta_title' => $request->meta_title,
@@ -219,4 +227,5 @@ class StorefrontController extends Controller
         return redirect()->back()->with('success', 'Banner deleted successfully');
     }
 }
+
 

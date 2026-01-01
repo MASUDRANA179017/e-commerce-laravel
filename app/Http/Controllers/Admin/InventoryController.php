@@ -122,20 +122,39 @@ class InventoryController extends Controller
             'status' => 'required|in:pending,ordered,received,cancelled',
         ]);
 
-        $purchase = Purchase::findOrFail($id);
-        $purchase->update([
-            'status' => $request->status,
-            'notes' => $request->notes,
-        ]);
+        $purchase = Purchase::with('items')->findOrFail($id);
+        $oldStatus = $purchase->status;
+        $newStatus = $request->status;
 
-        if ($request->status == 'received') {
+        // If status is the same, just update notes
+        if ($oldStatus === $newStatus) {
+            $purchase->update(['notes' => $request->notes]);
+            return redirect()->back()->with('success', 'Purchase order updated successfully');
+        }
+
+        // Handle Stock Adjustment
+        if ($newStatus === 'received' && $oldStatus !== 'received') {
+            // Add stock
             foreach ($purchase->items as $item) {
                 $product = Product::find($item->product_id);
                 if ($product) {
                     $product->increment('stock_quantity', $item->quantity);
                 }
             }
+        } elseif ($oldStatus === 'received' && $newStatus !== 'received') {
+            // Remove stock (revert operation)
+            foreach ($purchase->items as $item) {
+                $product = Product::find($item->product_id);
+                if ($product) {
+                    $product->decrement('stock_quantity', $item->quantity);
+                }
+            }
         }
+
+        $purchase->update([
+            'status' => $newStatus,
+            'notes' => $request->has('notes') ? $request->notes : $purchase->notes,
+        ]);
 
         return redirect()->back()->with('success', 'Purchase order updated successfully');
     }
