@@ -117,9 +117,15 @@
                                 <td>{{ $customer->created_at->format('M d, Y') }}</td>
                                 <td class="text-end pe-3">
                                     <div class="d-flex align-items-center justify-content-end gap-1">
-                                        <a href="#" class="action-btn-info" title="View Details"><i class="fas fa-eye"></i></a>
-                                        <a href="#" class="action-btn-success" title="Edit"><i class="fas fa-edit"></i></a>
-                                        <a href="#" class="action-btn-danger" title="Delete"><i class="fas fa-trash"></i></a>
+                                        <a href="{{ route('admin.customers.show', $customer->id) }}" class="action-btn-info" title="View Details"><i class="fas fa-eye"></i></a>
+                                        <a href="#" class="action-btn-success btn-edit" data-id="{{ $customer->id }}" title="Edit"><i class="fas fa-edit"></i></a>
+                                        <form action="{{ route('admin.customers.destroy', $customer->id) }}" method="POST" class="delete-customer-form" style="display:inline-block;">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="action-btn-danger btn-delete btn btn-link p-0" title="Delete">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </form>
                                     </div>
                                 </td>
                             </tr>
@@ -145,5 +151,104 @@
         </div>
     </div>
 </div>
+
+<!-- Add Customer Modal (loads create page in iframe) -->
+<div class="modal fade" id="addCustomerModal" tabindex="-1" aria-labelledby="addCustomerModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addCustomerModalLabel">Add Customer</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form action="{{ route('admin.customers.store') }}" method="POST">
+                    @csrf
+                    <div class="p-3">
+                        @include('admin.customers._form_fields')
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Create Customer</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Edit Customer Modal (reuse form partial) -->
+<div class="modal fade" id="editCustomerModal" tabindex="-1" aria-labelledby="editCustomerModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editCustomerModalLabel">Edit Customer</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="editCustomerForm" action="" method="POST">
+                    @csrf
+                    @method('PUT')
+                    <div class="p-3">
+                        @include('admin.customers._form_fields')
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Update Customer</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
 @endsection
+
+@push('scripts')
+<script>
+document.addEventListener('DOMContentLoaded', function(){
+    var baseUrl = "{{ url('admin/customers') }}";
+
+    // Edit button opens modal and populates fields
+    document.querySelectorAll('.btn-edit').forEach(function(btn){
+        btn.addEventListener('click', function(e){
+            e.preventDefault();
+            var id = this.getAttribute('data-id');
+            if(!id) return;
+            fetch(baseUrl + '/' + id, { headers: { 'Accept': 'application/json' } })
+                .then(function(resp){ return resp.json(); })
+                .then(function(json){
+                    var c = json.customer;
+                    var form = document.getElementById('editCustomerForm');
+                    form.action = baseUrl + '/' + id;
+                    ['name','email','phone','address','zipcode','note','total_spent'].forEach(function(f){
+                        var el = form.querySelector('[name="'+f+'"]'); if(el) el.value = c[f] ?? '';
+                    });
+                    var pw = form.querySelector('[name="password"]'); if(pw) pw.value = '';
+                    var isActive = form.querySelector('[name="is_active"]'); if(isActive) isActive.checked = !!c.is_active;
+                    var modal = new bootstrap.Modal(document.getElementById('editCustomerModal'));
+                    modal.show();
+                }).catch(function(){ alert('Could not load customer data.'); });
+        });
+    });
+
+    // Delete using SweetAlert2
+    document.querySelectorAll('.delete-customer-form').forEach(function(form){
+        form.addEventListener('submit', function(e){
+            e.preventDefault();
+            var frm = this;
+            if (typeof Swal === 'undefined') {
+                if (confirm('Are you sure you want to delete this customer?')) frm.submit();
+                return;
+            }
+            Swal.fire({
+                title: 'Are you sure?',
+                text: 'This cannot be undone.',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Yes, delete it'
+            }).then(function(result){ if(result.isConfirmed) frm.submit(); });
+        });
+    });
+});
+</script>
+@endpush
 

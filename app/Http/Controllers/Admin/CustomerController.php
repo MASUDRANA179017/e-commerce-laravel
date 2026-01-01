@@ -3,21 +3,21 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\User;
+use App\Models\Customer;
 use Illuminate\Http\Request;
 
 class CustomerController extends Controller
 {
     public function index()
     {
-        // Get all users as customers (adjust query based on your actual user structure)
-        $customers = User::paginate(20);
+        // Get all customers
+        $customers = Customer::orderBy('created_at', 'desc')->paginate(20);
         return view('admin.customers.index', compact('customers'));
     }
 
     public function getData(Request $request)
     {
-        $customers = User::all();
+        $customers = Customer::all();
         return response()->json(['data' => $customers]);
     }
 
@@ -30,60 +30,88 @@ class CustomerController extends Controller
     {
         $request->validate([
             'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:users',
-            'password' => 'required|min:8',
+            'email' => 'required|email|unique:customers,email',
+            'phone' => 'required|string|max:50',
+            'address' => 'required|string',
+            'password' => 'required|string|min:6',
+            'zipcode' => 'nullable|string|max:50',
+            'note' => 'nullable|string',
+            'total_spent' => 'nullable|numeric',
         ]);
 
-        User::create([
+        $data = [
             'name' => $request->name,
             'email' => $request->email,
-            'password' => bcrypt($request->password),
-            'role' => 'customer',
-        ]);
+            'phone' => $request->phone,
+            'address' => $request->address,
+            'zipcode' => $request->zipcode,
+            'note' => $request->note,
+            'total_spent' => $request->total_spent ?? 0,
+            'is_active' => $request->has('is_active') ? 1 : 0,
+        ];
+
+        if ($request->filled('password')) {
+            $data['password'] = \Hash::make($request->password);
+        }
+
+        Customer::create($data);
 
         return redirect()->route('admin.customers.index')->with('success', 'Customer created successfully');
     }
 
     public function show($customer)
     {
-        $customer = User::findOrFail($customer);
+        $customer = Customer::findOrFail($customer);
+        if (request()->wantsJson() || request()->ajax()) {
+            return response()->json(['customer' => $customer]);
+        }
+
         return view('admin.customers.show', compact('customer'));
     }
 
     public function edit($customer)
     {
-        $customer = User::findOrFail($customer);
+        $customer = Customer::findOrFail($customer);
         return view('admin.customers.edit', compact('customer'));
     }
 
     public function update(Request $request, $customer)
     {
-        $customer = User::findOrFail($customer);
-        
+        $cust = Customer::findOrFail($customer);
         $request->validate([
             'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:users,email,' . $customer->id,
+            'email' => 'required|email|unique:customers,email,' . $cust->id,
+            'phone' => 'required|string|max:50',
+            'password' => 'nullable|string|min:6',
+            'address' => 'required|string',
+            'zipcode' => 'nullable|string|max:50',
+            'note' => 'nullable|string',
+            'total_spent' => 'nullable|numeric',
         ]);
 
-        $customer->update($request->only(['name', 'email']));
+        $data = $request->only(['name', 'email', 'phone', 'address', 'zipcode', 'note', 'total_spent']);
+        $data['is_active'] = $request->has('is_active') ? 1 : 0;
 
         if ($request->filled('password')) {
-            $customer->update(['password' => bcrypt($request->password)]);
+            $data['password'] = \Hash::make($request->password);
         }
+
+        $cust->update($data);
 
         return redirect()->route('admin.customers.index')->with('success', 'Customer updated successfully');
     }
 
     public function destroy($customer)
     {
-        User::findOrFail($customer)->delete();
+        Customer::findOrFail($customer)->delete();
         return response()->json(['success' => true]);
     }
 
     public function toggleStatus($customer)
     {
-        $customer = User::findOrFail($customer);
-        $customer->update(['is_active' => !$customer->is_active]);
+        $cust = Customer::findOrFail($customer);
+        $cust->is_active = !$cust->is_active;
+        $cust->save();
         return response()->json(['success' => true]);
     }
 
