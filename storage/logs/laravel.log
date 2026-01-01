@@ -1,1 +1,75 @@
 [2025-12-28 10:38:38] local.INFO: Login attempt for user: {"attributes":{},"request":{},"query":{},"server":{},"files":{},"cookies":{},"headers":{}}  
+[2026-01-01 04:48:47] local.INFO: Login attempt for user: {"attributes":{},"request":{},"query":{},"server":{},"files":{},"cookies":{},"headers":{}}  
+[2026-01-01 04:51:04] local.INFO: array (
+  'official_contact_number' => 
+  array (
+    0 => '"+8801844674502"',
+    1 => '017291199658',
+  ),
+  'whatsapp_number' => 
+  array (
+    0 => '"+8801844674502"',
+  ),
+  'hotline_number' => 
+  array (
+    0 => '"+8801844674503"',
+  ),
+  'email_address' => 
+  array (
+    0 => '"info@qbit-tech.com"',
+  ),
+  'landline_number' => '02-9876543',
+  'website_address' => 'https://qbit-tech.com',
+  'part' => 'contact_info',
+  '_method' => 'PUT',
+)  
+[2026-01-01 04:51:06] local.INFO: array (
+  'official_contact_number' => 
+  array (
+    0 => '"+8801844674502"',
+    1 => '017291199658',
+  ),
+  'whatsapp_number' => 
+  array (
+    0 => '"+8801844674502"',
+  ),
+  'hotline_number' => 
+  array (
+    0 => '"+8801844674503"',
+  ),
+  'email_address' => 
+  array (
+    0 => '"info@qbit-tech.com"',
+  ),
+  'landline_number' => '02-9876543',
+  'website_address' => 'https://qbit-tech.com',
+  'part' => 'contact_info',
+  '_method' => 'PUT',
+)  
+[2026-01-01 05:01:55] local.INFO: Login attempt for user: {"attributes":{},"request":{},"query":{},"server":{},"files":{},"cookies":{},"headers":{}}  
+[2026-01-01 05:11:21] local.INFO: array (
+  'official_contact_number' => 
+  array (
+    0 => '+8801844674502',
+    1 => '01729119658',
+  ),
+  'whatsapp_number' => 
+  array (
+    0 => '+8801844674502',
+    1 => '01729119658',
+  ),
+  'hotline_number' => 
+  array (
+    0 => '+8801844674503',
+    1 => '01729119658',
+  ),
+  'email_address' => 
+  array (
+    0 => 'info@qbit-tech.com',
+    1 => 'arnobghosh.go@gmail.com',
+  ),
+  'landline_number' => '02-9876543',
+  'website_address' => 'https://qbit-tech.com',
+  'part' => 'contact_info',
+  '_method' => 'PUT',
+)  

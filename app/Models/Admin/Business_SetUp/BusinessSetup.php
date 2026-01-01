@@ -63,22 +63,62 @@ protected $casts = [
 
    protected function officialContactNumber(): Attribute {
     return Attribute::make(
-        get: fn($v) => is_array($v) ? $v : (strlen((string)$v) ? [(string)$v] : [])
+        get: function ($v) {
+            if (is_array($v)) return $v;
+            if (is_string($v)) {
+                $d = json_decode($v, true);
+                if (null !== $d) {
+                    if (is_array($d)) return $d;
+                    if (is_scalar($d)) return [(string) $d];
+                }
+            }
+            return strlen((string) $v) ? [(string) $v] : [];
+        }
     );
 }
 protected function whatsappNumber(): Attribute {
     return Attribute::make(
-        get: fn($v) => is_array($v) ? $v : (strlen((string)$v) ? [(string)$v] : [])
+        get: function ($v) {
+            if (is_array($v)) return $v;
+            if (is_string($v)) {
+                $d = json_decode($v, true);
+                if (null !== $d) {
+                    if (is_array($d)) return $d;
+                    if (is_scalar($d)) return [(string) $d];
+                }
+            }
+            return strlen((string) $v) ? [(string) $v] : [];
+        }
     );
 }
 protected function hotlineNumber(): Attribute {
     return Attribute::make(
-        get: fn($v) => is_array($v) ? $v : (strlen((string)$v) ? [(string)$v] : [])
+        get: function ($v) {
+            if (is_array($v)) return $v;
+            if (is_string($v)) {
+                $d = json_decode($v, true);
+                if (null !== $d) {
+                    if (is_array($d)) return $d;
+                    if (is_scalar($d)) return [(string) $d];
+                }
+            }
+            return strlen((string) $v) ? [(string) $v] : [];
+        }
     );
 }
 protected function emailAddress(): Attribute {
     return Attribute::make(
-        get: fn($v) => is_array($v) ? $v : (strlen((string)$v) ? [(string)$v] : [])
+        get: function ($v) {
+            if (is_array($v)) return $v;
+            if (is_string($v)) {
+                $d = json_decode($v, true);
+                if (null !== $d) {
+                    if (is_array($d)) return $d;
+                    if (is_scalar($d)) return [(string) $d];
+                }
+            }
+            return strlen((string) $v) ? [(string) $v] : [];
+        }
     );
 }
 
