@@ -1070,22 +1070,23 @@
                         type: 'GET',
                         dataType: 'json',
                         success: function(user) {
+                            console.log("User data:", user);
                             $('#editUserId').val(user.id);
                             $('#editFullName').val(user.name);
                             $('#editEmail').val(user.email);
                             $('#editPhone').val(user.phone);
-                            $('#editUsername').val(user.username);
-                            $('#editDepartment').val(user.department);
-                            $('#editDesignation').val(user.designation);
-                            $('#editRole').val(user.roles.length ? user.roles[0].id : '');
-                            $('#editStatus').val(user.status);
+                            // remove non-existing username field if present
+                            // set selects and trigger change for select2 compatibility
+                            $('#editDepartment').val(user.department_id).trigger('change');
+                            $('#editDesignation').val(user.designation_id).trigger('change');
+                            $('#editRole').val(user.roles.length ? user.roles[0].id : '').trigger('change');
+                            $('#editStatus').val(user.is_active).trigger('change');
                             $('#editAddress').val(user.address);
 
-                            // Profile image
-                            let avatar = user.image ? `/storage/${user.image}` :
-                                'assets/img/avatar-1.jpg';
-                            console.log(avatar);
-                            $('#editProfileImagePreview').attr('src', avatar);
+                            // Profile image (use controller-provided absolute URL)
+                            const avatarUrl = user.image_url || (user.image ? `/storage/${user.image}` : 'assets/img/avatar-1.jpg');
+                            console.log('avatarUrl', avatarUrl);
+                            $('#editProfileImagePreview').attr('src', avatarUrl);
 
                             $('#editUserModal').modal('show');
                         },
