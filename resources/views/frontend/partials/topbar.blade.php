@@ -6,21 +6,21 @@
             <div class="col-lg-8">
                 <ul class="topbar-list d-flex align-items-center gap-4 mb-0 list-unstyled">
                     <li>
-                        <a href="mailto:info@growup.com" class="d-flex align-items-center text-white-50 text-decoration-none" style="font-size: 13px; transition: all 0.3s;">
+                        <a href="mailto:{{ $business_setup->email_address[0] ?? 'info@growup.com' }}" class="d-flex align-items-center text-white-50 text-decoration-none" style="font-size: 13px; transition: all 0.3s;">
                             <i class="fa-regular fa-envelope me-2" style="color: #0496ff;"></i>
-                            info@growup.com
+                            {{ $business_setup->email_address[0] ?? 'info@growup.com' }}
                         </a>
                     </li>
                     <li>
-                        <a href="tel:+8801713269591" class="d-flex align-items-center text-white-50 text-decoration-none" style="font-size: 13px; transition: all 0.3s;">
+                        <a href="tel:{{ $business_setup->official_contact_number[0] ?? '+8801713269591' }}" class="d-flex align-items-center text-white-50 text-decoration-none" style="font-size: 13px; transition: all 0.3s;">
                             <i class="fa-solid fa-phone me-2" style="color: #0496ff;"></i>
-                            +880 1713-269591
+                            {{ $business_setup->official_contact_number[0] ?? '+880 1713-269591' }}
                         </a>
                     </li>
                     <li>
                         <span class="d-flex align-items-center text-white-50" style="font-size: 13px;">
                             <i class="fa-solid fa-location-dot me-2" style="color: #0496ff;"></i>
-                            Dhaka, Bangladesh
+                            {{ $business_setup->street_address ?? 'Dhaka, Bangladesh' }}
                         </span>
                     </li>
                 </ul>
@@ -31,15 +31,26 @@
                 <div class="d-flex align-items-center justify-content-end gap-4">
                     <!-- Social Icons -->
                     <div class="social-icons d-flex gap-2">
-                        <a href="#" target="_blank" class="social-icon" style="width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; background: rgba(255,255,255,0.1); border-radius: 50%; color: #fff; font-size: 12px; transition: all 0.3s;">
+                        @if($business_setup->facebook_url)
+                        <a href="{{ $business_setup->facebook_url }}" target="_blank" class="social-icon" style="width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; background: rgba(255,255,255,0.1); border-radius: 50%; color: #fff; font-size: 12px; transition: all 0.3s;">
                             <i class="fab fa-facebook-f"></i>
                         </a>
-                        <a href="#" target="_blank" class="social-icon" style="width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; background: rgba(255,255,255,0.1); border-radius: 50%; color: #fff; font-size: 12px; transition: all 0.3s;">
+                        @endif
+                        @if($business_setup->twitter_url)
+                        <a href="{{ $business_setup->twitter_url }}" target="_blank" class="social-icon" style="width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; background: rgba(255,255,255,0.1); border-radius: 50%; color: #fff; font-size: 12px; transition: all 0.3s;">
                             <i class="fab fa-twitter"></i>
                         </a>
-                        <a href="#" target="_blank" class="social-icon" style="width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; background: rgba(255,255,255,0.1); border-radius: 50%; color: #fff; font-size: 12px; transition: all 0.3s;">
-                            <i class="fab fa-instagram"></i>
+                        @endif
+                        @if($business_setup->linkedin_url)
+                        <a href="{{ $business_setup->linkedin_url }}" target="_blank" class="social-icon" style="width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; background: rgba(255,255,255,0.1); border-radius: 50%; color: #fff; font-size: 12px; transition: all 0.3s;">
+                            <i class="fab fa-linkedin-in"></i>
                         </a>
+                        @endif
+                        @if($business_setup->youtube_url)
+                        <a href="{{ $business_setup->youtube_url }}" target="_blank" class="social-icon" style="width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; background: rgba(255,255,255,0.1); border-radius: 50%; color: #fff; font-size: 12px; transition: all 0.3s;">
+                            <i class="fab fa-youtube"></i>
+                        </a>
+                        @endif
                     </div>
                     
                     <!-- Divider -->

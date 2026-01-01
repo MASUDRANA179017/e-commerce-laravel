@@ -63,22 +63,18 @@ Route::prefix('checkout')->name('checkout.')->group(function () {
     Route::get('/success/{order}', [CheckoutController::class, 'success'])->name('success');
 });
 
-// Static Pages
-Route::get('/about', function () {
-    return view('frontend.about');
-})->name('frontend.about');
+use App\Http\Controllers\Frontend\PageController;
 
+// Static Pages
+Route::get('/about', [PageController::class, 'about'])->name('frontend.about');
 Route::get('/contact', [ContactController::class, 'index'])->name('frontend.contact');
 Route::post('/contact', [ContactController::class, 'store'])->name('contact.store');
 
 // Additional static pages
-Route::get('/terms-and-conditions', function () {
-    return view('frontend.terms');
-})->name('frontend.terms');
+Route::get('/terms-and-conditions', [PageController::class, 'terms'])->name('frontend.terms');
+Route::get('/privacy-policy', [PageController::class, 'privacy'])->name('frontend.privacy');
+Route::get('/page/{slug}', [PageController::class, 'show'])->name('frontend.page');
 
-Route::get('/privacy-policy', function () {
-    return view('frontend.privacy');
-})->name('frontend.privacy');
 
 Route::get('/faq', function () {
     return view('frontend.faq');

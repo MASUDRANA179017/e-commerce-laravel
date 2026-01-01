@@ -21,8 +21,23 @@
             </div>
             <div class="card-body">
                 <div class="row g-3">
+                    @foreach($hero_sliders as $slider)
                     <div class="col-md-4">
-                        <div class="border rounded p-3 text-center" style="border-style: dashed !important;">
+                        <div class="border rounded p-2 position-relative group-action">
+                            <img src="{{ asset('storage/' . $slider->image) }}" class="img-fluid rounded" alt="Slider">
+                            <div class="position-absolute top-0 end-0 p-2 d-none group-action-show">
+                                <button class="btn btn-sm btn-light rounded-circle shadow-sm" onclick='editBanner(@json($slider))'><i class="bx bx-edit"></i></button>
+                                <form action="{{ route('admin.storefront.banners.destroy', $slider->id) }}" method="POST" class="d-inline">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button class="btn btn-sm btn-danger rounded-circle shadow-sm" onclick="return confirm('Are you sure?')"><i class="bx bx-trash"></i></button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    @endforeach
+                    <div class="col-md-4">
+                        <div class="border rounded p-3 text-center d-flex flex-column align-items-center justify-content-center h-100" style="border-style: dashed !important; min-height: 200px; cursor: pointer;" data-bs-toggle="modal" data-bs-target="#addBannerModal" onclick="$('#bannerType').val('hero_slider')">
                             <span class="material-symbols-outlined fs-1 text-muted d-block mb-2">add_photo_alternate</span>
                             <p class="mb-2 text-muted">Add Slider Image</p>
                             <small class="text-muted">Recommended: 1920x600px</small>
@@ -53,6 +68,31 @@
                             </tr>
                         </thead>
                         <tbody>
+                            @forelse($promotional_banners as $banner)
+                            <tr>
+                                <td class="ps-3">
+                                    <img src="{{ asset('storage/' . $banner->image) }}" alt="Banner" style="height: 50px; width: auto;" class="rounded">
+                                </td>
+                                <td>{{ $banner->title ?? 'N/A' }}</td>
+                                <td>{{ $banner->position }}</td>
+                                <td>
+                                    @if($banner->status)
+                                    <span class="badge bg-success">Active</span>
+                                    @else
+                                    <span class="badge bg-secondary">Inactive</span>
+                                    @endif
+                                </td>
+                                <td>{{ $banner->clicks }}</td>
+                                <td class="text-end pe-3">
+                                    <button class="btn btn-sm btn-light" onclick='editBanner(@json($banner))'><i class="bx bx-edit"></i></button>
+                                    <form action="{{ route('admin.storefront.banners.destroy', $banner->id) }}" method="POST" class="d-inline">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button class="btn btn-sm btn-light text-danger" onclick="return confirm('Are you sure?')"><i class="bx bx-trash"></i></button>
+                                    </form>
+                                </td>
+                            </tr>
+                            @empty
                             <tr>
                                 <td colspan="6" class="text-center py-5">
                                     <div class="text-muted">
@@ -61,6 +101,7 @@
                                     </div>
                                 </td>
                             </tr>
+                            @endforelse
                         </tbody>
                     </table>
                 </div>
@@ -68,5 +109,83 @@
         </div>
     </div>
 </div>
+
+<!-- Add/Edit Modal -->
+<div class="modal fade" id="addBannerModal" tabindex="-1">
+    <div class="modal-dialog">
+        <form id="bannerForm" action="{{ route('admin.storefront.banners.store') }}" method="POST" enctype="multipart/form-data">
+            @csrf
+            <div id="methodField"></div>
+            <div class="modal-content">
+                <div class="modal-header border-0">
+                    <h5 class="modal-title fw-bold" id="modalTitle">Add Banner</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label">Type</label>
+                        <select name="type" id="bannerType" class="form-select">
+                            <option value="hero_slider">Hero Slider</option>
+                            <option value="promotional_banner">Promotional Banner</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Title (Optional)</label>
+                        <input type="text" name="title" id="bannerTitle" class="form-control" placeholder="e.g. Summer Sale">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Link (Optional)</label>
+                        <input type="url" name="link" id="bannerLink" class="form-control" placeholder="https://...">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Position</label>
+                        <input type="number" name="position" id="bannerPosition" class="form-control" value="0">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Image</label>
+                        <input type="file" name="image" id="bannerImage" class="form-control" accept="image/*">
+                        <small class="text-muted d-block mt-1">Recommended size: 1920x600px for Sliders, 800x400px for Banners</small>
+                    </div>
+                </div>
+                <div class="modal-footer border-0">
+                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="create-btn-base">Save Banner</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
 @endsection
 
+@push('scripts')
+<script>
+    function editBanner(banner) {
+        $('#modalTitle').text('Edit Banner');
+        $('#bannerForm').attr('action', '{{ route("admin.storefront.banners.update", "") }}/' + banner.id);
+        $('#methodField').html('<input type="hidden" name="_method" value="PUT">');
+        $('#bannerType').val(banner.type);
+        $('#bannerTitle').val(banner.title);
+        $('#bannerLink').val(banner.link);
+        $('#bannerPosition').val(banner.position);
+        
+        // Image is optional on update
+        $('#bannerImage').removeAttr('required');
+        
+        $('#addBannerModal').modal('show');
+    }
+
+    $('#addBannerModal').on('hidden.bs.modal', function () {
+        $('#modalTitle').text('Add Banner');
+        $('#bannerForm').attr('action', '{{ route("admin.storefront.banners.store") }}');
+        $('#methodField').empty();
+        $('#bannerForm')[0].reset();
+        $('#bannerImage').attr('required', 'required');
+    });
+</script>
+<style>
+    .group-action:hover .group-action-show {
+        display: block !important;
+    }
+</style>
+@endpush

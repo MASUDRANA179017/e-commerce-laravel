@@ -256,6 +256,12 @@
                 <h6 class="mb-0">System Settings</h6><span class="small-muted">local/S3</span>
             </div>
         </div>
+        <div class="qb-wizard-tab" data-target="#tab-mail">
+            <div class="qb-wizard-tab-icon"><i class="bx bx-envelope"></i></div>
+            <div>
+                <h6 class="mb-0">Mail Config</h6><span class="small-muted">smtp settings</span>
+            </div>
+        </div>
     </div>
 
     <div id="wizard-content">
@@ -1047,6 +1053,7 @@
                     <h5 class="panel-title mb-0"><i class="bx bx-list-check me-2"></i>System Prefixes Management</h5>
                 </div>
                 <div class="panel-body">
+
                     <div class="page-inner">
                         <style>
                             .vertical-btn {
@@ -1241,6 +1248,80 @@
                     </div>
                 </div>
             </div>
+        </div>
+        <div class="tab-pane" id="tab-mail">
+             <form class="panel card-form" id="mailConfigForm" data-part="mail_config">
+                 <div class="panel-header d-flex justify-content-between align-items-center">
+                     <h5 class="panel-title mb-0"><i class="bx bx-envelope me-2"></i>Mail Configuration</h5>
+                     <button type="button" class="select-btn-primary edit-card-btn">Edit</button>
+                 </div>
+                 <div class="panel-body">
+                     <div class="row g-3">
+                         <div class="col-lg-6">
+                             <div class="form-group">
+                                 <label>Mailer</label>
+                                 <select name="mail_mailer" class="form-select" disabled>
+                                     <option value="smtp" {{ ($business_setup->mail_mailer ?? 'smtp') == 'smtp' ? 'selected' : '' }}>SMTP</option>
+                                     <option value="sendmail" {{ ($business_setup->mail_mailer ?? '') == 'sendmail' ? 'selected' : '' }}>Sendmail</option>
+                                     <option value="mailgun" {{ ($business_setup->mail_mailer ?? '') == 'mailgun' ? 'selected' : '' }}>Mailgun</option>
+                                     <option value="ses" {{ ($business_setup->mail_mailer ?? '') == 'ses' ? 'selected' : '' }}>SES</option>
+                                     <option value="postmark" {{ ($business_setup->mail_mailer ?? '') == 'postmark' ? 'selected' : '' }}>Postmark</option>
+                                 </select>
+                             </div>
+                         </div>
+                         <div class="col-lg-6">
+                             <div class="form-group">
+                                 <label>Host</label>
+                                 <input type="text" name="mail_host" class="form-control" value="{{ $business_setup->mail_host ?? '' }}" placeholder="smtp.mailtrap.io" disabled>
+                             </div>
+                         </div>
+                         <div class="col-lg-6">
+                             <div class="form-group">
+                                 <label>Port</label>
+                                 <input type="text" name="mail_port" class="form-control" value="{{ $business_setup->mail_port ?? '2525' }}" placeholder="2525" disabled>
+                             </div>
+                         </div>
+                         <div class="col-lg-6">
+                             <div class="form-group">
+                                 <label>Username</label>
+                                 <input type="text" name="mail_username" class="form-control" value="{{ $business_setup->mail_username ?? '' }}" placeholder="Username" disabled>
+                             </div>
+                         </div>
+                         <div class="col-lg-6">
+                             <div class="form-group">
+                                 <label>Password</label>
+                                 <input type="password" name="mail_password" class="form-control" value="{{ $business_setup->mail_password ?? '' }}" placeholder="Password" disabled>
+                            </div>
+                         </div>
+                         <div class="col-lg-6">
+                             <div class="form-group">
+                                 <label>Encryption</label>
+                                 <select name="mail_encryption" class="form-select" disabled>
+                                     <option value="tls" {{ ($business_setup->mail_encryption ?? 'tls') == 'tls' ? 'selected' : '' }}>TLS</option>
+                                     <option value="ssl" {{ ($business_setup->mail_encryption ?? '') == 'ssl' ? 'selected' : '' }}>SSL</option>
+                                     <option value="null" {{ ($business_setup->mail_encryption ?? '') == 'null' ? 'selected' : '' }}>None</option>
+                                 </select>
+                             </div>
+                         </div>
+                         <div class="col-lg-6">
+                             <div class="form-group">
+                                 <label>From Address</label>
+                                 <input type="email" name="mail_from_address" class="form-control" value="{{ $business_setup->mail_from_address ?? '' }}" placeholder="hello@example.com" disabled>
+                             </div>
+                         </div>
+                         <div class="col-lg-6">
+                             <div class="form-group">
+                                 <label>From Name</label>
+                                 <input type="text" name="mail_from_name" class="form-control" value="{{ $business_setup->mail_from_name ?? '' }}" placeholder="Example App" disabled>
+                             </div>
+                         </div>
+                     </div>
+                 </div>
+                 <div class="panel-footer text-end d-none">
+                     <button type="button" class="btn btn-secondary btn-sm cancel-card-btn me-2">Cancel</button>
+                     <button type="button" class="btn btn-success btn-sm save-card-btn">Save</button>
+                 </div>
+             </form>
         </div>
     </div>
 

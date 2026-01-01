@@ -247,6 +247,20 @@ class BusinessSetUpController extends Controller
                 );
                 break;
 
+            case 'mail_config':
+                $validated = $request->validate([
+                    'mail_mailer'       => 'required|string|in:smtp,sendmail,mailgun,ses,postmark',
+                    'mail_host'         => 'required|string',
+                    'mail_port'         => 'required|string',
+                    'mail_username'     => 'nullable|string',
+                    'mail_password'     => 'nullable|string',
+                    'mail_encryption'   => 'nullable|string|in:tls,ssl,null',
+                    'mail_from_address' => 'required|email',
+                    'mail_from_name'    => 'required|string',
+                ]);
+                $business->update(array_merge($validated, $dataToUpdate));
+                break;
+
             default:
                 return response()->json([
                     'status'  => 'error',

@@ -41,8 +41,18 @@
                             </div>
                             <div>
                                 <h5 class="mb-2">Call Us</h5>
-                                <p class="mb-1"><a href="tel:+8801713269591" class="text-muted text-decoration-none">+880 1713-269591</a></p>
-                                <p class="mb-0"><a href="tel:+8801713269592" class="text-muted text-decoration-none">+880 1713-269592</a></p>
+                                <p class="mb-1">
+                                    <a href="tel:{{ $business_setup->official_contact_number[0] ?? '+8801713269591' }}" class="text-muted text-decoration-none">
+                                        {{ $business_setup->official_contact_number[0] ?? '+880 1713-269591' }}
+                                    </a>
+                                </p>
+                                @if(isset($business_setup->official_contact_number[1]))
+                                <p class="mb-0">
+                                    <a href="tel:{{ $business_setup->official_contact_number[1] }}" class="text-muted text-decoration-none">
+                                        {{ $business_setup->official_contact_number[1] }}
+                                    </a>
+                                </p>
+                                @endif
                             </div>
                         </div>
                         
@@ -52,8 +62,18 @@
                             </div>
                             <div>
                                 <h5 class="mb-2">Email Us</h5>
-                                <p class="mb-1"><a href="mailto:info@growup.com" class="text-muted text-decoration-none">info@growup.com</a></p>
-                                <p class="mb-0"><a href="mailto:support@growup.com" class="text-muted text-decoration-none">support@growup.com</a></p>
+                                <p class="mb-1">
+                                    <a href="mailto:{{ $business_setup->email_address[0] ?? 'info@growup.com' }}" class="text-muted text-decoration-none">
+                                        {{ $business_setup->email_address[0] ?? 'info@growup.com' }}
+                                    </a>
+                                </p>
+                                @if(isset($business_setup->email_address[1]))
+                                <p class="mb-0">
+                                    <a href="mailto:{{ $business_setup->email_address[1] }}" class="text-muted text-decoration-none">
+                                        {{ $business_setup->email_address[1] }}
+                                    </a>
+                                </p>
+                                @endif
                             </div>
                         </div>
                         
@@ -63,7 +83,11 @@
                             </div>
                             <div>
                                 <h5 class="mb-2">Visit Us</h5>
-                                <p class="mb-0 text-muted">Ambon Complex 99<br>Mohakhali C/A<br>Dhaka, Bangladesh</p>
+                                <p class="mb-0 text-muted">
+                                    {{ $business_setup->street_address ?? 'Ambon Complex 99' }}<br>
+                                    {{ $business_setup->city_thana ?? 'Mohakhali C/A' }}<br>
+                                    {{ $business_setup->district ?? 'Dhaka, Bangladesh' }}
+                                </p>
                             </div>
                         </div>
                         
@@ -83,21 +107,31 @@
                     <div class="social-links mt-5" data-aos="fade-up" data-aos-delay="500">
                         <h6 class="mb-3">Follow Us</h6>
                         <div class="d-flex gap-2">
-                            <a href="#" class="social-link" style="width: 45px; height: 45px; background: #0496ff; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #fff; text-decoration: none; transition: all 0.3s;">
+                            @if($business_setup && $business_setup->facebook_status && $business_setup->facebook_url)
+                            <a href="{{ $business_setup->facebook_url }}" target="_blank" class="social-link" style="width: 45px; height: 45px; background: #0496ff; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #fff; text-decoration: none; transition: all 0.3s;">
                                 <i class="fab fa-facebook-f"></i>
                             </a>
-                            <a href="#" class="social-link" style="width: 45px; height: 45px; background: #1da1f2; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #fff; text-decoration: none; transition: all 0.3s;">
+                            @endif
+                            @if($business_setup && $business_setup->twitter_status && $business_setup->twitter_url)
+                            <a href="{{ $business_setup->twitter_url }}" target="_blank" class="social-link" style="width: 45px; height: 45px; background: #1da1f2; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #fff; text-decoration: none; transition: all 0.3s;">
                                 <i class="fab fa-twitter"></i>
                             </a>
-                            <a href="#" class="social-link" style="width: 45px; height: 45px; background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #fff; text-decoration: none; transition: all 0.3s;">
+                            @endif
+                            @if($business_setup && $business_setup->instagram_status && $business_setup->instagram_url)
+                            <a href="{{ $business_setup->instagram_url }}" target="_blank" class="social-link" style="width: 45px; height: 45px; background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #fff; text-decoration: none; transition: all 0.3s;">
                                 <i class="fab fa-instagram"></i>
                             </a>
-                            <a href="#" class="social-link" style="width: 45px; height: 45px; background: #0077b5; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #fff; text-decoration: none; transition: all 0.3s;">
+                            @endif
+                            @if($business_setup && $business_setup->linkedin_status && $business_setup->linkedin_url)
+                            <a href="{{ $business_setup->linkedin_url }}" target="_blank" class="social-link" style="width: 45px; height: 45px; background: #0077b5; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #fff; text-decoration: none; transition: all 0.3s;">
                                 <i class="fab fa-linkedin-in"></i>
                             </a>
-                            <a href="#" class="social-link" style="width: 45px; height: 45px; background: #25d366; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #fff; text-decoration: none; transition: all 0.3s;">
-                                <i class="fab fa-whatsapp"></i>
+                            @endif
+                            @if($business_setup && $business_setup->youtube_status && $business_setup->youtube_url)
+                            <a href="{{ $business_setup->youtube_url }}" target="_blank" class="social-link" style="width: 45px; height: 45px; background: #ff0000; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #fff; text-decoration: none; transition: all 0.3s;">
+                                <i class="fab fa-youtube"></i>
                             </a>
+                            @endif
                         </div>
                     </div>
                 </div>

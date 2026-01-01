@@ -7,35 +7,49 @@
             <div class="col-lg-4 col-md-6">
                 <div class="footer-widget">
                     <a href="{{ route('home') }}" class="d-inline-flex align-items-center text-decoration-none mb-4">
-                        <div class="logo-icon me-2" style="width: 50px; height: 50px; background: #0496ff; border-radius: 12px; display: flex; align-items: center; justify-content: center;">
-                            <i class="fa-solid fa-cart-shopping text-white" style="font-size: 22px;"></i>
-                        </div>
-                        <div class="logo-text">
-                            <h4 class="mb-0 text-white" style="font-weight: 700;">Grow<span style="color: #0496ff;">Up</span></h4>
-                            <small style="font-size: 10px; color: rgba(255,255,255,0.5); letter-spacing: 1px;">E-COMMERCE</small>
-                        </div>
+                        @if($business_setup && $business_setup->logo)
+                            <img src="{{ asset('storage/' . $business_setup->logo) }}" alt="{{ $business_setup->company_name }}" style="height: 50px;">
+                        @else
+                            <div class="logo-icon me-2" style="width: 50px; height: 50px; background: #0496ff; border-radius: 12px; display: flex; align-items: center; justify-content: center;">
+                                <i class="fa-solid fa-cart-shopping text-white" style="font-size: 22px;"></i>
+                            </div>
+                            <div class="logo-text">
+                                <h4 class="mb-0 text-white" style="font-weight: 700;">{{ $business_setup->company_name ?? 'GrowUp' }}</h4>
+                                <small style="font-size: 10px; color: rgba(255,255,255,0.5); letter-spacing: 1px;">E-COMMERCE</small>
+                            </div>
+                        @endif
                     </a>
                     <p style="color: rgba(255,255,255,0.6); font-size: 14px; line-height: 1.8; margin-bottom: 25px;">
-                        Your ultimate shopping destination for quality products at the best prices. We deliver happiness right to your doorstep.
+                        {{ $business_setup->footer_text ?? 'Your ultimate shopping destination for quality products at the best prices. We deliver happiness right to your doorstep.' }}
                     </p>
                     
                     <!-- Social Icons -->
                     <div class="social-icons d-flex gap-2">
-                        <a href="#" class="social-icon" style="width: 42px; height: 42px; background: rgba(255,255,255,0.1); border-radius: 10px; display: flex; align-items: center; justify-content: center; color: #fff; text-decoration: none; transition: all 0.3s;">
+                        @if($business_setup && $business_setup->facebook_status && $business_setup->facebook_url)
+                        <a href="{{ $business_setup->facebook_url }}" target="_blank" class="social-icon" style="width: 42px; height: 42px; background: rgba(255,255,255,0.1); border-radius: 10px; display: flex; align-items: center; justify-content: center; color: #fff; text-decoration: none; transition: all 0.3s;">
                             <i class="fab fa-facebook-f"></i>
                         </a>
-                        <a href="#" class="social-icon" style="width: 42px; height: 42px; background: rgba(255,255,255,0.1); border-radius: 10px; display: flex; align-items: center; justify-content: center; color: #fff; text-decoration: none; transition: all 0.3s;">
+                        @endif
+                        @if($business_setup && $business_setup->twitter_status && $business_setup->twitter_url)
+                        <a href="{{ $business_setup->twitter_url }}" target="_blank" class="social-icon" style="width: 42px; height: 42px; background: rgba(255,255,255,0.1); border-radius: 10px; display: flex; align-items: center; justify-content: center; color: #fff; text-decoration: none; transition: all 0.3s;">
                             <i class="fab fa-twitter"></i>
                         </a>
-                        <a href="#" class="social-icon" style="width: 42px; height: 42px; background: rgba(255,255,255,0.1); border-radius: 10px; display: flex; align-items: center; justify-content: center; color: #fff; text-decoration: none; transition: all 0.3s;">
+                        @endif
+                        @if($business_setup && $business_setup->instagram_status && $business_setup->instagram_url)
+                        <a href="{{ $business_setup->instagram_url }}" target="_blank" class="social-icon" style="width: 42px; height: 42px; background: rgba(255,255,255,0.1); border-radius: 10px; display: flex; align-items: center; justify-content: center; color: #fff; text-decoration: none; transition: all 0.3s;">
                             <i class="fab fa-instagram"></i>
                         </a>
-                        <a href="#" class="social-icon" style="width: 42px; height: 42px; background: rgba(255,255,255,0.1); border-radius: 10px; display: flex; align-items: center; justify-content: center; color: #fff; text-decoration: none; transition: all 0.3s;">
+                        @endif
+                        @if($business_setup && $business_setup->youtube_status && $business_setup->youtube_url)
+                        <a href="{{ $business_setup->youtube_url }}" target="_blank" class="social-icon" style="width: 42px; height: 42px; background: rgba(255,255,255,0.1); border-radius: 10px; display: flex; align-items: center; justify-content: center; color: #fff; text-decoration: none; transition: all 0.3s;">
                             <i class="fab fa-youtube"></i>
                         </a>
-                        <a href="#" class="social-icon" style="width: 42px; height: 42px; background: rgba(255,255,255,0.1); border-radius: 10px; display: flex; align-items: center; justify-content: center; color: #fff; text-decoration: none; transition: all 0.3s;">
+                        @endif
+                        @if($business_setup && $business_setup->linkedin_status && $business_setup->linkedin_url)
+                        <a href="{{ $business_setup->linkedin_url }}" target="_blank" class="social-icon" style="width: 42px; height: 42px; background: rgba(255,255,255,0.1); border-radius: 10px; display: flex; align-items: center; justify-content: center; color: #fff; text-decoration: none; transition: all 0.3s;">
                             <i class="fab fa-linkedin-in"></i>
                         </a>
+                        @endif
                     </div>
                 </div>
             </div>
@@ -126,7 +140,8 @@
                             <div>
                                 <h6 style="color: #fff; font-weight: 500; margin-bottom: 5px; font-size: 14px;">Address</h6>
                                 <p style="color: rgba(255,255,255,0.6); font-size: 13px; margin-bottom: 0; line-height: 1.6;">
-                                    123 Commerce Street,<br>Dhaka-1000, Bangladesh
+                                    {{ $business_setup->street_address ?? '123 Commerce Street' }}<br>
+                                    {{ $business_setup->city_thana ?? '' }} {{ $business_setup->district ?? 'Dhaka-1000, Bangladesh' }}
                                 </p>
                             </div>
                         </div>
@@ -137,7 +152,7 @@
                             </div>
                             <div>
                                 <h6 style="color: #fff; font-weight: 500; margin-bottom: 5px; font-size: 14px;">Phone</h6>
-                                <a href="tel:+8801713269591" style="color: rgba(255,255,255,0.6); text-decoration: none; font-size: 13px;">+880 1713-269591</a>
+                                <a href="tel:{{ $business_setup->official_contact_number[0] ?? '+8801713269591' }}" style="color: rgba(255,255,255,0.6); text-decoration: none; font-size: 13px;">{{ $business_setup->official_contact_number[0] ?? '+880 1713-269591' }}</a>
                             </div>
                         </div>
                         
@@ -147,7 +162,7 @@
                             </div>
                             <div>
                                 <h6 style="color: #fff; font-weight: 500; margin-bottom: 5px; font-size: 14px;">Email</h6>
-                                <a href="mailto:info@growup.com" style="color: rgba(255,255,255,0.6); text-decoration: none; font-size: 13px;">info@growup.com</a>
+                                <a href="mailto:{{ $business_setup->email_address[0] ?? 'info@growup.com' }}" style="color: rgba(255,255,255,0.6); text-decoration: none; font-size: 13px;">{{ $business_setup->email_address[0] ?? 'info@growup.com' }}</a>
                             </div>
                         </div>
                     </div>

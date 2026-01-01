@@ -4,23 +4,40 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use App\Models\Admin\Business_SetUp\BusinessSetup;
+use App\Models\Banner;
+use App\Models\Page;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class StorefrontController extends Controller
 {
     public function customizer()
     {
-        return view('admin.storefront.customizer');
+        $business_setup = BusinessSetup::first();
+        return view('admin.storefront.customizer', compact('business_setup'));
     }
 
     public function saveCustomizer(Request $request)
     {
-        // Save theme customization settings
+        $business_setup = BusinessSetup::first();
+        if ($business_setup) {
+            $business_setup->update($request->only([
+                'theme_color_primary',
+                'theme_color_secondary',
+                'theme_color_accent',
+                'theme_font_primary',
+                'theme_font_base_size',
+                'theme_header_style',
+                'theme_footer_style',
+            ]));
+        }
         return response()->json(['success' => true, 'message' => 'Theme settings saved']);
     }
 
     public function pages()
     {
-        $pages = collect(); // Page::all()
+        $pages = Page::latest()->paginate(10);
         return view('admin.storefront.pages', compact('pages'));
     }
 
@@ -31,25 +48,53 @@ class StorefrontController extends Controller
 
     public function storePage(Request $request)
     {
-        // Store page logic
+        $request->validate([
+            'title' => 'required|string|max:255',
+            'content' => 'required',
+        ]);
+
+        Page::create([
+            'title' => $request->title,
+            'slug' => Str::slug($request->title),
+            'content' => $request->content,
+            'status' => true,
+            'meta_title' => $request->meta_title,
+            'meta_description' => $request->meta_description,
+        ]);
+
         return redirect()->route('admin.storefront.pages')->with('success', 'Page created successfully');
     }
 
-    public function editPage($page)
+    public function editPage($id)
     {
+        $page = Page::findOrFail($id);
         return view('admin.storefront.pages-edit', compact('page'));
     }
 
-    public function updatePage(Request $request, $page)
+    public function updatePage(Request $request, $id)
     {
-        // Update page logic
+        $page = Page::findOrFail($id);
+        
+        $request->validate([
+            'title' => 'required|string|max:255',
+            'content' => 'required',
+        ]);
+
+        $page->update([
+            'title' => $request->title,
+            'content' => $request->content,
+            'status' => $request->has('status'),
+            'meta_title' => $request->meta_title,
+            'meta_description' => $request->meta_description,
+        ]);
+
         return redirect()->route('admin.storefront.pages')->with('success', 'Page updated successfully');
     }
 
-    public function destroyPage($page)
+    public function destroyPage($id)
     {
-        // Delete page logic
-        return response()->json(['success' => true]);
+        Page::findOrFail($id)->delete();
+        return redirect()->back()->with('success', 'Page deleted successfully');
     }
 
     public function menus()
@@ -111,25 +156,67 @@ class StorefrontController extends Controller
 
     public function banners()
     {
-        return view('admin.storefront.banners');
+        $hero_sliders = Banner::where('type', 'hero_slider')->orderBy('position')->get();
+        $promotional_banners = Banner::where('type', 'promotional_banner')->orderBy('position')->get();
+        return view('admin.storefront.banners', compact('hero_sliders', 'promotional_banners'));
     }
 
     public function storeBanner(Request $request)
     {
-        // Store banner logic
-        return response()->json(['success' => true]);
+        $request->validate([
+            'image' => 'required|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
+            'type' => 'required|in:hero_slider,promotional_banner',
+        ]);
+
+        $path = $request->file('image')->store('banners', 'public');
+
+        Banner::create([
+            'title' => $request->title,
+            'image' => $path,
+            'link' => $request->link,
+            'type' => $request->type,
+            'position' => $request->position ?? 0,
+            'status' => true,
+        ]);
+
+        return redirect()->back()->with('success', 'Banner added successfully');
     }
 
-    public function updateBanner(Request $request, $banner)
+    public function updateBanner(Request $request, $id)
     {
-        // Update banner logic
-        return response()->json(['success' => true]);
+        $banner = Banner::findOrFail($id);
+        
+        $request->validate([
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
+        ]);
+
+        $data = [
+            'title' => $request->title,
+            'link' => $request->link,
+            'position' => $request->position ?? $banner->position,
+            'status' => $request->has('status'),
+        ];
+
+        if ($request->hasFile('image')) {
+             if (Storage::disk('public')->exists($banner->image)) {
+                Storage::disk('public')->delete($banner->image);
+            }
+            $data['image'] = $request->file('image')->store('banners', 'public');
+        }
+
+        $banner->update($data);
+
+        return redirect()->back()->with('success', 'Banner updated successfully');
     }
 
-    public function destroyBanner($banner)
+    public function destroyBanner($id)
     {
-        // Delete banner logic
-        return response()->json(['success' => true]);
+        $banner = Banner::findOrFail($id);
+        if (Storage::disk('public')->exists($banner->image)) {
+            Storage::disk('public')->delete($banner->image);
+        }
+        $banner->delete();
+        return redirect()->back()->with('success', 'Banner deleted successfully');
     }
 }
 

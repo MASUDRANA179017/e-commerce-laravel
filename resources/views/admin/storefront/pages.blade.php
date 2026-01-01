@@ -28,56 +28,38 @@
                             </tr>
                         </thead>
                         <tbody>
+                            @forelse($pages as $page)
                             <tr>
-                                <td class="ps-3 fw-medium">Home</td>
-                                <td><code>/</code></td>
-                                <td><span class="qbit-badge-success"><i class="bx bx-check-circle"></i> Published</span></td>
-                                <td>{{ now()->format('M d, Y') }}</td>
+                                <td class="ps-3 fw-medium">{{ $page->title }}</td>
+                                <td><code>/{{ $page->slug }}</code></td>
+                                <td>
+                                    @if($page->status)
+                                        <span class="qbit-badge-success"><i class="bx bx-check-circle"></i> Published</span>
+                                    @else
+                                        <span class="qbit-badge-danger"><i class="bx bx-x-circle"></i> Draft</span>
+                                    @endif
+                                </td>
+                                <td>{{ $page->updated_at->format('M d, Y') }}</td>
                                 <td class="text-end pe-3">
-                                    <button class="action-btn-success">Edit</button>
+                                    <a href="{{ route('admin.storefront.pages.edit', $page->id) }}" class="action-btn-success">Edit</a>
+                                    <form action="{{ route('admin.storefront.pages.destroy', $page->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Are you sure?')">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="action-btn-danger border-0">Delete</button>
+                                    </form>
                                 </td>
                             </tr>
+                            @empty
                             <tr>
-                                <td class="ps-3 fw-medium">About Us</td>
-                                <td><code>/about</code></td>
-                                <td><span class="qbit-badge-success"><i class="bx bx-check-circle"></i> Published</span></td>
-                                <td>{{ now()->format('M d, Y') }}</td>
-                                <td class="text-end pe-3">
-                                    <button class="action-btn-success">Edit</button>
-                                    <button class="action-btn-danger">Delete</button>
-                                </td>
+                                <td colspan="5" class="text-center py-4">No pages found</td>
                             </tr>
-                            <tr>
-                                <td class="ps-3 fw-medium">Contact</td>
-                                <td><code>/contact</code></td>
-                                <td><span class="qbit-badge-success"><i class="bx bx-check-circle"></i> Published</span></td>
-                                <td>{{ now()->format('M d, Y') }}</td>
-                                <td class="text-end pe-3">
-                                    <button class="action-btn-success">Edit</button>
-                                    <button class="action-btn-danger">Delete</button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="ps-3 fw-medium">Terms & Conditions</td>
-                                <td><code>/terms</code></td>
-                                <td><span class="qbit-badge-success"><i class="bx bx-check-circle"></i> Published</span></td>
-                                <td>{{ now()->format('M d, Y') }}</td>
-                                <td class="text-end pe-3">
-                                    <button class="action-btn-success">Edit</button>
-                                    <button class="action-btn-danger">Delete</button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="ps-3 fw-medium">Privacy Policy</td>
-                                <td><code>/privacy</code></td>
-                                <td><span class="qbit-badge-success"><i class="bx bx-check-circle"></i> Published</span></td>
-                                <td>{{ now()->format('M d, Y') }}</td>
-                                <td class="text-end pe-3">
-                                    <button class="action-btn-success">Edit</button>
-                                    <button class="action-btn-danger">Delete</button>
-                                </td>
-                            </tr>
+                            @endforelse
                         </tbody>
+                    </table>
+                </div>
+                <div class="px-3 py-3">
+                    {{ $pages->links() }}
+                </div>
                     </table>
                 </div>
             </div>

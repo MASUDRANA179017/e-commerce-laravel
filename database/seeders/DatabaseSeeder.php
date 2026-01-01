@@ -21,6 +21,7 @@ class DatabaseSeeder extends Seeder
             \Database\Seeders\CatalogSeeder::class,
             \Database\Seeders\BrandTemplateSeeder::class,
             ProductSeeder::class,
+            PageSeeder::class,
         ]);
     }
 }

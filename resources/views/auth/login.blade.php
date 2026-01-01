@@ -230,9 +230,9 @@
             <form action="{{ route('login') }}" method="POST">
                 @csrf
                 <div class="form-group mb-3">
-                    <label class="small-label-text" for="username">Username</label>
+                    <label class="small-label-text" for="username">Email or Username</label>
                     <div class="input-group">
-                        <input type="text" name="username" id="username" value="{{ old('username') }}" class="form-control custom-input @error('username') is-invalid @enderror" placeholder="Enter your username" required autofocus>
+                        <input type="text" name="username" id="username" value="{{ old('username') }}" class="form-control custom-input @error('username') is-invalid @enderror" placeholder="Enter your email or username" required autofocus>
                         <span class="input-group-text custom-input"><i class='bx bx-user'></i></span>
                     </div>
                     @error('username')
