@@ -4,7 +4,11 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Product;
+use App\Models\Vendor;
+use App\Models\Purchase;
+use App\Models\PurchaseItem;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 
 class InventoryController extends Controller
 {
@@ -55,63 +59,132 @@ class InventoryController extends Controller
 
     public function purchases()
     {
-        return view('admin.inventory.purchases');
+        $purchases = Purchase::with('vendor', 'items')->latest()->paginate(15);
+        return view('admin.inventory.purchases', compact('purchases'));
     }
 
     public function createPurchase()
     {
-        return view('admin.inventory.purchases-create');
+        $vendors = Vendor::where('status', 'active')->orderBy('name')->get();
+        $products = Product::select('id', 'title', 'sku')->where('status', 'active')->orderBy('title')->get();
+        return view('admin.inventory.purchases-create', compact('vendors', 'products'));
     }
 
     public function storePurchase(Request $request)
     {
-        // Store purchase order logic
-        return redirect()->route('admin.inventory.purchases')->with('success', 'Purchase order created');
+        $request->validate([
+            'vendor_id' => 'required|exists:vendors,id',
+            'purchase_date' => 'required|date',
+            'expected_delivery_date' => 'nullable|date',
+            'items' => 'required|array|min:1',
+            'items.*.product_id' => 'required|exists:products,id',
+            'items.*.quantity' => 'required|integer|min:1',
+            'items.*.unit_cost' => 'required|numeric|min:0',
+        ]);
+
+        $totalAmount = 0;
+        foreach ($request->items as $item) {
+            $totalAmount += $item['quantity'] * $item['unit_cost'];
+        }
+
+        $purchase = Purchase::create([
+            'purchase_number' => 'PO-' . strtoupper(Str::random(8)),
+            'vendor_id' => $request->vendor_id,
+            'purchase_date' => $request->purchase_date,
+            'expected_delivery_date' => $request->expected_delivery_date,
+            'total_amount' => $totalAmount,
+            'status' => 'pending',
+            'notes' => $request->notes,
+        ]);
+
+        foreach ($request->items as $item) {
+            PurchaseItem::create([
+                'purchase_id' => $purchase->id,
+                'product_id' => $item['product_id'],
+                'quantity' => $item['quantity'],
+                'unit_cost' => $item['unit_cost'],
+                'total_cost' => $item['quantity'] * $item['unit_cost'],
+            ]);
+        }
+
+        return redirect()->route('admin.inventory.purchases')->with('success', 'Purchase order created successfully');
     }
 
     public function showPurchase($purchase)
     {
+        $purchase = Purchase::with('vendor', 'items.product')->findOrFail($purchase);
         return view('admin.inventory.purchases-show', compact('purchase'));
     }
 
-    public function updatePurchase(Request $request, $purchase)
+    public function updatePurchase(Request $request, $id)
     {
-        // Update purchase order logic
-        return response()->json(['success' => true]);
+        $request->validate([
+            'status' => 'required|in:pending,ordered,received,cancelled',
+        ]);
+
+        $purchase = Purchase::findOrFail($id);
+        $purchase->update([
+            'status' => $request->status,
+            'notes' => $request->notes,
+        ]);
+
+        if ($request->status == 'received') {
+            foreach ($purchase->items as $item) {
+                $product = Product::find($item->product_id);
+                if ($product) {
+                    $product->increment('stock_quantity', $item->quantity);
+                }
+            }
+        }
+
+        return redirect()->back()->with('success', 'Purchase order updated successfully');
     }
 
-    public function destroyPurchase($purchase)
+    public function destroyPurchase($id)
     {
-        // Delete purchase order logic
-        return response()->json(['success' => true]);
+        $purchase = Purchase::findOrFail($id);
+        $purchase->delete();
+        return redirect()->route('admin.inventory.purchases')->with('success', 'Purchase order deleted successfully');
     }
 
     public function vendors()
     {
-        return view('admin.inventory.vendors');
+        $vendors = Vendor::latest()->paginate(15);
+        return view('admin.inventory.vendors', compact('vendors'));
     }
 
     public function storeVendor(Request $request)
     {
-        // Store vendor logic
-        return response()->json(['success' => true, 'message' => 'Vendor created']);
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'nullable|email|max:255',
+            'phone' => 'nullable|string|max:20',
+        ]);
+
+        Vendor::create($request->all());
+
+        return redirect()->back()->with('success', 'Vendor created successfully');
     }
 
-    public function showVendor($vendor)
+    public function updateVendor(Request $request, $id)
     {
-        return response()->json(['vendor' => $vendor]);
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'nullable|email|max:255',
+            'phone' => 'nullable|string|max:20',
+        ]);
+
+        $vendor = Vendor::findOrFail($id);
+        $vendor->update($request->all());
+
+        return redirect()->back()->with('success', 'Vendor updated successfully');
     }
 
-    public function updateVendor(Request $request, $vendor)
+    public function destroyVendor($id)
     {
-        // Update vendor logic
-        return response()->json(['success' => true]);
-    }
-
-    public function destroyVendor($vendor)
-    {
-        // Delete vendor logic
-        return response()->json(['success' => true]);
+        $vendor = Vendor::findOrFail($id);
+        $vendor->delete();
+        return redirect()->back()->with('success', 'Vendor deleted successfully');
     }
 }
 

@@ -11,7 +11,7 @@ class CustomerController extends Controller
     public function index()
     {
         // Get all users as customers (adjust query based on your actual user structure)
-        $customers = User::paginate(20);
+        $customers = User::withCount('orders')->paginate(20);
         return view('admin.customers.index', compact('customers'));
     }
 
@@ -89,25 +89,46 @@ class CustomerController extends Controller
 
     public function groups()
     {
-        return view('admin.customers.groups');
+        $groups = CustomerGroup::latest()->get();
+        return view('admin.customers.groups', compact('groups'));
     }
 
     public function storeGroup(Request $request)
     {
-        // Store customer group logic
-        return response()->json(['success' => true]);
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'discount_percentage' => 'nullable|numeric|min:0|max:100',
+        ]);
+
+        CustomerGroup::create([
+            'name' => $request->name,
+            'discount_percentage' => $request->discount_percentage ?? 0,
+            'is_active' => true,
+        ]);
+
+        return redirect()->back()->with('success', 'Customer group created successfully');
     }
 
     public function updateGroup(Request $request, $group)
     {
-        // Update customer group logic
-        return response()->json(['success' => true]);
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'discount_percentage' => 'nullable|numeric|min:0|max:100',
+        ]);
+
+        $customerGroup = CustomerGroup::findOrFail($group);
+        $customerGroup->update([
+            'name' => $request->name,
+            'discount_percentage' => $request->discount_percentage ?? 0,
+        ]);
+
+        return redirect()->back()->with('success', 'Customer group updated successfully');
     }
 
     public function destroyGroup($group)
     {
-        // Delete customer group logic
-        return response()->json(['success' => true]);
+        CustomerGroup::findOrFail($group)->delete();
+        return redirect()->back()->with('success', 'Customer group deleted successfully');
     }
 }
 

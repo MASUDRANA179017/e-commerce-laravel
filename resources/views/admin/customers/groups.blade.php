@@ -38,51 +38,44 @@
                             </tr>
                         </thead>
                         <tbody>
+                            @forelse($groups as $group)
                             <tr>
                                 <td class="ps-3">
                                     <div class="d-flex align-items-center gap-2">
-                                        <span class="qbit-badge-primary"><i class="bx bx-user"></i> Default</span>
-                                        <span class="fw-medium">Regular Customers</span>
+                                        <span class="fw-medium">{{ $group->name }}</span>
                                     </div>
                                 </td>
-                                <td>0%</td>
-                                <td>0</td>
-                                <td><span class="qbit-badge-success"><i class="bx bx-check-circle"></i> Active</span></td>
+                                <td>{{ $group->discount_percentage }}%</td>
+                                <td>0</td> <!-- Placeholder for members count if needed -->
+                                <td>
+                                    @if($group->is_active)
+                                        <span class="qbit-badge-success"><i class="bx bx-check-circle"></i> Active</span>
+                                    @else
+                                        <span class="qbit-badge-danger"><i class="bx bx-x-circle"></i> Inactive</span>
+                                    @endif
+                                </td>
                                 <td class="text-end pe-3">
-                                    <button class="action-btn-success me-1" title="Edit"><i class="bx bx-edit"></i></button>
-                                    <button class="action-btn-danger" title="Delete"><i class="bx bx-trash"></i></button>
+                                    <button class="action-btn-success me-1 edit-group-btn" 
+                                        data-id="{{ $group->id }}"
+                                        data-name="{{ $group->name }}"
+                                        data-discount="{{ $group->discount_percentage }}"
+                                        data-bs-toggle="modal" 
+                                        data-bs-target="#editGroupModal"
+                                        title="Edit">
+                                        <i class="bx bx-edit"></i>
+                                    </button>
+                                    <form action="{{ route('admin.customers.groups.destroy', $group->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Are you sure?')">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="action-btn-danger" title="Delete"><i class="bx bx-trash"></i></button>
+                                    </form>
                                 </td>
                             </tr>
+                            @empty
                             <tr>
-                                <td class="ps-3">
-                                    <div class="d-flex align-items-center gap-2">
-                                        <span class="qbit-badge-orange"><i class="bx bx-crown"></i> VIP</span>
-                                        <span class="fw-medium">VIP Customers</span>
-                                    </div>
-                                </td>
-                                <td>10%</td>
-                                <td>0</td>
-                                <td><span class="qbit-badge-success"><i class="bx bx-check-circle"></i> Active</span></td>
-                                <td class="text-end pe-3">
-                                    <button class="action-btn-success me-1" title="Edit"><i class="bx bx-edit"></i></button>
-                                    <button class="action-btn-danger" title="Delete"><i class="bx bx-trash"></i></button>
-                                </td>
+                                <td colspan="5" class="text-center py-3">No groups found</td>
                             </tr>
-                            <tr>
-                                <td class="ps-3">
-                                    <div class="d-flex align-items-center gap-2">
-                                        <span class="qbit-badge-info"><i class="bx bx-store"></i> Wholesale</span>
-                                        <span class="fw-medium">Wholesale Buyers</span>
-                                    </div>
-                                </td>
-                                <td>15%</td>
-                                <td>0</td>
-                                <td><span class="qbit-badge-success"><i class="bx bx-check-circle"></i> Active</span></td>
-                                <td class="text-end pe-3">
-                                    <button class="action-btn-success me-1" title="Edit"><i class="bx bx-edit"></i></button>
-                                    <button class="action-btn-danger" title="Delete"><i class="bx bx-trash"></i></button>
-                                </td>
-                            </tr>
+                            @endforelse
                         </tbody>
                     </table>
                 </div>

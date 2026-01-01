@@ -30,6 +30,37 @@
                             </tr>
                         </thead>
                         <tbody>
+                            @forelse($purchases as $purchase)
+                            <tr>
+                                <td class="ps-3 fw-medium">{{ $purchase->purchase_number }}</td>
+                                <td>{{ $purchase->vendor->name ?? 'N/A' }}</td>
+                                <td>{{ $purchase->items->sum('quantity') }}</td>
+                                <td>{{ number_format($purchase->total_amount, 2) }}</td>
+                                <td>
+                                    <span class="badge bg-{{ $purchase->status == 'received' ? 'success' : ($purchase->status == 'cancelled' ? 'danger' : 'warning') }}">
+                                        {{ ucfirst($purchase->status) }}
+                                    </span>
+                                </td>
+                                <td>{{ $purchase->expected_delivery_date ? $purchase->expected_delivery_date->format('d M, Y') : 'N/A' }}</td>
+                                <td class="text-end pe-3">
+                                    <div class="dropdown">
+                                        <button class="btn btn-sm btn-light" type="button" data-bs-toggle="dropdown">
+                                            <i class="fas fa-ellipsis-v"></i>
+                                        </button>
+                                        <ul class="dropdown-menu dropdown-menu-end border-0 shadow-sm">
+                                            <li><a class="dropdown-item" href="{{ route('admin.inventory.purchases.show', $purchase->id) }}"><i class="fas fa-eye me-2"></i> View Details</a></li>
+                                            <li>
+                                                <form action="{{ route('admin.inventory.purchases.destroy', $purchase->id) }}" method="POST" onsubmit="return confirm('Are you sure?')">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button type="submit" class="dropdown-item text-danger"><i class="fas fa-trash me-2"></i> Delete</button>
+                                                </form>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </td>
+                            </tr>
+                            @empty
                             <tr>
                                 <td colspan="7" class="text-center py-5">
                                     <div class="text-muted">
@@ -38,6 +69,7 @@
                                     </div>
                                 </td>
                             </tr>
+                            @endforelse
                         </tbody>
                     </table>
                 </div>

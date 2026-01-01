@@ -64,7 +64,8 @@ class BrandController extends Controller
         $data['top'] = $request->input('top', 0);
 
         // Check if updating existing brand
-        $brand = Brand::find($request->id);
+        $id = $request->id ?: null;
+        $brand = $id ? Brand::find($id) : null;
 
         // Handle logo upload
         if ($request->hasFile('logo')) {
@@ -78,7 +79,7 @@ class BrandController extends Controller
 
         // Create or update brand
         $brand = Brand::updateOrCreate(
-            ['id' => $request->id],
+            ['id' => $id],
             $data
         );
 
@@ -87,6 +88,19 @@ class BrandController extends Controller
             'message' => 'Brand saved successfully!',
             'brand' => $brand
         ]);
+    }
+
+    public function destroy($id)
+    {
+        $brand = Brand::find($id);
+        if ($brand) {
+            if ($brand->logo) {
+                $this->handleFileDelete($brand->logo);
+            }
+            $brand->delete();
+            return response()->json(['success' => true, 'message' => 'Brand deleted successfully']);
+        }
+        return response()->json(['success' => false, 'message' => 'Brand not found'], 404);
     }
 
     public function getBrands()

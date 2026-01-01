@@ -17,11 +17,11 @@ class UnitController extends Controller
                 ->addIndexColumn() // SL column
                 ->addColumn('status', function($row){
                     $checked = $row->status ? 'checked' : '';
-                    return '<input type="checkbox" class="toggle-status" data-id="'.$row->id.'" '.$checked.'>';
+                    return '<div class="form-check form-switch"><input type="checkbox" class="form-check-input toggle-status" data-id="'.$row->id.'" '.$checked.'></div>';
                 })
                 ->addColumn('action', function($row){
-                    $edit = '<button class="btn btn-sm btn-primary edit-unit" data-id="'.$row->id.'">Edit</button>';
-                    $delete = '<button class="btn btn-sm btn-danger delete-unit" data-id="'.$row->id.'">Delete</button>';
+                    $edit = '<button class="btn btn-sm btn-primary edit-unit" data-id="'.$row->id.'"><i class="fas fa-edit"></i></button>';
+                    $delete = '<button class="btn btn-sm btn-danger delete-unit" data-id="'.$row->id.'"><i class="fas fa-trash"></i></button>';
                     return $edit.' '.$delete;
                 })
                 ->rawColumns(['status','action'])
@@ -33,12 +33,9 @@ class UnitController extends Controller
 
     public function store(Request $request)
     {
-        $request->validate(['name'=>'required']);
-        Unit::updateOrCreate(
-            ['id' => $request->unit_id],
-            ['name' => $request->name, 'status' => $request->status ?? 0]
-        );
-        return response()->json(['success'=>'Unit saved successfully.']);
+        $request->validate(['name' => 'required|unique:units,name']);
+        Unit::create(['name' => $request->name, 'status' => true]);
+        return response()->json(['success' => 'Unit created successfully.']);
     }
 
     public function edit($id)
@@ -47,18 +44,26 @@ class UnitController extends Controller
         return response()->json($unit);
     }
 
+    public function update(Request $request, $id)
+    {
+        $request->validate(['name' => 'required|unique:units,name,'.$id]);
+        $unit = Unit::find($id);
+        $unit->update(['name' => $request->name]);
+        return response()->json(['success' => 'Unit updated successfully.']);
+    }
+
     public function destroy($id)
     {
         Unit::find($id)->delete();
-        return response()->json(['success'=>'Unit deleted successfully.']);
+        return response()->json(['success' => 'Unit deleted successfully.']);
     }
 
-    public function toggleStatus($id)
+    public function updateStatus(Request $request)
     {
-        $unit = Unit::find($id);
-        $unit->status = !$unit->status;
+        $unit = Unit::find($request->id);
+        $unit->status = $request->status;
         $unit->save();
-        return response()->json(['success'=>'Status updated.']);
+        return response()->json(['success'=>'Status changed successfully.']);
     }
 }
 

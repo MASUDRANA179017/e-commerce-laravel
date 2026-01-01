@@ -350,35 +350,37 @@ class ProductController extends Controller
                 }
 
                 // 🔗 Category mapping
-                $catPaths = $payload['categories'] ?? [];
-                $primaryPath = $payload['primary_category'] ?? null;
+                if (isset($payload['categories']) || isset($payload['primary_category'])) {
+                    $catPaths = $payload['categories'] ?? [];
+                    $primaryPath = $payload['primary_category'] ?? null;
 
-                $catIds = [];
-                foreach ($catPaths as $p) {
-                    if (is_numeric($p)) {
-                        $catIds[] = (int) $p;
-                        continue;
+                    $catIds = [];
+                    foreach ($catPaths as $p) {
+                        if (is_numeric($p)) {
+                            $catIds[] = (int) $p;
+                            continue;
+                        }
+                        if ($id = $this->resolveCategoryIdFromPath((string) $p))
+                            $catIds[] = $id;
                     }
-                    if ($id = $this->resolveCategoryIdFromPath((string) $p))
-                        $catIds[] = $id;
-                }
-                $catIds = array_values(array_unique($catIds));
+                    $catIds = array_values(array_unique($catIds));
 
-                $primaryId = null;
-                if ($primaryPath) {
-                    $primaryId = is_numeric($primaryPath)
-                        ? (int) $primaryPath
-                        : $this->resolveCategoryIdFromPath((string) $primaryPath);
-                }
-                if ($primaryId && !in_array($primaryId, $catIds, true))
-                    $catIds[] = $primaryId;
+                    $primaryId = null;
+                    if ($primaryPath) {
+                        $primaryId = is_numeric($primaryPath)
+                            ? (int) $primaryPath
+                            : $this->resolveCategoryIdFromPath((string) $primaryPath);
+                    }
+                    if ($primaryId && !in_array($primaryId, $catIds, true))
+                        $catIds[] = $primaryId;
 
-                foreach ($catIds as $cid) {
-                    DB::table('product_category_map')->insert([
-                        'product_id' => $productId,
-                        'category_id' => $cid,
-                        'is_primary' => ($primaryId === $cid),
-                    ]);
+                    foreach ($catIds as $cid) {
+                        DB::table('product_category_map')->insert([
+                            'product_id' => $productId,
+                            'category_id' => $cid,
+                            'is_primary' => ($primaryId === $cid),
+                        ]);
+                    }
                 }
 
                 // 🗑️ Delete Removed Images
