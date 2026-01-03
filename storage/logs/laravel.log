@@ -2642,3 +2642,376 @@
 [stacktrace]
 #0 {main}
 "} 
+[2026-01-03 18:32:08] local.INFO: array (
+  'product_id' => NULL,
+  'title' => 'Non iure magni quas',
+  'slug' => 'non-iure-magni-quas',
+  'sku' => NULL,
+  'brand_id' => '4',
+  'price' => 69000,
+  'sale_price' => 60000,
+  'stock_quantity' => 100,
+  'status' => 'Draft',
+  'short_desc' => 'Quos vel praesentium',
+  'featured' => true,
+  'allow_backorder' => false,
+  'variant_wise_image' => false,
+  'categories' => 
+  array (
+    0 => 'animal-food',
+  ),
+  'primary_category' => 'animal-food',
+  'attribute_set_id' => '1',
+  'media_rule_id' => NULL,
+  'variant_rule_id' => '1',
+  'attributes' => 
+  array (
+    0 => 
+    array (
+      'attribute_id' => '1',
+      'term_ids' => 
+      array (
+        0 => '3',
+      ),
+    ),
+    1 => 
+    array (
+      'attribute_id' => '2',
+      'term_ids' => 
+      array (
+        0 => '7',
+      ),
+    ),
+    2 => 
+    array (
+      'attribute_id' => '14',
+      'term_ids' => 
+      array (
+        0 => '34',
+      ),
+    ),
+  ),
+  'variants' => 
+  array (
+    0 => 
+    array (
+      'sku' => '',
+      'options' => 
+      array (
+        0 => 
+        array (
+          'attribute_id' => '1',
+          'term_id' => '3',
+        ),
+        1 => 
+        array (
+          'attribute_id' => '14',
+          'term_id' => '34',
+        ),
+        2 => 
+        array (
+          'attribute_id' => '2',
+          'term_id' => '7',
+        ),
+      ),
+      'map' => 
+      array (
+        0 => 
+        array (
+          0 => '1',
+          1 => '3',
+        ),
+        1 => 
+        array (
+          0 => '14',
+          1 => '34',
+        ),
+        2 => 
+        array (
+          0 => '2',
+          1 => '7',
+        ),
+      ),
+    ),
+  ),
+  'seo' => 
+  array (
+    'title' => '',
+    'desc' => '',
+    'keys' => '',
+  ),
+)  
+[2026-01-03 18:32:13] local.INFO: Entered allProducts (View)  
+[2026-01-03 18:32:16] local.INFO: Entered allProductsData (Dedicated JSON Route)  
+[2026-01-03 20:46:13] local.ERROR: syntax error, unexpected token "<" (View: C:\Users\Masud Rana\Desktop\qbit\e-commerce-laravel\resources\views\frontend\home.blade.php) {"userId":1,"exception":"[object] (Illuminate\\View\\ViewException(code: 0): syntax error, unexpected token \"<\" (View: C:\\Users\\Masud Rana\\Desktop\\qbit\\e-commerce-laravel\\resources\\views\\frontend\\home.blade.php) at C:\\Users\\Masud Rana\\Desktop\\qbit\\e-commerce-laravel\\storage\\framework\\views\\4ca1c9892addc31aa4df441b737ff946.php:94)
+[stacktrace]
+#0 C:\\Users\\Masud Rana\\Desktop\\qbit\\e-commerce-laravel\\vendor\\livewire\\livewire\\src\\Mechanisms\\ExtendBlade\\ExtendedCompilerEngine.php(58): Illuminate\\View\\Engines\\CompilerEngine->handleViewException(Object(ParseError), 1)
+#1 C:\\Users\\Masud Rana\\Desktop\\qbit\\e-commerce-laravel\\vendor\\laravel\\framework\\src\\Illuminate\\View\\Engines\\PhpEngine.php(59): Livewire\\Mechanisms\\ExtendBlade\\ExtendedCompilerEngine->handleViewException(Object(ParseError), 1)
+#2 C:\\Users\\Masud Rana\\Desktop\\qbit\\e-commerce-laravel\\vendor\\livewire\\livewire\\src\\Mechanisms\\ExtendBlade\\ExtendedCompilerEngine.php(22): Illuminate\\View\\Engines\\PhpEngine->evaluatePath('C:\\\\Users\\\\Masud ...', Array)
+#3 C:\\Users\\Masud Rana\\Desktop\\qbit\\e-commerce-laravel\\vendor\\laravel\\framework\\src\\Illuminate\\View\\Engines\\CompilerEngine.php(76): Livewire\\Mechanisms\\ExtendBlade\\ExtendedCompilerEngine->evaluatePath('C:\\\\Users\\\\Masud ...', Array)
+#4 C:\\Users\\Masud Rana\\Desktop\\qbit\\e-commerce-laravel\\vendor\\livewire\\livewire\\src\\Mechanisms\\ExtendBlade\\ExtendedCompilerEngine.php(10): Illuminate\\View\\Engines\\CompilerEngine->get('C:\\\\Users\\\\Masud ...', Array)
+#5 C:\\Users\\Masud Rana\\Desktop\\qbit\\e-commerce-laravel\\vendor\\laravel\\framework\\src\\Illuminate\\View\\View.php(208): Livewire\\Mechanisms\\ExtendBlade\\ExtendedCompilerEngine->get('C:\\\\Users\\\\Masud ...', Array)
+#6 C:\\Users\\Masud Rana\\Desktop\\qbit\\e-commerce-laravel\\vendor\\laravel\\framework\\src\\Illuminate\\View\\View.php(191): Illuminate\\View\\View->getContents()
+#7 C:\\Users\\Masud Rana\\Desktop\\qbit\\e-commerce-laravel\\vendor\\laravel\\framework\\src\\Illuminate\\View\\View.php(160): Illuminate\\View\\View->renderContents()
+#8 C:\\Users\\Masud Rana\\Desktop\\qbit\\e-commerce-laravel\\vendor\\laravel\\framework\\src\\Illuminate\\Http\\Response.php(78): Illuminate\\View\\View->render()
+#9 C:\\Users\\Masud Rana\\Desktop\\qbit\\e-commerce-laravel\\vendor\\laravel\\framework\\src\\Illuminate\\Http\\Response.php(34): Illuminate\\Http\\Response->setContent(Object(Illuminate\\View\\View))
+#10 C:\\Users\\Masud Rana\\Desktop\\qbit\\e-commerce-laravel\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Router.php(939): Illuminate\\Http\\Response->__construct(Object(Illuminate\\View\\View), 200, Array)
+#11 C:\\Users\\Masud Rana\\Desktop\\qbit\\e-commerce-laravel\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Router.php(906): Illuminate\\Routing\\Router::toResponse(Object(Illuminate\\Http\\Request), Object(Illuminate\\View\\View))
+#12 C:\\Users\\Masud Rana\\Desktop\\qbit\\e-commerce-laravel\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Router.php(821): Illuminate\\Routing\\Router->prepareResponse(Object(Illuminate\\Http\\Request), Object(Illuminate\\View\\View))
+#13 C:\\Users\\Masud Rana\\Desktop\\qbit\\e-commerce-laravel\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(180): Illuminate\\Routing\\Router->Illuminate\\Routing\\{closure}(Object(Illuminate\\Http\\Request))
+#14 C:\\Users\\Masud Rana\\Desktop\\qbit\\e-commerce-laravel\\vendor\\barryvdh\\laravel-debugbar\\src\\Middleware\\InjectDebugbar.php(66): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#15 C:\\Users\\Masud Rana\\Desktop\\qbit\\e-commerce-laravel\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(219): Barryvdh\\Debugbar\\Middleware\\InjectDebugbar->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#16 C:\\Users\\Masud Rana\\Desktop\\qbit\\e-commerce-laravel\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Middleware\\SubstituteBindings.php(50): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#17 C:\\Users\\Masud Rana\\Desktop\\qbit\\e-commerce-laravel\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(219): Illuminate\\Routing\\Middleware\\SubstituteBindings->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#18 C:\\Users\\Masud Rana\\Desktop\\qbit\\e-commerce-laravel\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Middleware\\VerifyCsrfToken.php(87): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#19 C:\\Users\\Masud Rana\\Desktop\\qbit\\e-commerce-laravel\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(219): Illuminate\\Foundation\\Http\\Middleware\\VerifyCsrfToken->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#20 C:\\Users\\Masud Rana\\Desktop\\qbit\\e-commerce-laravel\\vendor\\laravel\\framework\\src\\Illuminate\\View\\Middleware\\ShareErrorsFromSession.php(48): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#21 C:\\Users\\Masud Rana\\Desktop\\qbit\\e-commerce-laravel\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(219): Illuminate\\View\\Middleware\\ShareErrorsFromSession->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#22 C:\\Users\\Masud Rana\\Desktop\\qbit\\e-commerce-laravel\\vendor\\laravel\\framework\\src\\Illuminate\\Session\\Middleware\\StartSession.php(120): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#23 C:\\Users\\Masud Rana\\Desktop\\qbit\\e-commerce-laravel\\vendor\\laravel\\framework\\src\\Illuminate\\Session\\Middleware\\StartSession.php(63): Illuminate\\Session\\Middleware\\StartSession->handleStatefulRequest(Object(Illuminate\\Http\\Request), Object(Illuminate\\Session\\Store), Object(Closure))
+#24 C:\\Users\\Masud Rana\\Desktop\\qbit\\e-commerce-laravel\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(219): Illuminate\\Session\\Middleware\\StartSession->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#25 C:\\Users\\Masud Rana\\Desktop\\qbit\\e-commerce-laravel\\vendor\\laravel\\framework\\src\\Illuminate\\Cookie\\Middleware\\AddQueuedCookiesToResponse.php(36): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#26 C:\\Users\\Masud Rana\\Desktop\\qbit\\e-commerce-laravel\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(219): Illuminate\\Cookie\\Middleware\\AddQueuedCookiesToResponse->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#27 C:\\Users\\Masud Rana\\Desktop\\qbit\\e-commerce-laravel\\vendor\\laravel\\framework\\src\\Illuminate\\Cookie\\Middleware\\EncryptCookies.php(74): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#28 C:\\Users\\Masud Rana\\Desktop\\qbit\\e-commerce-laravel\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(219): Illuminate\\Cookie\\Middleware\\EncryptCookies->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#29 C:\\Users\\Masud Rana\\Desktop\\qbit\\e-commerce-laravel\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(137): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#30 C:\\Users\\Masud Rana\\Desktop\\qbit\\e-commerce-laravel\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Router.php(821): Illuminate\\Pipeline\\Pipeline->then(Object(Closure))
+#31 C:\\Users\\Masud Rana\\Desktop\\qbit\\e-commerce-laravel\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Router.php(800): Illuminate\\Routing\\Router->runRouteWithinStack(Object(Illuminate\\Routing\\Route), Object(Illuminate\\Http\\Request))
+#32 C:\\Users\\Masud Rana\\Desktop\\qbit\\e-commerce-laravel\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Router.php(764): Illuminate\\Routing\\Router->runRoute(Object(Illuminate\\Http\\Request), Object(Illuminate\\Routing\\Route))
+#33 C:\\Users\\Masud Rana\\Desktop\\qbit\\e-commerce-laravel\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Router.php(753): Illuminate\\Routing\\Router->dispatchToRoute(Object(Illuminate\\Http\\Request))
+#34 C:\\Users\\Masud Rana\\Desktop\\qbit\\e-commerce-laravel\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Kernel.php(200): Illuminate\\Routing\\Router->dispatch(Object(Illuminate\\Http\\Request))
+#35 C:\\Users\\Masud Rana\\Desktop\\qbit\\e-commerce-laravel\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(180): Illuminate\\Foundation\\Http\\Kernel->Illuminate\\Foundation\\Http\\{closure}(Object(Illuminate\\Http\\Request))
+#36 C:\\Users\\Masud Rana\\Desktop\\qbit\\e-commerce-laravel\\vendor\\livewire\\livewire\\src\\Features\\SupportDisablingBackButtonCache\\DisableBackButtonCacheMiddleware.php(19): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#37 C:\\Users\\Masud Rana\\Desktop\\qbit\\e-commerce-laravel\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(219): Livewire\\Features\\SupportDisablingBackButtonCache\\DisableBackButtonCacheMiddleware->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#38 C:\\Users\\Masud Rana\\Desktop\\qbit\\e-commerce-laravel\\vendor\\barryvdh\\laravel-debugbar\\src\\Middleware\\InjectDebugbar.php(66): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#39 C:\\Users\\Masud Rana\\Desktop\\qbit\\e-commerce-laravel\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(219): Barryvdh\\Debugbar\\Middleware\\InjectDebugbar->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#40 C:\\Users\\Masud Rana\\Desktop\\qbit\\e-commerce-laravel\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Middleware\\TransformsRequest.php(21): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#41 C:\\Users\\Masud Rana\\Desktop\\qbit\\e-commerce-laravel\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Middleware\\ConvertEmptyStringsToNull.php(31): Illuminate\\Foundation\\Http\\Middleware\\TransformsRequest->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#42 C:\\Users\\Masud Rana\\Desktop\\qbit\\e-commerce-laravel\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(219): Illuminate\\Foundation\\Http\\Middleware\\ConvertEmptyStringsToNull->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#43 C:\\Users\\Masud Rana\\Desktop\\qbit\\e-commerce-laravel\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Middleware\\TransformsRequest.php(21): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#44 C:\\Users\\Masud Rana\\Desktop\\qbit\\e-commerce-laravel\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Middleware\\TrimStrings.php(51): Illuminate\\Foundation\\Http\\Middleware\\TransformsRequest->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#45 C:\\Users\\Masud Rana\\Desktop\\qbit\\e-commerce-laravel\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(219): Illuminate\\Foundation\\Http\\Middleware\\TrimStrings->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#46 C:\\Users\\Masud Rana\\Desktop\\qbit\\e-commerce-laravel\\vendor\\laravel\\framework\\src\\Illuminate\\Http\\Middleware\\ValidatePostSize.php(27): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#47 C:\\Users\\Masud Rana\\Desktop\\qbit\\e-commerce-laravel\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(219): Illuminate\\Http\\Middleware\\ValidatePostSize->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#48 C:\\Users\\Masud Rana\\Desktop\\qbit\\e-commerce-laravel\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Middleware\\PreventRequestsDuringMaintenance.php(109): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#49 C:\\Users\\Masud Rana\\Desktop\\qbit\\e-commerce-laravel\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(219): Illuminate\\Foundation\\Http\\Middleware\\PreventRequestsDuringMaintenance->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#50 C:\\Users\\Masud Rana\\Desktop\\qbit\\e-commerce-laravel\\vendor\\laravel\\framework\\src\\Illuminate\\Http\\Middleware\\HandleCors.php(48): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#51 C:\\Users\\Masud Rana\\Desktop\\qbit\\e-commerce-laravel\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(219): Illuminate\\Http\\Middleware\\HandleCors->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#52 C:\\Users\\Masud Rana\\Desktop\\qbit\\e-commerce-laravel\\vendor\\laravel\\framework\\src\\Illuminate\\Http\\Middleware\\TrustProxies.php(58): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#53 C:\\Users\\Masud Rana\\Desktop\\qbit\\e-commerce-laravel\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(219): Illuminate\\Http\\Middleware\\TrustProxies->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#54 C:\\Users\\Masud Rana\\Desktop\\qbit\\e-commerce-laravel\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Middleware\\InvokeDeferredCallbacks.php(22): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#55 C:\\Users\\Masud Rana\\Desktop\\qbit\\e-commerce-laravel\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(219): Illuminate\\Foundation\\Http\\Middleware\\InvokeDeferredCallbacks->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#56 C:\\Users\\Masud Rana\\Desktop\\qbit\\e-commerce-laravel\\vendor\\laravel\\framework\\src\\Illuminate\\Http\\Middleware\\ValidatePathEncoding.php(26): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#57 C:\\Users\\Masud Rana\\Desktop\\qbit\\e-commerce-laravel\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(219): Illuminate\\Http\\Middleware\\ValidatePathEncoding->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#58 C:\\Users\\Masud Rana\\Desktop\\qbit\\e-commerce-laravel\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(137): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#59 C:\\Users\\Masud Rana\\Desktop\\qbit\\e-commerce-laravel\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Kernel.php(175): Illuminate\\Pipeline\\Pipeline->then(Object(Closure))
+#60 C:\\Users\\Masud Rana\\Desktop\\qbit\\e-commerce-laravel\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Kernel.php(144): Illuminate\\Foundation\\Http\\Kernel->sendRequestThroughRouter(Object(Illuminate\\Http\\Request))
+#61 C:\\Users\\Masud Rana\\Desktop\\qbit\\e-commerce-laravel\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Application.php(1220): Illuminate\\Foundation\\Http\\Kernel->handle(Object(Illuminate\\Http\\Request))
+#62 C:\\Users\\Masud Rana\\Desktop\\qbit\\e-commerce-laravel\\public\\index.php(20): Illuminate\\Foundation\\Application->handleRequest(Object(Illuminate\\Http\\Request))
+#63 C:\\Users\\Masud Rana\\Desktop\\qbit\\e-commerce-laravel\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\resources\\server.php(23): require_once('C:\\\\Users\\\\Masud ...')
+#64 {main}
+
+[previous exception] [object] (ParseError(code: 0): syntax error, unexpected token \"<\" at C:\\Users\\Masud Rana\\Desktop\\qbit\\e-commerce-laravel\\storage\\framework\\views\\4ca1c9892addc31aa4df441b737ff946.php:94)
+[stacktrace]
+#0 C:\\Users\\Masud Rana\\Desktop\\qbit\\e-commerce-laravel\\vendor\\laravel\\framework\\src\\Illuminate\\Filesystem\\Filesystem.php(124): Illuminate\\Filesystem\\Filesystem::Illuminate\\Filesystem\\{closure}()
+#1 C:\\Users\\Masud Rana\\Desktop\\qbit\\e-commerce-laravel\\vendor\\laravel\\framework\\src\\Illuminate\\View\\Engines\\PhpEngine.php(57): Illuminate\\Filesystem\\Filesystem->getRequire('C:\\\\Users\\\\Masud ...', Array)
+#2 C:\\Users\\Masud Rana\\Desktop\\qbit\\e-commerce-laravel\\vendor\\livewire\\livewire\\src\\Mechanisms\\ExtendBlade\\ExtendedCompilerEngine.php(22): Illuminate\\View\\Engines\\PhpEngine->evaluatePath('C:\\\\Users\\\\Masud ...', Array)
+#3 C:\\Users\\Masud Rana\\Desktop\\qbit\\e-commerce-laravel\\vendor\\laravel\\framework\\src\\Illuminate\\View\\Engines\\CompilerEngine.php(76): Livewire\\Mechanisms\\ExtendBlade\\ExtendedCompilerEngine->evaluatePath('C:\\\\Users\\\\Masud ...', Array)
+#4 C:\\Users\\Masud Rana\\Desktop\\qbit\\e-commerce-laravel\\vendor\\livewire\\livewire\\src\\Mechanisms\\ExtendBlade\\ExtendedCompilerEngine.php(10): Illuminate\\View\\Engines\\CompilerEngine->get('C:\\\\Users\\\\Masud ...', Array)
+#5 C:\\Users\\Masud Rana\\Desktop\\qbit\\e-commerce-laravel\\vendor\\laravel\\framework\\src\\Illuminate\\View\\View.php(208): Livewire\\Mechanisms\\ExtendBlade\\ExtendedCompilerEngine->get('C:\\\\Users\\\\Masud ...', Array)
+#6 C:\\Users\\Masud Rana\\Desktop\\qbit\\e-commerce-laravel\\vendor\\laravel\\framework\\src\\Illuminate\\View\\View.php(191): Illuminate\\View\\View->getContents()
+#7 C:\\Users\\Masud Rana\\Desktop\\qbit\\e-commerce-laravel\\vendor\\laravel\\framework\\src\\Illuminate\\View\\View.php(160): Illuminate\\View\\View->renderContents()
+#8 C:\\Users\\Masud Rana\\Desktop\\qbit\\e-commerce-laravel\\vendor\\laravel\\framework\\src\\Illuminate\\Http\\Response.php(78): Illuminate\\View\\View->render()
+#9 C:\\Users\\Masud Rana\\Desktop\\qbit\\e-commerce-laravel\\vendor\\laravel\\framework\\src\\Illuminate\\Http\\Response.php(34): Illuminate\\Http\\Response->setContent(Object(Illuminate\\View\\View))
+#10 C:\\Users\\Masud Rana\\Desktop\\qbit\\e-commerce-laravel\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Router.php(939): Illuminate\\Http\\Response->__construct(Object(Illuminate\\View\\View), 200, Array)
+#11 C:\\Users\\Masud Rana\\Desktop\\qbit\\e-commerce-laravel\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Router.php(906): Illuminate\\Routing\\Router::toResponse(Object(Illuminate\\Http\\Request), Object(Illuminate\\View\\View))
+#12 C:\\Users\\Masud Rana\\Desktop\\qbit\\e-commerce-laravel\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Router.php(821): Illuminate\\Routing\\Router->prepareResponse(Object(Illuminate\\Http\\Request), Object(Illuminate\\View\\View))
+#13 C:\\Users\\Masud Rana\\Desktop\\qbit\\e-commerce-laravel\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(180): Illuminate\\Routing\\Router->Illuminate\\Routing\\{closure}(Object(Illuminate\\Http\\Request))
+#14 C:\\Users\\Masud Rana\\Desktop\\qbit\\e-commerce-laravel\\vendor\\barryvdh\\laravel-debugbar\\src\\Middleware\\InjectDebugbar.php(66): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#15 C:\\Users\\Masud Rana\\Desktop\\qbit\\e-commerce-laravel\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(219): Barryvdh\\Debugbar\\Middleware\\InjectDebugbar->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#16 C:\\Users\\Masud Rana\\Desktop\\qbit\\e-commerce-laravel\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Middleware\\SubstituteBindings.php(50): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#17 C:\\Users\\Masud Rana\\Desktop\\qbit\\e-commerce-laravel\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(219): Illuminate\\Routing\\Middleware\\SubstituteBindings->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#18 C:\\Users\\Masud Rana\\Desktop\\qbit\\e-commerce-laravel\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Middleware\\VerifyCsrfToken.php(87): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#19 C:\\Users\\Masud Rana\\Desktop\\qbit\\e-commerce-laravel\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(219): Illuminate\\Foundation\\Http\\Middleware\\VerifyCsrfToken->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#20 C:\\Users\\Masud Rana\\Desktop\\qbit\\e-commerce-laravel\\vendor\\laravel\\framework\\src\\Illuminate\\View\\Middleware\\ShareErrorsFromSession.php(48): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#21 C:\\Users\\Masud Rana\\Desktop\\qbit\\e-commerce-laravel\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(219): Illuminate\\View\\Middleware\\ShareErrorsFromSession->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#22 C:\\Users\\Masud Rana\\Desktop\\qbit\\e-commerce-laravel\\vendor\\laravel\\framework\\src\\Illuminate\\Session\\Middleware\\StartSession.php(120): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#23 C:\\Users\\Masud Rana\\Desktop\\qbit\\e-commerce-laravel\\vendor\\laravel\\framework\\src\\Illuminate\\Session\\Middleware\\StartSession.php(63): Illuminate\\Session\\Middleware\\StartSession->handleStatefulRequest(Object(Illuminate\\Http\\Request), Object(Illuminate\\Session\\Store), Object(Closure))
+#24 C:\\Users\\Masud Rana\\Desktop\\qbit\\e-commerce-laravel\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(219): Illuminate\\Session\\Middleware\\StartSession->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#25 C:\\Users\\Masud Rana\\Desktop\\qbit\\e-commerce-laravel\\vendor\\laravel\\framework\\src\\Illuminate\\Cookie\\Middleware\\AddQueuedCookiesToResponse.php(36): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#26 C:\\Users\\Masud Rana\\Desktop\\qbit\\e-commerce-laravel\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(219): Illuminate\\Cookie\\Middleware\\AddQueuedCookiesToResponse->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#27 C:\\Users\\Masud Rana\\Desktop\\qbit\\e-commerce-laravel\\vendor\\laravel\\framework\\src\\Illuminate\\Cookie\\Middleware\\EncryptCookies.php(74): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#28 C:\\Users\\Masud Rana\\Desktop\\qbit\\e-commerce-laravel\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(219): Illuminate\\Cookie\\Middleware\\EncryptCookies->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#29 C:\\Users\\Masud Rana\\Desktop\\qbit\\e-commerce-laravel\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(137): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#30 C:\\Users\\Masud Rana\\Desktop\\qbit\\e-commerce-laravel\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Router.php(821): Illuminate\\Pipeline\\Pipeline->then(Object(Closure))
+#31 C:\\Users\\Masud Rana\\Desktop\\qbit\\e-commerce-laravel\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Router.php(800): Illuminate\\Routing\\Router->runRouteWithinStack(Object(Illuminate\\Routing\\Route), Object(Illuminate\\Http\\Request))
+#32 C:\\Users\\Masud Rana\\Desktop\\qbit\\e-commerce-laravel\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Router.php(764): Illuminate\\Routing\\Router->runRoute(Object(Illuminate\\Http\\Request), Object(Illuminate\\Routing\\Route))
+#33 C:\\Users\\Masud Rana\\Desktop\\qbit\\e-commerce-laravel\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Router.php(753): Illuminate\\Routing\\Router->dispatchToRoute(Object(Illuminate\\Http\\Request))
+#34 C:\\Users\\Masud Rana\\Desktop\\qbit\\e-commerce-laravel\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Kernel.php(200): Illuminate\\Routing\\Router->dispatch(Object(Illuminate\\Http\\Request))
+#35 C:\\Users\\Masud Rana\\Desktop\\qbit\\e-commerce-laravel\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(180): Illuminate\\Foundation\\Http\\Kernel->Illuminate\\Foundation\\Http\\{closure}(Object(Illuminate\\Http\\Request))
+#36 C:\\Users\\Masud Rana\\Desktop\\qbit\\e-commerce-laravel\\vendor\\livewire\\livewire\\src\\Features\\SupportDisablingBackButtonCache\\DisableBackButtonCacheMiddleware.php(19): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#37 C:\\Users\\Masud Rana\\Desktop\\qbit\\e-commerce-laravel\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(219): Livewire\\Features\\SupportDisablingBackButtonCache\\DisableBackButtonCacheMiddleware->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#38 C:\\Users\\Masud Rana\\Desktop\\qbit\\e-commerce-laravel\\vendor\\barryvdh\\laravel-debugbar\\src\\Middleware\\InjectDebugbar.php(66): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#39 C:\\Users\\Masud Rana\\Desktop\\qbit\\e-commerce-laravel\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(219): Barryvdh\\Debugbar\\Middleware\\InjectDebugbar->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#40 C:\\Users\\Masud Rana\\Desktop\\qbit\\e-commerce-laravel\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Middleware\\TransformsRequest.php(21): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#41 C:\\Users\\Masud Rana\\Desktop\\qbit\\e-commerce-laravel\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Middleware\\ConvertEmptyStringsToNull.php(31): Illuminate\\Foundation\\Http\\Middleware\\TransformsRequest->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#42 C:\\Users\\Masud Rana\\Desktop\\qbit\\e-commerce-laravel\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(219): Illuminate\\Foundation\\Http\\Middleware\\ConvertEmptyStringsToNull->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#43 C:\\Users\\Masud Rana\\Desktop\\qbit\\e-commerce-laravel\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Middleware\\TransformsRequest.php(21): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#44 C:\\Users\\Masud Rana\\Desktop\\qbit\\e-commerce-laravel\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Middleware\\TrimStrings.php(51): Illuminate\\Foundation\\Http\\Middleware\\TransformsRequest->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#45 C:\\Users\\Masud Rana\\Desktop\\qbit\\e-commerce-laravel\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(219): Illuminate\\Foundation\\Http\\Middleware\\TrimStrings->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#46 C:\\Users\\Masud Rana\\Desktop\\qbit\\e-commerce-laravel\\vendor\\laravel\\framework\\src\\Illuminate\\Http\\Middleware\\ValidatePostSize.php(27): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#47 C:\\Users\\Masud Rana\\Desktop\\qbit\\e-commerce-laravel\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(219): Illuminate\\Http\\Middleware\\ValidatePostSize->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#48 C:\\Users\\Masud Rana\\Desktop\\qbit\\e-commerce-laravel\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Middleware\\PreventRequestsDuringMaintenance.php(109): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#49 C:\\Users\\Masud Rana\\Desktop\\qbit\\e-commerce-laravel\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(219): Illuminate\\Foundation\\Http\\Middleware\\PreventRequestsDuringMaintenance->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#50 C:\\Users\\Masud Rana\\Desktop\\qbit\\e-commerce-laravel\\vendor\\laravel\\framework\\src\\Illuminate\\Http\\Middleware\\HandleCors.php(48): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#51 C:\\Users\\Masud Rana\\Desktop\\qbit\\e-commerce-laravel\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(219): Illuminate\\Http\\Middleware\\HandleCors->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#52 C:\\Users\\Masud Rana\\Desktop\\qbit\\e-commerce-laravel\\vendor\\laravel\\framework\\src\\Illuminate\\Http\\Middleware\\TrustProxies.php(58): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#53 C:\\Users\\Masud Rana\\Desktop\\qbit\\e-commerce-laravel\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(219): Illuminate\\Http\\Middleware\\TrustProxies->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#54 C:\\Users\\Masud Rana\\Desktop\\qbit\\e-commerce-laravel\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Middleware\\InvokeDeferredCallbacks.php(22): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#55 C:\\Users\\Masud Rana\\Desktop\\qbit\\e-commerce-laravel\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(219): Illuminate\\Foundation\\Http\\Middleware\\InvokeDeferredCallbacks->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#56 C:\\Users\\Masud Rana\\Desktop\\qbit\\e-commerce-laravel\\vendor\\laravel\\framework\\src\\Illuminate\\Http\\Middleware\\ValidatePathEncoding.php(26): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#57 C:\\Users\\Masud Rana\\Desktop\\qbit\\e-commerce-laravel\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(219): Illuminate\\Http\\Middleware\\ValidatePathEncoding->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#58 C:\\Users\\Masud Rana\\Desktop\\qbit\\e-commerce-laravel\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(137): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#59 C:\\Users\\Masud Rana\\Desktop\\qbit\\e-commerce-laravel\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Kernel.php(175): Illuminate\\Pipeline\\Pipeline->then(Object(Closure))
+#60 C:\\Users\\Masud Rana\\Desktop\\qbit\\e-commerce-laravel\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Kernel.php(144): Illuminate\\Foundation\\Http\\Kernel->sendRequestThroughRouter(Object(Illuminate\\Http\\Request))
+#61 C:\\Users\\Masud Rana\\Desktop\\qbit\\e-commerce-laravel\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Application.php(1220): Illuminate\\Foundation\\Http\\Kernel->handle(Object(Illuminate\\Http\\Request))
+#62 C:\\Users\\Masud Rana\\Desktop\\qbit\\e-commerce-laravel\\public\\index.php(20): Illuminate\\Foundation\\Application->handleRequest(Object(Illuminate\\Http\\Request))
+#63 C:\\Users\\Masud Rana\\Desktop\\qbit\\e-commerce-laravel\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\resources\\server.php(23): require_once('C:\\\\Users\\\\Masud ...')
+#64 {main}
+"} 
+[2026-01-03 20:48:16] local.ERROR: syntax error, unexpected end of file (View: C:\Users\Masud Rana\Desktop\qbit\e-commerce-laravel\resources\views\frontend\home.blade.php) {"userId":1,"exception":"[object] (Illuminate\\View\\ViewException(code: 0): syntax error, unexpected end of file (View: C:\\Users\\Masud Rana\\Desktop\\qbit\\e-commerce-laravel\\resources\\views\\frontend\\home.blade.php) at C:\\Users\\Masud Rana\\Desktop\\qbit\\e-commerce-laravel\\storage\\framework\\views\\4ca1c9892addc31aa4df441b737ff946.php:810)
+[stacktrace]
+#0 C:\\Users\\Masud Rana\\Desktop\\qbit\\e-commerce-laravel\\vendor\\livewire\\livewire\\src\\Mechanisms\\ExtendBlade\\ExtendedCompilerEngine.php(58): Illuminate\\View\\Engines\\CompilerEngine->handleViewException(Object(ParseError), 1)
+#1 C:\\Users\\Masud Rana\\Desktop\\qbit\\e-commerce-laravel\\vendor\\laravel\\framework\\src\\Illuminate\\View\\Engines\\PhpEngine.php(59): Livewire\\Mechanisms\\ExtendBlade\\ExtendedCompilerEngine->handleViewException(Object(ParseError), 1)
+#2 C:\\Users\\Masud Rana\\Desktop\\qbit\\e-commerce-laravel\\vendor\\livewire\\livewire\\src\\Mechanisms\\ExtendBlade\\ExtendedCompilerEngine.php(22): Illuminate\\View\\Engines\\PhpEngine->evaluatePath('C:\\\\Users\\\\Masud ...', Array)
+#3 C:\\Users\\Masud Rana\\Desktop\\qbit\\e-commerce-laravel\\vendor\\laravel\\framework\\src\\Illuminate\\View\\Engines\\CompilerEngine.php(76): Livewire\\Mechanisms\\ExtendBlade\\ExtendedCompilerEngine->evaluatePath('C:\\\\Users\\\\Masud ...', Array)
+#4 C:\\Users\\Masud Rana\\Desktop\\qbit\\e-commerce-laravel\\vendor\\livewire\\livewire\\src\\Mechanisms\\ExtendBlade\\ExtendedCompilerEngine.php(10): Illuminate\\View\\Engines\\CompilerEngine->get('C:\\\\Users\\\\Masud ...', Array)
+#5 C:\\Users\\Masud Rana\\Desktop\\qbit\\e-commerce-laravel\\vendor\\laravel\\framework\\src\\Illuminate\\View\\View.php(208): Livewire\\Mechanisms\\ExtendBlade\\ExtendedCompilerEngine->get('C:\\\\Users\\\\Masud ...', Array)
+#6 C:\\Users\\Masud Rana\\Desktop\\qbit\\e-commerce-laravel\\vendor\\laravel\\framework\\src\\Illuminate\\View\\View.php(191): Illuminate\\View\\View->getContents()
+#7 C:\\Users\\Masud Rana\\Desktop\\qbit\\e-commerce-laravel\\vendor\\laravel\\framework\\src\\Illuminate\\View\\View.php(160): Illuminate\\View\\View->renderContents()
+#8 C:\\Users\\Masud Rana\\Desktop\\qbit\\e-commerce-laravel\\vendor\\laravel\\framework\\src\\Illuminate\\Http\\Response.php(78): Illuminate\\View\\View->render()
+#9 C:\\Users\\Masud Rana\\Desktop\\qbit\\e-commerce-laravel\\vendor\\laravel\\framework\\src\\Illuminate\\Http\\Response.php(34): Illuminate\\Http\\Response->setContent(Object(Illuminate\\View\\View))
+#10 C:\\Users\\Masud Rana\\Desktop\\qbit\\e-commerce-laravel\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Router.php(939): Illuminate\\Http\\Response->__construct(Object(Illuminate\\View\\View), 200, Array)
+#11 C:\\Users\\Masud Rana\\Desktop\\qbit\\e-commerce-laravel\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Router.php(906): Illuminate\\Routing\\Router::toResponse(Object(Illuminate\\Http\\Request), Object(Illuminate\\View\\View))
+#12 C:\\Users\\Masud Rana\\Desktop\\qbit\\e-commerce-laravel\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Router.php(821): Illuminate\\Routing\\Router->prepareResponse(Object(Illuminate\\Http\\Request), Object(Illuminate\\View\\View))
+#13 C:\\Users\\Masud Rana\\Desktop\\qbit\\e-commerce-laravel\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(180): Illuminate\\Routing\\Router->Illuminate\\Routing\\{closure}(Object(Illuminate\\Http\\Request))
+#14 C:\\Users\\Masud Rana\\Desktop\\qbit\\e-commerce-laravel\\vendor\\barryvdh\\laravel-debugbar\\src\\Middleware\\InjectDebugbar.php(66): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#15 C:\\Users\\Masud Rana\\Desktop\\qbit\\e-commerce-laravel\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(219): Barryvdh\\Debugbar\\Middleware\\InjectDebugbar->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#16 C:\\Users\\Masud Rana\\Desktop\\qbit\\e-commerce-laravel\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Middleware\\SubstituteBindings.php(50): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#17 C:\\Users\\Masud Rana\\Desktop\\qbit\\e-commerce-laravel\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(219): Illuminate\\Routing\\Middleware\\SubstituteBindings->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#18 C:\\Users\\Masud Rana\\Desktop\\qbit\\e-commerce-laravel\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Middleware\\VerifyCsrfToken.php(87): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#19 C:\\Users\\Masud Rana\\Desktop\\qbit\\e-commerce-laravel\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(219): Illuminate\\Foundation\\Http\\Middleware\\VerifyCsrfToken->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#20 C:\\Users\\Masud Rana\\Desktop\\qbit\\e-commerce-laravel\\vendor\\laravel\\framework\\src\\Illuminate\\View\\Middleware\\ShareErrorsFromSession.php(48): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#21 C:\\Users\\Masud Rana\\Desktop\\qbit\\e-commerce-laravel\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(219): Illuminate\\View\\Middleware\\ShareErrorsFromSession->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#22 C:\\Users\\Masud Rana\\Desktop\\qbit\\e-commerce-laravel\\vendor\\laravel\\framework\\src\\Illuminate\\Session\\Middleware\\StartSession.php(120): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#23 C:\\Users\\Masud Rana\\Desktop\\qbit\\e-commerce-laravel\\vendor\\laravel\\framework\\src\\Illuminate\\Session\\Middleware\\StartSession.php(63): Illuminate\\Session\\Middleware\\StartSession->handleStatefulRequest(Object(Illuminate\\Http\\Request), Object(Illuminate\\Session\\Store), Object(Closure))
+#24 C:\\Users\\Masud Rana\\Desktop\\qbit\\e-commerce-laravel\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(219): Illuminate\\Session\\Middleware\\StartSession->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#25 C:\\Users\\Masud Rana\\Desktop\\qbit\\e-commerce-laravel\\vendor\\laravel\\framework\\src\\Illuminate\\Cookie\\Middleware\\AddQueuedCookiesToResponse.php(36): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#26 C:\\Users\\Masud Rana\\Desktop\\qbit\\e-commerce-laravel\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(219): Illuminate\\Cookie\\Middleware\\AddQueuedCookiesToResponse->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#27 C:\\Users\\Masud Rana\\Desktop\\qbit\\e-commerce-laravel\\vendor\\laravel\\framework\\src\\Illuminate\\Cookie\\Middleware\\EncryptCookies.php(74): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#28 C:\\Users\\Masud Rana\\Desktop\\qbit\\e-commerce-laravel\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(219): Illuminate\\Cookie\\Middleware\\EncryptCookies->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#29 C:\\Users\\Masud Rana\\Desktop\\qbit\\e-commerce-laravel\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(137): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#30 C:\\Users\\Masud Rana\\Desktop\\qbit\\e-commerce-laravel\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Router.php(821): Illuminate\\Pipeline\\Pipeline->then(Object(Closure))
+#31 C:\\Users\\Masud Rana\\Desktop\\qbit\\e-commerce-laravel\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Router.php(800): Illuminate\\Routing\\Router->runRouteWithinStack(Object(Illuminate\\Routing\\Route), Object(Illuminate\\Http\\Request))
+#32 C:\\Users\\Masud Rana\\Desktop\\qbit\\e-commerce-laravel\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Router.php(764): Illuminate\\Routing\\Router->runRoute(Object(Illuminate\\Http\\Request), Object(Illuminate\\Routing\\Route))
+#33 C:\\Users\\Masud Rana\\Desktop\\qbit\\e-commerce-laravel\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Router.php(753): Illuminate\\Routing\\Router->dispatchToRoute(Object(Illuminate\\Http\\Request))
+#34 C:\\Users\\Masud Rana\\Desktop\\qbit\\e-commerce-laravel\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Kernel.php(200): Illuminate\\Routing\\Router->dispatch(Object(Illuminate\\Http\\Request))
+#35 C:\\Users\\Masud Rana\\Desktop\\qbit\\e-commerce-laravel\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(180): Illuminate\\Foundation\\Http\\Kernel->Illuminate\\Foundation\\Http\\{closure}(Object(Illuminate\\Http\\Request))
+#36 C:\\Users\\Masud Rana\\Desktop\\qbit\\e-commerce-laravel\\vendor\\livewire\\livewire\\src\\Features\\SupportDisablingBackButtonCache\\DisableBackButtonCacheMiddleware.php(19): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#37 C:\\Users\\Masud Rana\\Desktop\\qbit\\e-commerce-laravel\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(219): Livewire\\Features\\SupportDisablingBackButtonCache\\DisableBackButtonCacheMiddleware->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#38 C:\\Users\\Masud Rana\\Desktop\\qbit\\e-commerce-laravel\\vendor\\barryvdh\\laravel-debugbar\\src\\Middleware\\InjectDebugbar.php(66): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#39 C:\\Users\\Masud Rana\\Desktop\\qbit\\e-commerce-laravel\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(219): Barryvdh\\Debugbar\\Middleware\\InjectDebugbar->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#40 C:\\Users\\Masud Rana\\Desktop\\qbit\\e-commerce-laravel\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Middleware\\TransformsRequest.php(21): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#41 C:\\Users\\Masud Rana\\Desktop\\qbit\\e-commerce-laravel\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Middleware\\ConvertEmptyStringsToNull.php(31): Illuminate\\Foundation\\Http\\Middleware\\TransformsRequest->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#42 C:\\Users\\Masud Rana\\Desktop\\qbit\\e-commerce-laravel\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(219): Illuminate\\Foundation\\Http\\Middleware\\ConvertEmptyStringsToNull->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#43 C:\\Users\\Masud Rana\\Desktop\\qbit\\e-commerce-laravel\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Middleware\\TransformsRequest.php(21): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#44 C:\\Users\\Masud Rana\\Desktop\\qbit\\e-commerce-laravel\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Middleware\\TrimStrings.php(51): Illuminate\\Foundation\\Http\\Middleware\\TransformsRequest->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#45 C:\\Users\\Masud Rana\\Desktop\\qbit\\e-commerce-laravel\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(219): Illuminate\\Foundation\\Http\\Middleware\\TrimStrings->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#46 C:\\Users\\Masud Rana\\Desktop\\qbit\\e-commerce-laravel\\vendor\\laravel\\framework\\src\\Illuminate\\Http\\Middleware\\ValidatePostSize.php(27): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#47 C:\\Users\\Masud Rana\\Desktop\\qbit\\e-commerce-laravel\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(219): Illuminate\\Http\\Middleware\\ValidatePostSize->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#48 C:\\Users\\Masud Rana\\Desktop\\qbit\\e-commerce-laravel\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Middleware\\PreventRequestsDuringMaintenance.php(109): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#49 C:\\Users\\Masud Rana\\Desktop\\qbit\\e-commerce-laravel\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(219): Illuminate\\Foundation\\Http\\Middleware\\PreventRequestsDuringMaintenance->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#50 C:\\Users\\Masud Rana\\Desktop\\qbit\\e-commerce-laravel\\vendor\\laravel\\framework\\src\\Illuminate\\Http\\Middleware\\HandleCors.php(48): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#51 C:\\Users\\Masud Rana\\Desktop\\qbit\\e-commerce-laravel\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(219): Illuminate\\Http\\Middleware\\HandleCors->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#52 C:\\Users\\Masud Rana\\Desktop\\qbit\\e-commerce-laravel\\vendor\\laravel\\framework\\src\\Illuminate\\Http\\Middleware\\TrustProxies.php(58): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#53 C:\\Users\\Masud Rana\\Desktop\\qbit\\e-commerce-laravel\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(219): Illuminate\\Http\\Middleware\\TrustProxies->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#54 C:\\Users\\Masud Rana\\Desktop\\qbit\\e-commerce-laravel\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Middleware\\InvokeDeferredCallbacks.php(22): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#55 C:\\Users\\Masud Rana\\Desktop\\qbit\\e-commerce-laravel\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(219): Illuminate\\Foundation\\Http\\Middleware\\InvokeDeferredCallbacks->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#56 C:\\Users\\Masud Rana\\Desktop\\qbit\\e-commerce-laravel\\vendor\\laravel\\framework\\src\\Illuminate\\Http\\Middleware\\ValidatePathEncoding.php(26): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#57 C:\\Users\\Masud Rana\\Desktop\\qbit\\e-commerce-laravel\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(219): Illuminate\\Http\\Middleware\\ValidatePathEncoding->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#58 C:\\Users\\Masud Rana\\Desktop\\qbit\\e-commerce-laravel\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(137): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#59 C:\\Users\\Masud Rana\\Desktop\\qbit\\e-commerce-laravel\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Kernel.php(175): Illuminate\\Pipeline\\Pipeline->then(Object(Closure))
+#60 C:\\Users\\Masud Rana\\Desktop\\qbit\\e-commerce-laravel\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Kernel.php(144): Illuminate\\Foundation\\Http\\Kernel->sendRequestThroughRouter(Object(Illuminate\\Http\\Request))
+#61 C:\\Users\\Masud Rana\\Desktop\\qbit\\e-commerce-laravel\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Application.php(1220): Illuminate\\Foundation\\Http\\Kernel->handle(Object(Illuminate\\Http\\Request))
+#62 C:\\Users\\Masud Rana\\Desktop\\qbit\\e-commerce-laravel\\public\\index.php(20): Illuminate\\Foundation\\Application->handleRequest(Object(Illuminate\\Http\\Request))
+#63 C:\\Users\\Masud Rana\\Desktop\\qbit\\e-commerce-laravel\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\resources\\server.php(23): require_once('C:\\\\Users\\\\Masud ...')
+#64 {main}
+
+[previous exception] [object] (ParseError(code: 0): syntax error, unexpected end of file at C:\\Users\\Masud Rana\\Desktop\\qbit\\e-commerce-laravel\\storage\\framework\\views\\4ca1c9892addc31aa4df441b737ff946.php:810)
+[stacktrace]
+#0 C:\\Users\\Masud Rana\\Desktop\\qbit\\e-commerce-laravel\\vendor\\laravel\\framework\\src\\Illuminate\\Filesystem\\Filesystem.php(124): Illuminate\\Filesystem\\Filesystem::Illuminate\\Filesystem\\{closure}()
+#1 C:\\Users\\Masud Rana\\Desktop\\qbit\\e-commerce-laravel\\vendor\\laravel\\framework\\src\\Illuminate\\View\\Engines\\PhpEngine.php(57): Illuminate\\Filesystem\\Filesystem->getRequire('C:\\\\Users\\\\Masud ...', Array)
+#2 C:\\Users\\Masud Rana\\Desktop\\qbit\\e-commerce-laravel\\vendor\\livewire\\livewire\\src\\Mechanisms\\ExtendBlade\\ExtendedCompilerEngine.php(22): Illuminate\\View\\Engines\\PhpEngine->evaluatePath('C:\\\\Users\\\\Masud ...', Array)
+#3 C:\\Users\\Masud Rana\\Desktop\\qbit\\e-commerce-laravel\\vendor\\laravel\\framework\\src\\Illuminate\\View\\Engines\\CompilerEngine.php(76): Livewire\\Mechanisms\\ExtendBlade\\ExtendedCompilerEngine->evaluatePath('C:\\\\Users\\\\Masud ...', Array)
+#4 C:\\Users\\Masud Rana\\Desktop\\qbit\\e-commerce-laravel\\vendor\\livewire\\livewire\\src\\Mechanisms\\ExtendBlade\\ExtendedCompilerEngine.php(10): Illuminate\\View\\Engines\\CompilerEngine->get('C:\\\\Users\\\\Masud ...', Array)
+#5 C:\\Users\\Masud Rana\\Desktop\\qbit\\e-commerce-laravel\\vendor\\laravel\\framework\\src\\Illuminate\\View\\View.php(208): Livewire\\Mechanisms\\ExtendBlade\\ExtendedCompilerEngine->get('C:\\\\Users\\\\Masud ...', Array)
+#6 C:\\Users\\Masud Rana\\Desktop\\qbit\\e-commerce-laravel\\vendor\\laravel\\framework\\src\\Illuminate\\View\\View.php(191): Illuminate\\View\\View->getContents()
+#7 C:\\Users\\Masud Rana\\Desktop\\qbit\\e-commerce-laravel\\vendor\\laravel\\framework\\src\\Illuminate\\View\\View.php(160): Illuminate\\View\\View->renderContents()
+#8 C:\\Users\\Masud Rana\\Desktop\\qbit\\e-commerce-laravel\\vendor\\laravel\\framework\\src\\Illuminate\\Http\\Response.php(78): Illuminate\\View\\View->render()
+#9 C:\\Users\\Masud Rana\\Desktop\\qbit\\e-commerce-laravel\\vendor\\laravel\\framework\\src\\Illuminate\\Http\\Response.php(34): Illuminate\\Http\\Response->setContent(Object(Illuminate\\View\\View))
+#10 C:\\Users\\Masud Rana\\Desktop\\qbit\\e-commerce-laravel\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Router.php(939): Illuminate\\Http\\Response->__construct(Object(Illuminate\\View\\View), 200, Array)
+#11 C:\\Users\\Masud Rana\\Desktop\\qbit\\e-commerce-laravel\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Router.php(906): Illuminate\\Routing\\Router::toResponse(Object(Illuminate\\Http\\Request), Object(Illuminate\\View\\View))
+#12 C:\\Users\\Masud Rana\\Desktop\\qbit\\e-commerce-laravel\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Router.php(821): Illuminate\\Routing\\Router->prepareResponse(Object(Illuminate\\Http\\Request), Object(Illuminate\\View\\View))
+#13 C:\\Users\\Masud Rana\\Desktop\\qbit\\e-commerce-laravel\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(180): Illuminate\\Routing\\Router->Illuminate\\Routing\\{closure}(Object(Illuminate\\Http\\Request))
+#14 C:\\Users\\Masud Rana\\Desktop\\qbit\\e-commerce-laravel\\vendor\\barryvdh\\laravel-debugbar\\src\\Middleware\\InjectDebugbar.php(66): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#15 C:\\Users\\Masud Rana\\Desktop\\qbit\\e-commerce-laravel\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(219): Barryvdh\\Debugbar\\Middleware\\InjectDebugbar->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#16 C:\\Users\\Masud Rana\\Desktop\\qbit\\e-commerce-laravel\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Middleware\\SubstituteBindings.php(50): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#17 C:\\Users\\Masud Rana\\Desktop\\qbit\\e-commerce-laravel\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(219): Illuminate\\Routing\\Middleware\\SubstituteBindings->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#18 C:\\Users\\Masud Rana\\Desktop\\qbit\\e-commerce-laravel\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Middleware\\VerifyCsrfToken.php(87): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#19 C:\\Users\\Masud Rana\\Desktop\\qbit\\e-commerce-laravel\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(219): Illuminate\\Foundation\\Http\\Middleware\\VerifyCsrfToken->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#20 C:\\Users\\Masud Rana\\Desktop\\qbit\\e-commerce-laravel\\vendor\\laravel\\framework\\src\\Illuminate\\View\\Middleware\\ShareErrorsFromSession.php(48): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#21 C:\\Users\\Masud Rana\\Desktop\\qbit\\e-commerce-laravel\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(219): Illuminate\\View\\Middleware\\ShareErrorsFromSession->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#22 C:\\Users\\Masud Rana\\Desktop\\qbit\\e-commerce-laravel\\vendor\\laravel\\framework\\src\\Illuminate\\Session\\Middleware\\StartSession.php(120): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#23 C:\\Users\\Masud Rana\\Desktop\\qbit\\e-commerce-laravel\\vendor\\laravel\\framework\\src\\Illuminate\\Session\\Middleware\\StartSession.php(63): Illuminate\\Session\\Middleware\\StartSession->handleStatefulRequest(Object(Illuminate\\Http\\Request), Object(Illuminate\\Session\\Store), Object(Closure))
+#24 C:\\Users\\Masud Rana\\Desktop\\qbit\\e-commerce-laravel\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(219): Illuminate\\Session\\Middleware\\StartSession->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#25 C:\\Users\\Masud Rana\\Desktop\\qbit\\e-commerce-laravel\\vendor\\laravel\\framework\\src\\Illuminate\\Cookie\\Middleware\\AddQueuedCookiesToResponse.php(36): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#26 C:\\Users\\Masud Rana\\Desktop\\qbit\\e-commerce-laravel\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(219): Illuminate\\Cookie\\Middleware\\AddQueuedCookiesToResponse->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#27 C:\\Users\\Masud Rana\\Desktop\\qbit\\e-commerce-laravel\\vendor\\laravel\\framework\\src\\Illuminate\\Cookie\\Middleware\\EncryptCookies.php(74): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#28 C:\\Users\\Masud Rana\\Desktop\\qbit\\e-commerce-laravel\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(219): Illuminate\\Cookie\\Middleware\\EncryptCookies->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#29 C:\\Users\\Masud Rana\\Desktop\\qbit\\e-commerce-laravel\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(137): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#30 C:\\Users\\Masud Rana\\Desktop\\qbit\\e-commerce-laravel\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Router.php(821): Illuminate\\Pipeline\\Pipeline->then(Object(Closure))
+#31 C:\\Users\\Masud Rana\\Desktop\\qbit\\e-commerce-laravel\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Router.php(800): Illuminate\\Routing\\Router->runRouteWithinStack(Object(Illuminate\\Routing\\Route), Object(Illuminate\\Http\\Request))
+#32 C:\\Users\\Masud Rana\\Desktop\\qbit\\e-commerce-laravel\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Router.php(764): Illuminate\\Routing\\Router->runRoute(Object(Illuminate\\Http\\Request), Object(Illuminate\\Routing\\Route))
+#33 C:\\Users\\Masud Rana\\Desktop\\qbit\\e-commerce-laravel\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Router.php(753): Illuminate\\Routing\\Router->dispatchToRoute(Object(Illuminate\\Http\\Request))
+#34 C:\\Users\\Masud Rana\\Desktop\\qbit\\e-commerce-laravel\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Kernel.php(200): Illuminate\\Routing\\Router->dispatch(Object(Illuminate\\Http\\Request))
+#35 C:\\Users\\Masud Rana\\Desktop\\qbit\\e-commerce-laravel\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(180): Illuminate\\Foundation\\Http\\Kernel->Illuminate\\Foundation\\Http\\{closure}(Object(Illuminate\\Http\\Request))
+#36 C:\\Users\\Masud Rana\\Desktop\\qbit\\e-commerce-laravel\\vendor\\livewire\\livewire\\src\\Features\\SupportDisablingBackButtonCache\\DisableBackButtonCacheMiddleware.php(19): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#37 C:\\Users\\Masud Rana\\Desktop\\qbit\\e-commerce-laravel\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(219): Livewire\\Features\\SupportDisablingBackButtonCache\\DisableBackButtonCacheMiddleware->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#38 C:\\Users\\Masud Rana\\Desktop\\qbit\\e-commerce-laravel\\vendor\\barryvdh\\laravel-debugbar\\src\\Middleware\\InjectDebugbar.php(66): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#39 C:\\Users\\Masud Rana\\Desktop\\qbit\\e-commerce-laravel\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(219): Barryvdh\\Debugbar\\Middleware\\InjectDebugbar->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#40 C:\\Users\\Masud Rana\\Desktop\\qbit\\e-commerce-laravel\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Middleware\\TransformsRequest.php(21): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#41 C:\\Users\\Masud Rana\\Desktop\\qbit\\e-commerce-laravel\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Middleware\\ConvertEmptyStringsToNull.php(31): Illuminate\\Foundation\\Http\\Middleware\\TransformsRequest->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#42 C:\\Users\\Masud Rana\\Desktop\\qbit\\e-commerce-laravel\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(219): Illuminate\\Foundation\\Http\\Middleware\\ConvertEmptyStringsToNull->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#43 C:\\Users\\Masud Rana\\Desktop\\qbit\\e-commerce-laravel\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Middleware\\TransformsRequest.php(21): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#44 C:\\Users\\Masud Rana\\Desktop\\qbit\\e-commerce-laravel\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Middleware\\TrimStrings.php(51): Illuminate\\Foundation\\Http\\Middleware\\TransformsRequest->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#45 C:\\Users\\Masud Rana\\Desktop\\qbit\\e-commerce-laravel\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(219): Illuminate\\Foundation\\Http\\Middleware\\TrimStrings->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#46 C:\\Users\\Masud Rana\\Desktop\\qbit\\e-commerce-laravel\\vendor\\laravel\\framework\\src\\Illuminate\\Http\\Middleware\\ValidatePostSize.php(27): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#47 C:\\Users\\Masud Rana\\Desktop\\qbit\\e-commerce-laravel\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(219): Illuminate\\Http\\Middleware\\ValidatePostSize->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#48 C:\\Users\\Masud Rana\\Desktop\\qbit\\e-commerce-laravel\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Middleware\\PreventRequestsDuringMaintenance.php(109): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#49 C:\\Users\\Masud Rana\\Desktop\\qbit\\e-commerce-laravel\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(219): Illuminate\\Foundation\\Http\\Middleware\\PreventRequestsDuringMaintenance->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#50 C:\\Users\\Masud Rana\\Desktop\\qbit\\e-commerce-laravel\\vendor\\laravel\\framework\\src\\Illuminate\\Http\\Middleware\\HandleCors.php(48): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#51 C:\\Users\\Masud Rana\\Desktop\\qbit\\e-commerce-laravel\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(219): Illuminate\\Http\\Middleware\\HandleCors->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#52 C:\\Users\\Masud Rana\\Desktop\\qbit\\e-commerce-laravel\\vendor\\laravel\\framework\\src\\Illuminate\\Http\\Middleware\\TrustProxies.php(58): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#53 C:\\Users\\Masud Rana\\Desktop\\qbit\\e-commerce-laravel\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(219): Illuminate\\Http\\Middleware\\TrustProxies->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#54 C:\\Users\\Masud Rana\\Desktop\\qbit\\e-commerce-laravel\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Middleware\\InvokeDeferredCallbacks.php(22): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#55 C:\\Users\\Masud Rana\\Desktop\\qbit\\e-commerce-laravel\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(219): Illuminate\\Foundation\\Http\\Middleware\\InvokeDeferredCallbacks->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#56 C:\\Users\\Masud Rana\\Desktop\\qbit\\e-commerce-laravel\\vendor\\laravel\\framework\\src\\Illuminate\\Http\\Middleware\\ValidatePathEncoding.php(26): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#57 C:\\Users\\Masud Rana\\Desktop\\qbit\\e-commerce-laravel\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(219): Illuminate\\Http\\Middleware\\ValidatePathEncoding->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#58 C:\\Users\\Masud Rana\\Desktop\\qbit\\e-commerce-laravel\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(137): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#59 C:\\Users\\Masud Rana\\Desktop\\qbit\\e-commerce-laravel\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Kernel.php(175): Illuminate\\Pipeline\\Pipeline->then(Object(Closure))
+#60 C:\\Users\\Masud Rana\\Desktop\\qbit\\e-commerce-laravel\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Kernel.php(144): Illuminate\\Foundation\\Http\\Kernel->sendRequestThroughRouter(Object(Illuminate\\Http\\Request))
+#61 C:\\Users\\Masud Rana\\Desktop\\qbit\\e-commerce-laravel\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Application.php(1220): Illuminate\\Foundation\\Http\\Kernel->handle(Object(Illuminate\\Http\\Request))
+#62 C:\\Users\\Masud Rana\\Desktop\\qbit\\e-commerce-laravel\\public\\index.php(20): Illuminate\\Foundation\\Application->handleRequest(Object(Illuminate\\Http\\Request))
+#63 C:\\Users\\Masud Rana\\Desktop\\qbit\\e-commerce-laravel\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\resources\\server.php(23): require_once('C:\\\\Users\\\\Masud ...')
+#64 {main}
+"} 

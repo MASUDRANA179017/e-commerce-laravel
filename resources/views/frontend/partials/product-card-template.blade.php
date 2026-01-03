@@ -112,10 +112,68 @@
             background: var(--primary-color, #0496ff);
             opacity: 1;
         }
+        .property-single-boxarea .title-animation a {
+            font-size: clamp(0.95rem, 2.2vw, 1.15rem);
+            line-height: 1.25;
+        }
+        .property-single-boxarea .product-category {
+            font-size: clamp(0.75rem, 1.6vw, 0.9rem);
+        }
+        .property-single-boxarea .price-current {
+            font-size: clamp(0.95rem, 2vw, 1.15rem);
+        }
+        .property-single-boxarea .price-old {
+            font-size: clamp(0.8rem, 1.6vw, 0.95rem);
+        }
+        .property-single-boxarea .badge {
+            font-size: clamp(0.6rem, 1.4vw, 0.75rem);
+        }
+        @media (max-width: 576px) {
+            .property-single-boxarea .title-animation a {
+                font-size: 1.2rem;
+            }
+            .property-single-boxarea .product-category {
+                font-size: 0.95rem;
+            }
+            .property-single-boxarea .price-current {
+                font-size: 1.25rem;
+            }
+            .property-single-boxarea .price-old {
+                font-size: 1rem;
+            }
+            .property-single-boxarea .badge {
+                font-size: 0.8rem;
+            }
+            .property-single-boxarea {
+                padding-bottom: 64px;
+            }
+            .property-single-boxarea .btn-area1 {
+                position: absolute;
+                left: 12px;
+                right: 12px;
+                bottom: 12px;
+                gap: 8px;
+                background: transparent;
+                animation: mobileSlideUp .3s ease-out both;
+                z-index: 3;
+            }
+            .property-single-boxarea .btn-area1 .action-btn-success {
+                width: 100%;
+                justify-content: center;
+            }
+            .property-single-boxarea .btn-area1 .add-to-wishlist,
+            .property-single-boxarea .btn-area1 .add-to-cart {
+                display: none;
+            }
+            @keyframes mobileSlideUp {
+                from { transform: translateY(20px); opacity: 0; }
+                to { transform: translateY(0); opacity: 1; }
+            }
+        }
     </style>
 @endonce
 
-<div class="col-6 col-md-4 col-lg-3 mb-5">
+<div class="col-12 col-md-4 col-lg-3 mb-5">
     <div class="property-single-boxarea p-0 d-flex flex-column" data-aos="fade-up" data-aos-duration="1000">
         <div class="property-list-img-area position-relative">
             <div class="img1 position-relative overflow-hidden" style="aspect-ratio: 1/1;"> 
@@ -225,7 +283,7 @@
                 <a href="{{ route('product.show', $product->slug ?? $product->id) }}">
                     {{ Str::limit($product->title ?? 'Product', 40) }}
                 </a>
-                <p class="m-0 p-0"><i class='bx bxs-tag p-2'></i>{{ $categoryName }}</p>
+                <p class="m-0 p-0 product-category"><i class='bx bxs-tag p-2'></i>{{ $categoryName }}</p>
             </h4>
         </div>
 
@@ -234,10 +292,10 @@
                 <li class="d-flex align-items-center">
                     <i class='bx bx-coin-stack me-1'></i>
                     @if($isOnSale)
-                        <span class="text-danger fw-bold">৳{{ number_format($salePrice, 0) }}</span>
-                        <small class="text-decoration-line-through text-muted ms-1">৳{{ number_format($price, 0) }}</small>
+                        <span class="text-danger fw-bold price-current">৳{{ number_format($salePrice, 0) }}</span>
+                        <small class="text-decoration-line-through text-muted ms-1 price-old">৳{{ number_format($price, 0) }}</small>
                     @else
-                        <span class="fw-bold">৳{{ number_format($price, 0) }}</span>
+                        <span class="fw-bold price-current">৳{{ number_format($price, 0) }}</span>
                     @endif
                 </li>
                 <li class="d-flex align-items-center justify-content-end text-nowrap">
@@ -253,7 +311,7 @@
 
         <div class="mt-0 pt-0 pb-2 btn-area1 text-center d-flex align-items-center justify-content-center">
             <a href="{{ route('product.show', $product->slug ?? $product->id) }}"
-                class="action-btn-success p-3 h-30px w-auto rounded-3">
+                class="action-btn-primary p-3 h-30px w-auto rounded-3">
                 <i class="bx bx-show fs-15 me-1"></i>View
             </a>
             <button type="button" title="Add to Wishlist" data-id="{{ $product->id }}"
@@ -262,7 +320,7 @@
             </button>
             @if($inStock)
                 <button type="button" title="Add to Cart" data-id="{{ $product->id }}"
-                    class="add-to-cart action-btn-success p-3 ms-2 h-30px w-auto rounded-3 border-0">
+                    class="add-to-cart action-btn-primary p-3 ms-2 h-30px w-auto rounded-3 border-0">
                     <i class="bx bxs-cart fs-15 me-1"></i>Cart
                 </button>
             @endif

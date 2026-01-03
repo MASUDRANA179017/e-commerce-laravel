@@ -63,12 +63,12 @@
     <section class="ministrie-eight-area">
         <div class="container-fluid">
             <div class="d-flex align-items-center justify-content-between">
-                <div class="section-eight-wrapper mb-0" data-aos="fade-up" data-aos-duration="1000" data-aos-delay="200">
+                <div class="section-eight-wrapper mb-0 text-center text-sm-center text-md-start text-lg-start" data-aos="fade-up" data-aos-duration="1000" data-aos-delay="200">
                     <h6 class="sub-title-main"><i class="fa-solid fa-cart-shopping"></i> Our Top Picks</h6>
                     <h2 class="title-animation">Explore Our <span>Product Categories</span></h2>
                 </div>
                 <a href="{{ route('shop.index') }}" aria-label="all products" title="all products"
-                    class="btn--primary p-2 px-5">
+                    class="btn--primary p-2 px-5 d-none d-md-inline-block">
                     View All Products<i class="fa-solid fa-arrow-right ms-2"></i>
                 </a>
             </div>
@@ -121,22 +121,29 @@
                     </div>
                 </div>
             </div>
-            <div class="ministrie-eight-dot text-center m-auto mt-2"></div>
+            <div class="ministrie-eight-dot text-center m-auto mt-4"></div>
+            <div class="text-center mt-4 d-md-none">
+                <a href="{{ route('shop.index') }}" aria-label="all products" title="all products"
+                    class="btn--primary p-2 px-5">
+                    View All Products<i class="fa-solid fa-arrow-right ms-2"></i>
+                </a>
+            </div>
         </div>
     </section>
 
     <!-- Featured Products Section -->
     <section class="team ff-team difference-two">
         <div class="container-fluid">
-            <div class="d-flex align-items-center justify-content-between">
-                <div class="section-eight-wrapper mb-0" data-aos="fade-up" data-aos-duration="1000" data-aos-delay="200">
+            <div class="d-flex flex-column flex-md-row align-items-center justify-content-between gap-3 gap-md-0">
+                <div class="section-eight-wrapper mb-0 text-center text-md-start" data-aos="fade-up" data-aos-duration="1000" data-aos-delay="200">
                     <h6 class="sub-title-main"><i class="fa-solid fa-building"></i> Explore by Category</h6>
                     <h2 class="title-animation">Browse Our <span>Featured Products</span></h2>
                 </div>
                 <div class="difference-two__inner cta mt-0">
                     <div class="difference-two__inner-content">
                         <div class="difference-two__tab">
-                            <div class="difference-two__tab-btns border-0">
+                            <!-- Desktop: show all buttons in a row -->
+                            <div class="difference-two__tab-btns border-0 d-none d-md-flex">
                                 <button class="difference-two__tab-btn fs-15 fw-600 p-2 px-4 active" data-target="#all"
                                     aria-label="all" title="all">
                                     <i class='bx bx-fullscreen bx-tada fs-15'></i> New Arrivals
@@ -150,6 +157,24 @@
                                     <i class='bx bxs-star bx-flashing fs-15'></i> Top Selling
                                 </button>
                             </div>
+
+                            <!-- Mobile: remove dropdown, keep buttons stacked -->
+                            <div class="d-md-none w-100">
+                                <div class="difference-two__tab-btns border-0 d-flex flex-column gap-2">
+                                    <button class="difference-two__tab-btn fs-15 fw-600 p-3 px-4 active w-100" data-target="#all"
+                                        aria-label="all" title="all">
+                                        <i class='bx bx-fullscreen bx-tada fs-15'></i> New Arrivals
+                                    </button>
+                                    <button class="difference-two__tab-btn fs-15 fw-600 p-3 px-4 w-100" data-target="#trending"
+                                        aria-label="trending" title="trending">
+                                        <i class='bx bxs-hot bx-flashing fs-15'></i> Trending
+                                    </button>
+                                    <button class="difference-two__tab-btn fs-15 fw-600 p-3 px-4 w-100" data-target="#topselling"
+                                        aria-label="topselling" title="topselling">
+                                        <i class='bx bxs-star bx-flashing fs-15'></i> Top Selling
+                                    </button>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -157,9 +182,9 @@
             <div class="row">
                 <div class="difference-two__tab-content">
                     <!-- New Arrivals Tab -->
-                    <div class="difference-two__content-single" id="all">
-                        <div class="row">
-                            @foreach($newArrivals as $product)
+                    <div class="difference-two__content-single active" id="all">
+                        <div class="row row-cols-1 row-cols-sm-1 row-cols-md-3 row-cols-lg-4 g-3">
+                            @foreach($newArrivals->take(4) as $product)
                                 @include('frontend.partials.product-card-template', ['product' => $product])
                             @endforeach
                         </div>
@@ -167,8 +192,8 @@
 
                     <!-- Trending Tab -->
                     <div class="difference-two__content-single" id="trending">
-                        <div class="row">
-                            @foreach($featuredProducts as $product)
+                        <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-3">
+                            @foreach($featuredProducts->take(4) as $product)
                                 @include('frontend.partials.product-card-template', ['product' => $product])
                             @endforeach
                         </div>
@@ -176,8 +201,8 @@
 
                     <!-- Top Selling Tab -->
                     <div class="difference-two__content-single" id="topselling">
-                        <div class="row">
-                            @foreach($bestSellers as $product)
+                        <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-3">
+                            @foreach($bestSellers->take(4) as $product)
                                 @include('frontend.partials.product-card-template', ['product' => $product])
                             @endforeach
                         </div>
@@ -186,10 +211,10 @@
             </div>
             <div class="row">
                 <div class="col-12">
-                    <div class="text-center mt-5">
-                        <a href="{{ route('shop.index') }}" aria-label="all products" title="all products"
+                    <div class="text-center mt-4">
+                        <a href="{{ route('shop.index') }}" aria-label="view more products" title="view more products"
                             class="btn--primary p-2 px-5">
-                            View All Products<i class="fa-solid fa-arrow-right ms-2"></i>
+                            View More<i class="fa-solid fa-arrow-right ms-2"></i>
                         </a>
                     </div>
                 </div>
@@ -202,64 +227,73 @@
         @php
             $isActiveFlash = $flashSale->status === 'active';
         @endphp
-        <section id="countdownSection" class="countdown-eight-area"
-            data-background="{{ $flashSale->banner_image ? asset('storage/' . $flashSale->banner_image) : asset('frontend/assets/images/shop/Ad-1.jpg') }}">
-            <div class="container">
-                <div class="row align-items-center justify-content-center">
-                    <div class="col-xl-8 col-lg-10 text-center">
-                        <div class="countdown-eight-wrapper" data-aos="fade-up" data-aos-duration="1000" data-aos-delay="200">
-                            <div class="section-eight-wrapper">
-                                <h6 class="section-eight-subtitle d-inline-block">
-                                    {{ $isActiveFlash ? 'Limited Time Offer' : 'Coming Soon' }}
-                                </h6>
-                                <h2 class="section-eight-title char-animation text-white">
-                                    {{ $isActiveFlash ? $flashSale->title : ($flashSale->title . ' Starts Soon!') }}
-                                </h2>
-                                @if($flashSale->description)
-                                    <p class="text-white opacity-75 mt-2">{{ $flashSale->description }}</p>
-                                @endif
-                                @if($flashSale->discount_percent > 0)
-                                    <div class="mt-3">
-                                        <span class="badge bg-danger fs-5 p-2 px-3">Up to {{ $flashSale->discount_percent }}%
-                                            OFF</span>
-                                    </div>
-                                @endif
-                            </div>
-                            <div class="countdown-eight-timer d-flex justify-content-center" id="countdown"
-                                data-end-time="{{ $flashSale->end_time->timestamp * 1000 }}">
-                                <ul>
-                                    <li><span id="days">00</span>Days</li>
-                                    <li><span id="hours">00</span>Hours</li>
-                                    <li><span id="minutes">00</span>Minutes</li>
-                                    <li><span id="seconds">00</span>Seconds</li>
-                                </ul>
-                            </div>
-                            <a href="{{ route('flash-sale.index') }}" class="btn--primary p-2 px-5">
-                                {{ $isActiveFlash ? 'Shop Flash Sale' : 'View Upcoming Deals' }}
-                            </a>
+        <section class="countdown-eight-area"
+        data-background="{{ $flashSale->banner_image ? asset('storage/' . $flashSale->banner_image) : asset('frontend/assets/images/shop/Ad-1.jpg') }}">
+        <div class="container">
+            <div class="row align-items-center justify-content-between">
+                <div class="col-12 col-sm-12 col-lg-8 col-xl-6">
+                    <div class="countdown-eight-wrapper" data-aos="fade-up" data-aos-duration="1000" data-aos-delay="200">
+                        <div class="section-eight-wrapper">
+                            <h6 class="section-eight-subtitle d-inline-block">
+                                {{ $flashSale->status === 'active' ? 'Limited Time Offer' : 'Coming Soon' }}
+                            </h6>
+                            <h2 class="section-eight-title char-animation text-white">
+                                {{ $flashSale->status === 'active' ? $flashSale->title : ($flashSale->title . ' Starts Soon!') }}
+                            </h2>
+                            @if($flashSale->description)
+                                <p class="text-white opacity-75 mt-2">{{ $flashSale->description }}</p>
+                            @endif
+                            @if($flashSale->discount_percent > 0)
+                                <div class="mt-3">
+                                    <span class="badge bg-danger fs-1 p-2 px-3">Up to {{ $flashSale->discount_percent }}%
+                                        OFF</span>
+                                </div>
+                            @endif
+                        </div>
+                        <!-- Mobile: centered single-row countdown -->
+                        <div class="countdown-eight-timer text-center d-md-none" id="flashSaleCountdown"
+                            data-end-time="{{ $flashSale->end_time->timestamp * 1000 }}">
+                            <ul class="list-inline mb-0 d-flex flex-nowrap justify-content-center small fs-6">
+                                <li class="list-inline-item"><span id="fs-days" class="fs-2">00</span>D</li>
+                                <li class="list-inline-item"><span id="fs-hours" class="fs-2">00</span>H</li>
+                                <li class="list-inline-item"><span id="fs-minutes" class="fs-2">00</span>M</li>
+                                <li class="list-inline-item"><span id="fs-seconds" class="fs-2">00</span>S</li>
+                            </ul>
+                        </div>
+                        <!-- Desktop: original multi-row countdown -->
+                        <div class="countdown-eight-timer d-none d-md-block" id="flashSaleCountdownDesktop"
+                            data-end-time="{{ $flashSale->end_time->timestamp * 1000 }}">
+                            <ul>
+                                <li><span id="fs-days-desktop">00</span>Days</li>
+                                <li><span id="fs-hours-desktop">00</span>Hours</li>
+                                <li><span id="fs-minutes-desktop">00</span>Minutes</li>
+                                <li><span id="fs-seconds-desktop">00</span>Seconds</li>
+                            </ul>
                         </div>
                     </div>
                 </div>
             </div>
-        </section>
+        </div>
+    </section>
     @else
         <!-- No active flash sale - show default banner -->
         <section id="countdownSection" class="countdown-eight-area"
             data-background="{{ asset('frontend/assets/images/shop/Ad-1.jpg') }}">
             <div class="container">
                 <div class="row align-items-center justify-content-center">
-                    <div class="col-xl-8 col-lg-10 text-center">
+                    <div class="col-12 col-sm-12 col-lg-8 col-xl-6 text-center px-3">
                         <div class="countdown-eight-wrapper" data-aos="fade-up" data-aos-duration="1000" data-aos-delay="200">
                             <div class="section-eight-wrapper">
-                                <h6 class="section-eight-subtitle d-inline-block">Special Offers</h6>
-                                <h2 class="section-eight-title char-animation text-white">Check Our Latest Deals!</h2>
+                                <h6 class="section-eight-subtitle d-inline-block mb-2">Special Offers</h6>
+                                <h2 class="section-eight-title char-animation text-white mb-3">Check Our Latest Deals!</h2>
                             </div>
-                            <a href="{{ route('shop.index') }}" class="btn--primary p-2 px-5 mt-4">Shop Now</a>
+                            <a href="{{ route('shop.index') }}" class="btn--primary d-inline-block p-2 px-4 mt-3">Shop Now</a>
                         </div>
                     </div>
                 </div>
             </div>
         </section>
+
     @endif
 
     <!-- Testimonial Section -->
@@ -689,53 +723,42 @@
 
 @push('scripts')
     <script>
-        // Countdown Timer - Always counts down to flash sale end time from database
         (function () {
-            const countdownEl = document.getElementById('countdown');
-            if (!countdownEl) return;
-
-            const endAttr = countdownEl.getAttribute('data-end-time');
-
-            if (!endAttr) {
-                return;
-            }
-
+            const elSingle = document.getElementById('countdown');
+            const elMobile = document.getElementById('flashSaleCountdown');
+            const elDesktop = document.getElementById('flashSaleCountdownDesktop');
+            const endAttr =
+                (elMobile && elMobile.getAttribute('data-end-time')) ||
+                (elDesktop && elDesktop.getAttribute('data-end-time')) ||
+                (elSingle && elSingle.getAttribute('data-end-time'));
+            if (!endAttr) return;
             const endTime = parseInt(endAttr, 10);
-
+            function setTexts(days, hours, minutes, seconds) {
+                const sets = [
+                    ['days', 'hours', 'minutes', 'seconds'],
+                    ['fs-days', 'fs-hours', 'fs-minutes', 'fs-seconds'],
+                    ['fs-days-desktop', 'fs-hours-desktop', 'fs-minutes-desktop', 'fs-seconds-desktop']
+                ];
+                sets.forEach(ids => {
+                    const d = document.getElementById(ids[0]); if (d) d.textContent = String(days).padStart(2, '0');
+                    const h = document.getElementById(ids[1]); if (h) h.textContent = String(hours).padStart(2, '0');
+                    const m = document.getElementById(ids[2]); if (m) m.textContent = String(minutes).padStart(2, '0');
+                    const s = document.getElementById(ids[3]); if (s) s.textContent = String(seconds).padStart(2, '0');
+                });
+            }
             function updateCountdown() {
-                const daysEl = document.getElementById('days');
-                const hoursEl = document.getElementById('hours');
-                const minutesEl = document.getElementById('minutes');
-                const secondsEl = document.getElementById('seconds');
-
-                if (!daysEl || !hoursEl || !minutesEl || !secondsEl) return;
-
                 const now = Date.now();
-
-                // Otherwise count down to end time
                 const distanceToEnd = endTime - now;
-
                 if (distanceToEnd <= 0) {
-                    // Sale ended
-                    daysEl.textContent = '00';
-                    hoursEl.textContent = '00';
-                    minutesEl.textContent = '00';
-                    secondsEl.textContent = '00';
+                    setTexts(0, 0, 0, 0);
                     return;
                 }
-
                 const days = Math.floor(distanceToEnd / (1000 * 60 * 60 * 24));
                 const hours = Math.floor((distanceToEnd % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
                 const minutes = Math.floor((distanceToEnd % (1000 * 60 * 60)) / (1000 * 60));
                 const seconds = Math.floor((distanceToEnd % (1000 * 60)) / 1000);
-
-                daysEl.textContent = String(days).padStart(2, '0');
-                hoursEl.textContent = String(hours).padStart(2, '0');
-                minutesEl.textContent = String(minutes).padStart(2, '0');
-                secondsEl.textContent = String(seconds).padStart(2, '0');
+                setTexts(days, hours, minutes, seconds);
             }
-
-            // Update every second
             setInterval(updateCountdown, 1000);
             updateCountdown();
         })();

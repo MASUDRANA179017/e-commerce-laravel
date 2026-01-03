@@ -8,7 +8,7 @@
         data-background="{{ $flashSale->banner_image ? asset('storage/' . $flashSale->banner_image) : asset('frontend/assets/images/shop/Ad-1.jpg') }}">
         <div class="container">
             <div class="row align-items-center justify-content-between">
-                <div class="col-xl-6 col-lg-8">
+                <div class="col-12 col-sm-12 col-lg-8 col-xl-6">
                     <div class="countdown-eight-wrapper" data-aos="fade-up" data-aos-duration="1000" data-aos-delay="200">
                         <div class="section-eight-wrapper">
                             <h6 class="section-eight-subtitle d-inline-block">
@@ -22,18 +22,29 @@
                             @endif
                             @if($flashSale->discount_percent > 0)
                                 <div class="mt-3">
-                                    <span class="badge bg-danger fs-5 p-2 px-3">Up to {{ $flashSale->discount_percent }}%
+                                    <span class="badge bg-danger fs-1 p-2 px-3">Up to {{ $flashSale->discount_percent }}%
                                         OFF</span>
                                 </div>
                             @endif
                         </div>
-                        <div class="countdown-eight-timer" id="flashSaleCountdown"
+                        <!-- Mobile: centered single-row countdown -->
+                        <div class="countdown-eight-timer text-center d-md-none" id="flashSaleCountdown"
+                            data-end-time="{{ $flashSale->end_time->timestamp * 1000 }}">
+                            <ul class="list-inline mb-0 d-flex flex-nowrap justify-content-center small fs-6">
+                                <li class="list-inline-item"><span id="fs-days" class="fs-2">00</span>D</li>
+                                <li class="list-inline-item"><span id="fs-hours" class="fs-2">00</span>H</li>
+                                <li class="list-inline-item"><span id="fs-minutes" class="fs-2">00</span>M</li>
+                                <li class="list-inline-item"><span id="fs-seconds" class="fs-2">00</span>S</li>
+                            </ul>
+                        </div>
+                        <!-- Desktop: original multi-row countdown -->
+                        <div class="countdown-eight-timer d-none d-md-block" id="flashSaleCountdownDesktop"
                             data-end-time="{{ $flashSale->end_time->timestamp * 1000 }}">
                             <ul>
-                                <li><span id="fs-days">00</span>Days</li>
-                                <li><span id="fs-hours">00</span>Hours</li>
-                                <li><span id="fs-minutes">00</span>Minutes</li>
-                                <li><span id="fs-seconds">00</span>Seconds</li>
+                                <li><span id="fs-days-desktop">00</span>Days</li>
+                                <li><span id="fs-hours-desktop">00</span>Hours</li>
+                                <li><span id="fs-minutes-desktop">00</span>Minutes</li>
+                                <li><span id="fs-seconds-desktop">00</span>Seconds</li>
                             </ul>
                         </div>
                     </div>

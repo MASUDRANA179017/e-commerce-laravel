@@ -2704,8 +2704,8 @@ padding: 15px 40px;
   z-index: 99;
 }
 .header .main-header__menu-box {
-  padding-top: 27px;
-  padding-bottom: 27px;
+  /* padding-top: 27px;
+  padding-bottom: 27px; */
   position: relative;
   background-color: var(--white);
 }
