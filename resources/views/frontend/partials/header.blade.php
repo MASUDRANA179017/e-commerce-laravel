@@ -9,15 +9,22 @@
                     <!-- Logo -->
                     <div class="logo-area">
                         <a href="{{ route('home') }}" class="d-flex align-items-center text-decoration-none">
-                            <div class="logo-icon me-2"
-                                style="width: 45px; height: 45px; background: linear-gradient(135deg, #0496ff 0%, #0380d9 100%); border-radius: 12px; display: flex; align-items: center; justify-content: center;">
-                                <i class="fa-solid fa-cart-shopping text-white" style="font-size: 20px;"></i>
-                            </div>
-                            <div class="logo-text">
-                                <h4 class="mb-0" style="font-weight: 700; color: #1a1a2e; font-size: 22px;">Grow<span
-                                        style="color: #0496ff;">Up</span></h4>
-                                <small style="font-size: 10px; color: #888; letter-spacing: 1px;">E-COMMERCE</small>
-                            </div>
+                            @if(isset($business_setup) && $business_setup?->logo)
+                                <img src="{{ asset('storage/' . $business_setup->logo) }}" alt="{{ $business_setup->company_name ?? config('app.name') }}" style="height: 45px; border-radius: 8px;" class="me-2">
+                                <div class="logo-text">
+                                    <h4 class="mb-0" style="font-weight: 700; color: #1a1a2e; font-size: 22px;">{{ $business_setup->company_name ?? config('app.name') }}</h4>
+                                    <small style="font-size: 10px; color: #888; letter-spacing: 1px;">E-COMMERCE</small>
+                                </div>
+                            @else
+                                <div class="logo-icon me-2"
+                                    style="width: 45px; height: 45px; background: linear-gradient(135deg, #0496ff 0%, #0380d9 100%); border-radius: 12px; display: flex; align-items: center; justify-content: center;">
+                                    <i class="fa-solid fa-cart-shopping text-white" style="font-size: 20px;"></i>
+                                </div>
+                                <div class="logo-text">
+                                    <h4 class="mb-0" style="font-weight: 700; color: #1a1a2e; font-size: 22px;">{{ $business_setup->company_name ?? 'GrowUp' }}</h4>
+                                    <small style="font-size: 10px; color: #888; letter-spacing: 1px;">E-COMMERCE</small>
+                                </div>
+                            @endif
                         </a>
                     </div>
 
