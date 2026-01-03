@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use App\Models\Blog;
 use App\Models\Admin\Business_SetUp\BusinessSetup;
 use App\Models\Banner;
 use App\Models\Page;
@@ -130,18 +131,53 @@ class StorefrontController extends Controller
 
     public function blog()
     {
-        $posts = collect(); // BlogPost::all()
+        $posts = Blog::with('author')->orderBy('created_at', 'desc')->paginate(10);
         return view('admin.storefront.blog', compact('posts'));
     }
 
     public function createBlog()
     {
-        return view('admin.storefront.blog-create');
+        $categories = Blog::whereNotNull('category')->distinct()->pluck('category');
+        return view('admin.storefront.blog-create', compact('categories'));
     }
 
     public function storeBlog(Request $request)
     {
-        // Store blog post logic
+        $validated = $request->validate([
+            'title' => 'required|string|max:255',
+            'excerpt' => 'nullable|string|max:500',
+            'content' => 'required|string',
+            'featured_image' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
+            'category' => 'nullable|string|max:100',
+            'tags' => 'nullable|string',
+            'is_published' => 'nullable|boolean',
+        ]);
+
+        $data = [
+            'title' => $validated['title'],
+            'slug' => Str::slug($validated['title']),
+            'excerpt' => $validated['excerpt'] ?? null,
+            'content' => $validated['content'],
+            'category' => isset($validated['category']) ? trim($validated['category']) : null,
+            'tags' => null,
+            'author_id' => auth()->id(),
+            'is_published' => (bool)($request->has('is_published')),
+        ];
+
+        if ($request->hasFile('featured_image')) {
+            $data['featured_image'] = $request->file('featured_image')->store('blogs', 'public');
+        }
+
+        if (!empty($validated['tags'])) {
+            $data['tags'] = array_map('trim', explode(',', $validated['tags']));
+        }
+
+        if ($data['is_published']) {
+            $data['published_at'] = now();
+        }
+
+        Blog::create($data);
+
         return redirect()->route('admin.storefront.blog')->with('success', 'Blog post created');
     }
 

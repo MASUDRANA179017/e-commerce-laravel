@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Customer;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\DataTables;
@@ -18,17 +19,17 @@ class CustomerController extends Controller
 
     public function getData(Request $request)
     {
-        $query = Customer::query();
+        $query = User::query();
 
         return DataTables::of($query)
             ->addColumn('orders', function ($c) {
                 return 0;
             })
             ->addColumn('total_spent', function ($c) {
-                return number_format($c->total_spent, 2);
+                return number_format($c->total_spent ?? 0, 2);
             })
             ->addColumn('is_active', function ($c) {
-                return $c->is_active ? 1 : 0;
+                return $c->is_active ?? true;
             })
             ->addColumn('actions', function ($c) {
                 $view = '<a href="' . route('admin.customers.show', $c->id) . '" class="action-btn-info" title="View Details"><i class="fas fa-eye"></i></a> ';
@@ -89,10 +90,10 @@ class CustomerController extends Controller
         $cust = Customer::findOrFail($customer);
         $request->validate([
             'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:users,email,' . $customer->id,
+            'email' => 'required|email|unique:customers,email,' . $cust->id,
         ]);
 
-        $customer->update($request->only(['name', 'email']));
+        $data = $request->only(['name', 'email', 'phone', 'address', 'zipcode', 'note']);
 
         if ($request->filled('password')) {
             $data['password'] = \Hash::make($request->password);

@@ -706,9 +706,21 @@
                             class="fa-solid fa-shopping-bag ms-1"></i></a>
                 </div>
                 <div class="mobile-menu__social social nav-fade">
-                    <a href="#" target="_blank" title="facebook"><i class="fa-brands fa-facebook-f"></i></a>
-                    <a href="#" target="_blank" title="twitter"><i class="fa-brands fa-twitter"></i></a>
-                    <a href="#" target="_blank" title="instagram"><i class="fa-brands fa-instagram"></i></a>
+                    @if($business_setup && $business_setup->facebook_status && $business_setup->facebook_url)
+                        <a href="{{ $business_setup->facebook_url }}" target="_blank" title="facebook"><i class="fa-brands fa-facebook-f"></i></a>
+                    @endif
+                    @if($business_setup && $business_setup->twitter_status && $business_setup->twitter_url)
+                        <a href="{{ $business_setup->twitter_url }}" target="_blank" title="twitter"><i class="fa-brands fa-twitter"></i></a>
+                    @endif
+                    @if($business_setup && $business_setup->linkedin_status && $business_setup->linkedin_url)
+                        <a href="{{ $business_setup->linkedin_url }}" target="_blank" title="linkedin"><i class="fa-brands fa-linkedin-in"></i></a>
+                    @endif
+                    @if($business_setup && $business_setup->youtube_status && $business_setup->youtube_url)
+                        <a href="{{ $business_setup->youtube_url }}" target="_blank" title="youtube"><i class="fa-brands fa-youtube"></i></a>
+                    @endif
+                    @if(isset($business_setup->instagram_status) && isset($business_setup->instagram_url) && $business_setup->instagram_status && $business_setup->instagram_url)
+                        <a href="{{ $business_setup->instagram_url }}" target="_blank" title="instagram"><i class="fa-brands fa-instagram"></i></a>
+                    @endif
                 </div>
             </nav>
         </div>
@@ -766,7 +778,7 @@
                                 </div>
                                 <div class="footer-eight-top-info-con">
                                     <p>Sales Hotline</p>
-                                    <a class="apece-link-line" href="tel:+8801700000000">+880 1700-000000</a>
+                                    <a class="apece-link-line" href="tel:{{ $business_setup->official_contact_number[0] ?? '+8801700000000' }}">{{ $business_setup->official_contact_number[0] ?? '+880 1700-000000' }}</a>
                                 </div>
                             </div>
                         </div>
@@ -777,7 +789,7 @@
                                 </div>
                                 <div class="footer-eight-top-info-con">
                                     <p>Support</p>
-                                    <a class="apece-link-line" href="tel:+8801800000000">+880 1800-000000</a>
+                                    <a class="apece-link-line" href="tel:{{ $business_setup->hotline_number[0] ?? '+8801800000000' }}">{{ $business_setup->hotline_number[0] ?? '+880 1800-000000' }}</a>
                                 </div>
                             </div>
                         </div>
@@ -796,18 +808,24 @@
                             </div>
                             <div class="footer-two__widget-content">
                                 <p class="sub-itle-lg">
-                                    Your one-stop destination for quality products at affordable prices. Shop with
-                                    confidence and enjoy fast delivery.
+                                    {{ $business_setup->footer_text ?? 'Your one-stop destination for quality products at affordable prices. Shop with confidence and enjoy fast delivery.' }}
                                 </p>
                                 <div class="social">
-                                    <a href="#" target="_blank" aria-label="facebook"><i
-                                            class="fa-brands fa-facebook-f"></i></a>
-                                    <a href="#" target="_blank" aria-label="instagram"><i
-                                            class="fa-brands fa-instagram"></i></a>
-                                    <a href="#" target="_blank" aria-label="twitter"><i
-                                            class="fa-brands fa-twitter"></i></a>
-                                    <a href="#" target="_blank" aria-label="youtube"><i
-                                            class="fa-brands fa-youtube"></i></a>
+                                    @if($business_setup && $business_setup->facebook_status && $business_setup->facebook_url)
+                                        <a href="{{ $business_setup->facebook_url }}" target="_blank" aria-label="facebook"><i class="fa-brands fa-facebook-f"></i></a>
+                                    @endif
+                                    @if(isset($business_setup->instagram_status) && isset($business_setup->instagram_url) && $business_setup->instagram_status && $business_setup->instagram_url)
+                                        <a href="{{ $business_setup->instagram_url }}" target="_blank" aria-label="instagram"><i class="fa-brands fa-instagram"></i></a>
+                                    @endif
+                                    @if($business_setup && $business_setup->twitter_status && $business_setup->twitter_url)
+                                        <a href="{{ $business_setup->twitter_url }}" target="_blank" aria-label="twitter"><i class="fa-brands fa-twitter"></i></a>
+                                    @endif
+                                    @if($business_setup && $business_setup->youtube_status && $business_setup->youtube_url)
+                                        <a href="{{ $business_setup->youtube_url }}" target="_blank" aria-label="youtube"><i class="fa-brands fa-youtube"></i></a>
+                                    @endif
+                                    @if($business_setup && $business_setup->linkedin_status && $business_setup->linkedin_url)
+                                        <a href="{{ $business_setup->linkedin_url }}" target="_blank" aria-label="linkedin"><i class="fa-brands fa-linkedin-in"></i></a>
+                                    @endif
                                 </div>
                             </div>
                         </div>
@@ -885,13 +903,13 @@
                                 <ul>
                                     <li>
                                         <a class="text-white sub-title-lg" href="#">
-                                            <i class="fa-solid fa-location-dot"></i> Dhaka, Bangladesh
+                                            <i class="fa-solid fa-location-dot"></i> {{ $business_setup->street_address ?? '' }}{{ ($business_setup->street_address ?? '') && ($business_setup->city_thana ?? '') ? ', ' : '' }}{{ $business_setup->city_thana ?? '' }}{{ ($business_setup->district ?? '') ? ', ' . $business_setup->district : '' }}
                                         </a>
                                     </li>
-                                    <li><a class="text-white sub-title-lg" href="tel:+8801700000000"><i
-                                                class="fa-solid fa-phone"></i> +880 1700-000000</a></li>
-                                    <li><a class="text-white sub-title-lg" href="mailto:info@shop.com"><i
-                                                class="fa-solid fa-envelope"></i> info@shop.com</a></li>
+                                    <li><a class="text-white sub-title-lg" href="tel:{{ $business_setup->official_contact_number[0] ?? '+8801700000000' }}"><i
+                                                class="fa-solid fa-phone"></i> {{ $business_setup->official_contact_number[0] ?? '+880 1700-000000' }}</a></li>
+                                    <li><a class="text-white sub-title-lg" href="mailto:{{ $business_setup->email_address[0] ?? 'info@shop.com' }}"><i
+                                                class="fa-solid fa-envelope"></i> {{ $business_setup->email_address[0] ?? 'info@shop.com' }}</a></li>
                                 </ul>
                             </div>
                         </div>
@@ -904,16 +922,20 @@
                     <div class="row align-items-center gutter-12 footer-six-copyright-border position-relative">
                         <div class="col-12 col-lg-6">
                             <div class="footer-two__copyright-inner text-center text-lg-start">
-                                <p>Copyright &copy; <span id="copyrightYear">{{ date('Y') }}</span> <a
-                                        href="{{ url('/') }}">{{ config('app.name') }}</a>. All rights reserved.
+                                <p>
+                                    @if($business_setup && $business_setup->copyright_text)
+                                        {{ $business_setup->copyright_text }}
+                                    @else
+                                        Copyright &copy; <span id="copyrightYear">{{ date('Y') }}</span> <a href="{{ url('/') }}">{{ $business_setup->company_name ?? config('app.name') }}</a>. All rights reserved.
+                                    @endif
                                 </p>
                             </div>
                         </div>
                         <div class="col-12 col-lg-6">
                             <div class="footer__bottom-left">
                                 <ul class="footer__bottom-list justify-content-center justify-content-lg-end">
-                                    <li><a href="#">Terms & Conditions</a></li>
-                                    <li><a href="#">Privacy Policy</a></li>
+                                    <li><a href="{{ route('frontend.terms') }}">Terms & Conditions</a></li>
+                                    <li><a href="{{ route('frontend.privacy') }}">Privacy Policy</a></li>
                                 </ul>
                             </div>
                         </div>

@@ -171,7 +171,7 @@
 
     function editBanner(banner) {
         $('#modalTitle').text('Edit Banner');
-        $('#bannerForm').attr('action', '{{ route("admin.storefront.banners.update", "") }}/' + banner.id);
+        $('#bannerForm').attr('action', '{{ url("admin/storefront/banners") }}' + '/' + banner.id);
         $('#methodField').html('<input type="hidden" name="_method" value="PUT">');
         $('#bannerType').val(banner.type);
         $('#bannerTitle').val(banner.title);

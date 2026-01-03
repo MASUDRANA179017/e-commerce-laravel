@@ -18,20 +18,28 @@
             <div class="card-header bg-white">
                 <h5 class="mb-0 fw-bold">Post Content</h5>
             </div>
-            <div class="card-body">
-                <div class="mb-3">
-                    <label class="form-label">Post Title <span class="text-danger">*</span></label>
-                    <input type="text" class="form-control" required>
+            <form action="{{ route('admin.storefront.blog.store') }}" method="POST" enctype="multipart/form-data">
+                @csrf
+                <div class="card-body">
+                    <div class="mb-3">
+                        <label class="form-label">Post Title <span class="text-danger">*</span></label>
+                        <input type="text" name="title" class="form-control" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Content <span class="text-danger">*</span></label>
+                        <textarea class="form-control" name="content" rows="15" id="postContent" required></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Excerpt</label>
+                        <textarea class="form-control" name="excerpt" rows="3" placeholder="Brief summary of the post"></textarea>
+                    </div>
                 </div>
-                <div class="mb-3">
-                    <label class="form-label">Content <span class="text-danger">*</span></label>
-                    <textarea class="form-control" rows="15" id="postContent"></textarea>
+                <div class="card-footer bg-white">
+                    <button type="submit" class="create-btn-base">
+                        <i class="fas fa-save me-2"></i>Save Post
+                    </button>
                 </div>
-                <div class="mb-3">
-                    <label class="form-label">Excerpt</label>
-                    <textarea class="form-control" rows="3" placeholder="Brief summary of the post"></textarea>
-                </div>
-            </div>
+            </form>
         </div>
     </div>
 
@@ -43,18 +51,11 @@
             <div class="card-body">
                 <div class="mb-3">
                     <label class="form-label">Status</label>
-                    <select class="form-select">
-                        <option value="draft">Draft</option>
-                        <option value="published">Published</option>
-                    </select>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="isPublished" name="is_published" value="1">
+                        <label class="form-check-label" for="isPublished">Publish immediately</label>
+                    </div>
                 </div>
-                <div class="mb-3">
-                    <label class="form-label">Publish Date</label>
-                    <input type="datetime-local" class="form-control">
-                </div>
-                <button class="create-btn-base w-100">
-                    <i class="fas fa-save me-2"></i>Save Post
-                </button>
             </div>
         </div>
 
@@ -66,7 +67,7 @@
                 <div class="border rounded p-4 text-center" style="border-style: dashed !important;">
                     <i class="fas fa-cloud-upload-alt fa-2x text-muted mb-2"></i>
                     <p class="mb-0 text-muted">Click to upload image</p>
-                    <input type="file" class="d-none">
+                    <input type="file" name="featured_image" class="form-control mt-3" accept="image/*">
                 </div>
             </div>
         </div>
@@ -78,13 +79,16 @@
             <div class="card-body">
                 <div class="mb-3">
                     <label class="form-label">Category</label>
-                    <select class="form-select">
-                        <option>Select category</option>
-                    </select>
+                    <input type="text" name="category" class="form-control" list="blogCategories" placeholder="Type or select category">
+                    <datalist id="blogCategories">
+                        @foreach(($categories ?? []) as $cat)
+                            <option value="{{ $cat }}">
+                        @endforeach
+                    </datalist>
                 </div>
                 <div class="mb-3">
                     <label class="form-label">Tags</label>
-                    <input type="text" class="form-control" placeholder="Enter tags separated by comma">
+                    <input type="text" name="tags" class="form-control" placeholder="Enter tags separated by comma">
                 </div>
             </div>
         </div>
