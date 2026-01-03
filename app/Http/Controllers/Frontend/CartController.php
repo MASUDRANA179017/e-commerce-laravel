@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Frontend;
 
 use App\Http\Controllers\Controller;
+use App\Models\Coupon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -210,6 +211,7 @@ class CartController extends Controller
         session()->forget('cart');
         session()->forget('discount');
         session()->forget('coupon_code');
+        session()->forget('coupon_id');
 
         return back()->with('success', 'Cart cleared!');
     }
@@ -223,46 +225,58 @@ class CartController extends Controller
             'coupon_code' => 'required|string',
         ]);
 
-        // Simple coupon logic - you can extend this with database lookup
-        $validCoupons = [
-            'SAVE10' => 10,
-            'SAVE20' => 20,
-            'WELCOME' => 15,
-            'FIRST50' => 50,
-        ];
-
         $code = strtoupper($request->coupon_code);
 
-        if (isset($validCoupons[$code])) {
-            $cart = session()->get('cart', []);
-            $subtotal = $this->calculateSubtotal($cart);
-            $discountPercent = $validCoupons[$code];
-            $discount = ($subtotal * $discountPercent) / 100;
+        $coupon = Coupon::where('code', $code)->first();
+        $cart = session()->get('cart', []);
+        $subtotal = $this->calculateSubtotal($cart);
 
-            session()->put('discount', $discount);
-            session()->put('coupon_code', $code);
-
-            if ($request->ajax()) {
-                $shipping = $subtotal >= 5000 ? 0 : 100;
-                return response()->json([
-                    'success' => true,
-                    'message' => "Coupon applied! {$discountPercent}% off",
-                    'discount' => $discount,
-                    'total' => $subtotal - $discount + $shipping,
-                ]);
-            }
-
-            return back()->with('success', "Coupon applied! You saved ৳{$discount}");
+        if (!$coupon) {
+            return $this->couponError($request, 'Invalid coupon code!');
         }
+
+        if (!$coupon->is_active) {
+            return $this->couponError($request, 'This coupon is inactive.');
+        }
+
+        if ($coupon->expiry_date && $coupon->expiry_date->isPast()) {
+            return $this->couponError($request, 'This coupon has expired.');
+        }
+
+        if ($coupon->usage_limit !== null && $coupon->used_count >= $coupon->usage_limit) {
+            return $this->couponError($request, 'This coupon usage limit has been reached.');
+        }
+
+        if ($coupon->min_purchase !== null && $subtotal < $coupon->min_purchase) {
+            return $this->couponError($request, 'Minimum purchase not met for this coupon.');
+        }
+
+        $discount = 0;
+        if ($coupon->type === 'percentage') {
+            $discount = round(($subtotal * $coupon->value) / 100, 2);
+        } else { // fixed
+            $discount = min(round($coupon->value, 2), $subtotal);
+        }
+
+        session()->put('discount', $discount);
+        session()->put('coupon_code', $coupon->code);
+        session()->put('coupon_id', $coupon->id);
+
+        $shipping = $subtotal >= 5000 ? 0 : 100;
+        $message = $coupon->type === 'percentage'
+            ? "Coupon applied! {$coupon->value}% off"
+            : "Coupon applied! ৳" . number_format($coupon->value, 2) . " off";
 
         if ($request->ajax()) {
             return response()->json([
-                'success' => false,
-                'message' => 'Invalid coupon code!',
-            ], 400);
+                'success' => true,
+                'message' => $message,
+                'discount' => $discount,
+                'total' => $subtotal - $discount + $shipping,
+            ]);
         }
 
-        return back()->with('error', 'Invalid coupon code!');
+        return back()->with('success', "Coupon applied! You saved ৳" . number_format($discount, 2));
     }
 
     /**
@@ -286,5 +300,16 @@ class CartController extends Controller
             $subtotal += ($item['price'] ?? 0) * ($item['qty'] ?? 1);
         }
         return $subtotal;
+    }
+
+    private function couponError(Request $request, string $message)
+    {
+        if ($request->ajax()) {
+            return response()->json([
+                'success' => false,
+                'message' => $message,
+            ], 400);
+        }
+        return back()->with('error', $message);
     }
 }

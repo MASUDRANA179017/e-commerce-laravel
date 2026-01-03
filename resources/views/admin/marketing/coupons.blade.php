@@ -22,7 +22,7 @@
                         <span class="material-symbols-outlined text-primary">confirmation_number</span>
                     </div>
                     <div>
-                        <h4 class="mb-0 fw-bold">0</h4>
+                        <h4 class="mb-0 fw-bold">{{ $total ?? 0 }}</h4>
                         <span class="text-muted">Total Coupons</span>
                     </div>
                 </div>
@@ -37,7 +37,7 @@
                         <span class="material-symbols-outlined text-success">check_circle</span>
                     </div>
                     <div>
-                        <h4 class="mb-0 fw-bold">0</h4>
+                        <h4 class="mb-0 fw-bold">{{ $active ?? 0 }}</h4>
                         <span class="text-muted">Active</span>
                     </div>
                 </div>
@@ -52,7 +52,7 @@
                         <span class="material-symbols-outlined text-info">receipt</span>
                     </div>
                     <div>
-                        <h4 class="mb-0 fw-bold">0</h4>
+                        <h4 class="mb-0 fw-bold">{{ $timesUsed ?? 0 }}</h4>
                         <span class="text-muted">Times Used</span>
                     </div>
                 </div>
@@ -67,7 +67,7 @@
                         <span class="material-symbols-outlined text-warning">savings</span>
                     </div>
                     <div>
-                        <h4 class="mb-0 fw-bold">৳0</h4>
+                        <h4 class="mb-0 fw-bold">৳{{ number_format($totalSavings ?? 0, 2) }}</h4>
                         <span class="text-muted">Total Savings</span>
                     </div>
                 </div>
@@ -93,15 +93,43 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
-                                <td colspan="7" class="text-center py-5">
-                                    <div class="text-muted">
-                                        <span class="material-symbols-outlined fs-1 d-block mb-2">confirmation_number</span>
-                                        <p class="mb-0">No coupons found</p>
-                                        <small>Create your first coupon to attract customers</small>
-                                    </div>
-                                </td>
-                            </tr>
+                            @forelse($coupons as $coupon)
+                                <tr>
+                                    <td class="ps-3"><strong>{{ $coupon->code }}</strong></td>
+                                    <td>{{ ucfirst($coupon->type) }}</td>
+                                    <td>{{ $coupon->type === 'percentage' ? $coupon->value . '%' : '৳' . number_format($coupon->value, 2) }}</td>
+                                    <td>{{ $coupon->used_count }}/{{ $coupon->usage_limit ?? '∞' }}</td>
+                                    <td>{{ $coupon->expiry_date ? $coupon->expiry_date->format('M d, Y') : '—' }}</td>
+                                    <td>
+                                        @if($coupon->is_active)
+                                            <span class="badge bg-success">Active</span>
+                                        @else
+                                            <span class="badge bg-secondary">Inactive</span>
+                                        @endif
+                                    </td>
+                                    <td class="text-end pe-3">
+                                        <form action="{{ route('admin.marketing.coupons.toggle', $coupon->id) }}" method="POST" class="d-inline">
+                                            @csrf
+                                            <button class="btn btn-sm btn-light"><i class="bx bx-toggle-left"></i></button>
+                                        </form>
+                                        <form action="{{ route('admin.marketing.coupons.destroy', $coupon->id) }}" method="POST" class="d-inline">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button class="btn btn-sm btn-light text-danger" onclick="return confirm('Delete this coupon?')"><i class="bx bx-trash"></i></button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            @empty
+                                <tr>
+                                    <td colspan="7" class="text-center py-5">
+                                        <div class="text-muted">
+                                            <span class="material-symbols-outlined fs-1 d-block mb-2">confirmation_number</span>
+                                            <p class="mb-0">No coupons found</p>
+                                            <small>Create your first coupon to attract customers</small>
+                                        </div>
+                                    </td>
+                                </tr>
+                            @endforelse
                         </tbody>
                     </table>
                 </div>
@@ -118,38 +146,39 @@
                 <h5 class="modal-title fw-bold">Create Coupon</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
-            <form>
+            <form action="{{ route('admin.marketing.coupons.store') }}" method="POST">
+                @csrf
                 <div class="modal-body">
                     <div class="mb-3">
                         <label class="form-label">Coupon Code</label>
-                        <input type="text" class="form-control" placeholder="e.g., SAVE20">
+                        <input type="text" name="code" class="form-control" placeholder="e.g., SAVE20" required>
                     </div>
                     <div class="row">
                         <div class="col-6 mb-3">
                             <label class="form-label">Type</label>
-                            <select class="form-select">
+                            <select name="type" class="form-select" required>
                                 <option value="percentage">Percentage</option>
                                 <option value="fixed">Fixed Amount</option>
                             </select>
                         </div>
                         <div class="col-6 mb-3">
                             <label class="form-label">Value</label>
-                            <input type="number" class="form-control" placeholder="10">
+                            <input type="number" name="value" class="form-control" placeholder="10" step="0.01" min="0" required>
                         </div>
                     </div>
                     <div class="row">
                         <div class="col-6 mb-3">
                             <label class="form-label">Min. Purchase</label>
-                            <input type="number" class="form-control" placeholder="0">
+                            <input type="number" name="min_purchase" class="form-control" placeholder="0" step="0.01" min="0">
                         </div>
                         <div class="col-6 mb-3">
                             <label class="form-label">Usage Limit</label>
-                            <input type="number" class="form-control" placeholder="Unlimited">
+                            <input type="number" name="usage_limit" class="form-control" placeholder="Unlimited" min="0">
                         </div>
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Expiry Date</label>
-                        <input type="date" class="form-control">
+                        <input type="date" name="expiry_date" class="form-control">
                     </div>
                 </div>
                 <div class="modal-footer">

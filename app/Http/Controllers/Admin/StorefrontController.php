@@ -183,12 +183,54 @@ class StorefrontController extends Controller
 
     public function editBlog($post)
     {
-        return view('admin.storefront.blog-edit', compact('post'));
+        $post = Blog::findOrFail($post);
+        $categories = Blog::whereNotNull('category')->distinct()->pluck('category');
+        return view('admin.storefront.blog-edit', compact('post', 'categories'));
     }
 
     public function updateBlog(Request $request, $post)
     {
-        // Update blog post logic
+        $post = Blog::findOrFail($post);
+
+        $validated = $request->validate([
+            'title' => 'required|string|max:255',
+            'excerpt' => 'nullable|string|max:500',
+            'content' => 'required|string',
+            'featured_image' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
+            'category' => 'nullable|string|max:100',
+            'tags' => 'nullable|string',
+            'is_published' => 'nullable|boolean',
+        ]);
+
+        $data = [
+            'title' => $validated['title'],
+            'excerpt' => $validated['excerpt'] ?? null,
+            'content' => $validated['content'],
+            'category' => isset($validated['category']) ? trim($validated['category']) : null,
+            'tags' => null,
+            'is_published' => (bool)($request->has('is_published') ? $validated['is_published'] : $post->is_published),
+        ];
+
+        if (!empty($validated['tags'])) {
+            $data['tags'] = array_map('trim', explode(',', $validated['tags']));
+        }
+
+        if ($request->hasFile('featured_image')) {
+            if ($post->featured_image && \Illuminate\Support\Facades\Storage::disk('public')->exists($post->featured_image)) {
+                \Illuminate\Support\Facades\Storage::disk('public')->delete($post->featured_image);
+            }
+            $data['featured_image'] = $request->file('featured_image')->store('blogs', 'public');
+        }
+
+        if ($data['is_published'] && !$post->published_at) {
+            $data['published_at'] = now();
+        }
+        if (!$data['is_published']) {
+            $data['published_at'] = null;
+        }
+
+        $post->update($data);
+
         return redirect()->route('admin.storefront.blog')->with('success', 'Blog post updated');
     }
 

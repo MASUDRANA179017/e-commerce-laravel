@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Frontend;
 
 use App\Http\Controllers\Controller;
+use App\Models\Coupon;
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\User;
@@ -161,6 +162,14 @@ class CheckoutController extends Controller
                     DB::table('products')
                         ->where('id', $item['id'])
                         ->decrement('stock_quantity', $item['qty']);
+                }
+            }
+
+            // Increment coupon usage if applied
+            if (session()->has('coupon_code')) {
+                $coupon = Coupon::where('code', session()->get('coupon_code'))->first();
+                if ($coupon) {
+                    $coupon->increment('used_count');
                 }
             }
 

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Coupon;
 use App\Models\FlashSale;
 use App\Models\Product;
 use Illuminate\Http\Request;
@@ -13,48 +14,90 @@ class MarketingController extends Controller
 {
     public function coupons()
     {
-        return view('admin.marketing.coupons');
+        $coupons = Coupon::orderByDesc('created_at')->get();
+        $total = $coupons->count();
+        $active = $coupons->where('is_active', true)->count();
+        $timesUsed = $coupons->sum('used_count');
+        $totalSavings = $coupons->sum(function ($c) {
+            return $c->type === 'fixed' ? ($c->value * $c->used_count) : 0;
+        });
+        return view('admin.marketing.coupons', compact('coupons', 'total', 'active', 'timesUsed', 'totalSavings'));
     }
 
     public function couponsData(Request $request)
     {
-        $coupons = collect(); // Coupon::all()
+        $coupons = Coupon::orderByDesc('created_at')->get();
         return response()->json(['data' => $coupons]);
     }
 
     public function storeCoupon(Request $request)
     {
-        $request->validate([
-            'code' => 'required|string|unique:coupons',
+        $validated = $request->validate([
+            'code' => 'required|string|unique:coupons,code',
             'type' => 'required|in:percentage,fixed',
             'value' => 'required|numeric|min:0',
+            'min_purchase' => 'nullable|numeric|min:0',
+            'usage_limit' => 'nullable|integer|min:0',
+            'expiry_date' => 'nullable|date',
         ]);
 
-        // Create coupon logic
-        return response()->json(['success' => true, 'message' => 'Coupon created']);
+        Coupon::create([
+            'code' => strtoupper(trim($validated['code'])),
+            'type' => $validated['type'],
+            'value' => $validated['value'],
+            'min_purchase' => $validated['min_purchase'] ?? null,
+            'usage_limit' => $validated['usage_limit'] ?? null,
+            'expiry_date' => $validated['expiry_date'] ?? null,
+            'is_active' => true,
+        ]);
+
+        return redirect()->route('admin.marketing.coupons')->with('success', 'Coupon created');
     }
 
     public function showCoupon($coupon)
     {
+        $coupon = Coupon::findOrFail($coupon);
         return response()->json(['coupon' => $coupon]);
     }
 
     public function updateCoupon(Request $request, $coupon)
     {
-        // Update coupon logic
-        return response()->json(['success' => true, 'message' => 'Coupon updated']);
+        $coupon = Coupon::findOrFail($coupon);
+        $validated = $request->validate([
+            'code' => 'required|string|unique:coupons,code,' . $coupon->id,
+            'type' => 'required|in:percentage,fixed',
+            'value' => 'required|numeric|min:0',
+            'min_purchase' => 'nullable|numeric|min:0',
+            'usage_limit' => 'nullable|integer|min:0',
+            'expiry_date' => 'nullable|date',
+            'is_active' => 'nullable|boolean',
+        ]);
+
+        $coupon->update([
+            'code' => strtoupper(trim($validated['code'])),
+            'type' => $validated['type'],
+            'value' => $validated['value'],
+            'min_purchase' => $validated['min_purchase'] ?? null,
+            'usage_limit' => $validated['usage_limit'] ?? null,
+            'expiry_date' => $validated['expiry_date'] ?? null,
+            'is_active' => $request->has('is_active') ? (bool)$validated['is_active'] : $coupon->is_active,
+        ]);
+
+        return redirect()->route('admin.marketing.coupons')->with('success', 'Coupon updated');
     }
 
     public function destroyCoupon($coupon)
     {
-        // Delete coupon logic
-        return response()->json(['success' => true]);
+        $coupon = Coupon::findOrFail($coupon);
+        $coupon->delete();
+        return redirect()->back()->with('success', 'Coupon deleted');
     }
 
     public function toggleCoupon($coupon)
     {
-        // Toggle coupon status
-        return response()->json(['success' => true]);
+        $coupon = Coupon::findOrFail($coupon);
+        $coupon->update(['is_active' => !$coupon->is_active]);
+        return redirect()->back()->with('success', 'Coupon status updated');
     }
 
     public function flashSales()
