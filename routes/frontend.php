@@ -84,6 +84,14 @@ Route::get('/faq', function () {
     return view('frontend.faq');
 })->name('frontend.faq');
 
+Route::get('/trackorder', function () {
+    return view('frontend.trackorder');
+})->name('frontend.trackorder');
+
+Route::get('/return-refund', function () {
+    return view('frontend.return-refund');
+})->name('frontend.return-refund');
+
 // Blog Routes
 Route::prefix('blog')->name('blog.')->group(function () {
     Route::get('/', [\App\Http\Controllers\Frontend\BlogController::class, 'index'])->name('index');

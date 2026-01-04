@@ -137,22 +137,29 @@
     }
     
     .stat-card {
-        text-align: center;
-        padding: 30px;
+    text-align: center;
+    padding: 30px;
+        /* Optional: add min-height to prevent container collapse if needed */
+        /* min-height: 150px; */
     }
-    
+
     .stat-card .number {
-        font-size: 56px;
+        font-size: 26px;
         font-weight: 800;
-        color: #fff;
-        line-height: 1;
-        margin-bottom: 10px;
+        color: #0496ff;          /* Your preferred blue */
+        line-height: 1.2;        /* Increased line height for breathing room */
+        margin-bottom: 16px;     /* More space below number */
     }
-    
+
     .stat-card .label {
-        color: rgba(255,255,255,0.8);
+        color: rgba(4, 150, 255, 0.8); /* Slightly transparent blue */
         font-size: 16px;
+        line-height: 1.4;        /* Comfortable line height */
+        margin-top: 0;
+        font-weight: 600;        /* Optional: makes label stand out */
     }
+
+
     
     /* Mission Vision Cards */
     .mv-card {
@@ -376,6 +383,11 @@
             font-size: 42px;
         }
     }
+
+.stat-card .number,
+.stat-card .label {
+    color: #0496ff;
+}
 </style>
 @endpush
 
@@ -402,112 +414,126 @@
 </section>
 
 <!-- About Section -->
-<section class="py-5 py-lg-6" style="padding: 100px 0;">
-    <div class="container">
-        <div class="row align-items-center">
+<section class="py-5 py-lg-6 about-section position-relative" style="padding: 100px 0; background:#ffffff;">
+    <div class="container position-relative">
+        <div class="row align-items-center gx-5 gx-lg-6">
+            
+            <!-- LEFT IMAGE COLUMN -->
             <div class="col-lg-6 mb-5 mb-lg-0" data-aos="fade-right">
                 <div class="about-image-wrapper">
+                    
                     <div class="about-image-main">
                         <img src="https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=800&h=600&fit=crop" 
                              alt="GrowUp Shopping Experience">
                     </div>
+
                     <div class="about-image-secondary">
                         <img src="https://images.unsplash.com/photo-1556742111-a301076d9d18?w=400&h=400&fit=crop" 
                              alt="Happy Customer">
                     </div>
+
                     <div class="experience-badge">
                         <h2>5+</h2>
                         <p>Years of Excellence</p>
                     </div>
+
                 </div>
             </div>
+
+            <!-- RIGHT CONTENT COLUMN -->
             <div class="col-lg-6" data-aos="fade-left">
+
                 <span class="badge bg-primary-subtle text-primary px-3 py-2 rounded-pill mb-3">
                     <i class="fa-solid fa-star me-1"></i> Welcome to GrowUp
                 </span>
-                <h2 class="mb-4" style="font-size: 42px; font-weight: 800; color: #1a1a2e;">
-                    Who <span style="color: #0496ff;">We Are</span>
+
+                <h2 class="mb-4 about-title">
+                    Who <span class="text-primary">We Are</span>
                 </h2>
-                <p class="lead mb-4" style="color: #555;">
+
+                <p class="lead mb-4 about-lead">
                     GrowUp E-Commerce is your trusted online shopping destination, offering a wide range of quality products at competitive prices.
                 </p>
-                <p class="text-muted mb-4" style="line-height: 1.8;">
+
+                <p class="about-text">
                     Founded in 2019, we've grown from a small startup to a leading e-commerce platform in Bangladesh. Our mission is to provide customers with a seamless shopping experience, exceptional customer service, and products that meet the highest standards of quality.
                 </p>
-                <p class="text-muted mb-4" style="line-height: 1.8;">
+
+                <p class="about-text">
                     We believe in building lasting relationships with our customers by delivering value, convenience, and trust in every transaction.
                 </p>
-                
-                <div class="row mt-4">
+
+                <div class="row mt-4 gy-3">
                     <div class="col-sm-6">
                         <div class="feature-check-item">
-                            <div class="icon">
-                                <i class="fa-solid fa-check"></i>
-                            </div>
+                            <div class="icon"><i class="fa-solid fa-check"></i></div>
                             <h6>Quality Products</h6>
                         </div>
                     </div>
                     <div class="col-sm-6">
                         <div class="feature-check-item">
-                            <div class="icon">
-                                <i class="fa-solid fa-check"></i>
-                            </div>
+                            <div class="icon"><i class="fa-solid fa-check"></i></div>
                             <h6>Fast Delivery</h6>
                         </div>
                     </div>
                     <div class="col-sm-6">
                         <div class="feature-check-item">
-                            <div class="icon">
-                                <i class="fa-solid fa-check"></i>
-                            </div>
+                            <div class="icon"><i class="fa-solid fa-check"></i></div>
                             <h6>24/7 Support</h6>
                         </div>
                     </div>
                     <div class="col-sm-6">
                         <div class="feature-check-item">
-                            <div class="icon">
-                                <i class="fa-solid fa-check"></i>
-                            </div>
+                            <div class="icon"><i class="fa-solid fa-check"></i></div>
                             <h6>Easy Returns</h6>
                         </div>
                     </div>
                 </div>
+
             </div>
+
         </div>
     </div>
 </section>
 
+
 <!-- Stats Section -->
 <section class="stats-section py-5">
     <div class="container position-relative">
-        <div class="row">
-            <div class="col-6 col-lg-3" data-aos="fade-up">
+        <div class="row justify-content-center">
+
+            <div class="col-6 col-lg-3 d-flex justify-content-center" data-aos="fade-up">
                 <div class="stat-card">
                     <div class="number">10K+</div>
                     <div class="label">Happy Customers</div>
                 </div>
             </div>
-            <div class="col-6 col-lg-3" data-aos="fade-up" data-aos-delay="100">
+
+            <div class="col-6 col-lg-3 d-flex justify-content-center" data-aos="fade-up" data-aos-delay="100">
                 <div class="stat-card">
                     <div class="number">5K+</div>
                     <div class="label">Products</div>
                 </div>
             </div>
-            <div class="col-6 col-lg-3" data-aos="fade-up" data-aos-delay="200">
+
+            <div class="col-6 col-lg-3 d-flex justify-content-center" data-aos="fade-up" data-aos-delay="200">
                 <div class="stat-card">
                     <div class="number">50+</div>
                     <div class="label">Categories</div>
                 </div>
             </div>
-            <div class="col-6 col-lg-3" data-aos="fade-up" data-aos-delay="300">
+
+            <div class="col-6 col-lg-3 d-flex justify-content-center" data-aos="fade-up" data-aos-delay="300">
                 <div class="stat-card">
                     <div class="number">99%</div>
                     <div class="label">Satisfaction Rate</div>
                 </div>
             </div>
+
         </div>
     </div>
 </section>
+
 
 <!-- Mission & Vision Section -->
 <section class="py-5" style="background: #f8f9fa;">

@@ -850,14 +850,19 @@
                                                     class="fa-solid fa-angle-right me-2"></i></span> My Cart</a></li>
                                     <li><a class="text-white sub-title-lg" href="{{ route('wishlist.index') }}"><span><i
                                                     class="fa-solid fa-angle-right me-2"></i></span> Wishlist</a></li>
-                                    <li><a class="text-white sub-title-lg" href="#"><span><i
-                                                    class="fa-solid fa-angle-right me-2"></i></span> Track Order</a>
+                                    <li><a class="text-white sub-title-lg"
+                                            href="{{ route('frontend.trackorder') }}"><span><i
+                                                    class="fa-solid fa-angle-right me-2"></i></span>Track my order</a></li>
                                     </li>
-                                    <li><a class="text-white sub-title-lg" href="#"><span><i
-                                                    class="fa-solid fa-angle-right me-2"></i></span> Returns &
-                                            Refunds</a></li>
-                                    <li><a class="text-white sub-title-lg" href="#"><span><i
-                                                    class="fa-solid fa-angle-right me-2"></i></span> FAQs</a></li>
+                                    <li>
+                                        <a class="text-white sub-title-lg" href="{{ route('frontend.return-refund') }}">
+                                            <span><i class="fa-solid fa-angle-right me-2"></i></span>Return & Refund
+                                        </a>
+                                        </li>
+
+                                    <li><a class="text-white sub-title-lg"
+                                            href="{{ route('frontend.faq') }}"><span><i
+                                                    class="fa-solid fa-angle-right me-2"></i></span>FAQs</a></li>
                                 </ul>
                             </div>
                         </div>
