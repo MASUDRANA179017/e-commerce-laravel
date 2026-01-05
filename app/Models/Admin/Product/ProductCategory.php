@@ -61,7 +61,9 @@ class ProductCategory extends Model
     // Recursive relation (unlimited depth)
     public function childrenRecursive()
     {
-        return $this->children()->with('childrenRecursive');
+        return $this->children()
+            ->orderByRaw('CASE WHEN `order` = 0 OR `order` IS NULL THEN 1 ELSE 0 END, `order` ASC')
+            ->with('childrenRecursive');
     }
 
     /**

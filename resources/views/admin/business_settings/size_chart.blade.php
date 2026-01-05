@@ -640,7 +640,7 @@
               <div class="attr-name">${cat}</div>
               <div class="small-muted">${items.length} templates</div>
             </div>
-            <span class="badge">drag to use</span>
+            <span class="badge badge-primary text-black">drag to use</span>
           </div>
           <div class="chips" data-cat="${cat}">
             ${items.map(t=>`<div class="chip" data-template-id="${t.id}"><i class="bx bx-move me-1"></i>${t.name}</div>`).join('')}

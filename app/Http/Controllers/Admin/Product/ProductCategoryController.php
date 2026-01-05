@@ -37,7 +37,37 @@ class ProductCategoryController extends Controller
             ]
         );
 
-        return response()->json(['success' => true, 'data' => $category]);
+        $productsCount = \DB::table('product_category_map as pcm')
+            ->join('products as p', 'pcm.product_id', '=', 'p.id')
+            ->where('pcm.category_id', $category->id)
+            ->count();
+        $variantsCount = \DB::table('product_variants as pv')
+            ->join('products as p', 'pv.product_id', '=', 'p.id')
+            ->join('product_category_map as pcm', 'p.id', '=', 'pcm.product_id')
+            ->where('pcm.category_id', $category->id)
+            ->count();
+        $ordersCount = \DB::table('order_items as oi')
+            ->join('products as p', 'oi.product_id', '=', 'p.id')
+            ->join('product_category_map as pcm', 'p.id', '=', 'pcm.product_id')
+            ->where('pcm.category_id', $category->id)
+            ->distinct('oi.order_id')
+            ->count('oi.order_id');
+        $payload = [
+            'id' => $category->id,
+            'name' => $category->name,
+            'slug' => $category->slug,
+            'parent_id' => $category->parent_id,
+            'order' => $category->order,
+            'show_on_menu' => $category->show_on_menu,
+            'icon' => $category->icon,
+            'thumb_url' => $category->thumb_url,
+            'products_count' => $productsCount,
+            'orders_count' => $ordersCount,
+            'variants_count' => $variantsCount,
+            'children_recursive' => [],
+        ];
+
+        return response()->json(['success' => true, 'data' => $payload]);
     }
 
     // Get all parent categories for dropdown (level 1 + 2)
@@ -62,7 +92,7 @@ class ProductCategoryController extends Controller
 
     public function getParents()
     {
-        $categories = ProductCategory::all();
+        $categories = ProductCategory::orderByRaw('CASE WHEN `order` = 0 OR `order` IS NULL THEN 1 ELSE 0 END, `order` ASC')->get();
         $tree = $this->buildCategoryTree($categories);
 
         return response()->json(['categories' => $tree]);
@@ -70,11 +100,50 @@ class ProductCategoryController extends Controller
 
     public function getTree()
     {
-        $categories = ProductCategory::with('childrenRecursive') // যত depth দরকার
+        $categories = ProductCategory::with('childrenRecursive')
             ->whereNull('parent_id')
+            ->orderByRaw('CASE WHEN `order` = 0 OR `order` IS NULL THEN 1 ELSE 0 END, `order` ASC')
             ->get();
 
-        return response()->json($categories);
+        $map = function ($cat) use (&$map) {
+            $productsCount = \DB::table('product_category_map as pcm')
+                ->join('products as p', 'pcm.product_id', '=', 'p.id')
+                ->where('pcm.category_id', $cat->id)
+                ->count();
+            $variantsCount = \DB::table('product_variants as pv')
+                ->join('products as p', 'pv.product_id', '=', 'p.id')
+                ->join('product_category_map as pcm', 'p.id', '=', 'pcm.product_id')
+                ->where('pcm.category_id', $cat->id)
+                ->count();
+            $ordersCount = \DB::table('order_items as oi')
+                ->join('products as p', 'oi.product_id', '=', 'p.id')
+                ->join('product_category_map as pcm', 'p.id', '=', 'pcm.product_id')
+                ->where('pcm.category_id', $cat->id)
+                ->distinct('oi.order_id')
+                ->count('oi.order_id');
+            $children = ($cat->childrenRecursive ?? collect())->map(function ($c) use (&$map) {
+                return $map($c);
+            })->toArray();
+            return [
+                'id' => $cat->id,
+                'name' => $cat->name,
+                'slug' => $cat->slug,
+                'parent_id' => $cat->parent_id,
+                'order' => $cat->order,
+                'show_on_menu' => $cat->show_on_menu,
+                'icon' => $cat->icon,
+                'thumb_url' => $cat->thumb_url,
+                'products_count' => $productsCount,
+                'orders_count' => $ordersCount,
+                'variants_count' => $variantsCount,
+                'children_recursive' => $children,
+            ];
+        };
+        $data = $categories->map(function ($c) use ($map) {
+            return $map($c);
+        });
+
+        return response()->json($data);
     }
 
     // Get single category for edit
@@ -115,8 +184,7 @@ class ProductCategoryController extends Controller
         // id, name, parent_id only; sort by `order` then name for stable paths
         $rows = ProductCategory::query()
             ->select('id', 'name', 'parent_id', 'order')
-            ->orderByRaw('COALESCE(`order`, 999999) asc')
-            ->orderBy('name')
+            ->orderByRaw('CASE WHEN `order` = 0 OR `order` IS NULL THEN 1 ELSE 0 END, `order` ASC')
             ->get();
 
         if ($rows->isEmpty()) {
@@ -146,8 +214,8 @@ class ProductCategoryController extends Controller
         // Sort children by order then name
         $sortFn = function (&$arr) use (&$sortFn) {
             usort($arr, function ($a, $b) {
-                $ao = $a['order'] ?? 999999;
-                $bo = $b['order'] ?? 999999;
+                $ao = !empty($a['order']) ? $a['order'] : 999999;
+                $bo = !empty($b['order']) ? $b['order'] : 999999;
                 if ($ao === $bo) {
                     return strcasecmp($a['name'], $b['name']);
                 }
@@ -188,69 +256,139 @@ class ProductCategoryController extends Controller
         return response()->json($leafs);
     }
 
-    public function tree(Request $request)
-    {
-        $rows = ProductCategory::query()
-            ->select('id', 'name', 'parent_id', 'order')
-            ->orderByRaw('COALESCE(`order`, 999999) asc')
-            ->orderBy('name')
-            ->get();
+    // public function tree(Request $request)
+    // {
+    //     $rows = ProductCategory::query()
+    //         ->select('id', 'name', 'parent_id', 'order')
+    //         ->orderByRaw('COALESCE(`order`, 999999) asc')
+    //         ->orderBy('name')
+    //         ->get();
 
-        if ($rows->isEmpty()) {
-            return response()->json([]);
-        }
+    //     if ($rows->isEmpty()) {
+    //         return response()->json([]);
+    //     }
 
-        // Build adjacency
-        $nodes = [];
-        foreach ($rows as $r) {
-            $nodes[$r->id] = [
-                'id' => $r->id,
-                'name' => $r->name,
-                'parent_id' => $r->parent_id,
-                'children' => [],
-                'order' => $r->order,
-            ];
-        }
-        foreach ($nodes as $id => $n) {
-            if ($n['parent_id'] && isset($nodes[$n['parent_id']])) {
-                $nodes[$n['parent_id']]['children'][] = &$nodes[$id];
-            }
-        }
-        // Roots
-        $roots = array_values(array_filter($nodes, fn ($n) => empty($n['parent_id']) || ! isset($nodes[$n['parent_id']])));
+    //     // Build adjacency
+    //     $nodes = [];
+    //     foreach ($rows as $r) {
+    //         $nodes[$r->id] = [
+    //             'id' => $r->id,
+    //             'name' => $r->name,
+    //             'parent_id' => $r->parent_id,
+    //             'children' => [],
+    //             'order' => $r->order,
+    //         ];
+    //     }
+    //     foreach ($nodes as $id => $n) {
+    //         if ($n['parent_id'] && isset($nodes[$n['parent_id']])) {
+    //             $nodes[$n['parent_id']]['children'][] = &$nodes[$id];
+    //         }
+    //     }
+    //     // Roots
+    //     $roots = array_values(array_filter($nodes, fn ($n) => empty($n['parent_id']) || ! isset($nodes[$n['parent_id']])));
 
-        // Sort + compute slug along the way
-        $sortFn = function (&$arr) use (&$sortFn) {
-            usort($arr, function ($a, $b) {
-                $ao = $a['order'] ?? 999999;
-                $bo = $b['order'] ?? 999999;
-                if ($ao === $bo) {
-                    return strcasecmp($a['name'], $b['name']);
-                }
+    //     // Sort + compute slug along the way
+    //     $sortFn = function (&$arr) use (&$sortFn) {
+    //         usort($arr, function ($a, $b) {
+    //             $ao = $a['order'] ?? 999999;
+    //             $bo = $b['order'] ?? 999999;
+    //             if ($ao === $bo) {
+    //                 return strcasecmp($a['name'], $b['name']);
+    //             }
 
-                return $ao <=> $bo;
-            });
-            foreach ($arr as &$child) {
-                if (! empty($child['children'])) {
-                    $sortFn($child['children']);
-                }
-            }
-        };
-        $sortFn($roots);
+    //             return $ao <=> $bo;
+    //         });
+    //         foreach ($arr as &$child) {
+    //             if (! empty($child['children'])) {
+    //                 $sortFn($child['children']);
+    //             }
+    //         }
+    //     };
+    //     $sortFn($roots);
 
-        $mapTree = function ($node, $slugPrefix = []) use (&$mapTree) {
-            $slugParts = array_merge($slugPrefix, [Str::slug($node['name'])]);
+    //     $mapTree = function ($node, $slugPrefix = []) use (&$mapTree) {
+    //         $slugParts = array_merge($slugPrefix, [Str::slug($node['name'])]);
 
-            return [
-                'id' => $node['id'],
-                'name' => $node['name'],
-                'slug' => implode('/', $slugParts),
-                'children' => array_map(fn ($c) => $mapTree($c, $slugParts), $node['children']),
-            ];
-        };
+    //         return [
+    //             'id' => $node['id'],
+    //             'name' => $node['name'],
+    //             'slug' => implode('/', $slugParts),
+    //             'children' => array_map(fn ($c) => $mapTree($c, $slugParts), $node['children']),
+    //         ];
+    //     };
 
-        $tree = array_map(fn ($r) => $mapTree($r, []), $roots);
+    //     $tree = array_map(fn ($r) => $mapTree($r, []), $roots);
 
-        return response()->json($tree);
+    //     return response()->json($tree);
+    // }
+
+    public function tree()
+{
+    $rows = ProductCategory::select('id', 'name', 'parent_id', 'order')
+        ->get();
+
+    if ($rows->isEmpty()) {
+        return response()->json([]);
     }
+
+    // Build adjacency
+    $nodes = [];
+    foreach ($rows as $r) {
+        $nodes[$r->id] = [
+            'id' => $r->id,
+            'name' => $r->name,
+            'parent_id' => $r->parent_id,
+            'order' => $r->order,
+            'children' => [],
+        ];
+    }
+
+    foreach ($nodes as $id => $node) {
+        if ($node['parent_id'] && isset($nodes[$node['parent_id']])) {
+            $nodes[$node['parent_id']]['children'][] = &$nodes[$id];
+        }
+    }
+
+    // Root nodes
+    $roots = array_values(array_filter($nodes, fn ($n) =>
+        empty($n['parent_id']) || ! isset($nodes[$n['parent_id']])
+    ));
+
+    // ✅ SORT MAIN + SUB TREES
+    $this->sortTree($roots);
+
+    // Build slugged tree
+    $mapTree = function ($node, $slugPrefix = []) use (&$mapTree) {
+        $slug = array_merge($slugPrefix, [Str::slug($node['name'])]);
+
+        return [
+            'id' => $node['id'],
+            'name' => $node['name'],
+            'slug' => implode('/', $slug),
+            'children' => array_map(
+                fn ($c) => $mapTree($c, $slug),
+                $node['children']
+            ),
+        ];
+    };
+
+    return response()->json(array_map(fn ($r) => $mapTree($r), $roots));
+}
+
+    private function sortTree(array &$nodes): void
+{
+    usort($nodes, function ($a, $b) {
+        $ao = $a['order'] ?? PHP_INT_MAX;
+        $bo = $b['order'] ?? PHP_INT_MAX;
+
+        return $ao <=> $bo ?: strcasecmp($a['name'], $b['name']);
+    });
+
+    foreach ($nodes as &$node) {
+        if (! empty($node['children'])) {
+            $this->sortTree($node['children']);
+        }
+    }
+}
+
 }

@@ -35,6 +35,11 @@
                     <textarea name="excerpt" class="form-control" rows="3">{{ old('excerpt', $post->excerpt) }}</textarea>
                 </div>
             </div>
+            <div class="card-footer bg-white">
+                <button type="submit" class="create-btn-base">
+                    <i class="fas fa-save me-2"></i>Update Post
+                </button>
+            </div>
         </div>
     </div>
 
@@ -46,14 +51,11 @@
             <div class="card-body">
                 <div class="mb-3">
                     <label class="form-label">Status</label>
-                    <select name="is_published" class="form-select">
-                        <option value="0" {{ old('is_published', $post->is_published ? 1 : 0) == 0 ? 'selected' : '' }}>Draft</option>
-                        <option value="1" {{ old('is_published', $post->is_published ? 1 : 0) == 1 ? 'selected' : '' }}>Published</option>
-                    </select>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="isPublished" name="is_published" value="1" {{ old('is_published', $post->is_published) ? 'checked' : '' }}>
+                        <label class="form-check-label" for="isPublished">Publish immediately</label>
+                    </div>
                 </div>
-                <button class="create-btn-base w-100">
-                    <i class="fas fa-save me-2"></i>Update Post
-                </button>
             </div>
         </div>
 
@@ -64,8 +66,8 @@
             <div class="card-body">
                 <div class="border rounded p-4 text-center" style="border-style: dashed !important;">
                     <i class="fas fa-cloud-upload-alt fa-2x text-muted mb-2"></i>
-                    <p class="mb-0 text-muted">Click to change image</p>
-                    <input type="file" name="featured_image" class="d-none">
+                    <p class="mb-0 text-muted">Click to upload image</p>
+                    <input type="file" name="featured_image" class="form-control mt-3" accept="image/*">
                 </div>
             </div>
         </div>
@@ -77,12 +79,12 @@
             <div class="card-body">
                 <div class="mb-3">
                     <label class="form-label">Category</label>
-                    <select name="category" class="form-select">
-                        <option value="">Select category</option>
-                        @foreach($categories as $category)
-                            <option value="{{ $category }}" {{ old('category', $post->category) == $category ? 'selected' : '' }}>{{ $category }}</option>
+                    <input type="text" name="category" class="form-control" list="blogCategories" value="{{ old('category', $post->category) }}" placeholder="Type or select category">
+                    <datalist id="blogCategories">
+                        @foreach(($categories ?? []) as $category)
+                            <option value="{{ $category }}">
                         @endforeach
-                    </select>
+                    </datalist>
                 </div>
                 <div class="mb-3">
                     <label class="form-label">Tags</label>

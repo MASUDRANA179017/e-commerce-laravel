@@ -60,6 +60,25 @@ class BlogController extends Controller
             ->take(3)
             ->get();
 
-        return view('frontend.blog.show', compact('blog', 'relatedBlogs'));
+        // Sidebar data
+        $categories = Blog::published()
+            ->whereNotNull('category')
+            ->distinct()
+            ->pluck('category');
+
+        $recentBlogs = Blog::published()
+            ->latest()
+            ->take(5)
+            ->get();
+
+        $popularTags = Blog::published()
+            ->whereNotNull('tags')
+            ->get()
+            ->pluck('tags')
+            ->flatten()
+            ->unique()
+            ->take(12);
+
+        return view('frontend.blog.show', compact('blog', 'relatedBlogs', 'categories', 'recentBlogs', 'popularTags'));
     }
 }

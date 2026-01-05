@@ -299,6 +299,25 @@
     <!-- Testimonial Section -->
     <section class="testimonial-six-area">
         <div class="container">
+                <div class="col-xl-6 col-lg-6 d-block d-lg-none text-center">
+                    <div class="testimonial-six-right" data-aos="fade-up">
+                        <div class="section-six-wrapper mb-4">
+                            <h6 class="sub-title-main">Testimonials</h6>
+                            <h2 class="title-animation">Real Reviews from Our Customers</h2>
+                            <p class="section-six-paragraph">
+                                We pride ourselves on providing high-quality products and an exceptional shopping
+                                experience. Hear directly from our satisfied customers about their purchases, fast
+                                delivery, and excellent customer service.
+                            </p>
+                        </div>
+                        <div class="text-center">
+                            <div class="testimonial-six-rating">
+                                <h6>4.9/5 Rating</h6>
+                                <p class="text-center">Based on verified purchases & feedback.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             <div class="row align-items-center testimonial-six-frist-row">
                 <div class="col-xl-6 col-lg-6">
                     <div class="row justify-content-center">
@@ -375,7 +394,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-xl-6 col-lg-6">
+                <div class="col-xl-6 col-lg-6 d-none d-lg-block">
                     <div class="testimonial-six-right" data-aos="fade-up">
                         <div class="section-six-wrapper mb-4">
                             <h6 class="sub-title-main">Testimonials</h6>
@@ -407,79 +426,24 @@
         </div>
     </section>
 
-    <!-- Latest Blog Posts Section -->
-    @if(isset($latestBlogs) && $latestBlogs->count() > 0)
-    <section class="blog-eight-area pt-100 pb-70 bg-light">
-        <div class="container">
-            <div class="row">
-                <div class="col-12 text-center">
-                    <div class="section-eight-wrapper mb-50" data-aos="fade-up" data-aos-duration="1000">
-                        <h6 class="section-eight-subtitle d-inline-block text-primary">From Our Blog</h6>
-                        <h2 class="section-eight-title title-animation">Latest News & Articles</h2>
-                        <p class="section-eight-paragraph mt-2">Stay updated with the latest trends, tips, and insights</p>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="row justify-content-center">
-                @foreach($latestBlogs as $blog)
-                    <div class="col-xl-4 col-lg-4 col-md-6">
-                        <div class="blog-eight-item mb-30 bg-white rounded-4 overflow-hidden shadow-sm h-100 d-flex flex-column" data-aos="fade-up" data-aos-duration="1000" data-aos-delay="{{ 200 + ($loop->index * 100) }}">
-                            <div class="blog-eight-thumb position-relative overflow-hidden">
-                                <a href="{{ route('blog.show', $blog->slug) }}" class="d-block w-100">
-                                    @if($blog->featured_image)
-                                        <img src="{{ asset('storage/' . $blog->featured_image) }}" 
-                                             alt="{{ $blog->title }}" 
-                                             class="w-100" 
-                                             style="height: 250px; object-fit: cover; transition: transform 0.5s ease;">
-                                    @else
-                                        <div class="w-100 bg-secondary d-flex align-items-center justify-content-center" style="height: 250px;">
-                                            <i class="bx bx-image text-white" style="font-size: 48px;"></i>
-                                        </div>
-                                    @endif
-                                </a>
-                                @if($blog->category)
-                                    <span class="badge bg-primary position-absolute top-0 start-0 m-3">{{ $blog->category }}</span>
-                                @endif
-                            </div>
-                            <div class="blog-eight-content p-4 d-flex flex-column flex-grow-1">
-                                <div class="blog-meta mb-2 text-muted small">
-                                    <span class="me-3"><i class="fa-regular fa-calendar me-1"></i> {{ $blog->formatted_date }}</span>
-                                    <span><i class="fa-regular fa-clock me-1"></i> {{ $blog->reading_time }} min read</span>
-                                </div>
-                                <h4 class="mb-3">
-                                    <a href="{{ route('blog.show', $blog->slug) }}" class="text-dark text-decoration-none fw-bold hover-primary">
-                                        {{ Str::limit($blog->title, 60) }}
-                                    </a>
-                                </h4>
-                                @if($blog->excerpt)
-                                    <p class="mb-4 text-muted">{{ Str::limit($blog->excerpt, 100) }}</p>
-                                @endif
-                                <div class="mt-auto">
-                                    <a href="{{ route('blog.show', $blog->slug) }}" class="btn--primary p-2 px-4 w-100 text-center">
-                                        Read More <i class="fa-solid fa-arrow-right ms-2"></i>
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                @endforeach
-            </div>
-            
-            <div class="row">
-                <div class="col-12 text-center mt-4">
-                    <a href="{{ route('blog.index') }}" class="btn btn-outline-primary rounded-pill px-5 py-2 fw-bold">
-                        View All Articles <i class="fa-solid fa-arrow-right ms-2"></i>
-                    </a>
-                </div>
-            </div>
-        </div>
-    </section>
-    @endif
 
     <!-- FAQ Section -->
     <section class="faq-eight-area">
         <div class="container">
+                <div class="col-xl-6 col-lg-10 d-block d-xl-none text-center">
+                    <div class="faq-eight-right" data-aos="fade-up" data-aos-duration="1000" data-aos-delay="300">
+                        <div class="section-eight-wrapper mb-0">
+                            <h6 class="sub-title-main">Question & Answer</h6>
+                            <h2 class="title-animation">Frequently Asked Questions</h2>
+                            <p class="section-eight-paragraph mb-2">
+                                Have questions about shopping with us? Find answers to common queries about ordering,
+                                shipping, payments, and returns. If you need more help, our customer support team
+                                is always ready to assist you.
+                            </p>
+                           
+                        </div>
+                    </div>
+                </div>
             <div class="row align-items-center">
                 <div class="col-xl-6">
                     <div class="faq-eight-wrapper" data-aos="fade-up" data-aos-duration="1000" data-aos-delay="200">
@@ -552,7 +516,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-xl-6 col-lg-10">
+                <div class="col-xl-6 col-lg-10 d-none d-xl-block">
                     <div class="faq-eight-right" data-aos="fade-up" data-aos-duration="1000" data-aos-delay="300">
                         <div class="section-eight-wrapper mb-0">
                             <h6 class="sub-title-main">Question & Answer</h6>
@@ -562,7 +526,7 @@
                                 shipping, payments, and returns. If you need more help, our customer support team
                                 is always ready to assist you.
                             </p>
-                            <div class="about-eight-button event-eight-btn d-inline-block mt-3 mb-4">
+                            <div class="about-eight-button event-eight-btn d-block d-inline-block mt-3 mb-4">
                                 <a href="{{ route('frontend.contact') }}" class="btn--primary">Contact with Us <i
                                         class="bx bx-right-arrow-alt"></i></a>
                             </div>
@@ -575,151 +539,78 @@
 
     <!-- Latest Blog Posts Section -->
     @if($latestBlogs && $latestBlogs->count() > 0)
-    <section class="py-5 bg-light">
-        <div class="container-fluid">
-            <div class="row mb-4">
-                <div class="col-12 text-center">
-                    <div class="section-eight-wrapper" data-aos="fade-up" data-aos-duration="1000">
-                        <h6 class="sub-title-main"><i class="bx bxs-news"></i> From Our Blog</h6>
-                        <h2 class="title-animation">Latest <span>News & Articles</span></h2>
-                        <p class="mt-2 text-muted">Stay updated with the latest trends, tips, and insights</p>
+    <section class="blog fc-blog py-5 bg-light">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-xl-6">
+                    <div class="section-six-wrapper text-center" data-aos="fade-up" data-aos-duration="1000" data-aos-delay="200">
+                        <h6 class="sub-title-main"><i class="fa-solid fa-user-graduate"></i>News &amp; Blog</h6>
+                        <h2 class="title-animation mb-5">
+                            <div style="position:relative;display:inline-block;">
+                                <div style="position: relative; display: inline-block; translate: none; rotate: none; scale: none; opacity: 1; visibility: inherit; transform: translate(0px, 0px);">L</div>
+                                <div style="position: relative; display: inline-block; translate: none; rotate: none; scale: none; opacity: 1; visibility: inherit; transform: translate(0px, 0px);">a</div>
+                                <div style="position: relative; display: inline-block; translate: none; rotate: none; scale: none; opacity: 1; visibility: inherit; transform: translate(0px, 0px);">t</div>
+                                <div style="position: relative; display: inline-block; translate: none; rotate: none; scale: none; opacity: 1; visibility: inherit; transform: translate(0px, 0px);">e</div>
+                                <div style="position: relative; display: inline-block; translate: none; rotate: none; scale: none; opacity: 1; visibility: inherit; transform: translate(0px, 0px);">s</div>
+                                <div style="position: relative; display: inline-block; translate: none; rotate: none; scale: none; opacity: 1; visibility: inherit; transform: translate(0px, 0px);">t</div>
+                            </div>
+                            <div style="position:relative;display:inline-block;">
+                                <div style="position: relative; display: inline-block; translate: none; rotate: none; scale: none; opacity: 1; visibility: inherit; transform: translate(0px, 0px);">N</div>
+                                <div style="position: relative; display: inline-block; translate: none; rotate: none; scale: none; opacity: 1; visibility: inherit; transform: translate(0px, 0px);">e</div>
+                                <div style="position: relative; display: inline-block; translate: none; rotate: none; scale: none; opacity: 1; visibility: inherit; transform: translate(0px, 0px);">w</div>
+                                <div style="position: relative; display: inline-block; translate: none; rotate: none; scale: none; opacity: 1; visibility: inherit; transform: translate(0px, 0px);">s</div>
+                            </div>
+                            <div style="position:relative;display:inline-block;">
+                                <div style="position: relative; display: inline-block; translate: none; rotate: none; scale: none; opacity: 1; visibility: inherit; transform: translate(0px, 0px);">&amp;</div>
+                            </div>
+                            <div style="position:relative;display:inline-block;">
+                                <div style="position: relative; display: inline-block; translate: none; rotate: none; scale: none; opacity: 1; visibility: inherit; transform: translate(0px, 0px);">B</div>
+                                <div style="position: relative; display: inline-block; translate: none; rotate: none; scale: none; opacity: 1; visibility: inherit; transform: translate(0px, 0px);">l</div>
+                                <div style="position: relative; display: inline-block; translate: none; rotate: none; scale: none; opacity: 1; visibility: inherit; transform: translate(0px, 0px);">o</div>
+                                <div style="position: relative; display: inline-block; translate: none; rotate: none; scale: none; opacity: 1; visibility: inherit; transform: translate(0px, 0px);">g</div>
+                            </div>
+                        </h2>
                     </div>
                 </div>
             </div>
-            
             <div class="row">
                 @foreach($latestBlogs as $blog)
-                    <div class="col-12 col-md-6 col-lg-4 mb-4">
-                        <article class="blog-card h-100" data-aos="fade-up" data-aos-duration="1000">
-                            <div class="blog-card__image">
-                                <a href="{{ route('blog.show', $blog->slug) }}">
-                                    @if($blog->featured_image)
-                                        <img src="{{ asset('storage/' . $blog->featured_image) }}" 
-                                             alt="{{ $blog->title }}" 
-                                             class="w-100" 
-                                             style="height: 250px; object-fit: cover;">
-                                    @else
-                                        <div class="w-100 bg-secondary d-flex align-items-center justify-content-center" style="height: 250px;">
-                                            <i class="bx bx-image" style="font-size: 48px; color: #999;"></i>
-                                        </div>
-                                    @endif
-                                </a>
-                                @if($blog->category)
-                                    <span class="blog-card__category">{{ $blog->category }}</span>
-                                @endif
-                            </div>
-                            <div class="blog-card__content p-4">
-                                <div class="blog-card__meta mb-2">
-                                    <span><i class="bx bx-calendar"></i> {{ $blog->formatted_date }}</span>
-                                    <span><i class="bx bx-time-five"></i> {{ $blog->reading_time }} min read</span>
+                    <div class="col-12 col-lg-6 col-xl-4">
+                        <div class="blog__single-wrapper" data-aos="fade-up" data-aos-duration="1000">
+                            <div class="blog__single van-tilt">
+                                <div class="blog__single-thumb">
+                                    <a href="{{ route('blog.show', $blog->slug) }}">
+                                        @if($blog->featured_image)
+                                            <img src="{{ asset('storage/' . $blog->featured_image) }}" alt="{{ $blog->title }}">
+                                        @else
+                                            <img src="assets/images/event-1.jpg" alt="{{ $blog->title }}">
+                                        @endif
+                                    </a>
+                                    <div class="tag">
+                                        <span>{{ \Carbon\Carbon::parse($blog->created_at)->format('M') }}</span>
+                                        <span>{{ \Carbon\Carbon::parse($blog->created_at)->format('d') }} / {{ \Carbon\Carbon::parse($blog->created_at)->format('y') }}</span>
+                                    </div>
                                 </div>
-                                <h4 class="blog-card__title">
-                                    <a href="{{ route('blog.show', $blog->slug) }}">{{ Str::limit($blog->title, 60) }}</a>
-                                </h4>
-                                @if($blog->excerpt)
-                                    <p class="blog-card__excerpt">{{ Str::limit($blog->excerpt, 100) }}</p>
-                                @endif
-                                <a href="{{ route('blog.show', $blog->slug) }}" class="btn btn-link p-0 text-primary">
-                                    Read More <i class="bx bx-right-arrow-alt"></i>
-                                </a>
+                                <div class="blog__single-inner px-3 py-4">
+                                    <div class="blog__single-content">
+                                        <div class="blog__single-meta mb-0">
+                                            <p><i class="icon-user"></i> {{ $blog->author->name ?? 'Admin' }}</p>
+                                        </div>
+                                        <h6 class="blog-title">
+                                            <a href="{{ route('blog.show', $blog->slug) }}">{{ Str::limit($blog->title, 60) }}</a>
+                                        </h6>
+                                    </div>
+                                </div>
                             </div>
-                        </article>
+                        </div>
                     </div>
                 @endforeach
-            </div>
-            
-            <div class="row">
-                <div class="col-12 text-center mt-3">
-                    <a href="{{ route('blog.index') }}" class="btn--primary p-2 px-5">
-                        View All Articles <i class="fa-solid fa-arrow-right ms-2"></i>
-                    </a>
-                </div>
             </div>
         </div>
     </section>
     @endif
 @endsection
 
-@push('styles')
-    <style>
-        /* Fix countdown timer shaking - use fixed width and tabular numbers */
-        .countdown-eight-timer ul li {
-            min-width: 100px;
-            width: 100px;
-        }
-
-        .countdown-eight-timer ul li span {
-            font-variant-numeric: tabular-nums;
-            font-feature-settings: "tnum";
-            min-width: 80px;
-            text-align: center;
-            display: inline-block;
-        }
-
-        /* Blog Card Styles */
-        .blog-card {
-            background: #fff;
-            border-radius: 12px;
-            overflow: hidden;
-            box-shadow: 0 2px 12px rgba(0,0,0,0.08);
-            transition: all 0.3s ease;
-        }
-        .blog-card:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 8px 24px rgba(0,0,0,0.12);
-        }
-        .blog-card__image {
-            position: relative;
-            overflow: hidden;
-        }
-        .blog-card__image img {
-            transition: transform 0.3s ease;
-        }
-        .blog-card:hover .blog-card__image img {
-            transform: scale(1.05);
-        }
-        .blog-card__category {
-            position: absolute;
-            top: 15px;
-            left: 15px;
-            background: var(--primary-color, #0496ff);
-            color: #fff;
-            padding: 6px 16px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: 600;
-            z-index: 2;
-        }
-        .blog-card__meta {
-            display: flex;
-            gap: 15px;
-            font-size: 13px;
-            color: #666;
-        }
-        .blog-card__meta i {
-            margin-right: 5px;
-        }
-        .blog-card__title {
-            font-size: 18px;
-            margin-bottom: 12px;
-            line-height: 1.4;
-        }
-        .blog-card__title a {
-            color: #333;
-            text-decoration: none;
-            transition: color 0.3s ease;
-        }
-        .blog-card__title a:hover {
-            color: var(--primary-color, #0496ff);
-        }
-        .blog-card__excerpt {
-            color: #666;
-            font-size: 14px;
-            margin-bottom: 15px;
-            line-height: 1.6;
-        }
-    </style>
-@endpush
 
 @push('scripts')
     <script>

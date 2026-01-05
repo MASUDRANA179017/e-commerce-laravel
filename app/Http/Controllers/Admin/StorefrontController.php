@@ -108,25 +108,87 @@ class StorefrontController extends Controller
 
     public function menus()
     {
-        return view('admin.storefront.menus');
+        $path = 'menus.json';
+        if (Storage::disk('local')->exists($path)) {
+            $menus = json_decode(Storage::disk('local')->get($path), true);
+        } else {
+            $menus = [
+                'main' => [
+                    ['label' => 'Home', 'url' => url('/')],
+                    ['label' => 'Shop', 'url' => route('shop.index')],
+                    ['label' => 'Blog', 'url' => route('blog.index')],
+                    ['label' => 'Contact', 'url' => route('frontend.contact')],
+                ],
+                'footer' => [
+                    ['label' => 'Shop', 'url' => route('shop.index')],
+                    ['label' => 'About', 'url' => route('frontend.about')],
+                    ['label' => 'Blog', 'url' => route('blog.index')],
+                    ['label' => 'Contact', 'url' => route('frontend.contact')],
+                ],
+                'mobile' => [
+                    ['label' => 'Home', 'url' => url('/')],
+                    ['label' => 'Shop', 'url' => route('shop.index')],
+                    ['label' => 'Categories', 'url' => route('shop.index')],
+                    ['label' => 'Contact', 'url' => route('frontend.contact')],
+                ],
+            ];
+            Storage::disk('local')->put($path, json_encode($menus));
+        }
+        $active = request('menu', 'main');
+        return view('admin.storefront.menus', compact('menus', 'active'));
     }
 
     public function storeMenu(Request $request)
     {
-        // Store menu logic
-        return response()->json(['success' => true]);
+        $request->validate([
+            'name' => 'required|string|max:50',
+        ]);
+        $path = 'menus.json';
+        $menus = [];
+        if (Storage::disk('local')->exists($path)) {
+            $menus = json_decode(Storage::disk('local')->get($path), true) ?: [];
+        }
+        $key = Str::slug($request->name);
+        if (!isset($menus[$key])) {
+            $menus[$key] = [];
+            Storage::disk('local')->put($path, json_encode($menus));
+        }
+        return redirect()->route('admin.storefront.menus', ['menu' => $key])->with('success', 'Menu created');
     }
 
     public function updateMenu(Request $request, $menu)
     {
-        // Update menu logic
-        return response()->json(['success' => true]);
+        $labels = $request->input('label', []);
+        $urls = $request->input('url', []);
+        $items = [];
+        foreach ($labels as $i => $label) {
+            $label = trim($label ?? '');
+            $url = trim($urls[$i] ?? '');
+            if ($label !== '' && $url !== '') {
+                $items[] = ['label' => $label, 'url' => $url];
+            }
+        }
+        $path = 'menus.json';
+        $menus = [];
+        if (Storage::disk('local')->exists($path)) {
+            $menus = json_decode(Storage::disk('local')->get($path), true) ?: [];
+        }
+        $menus[$menu] = $items;
+        Storage::disk('local')->put($path, json_encode($menus));
+        return redirect()->route('admin.storefront.menus', ['menu' => $menu])->with('success', 'Menu saved');
     }
 
     public function destroyMenu($menu)
     {
-        // Delete menu logic
-        return response()->json(['success' => true]);
+        $path = 'menus.json';
+        if (Storage::disk('local')->exists($path)) {
+            $menus = json_decode(Storage::disk('local')->get($path), true) ?: [];
+            if (isset($menus[$menu])) {
+                unset($menus[$menu]);
+                Storage::disk('local')->put($path, json_encode($menus));
+            }
+        }
+        return redirect()->route('admin.storefront.menus')->with('success', 'Menu deleted');
     }
 
     public function blog()

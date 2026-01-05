@@ -35,7 +35,7 @@ Route::get('/user/account-details', [App\Http\Controllers\Frontend\DashboardCont
 
 Route::post('/user/account-details', [App\Http\Controllers\Frontend\DashboardController::class, 'updateAccountDetails'])
     ->middleware(['auth', 'verified'])
-    ->name('user.account.update');
+    ->name('user.account-details.update');
 
 // User Notification Routes
 Route::prefix('user/notifications')->name('user.notifications.')->controller(\App\Http\Controllers\User\NotificationController::class)->middleware(['auth', 'verified'])->group(function () {
@@ -85,14 +85,16 @@ Route::prefix('admin')->group(function () {
     Route::post('/support', [SupportTicketController::class, 'store'])->name('admin.support.store');
 });
 
-//unit
-Route::prefix('admin')->group(function () {
-    Route::get('units', [UnitController::class, 'index'])->name('admin.units.index');
-    Route::post('units/store', [UnitController::class, 'store'])->name('admin.units.store');
-    Route::get('units/edit/{id}', [UnitController::class, 'edit'])->name('admin.units.edit');
-    Route::put('units/update/{id}', [UnitController::class, 'update'])->name('admin.units.update');
-    Route::delete('units/delete/{id}', [UnitController::class, 'destroy'])->name('admin.units.delete');
-    Route::post('units/toggle-status/{id}', [UnitController::class, 'toggleStatus'])->name('admin.units.toggleStatus');
+
+// units
+
+Route::prefix('admin')->name('admin.')->group(function () {
+    Route::get('units', [UnitController::class, 'index'])->name('units.index');
+    Route::post('units/store', [UnitController::class, 'store'])->name('units.store');
+    Route::get('units/edit/{id}', [UnitController::class, 'edit'])->name('units.edit');
+    Route::put('units/update/{id}', [UnitController::class, 'update'])->name('units.update');
+    Route::delete('units/delete/{id}', [UnitController::class, 'destroy'])->name('units.delete');
+    Route::post('units/toggle-status/{id}', [UnitController::class, 'toggleStatus'])->name('units.toggleStatus');
 });
 
 require __DIR__.'/auth.php';

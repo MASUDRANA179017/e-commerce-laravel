@@ -148,10 +148,9 @@
 
                                     <div class="col-md-4">
                                         <label class="form-label">Status</label>
-                                        <select id="status" class="form-select">
+                                        <select id="status" class="form-select" name="status">
                                             <option value="draft" {{ isset($product) && $product && strtolower($product->status) == 'draft' ? 'selected' : '' }}>Draft</option>
                                             <option value="active" {{ isset($product) && $product && strtolower($product->status) == 'active' ? 'selected' : '' }}>Active</option>
-                                            <option value="archived" {{ isset($product) && $product && strtolower($product->status) == 'archived' ? 'selected' : '' }}>Archived</option>
                                         </select>
                                     </div>
                                     <div class="col-12">
@@ -788,7 +787,11 @@
 
       $('#btnCatSave')?.addEventListener('click', () => {
           if (selectedCats.size === 0) {
-              alert('Please select at least one category');
+              if (typeof toastr !== 'undefined') {
+                  toastr.warning('Please select at least one category');
+              } else {
+                  alert('Please select at least one category');
+              }
               return;
           }
           if (!primaryCat) primaryCat = [...selectedCats][0];
@@ -900,19 +903,26 @@
               body: fd
           });
 
-          if (!res.ok) {
-              let err = {};
-              let text = '';
-              try { err = await res.json(); } catch { try { text = await res.text(); } catch {} }
-              console.error('SAVE ERROR', Object.keys(err).length ? err : text);
+      if (!res.ok) {
+          let err = {};
+          let text = '';
+          try { err = await res.json(); } catch { try { text = await res.text(); } catch {} }
+          console.error('SAVE ERROR', Object.keys(err).length ? err : text);
+          if (typeof toastr !== 'undefined') {
+              toastr.error((err && err.message) || text || 'Save failed.');
+          } else {
               alert((err && err.message) || text || 'Save failed.');
-              return;
           }
-        //   const out = await res.json().catch(() => null);
-        //   console.log('SAVE OK', out);
-        // //   alert('Product saved!');
-
+          return;
+      }
+      if (typeof toastr !== 'undefined') {
+          toastr.success('Product saved successfully');
+          setTimeout(function() {
+              window.location.href = '/admin/all-products';
+          }, 800);
+      } else {
           window.location.href = '/admin/all-products';
+      }
 
           // optional: redirect
           // if (out?.id) location.href = `/admin/products/${out.id}/edit`;
@@ -921,13 +931,11 @@
       $('#btnSaveDraft')?.addEventListener('click', async (e) => {
           e.preventDefault();
           if (!validateBasic()) return;
-          $('#status') && ($('#status').value = 'Draft');
           await sendProduct();
       });
       $('#btnPublish')?.addEventListener('click', async (e) => {
           e.preventDefault();
           if (!validateBasic()) return;
-          $('#status') && ($('#status').value = 'Active');
           await sendProduct();
       });
 
@@ -1164,7 +1172,11 @@
 
           const setId = setSel?.value;
           if (!setId) {
-              alert('Select attribute set first.');
+              if (typeof toastr !== 'undefined') {
+                  toastr.warning('Select attribute set first.');
+              } else {
+                  alert('Select attribute set first.');
+              }
               varRuleSel.value = '';
               return;
           }
@@ -1345,7 +1357,11 @@
           if (axesTerms.some(list => list.length === 0)) {
               const missing = axes.filter((_, i) => (axesTerms[i] || []).length === 0)
                   .map(aid => STATE.ATTRS[aid]?.name || aid);
-              alert('Select terms for: ' + missing.join(', '));
+              if (typeof toastr !== 'undefined') {
+                  toastr.warning('Select terms for: ' + missing.join(', '));
+              } else {
+                  alert('Select terms for: ' + missing.join(', '));
+              }
               openTab('#tab-attrs');
               return;
           }
@@ -1442,7 +1458,7 @@
               featured: $('#isFeatured')?.checked || false,
               allow_backorder: $('#allowBackorder')?.checked || false,
               visible: $('#visible')?.checked || true,
-              status: $('#status')?.value || 'Draft'
+              status: $('#status')?.value || 'draft'
           };
       }
 
@@ -1450,11 +1466,41 @@
           if (!($('#title')?.value || '').trim()) {
               openTab('#tab-basic');
               $('#title')?.focus();
+              if (typeof toastr !== 'undefined') {
+                  toastr.error('Product Title is required');
+              }
               return false;
           }
           if (selectedCats.size === 0) {
               openTab('#tab-basic');
-              alert('At least one category is required');
+              if (typeof toastr !== 'undefined') {
+                  toastr.error('At least one category is required');
+              } else {
+                  alert('At least one category is required');
+              }
+              return false;
+          }
+          const rp = parseFloat($('#regularPrice')?.value || '0');
+          if (!(rp > 0)) {
+              openTab('#tab-basic');
+              if (typeof toastr !== 'undefined') {
+                  toastr.error('Regular Price is required');
+              } else {
+                  alert('Regular Price is required');
+              }
+              $('#regularPrice')?.focus();
+              return false;
+          }
+          const spRaw = $('#salePrice')?.value || '';
+          const sp = spRaw ? parseFloat(spRaw) : null;
+          if (sp != null && sp >= rp) {
+              openTab('#tab-basic');
+              if (typeof toastr !== 'undefined') {
+                  toastr.error('Sale Price must be less than Regular Price');
+              } else {
+                  alert('Sale Price must be less than Regular Price');
+              }
+              $('#salePrice')?.focus();
               return false;
           }
           return true;
@@ -1469,28 +1515,49 @@
           if (!id) return;
 
           // Confirm deletion
-          if (!confirm('Are you sure you want to delete this image?')) return;
-
-          // AJAX delete
-          fetch(`/admin/product/image/${id}`, {
-              method: 'DELETE',
-              headers: {
-                  'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                  'Accept': 'application/json'
-              }
-          })
-          .then(res => res.json())
-          .then(data => {
-              if (data.success) {
-                  item.remove();
-                  toastr.success('Image deleted successfully');
-              } else {
-                  toastr.error('Failed to delete image: ' + (data.message || 'Unknown error'));
-              }
-          })
-          .catch(() => {
-              toastr.error('Failed to delete image');
-          });
+          var confirmMsg = 'Are you sure you want to delete this image?';
+          function doDelete() {
+              fetch(`/admin/product/image/${id}`, {
+                  method: 'DELETE',
+                  headers: {
+                      'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                      'Accept': 'application/json'
+                  }
+              })
+              .then(res => res.json())
+              .then(data => {
+                  if (data.success) {
+                      item.remove();
+                      if (typeof toastr !== 'undefined') {
+                          toastr.success('Image deleted successfully');
+                      }
+                  } else {
+                      if (typeof toastr !== 'undefined') {
+                          toastr.error('Failed to delete image: ' + (data.message || 'Unknown error'));
+                      }
+                  }
+              })
+              .catch(() => {
+                  if (typeof toastr !== 'undefined') {
+                      toastr.error('Failed to delete image');
+                  }
+              });
+          }
+          if (typeof Swal !== 'undefined') {
+              Swal.fire({
+                  title: 'Are you sure?',
+                  text: confirmMsg,
+                  icon: 'warning',
+                  showCancelButton: true,
+                  confirmButtonColor: '#3085d6',
+                  cancelButtonColor: '#d33',
+                  confirmButtonText: 'Yes'
+              }).then(function (result) {
+                  if (result.isConfirmed) doDelete();
+              });
+          } else {
+              if (confirm(confirmMsg)) doDelete();
+          }
       };
       
       window.setCover = function(btn) {
@@ -1502,11 +1569,7 @@
           const item = btn.closest('.gallery-item');
           item.classList.add('is-cover');
           item.insertAdjacentHTML('beforeend', '<span class="cover-badge">Cover</span>');
-          
-          // Re-index inputs if they exist (for new images), or we need to handle "Cover Change" for existing images?
-          // Existing images don't have radio inputs in this UI implementation for "new" cover selection logic easily
-          // unless we add hidden inputs. 
-          // For now let's minimal fix: Delete is the priority.
+        
       };
 
 

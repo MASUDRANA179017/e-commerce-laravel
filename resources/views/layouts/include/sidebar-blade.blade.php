@@ -106,9 +106,7 @@
                     <li class="menu-item {{ request()->routeIs('admin.customers.index') ? 'active' : '' }}">
                         <a href="{{ route('admin.customers.index') }}" class="menu-link">All Customers</a>
                     </li>
-                    <li class="menu-item {{ request()->routeIs('admin.customers.groups') ? 'active' : '' }}">
-                        <a href="{{ route('admin.customers.groups') }}" class="menu-link">Customer Groups</a>
-                    </li>
+                   
                 </ul>
             </li>
 

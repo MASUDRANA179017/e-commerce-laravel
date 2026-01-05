@@ -319,6 +319,63 @@
         document.getElementById('header-burger-menu').addEventListener('click', function () {
             document.getElementById('sidebar-area').classList.toggle('collapsed');
         });
+        
+        (function () {
+            function proceed(target) {
+                if (target.tagName === 'A' && target.href) {
+                    window.location.href = target.href;
+                    return;
+                }
+                var form = target.closest('form');
+                if (form) {
+                    form.submit();
+                    return;
+                }
+                target.click();
+            }
+            document.addEventListener('click', function (e) {
+                var el = e.target.closest('[data-confirm]');
+                if (!el) return;
+                e.preventDefault();
+                var msg = el.getAttribute('data-confirm') || 'Are you sure?';
+                if (typeof Swal !== 'undefined') {
+                    Swal.fire({
+                        title: 'Are you sure?',
+                        text: msg,
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#3085d6',
+                        cancelButtonColor: '#d33',
+                        confirmButtonText: 'Yes'
+                    }).then(function (result) {
+                        if (result.isConfirmed) proceed(el);
+                    });
+                } else {
+                    if (window.confirm(msg)) proceed(el);
+                }
+            });
+            document.addEventListener('submit', function (e) {
+                var form = e.target;
+                var msg = form.getAttribute('data-confirm');
+                if (!msg) return;
+                e.preventDefault();
+                if (typeof Swal !== 'undefined') {
+                    Swal.fire({
+                        title: 'Are you sure?',
+                        text: msg,
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#3085d6',
+                        cancelButtonColor: '#d33',
+                        confirmButtonText: 'Yes'
+                    }).then(function (result) {
+                        if (result.isConfirmed) form.submit();
+                    });
+                } else {
+                    if (window.confirm(msg)) form.submit();
+                }
+            });
+        })();
     </script>
 
     @stack('scripts')

@@ -434,9 +434,9 @@
                                 <div class="cat-title">${category.name}</div>
                                 <div class="cat-meta">
                                     ${category.show_on_menu ? `<span class="badge-soft rounded-pill px-2">Menu</span>` : ''}
-                                    <span class="badge badge-products rounded-pill px-2 badge-pill-click" title="View products">0</span>
-                                    <span class="badge badge-orders rounded-pill px-2 badge-pill-click" title="View orders">0</span>
-                                    <span class="badge badge-variants rounded-pill px-2 badge-pill-click" title="View variants">0</span>
+                                    <span class="badge badge-products rounded-pill px-2 badge-pill-click" title="View products">${(category.products_count != null ? category.products_count : 0)}</span>
+                                    <span class="badge badge-orders rounded-pill px-2 badge-pill-click" title="View orders">${(category.orders_count != null ? category.orders_count : 0)}</span>
+                                    <span class="badge badge-variants rounded-pill px-2 badge-pill-click" title="View variants">${(category.variants_count != null ? category.variants_count : 0)}</span>
                                     <span class="badge badge-order rounded-pill px-2">order: ${category.order || 0}</span>
                                 </div>
                             </div>
@@ -496,6 +496,7 @@
                                         li.remove();
                                         document.getElementById('chipCats').textContent =
                                             ' Categories: ' + document.querySelectorAll('#treeRoot li').length;
+                                        if (typeof updateAllBadgeCounts === 'function') updateAllBadgeCounts();
                                         Swal.fire('Deleted!', res.message, 'success');
                                     } else {
                                         Swal.fire('Failed!', 'Could not delete category', 'error');
@@ -516,6 +517,11 @@
                     category.children_recursive.forEach(c => ul.appendChild(createLi(c)));
                     li.appendChild(ul);
                 }
+
+                // store immediate counts for roll-up
+                li.dataset.prod = String(category.products_count != null ? category.products_count : 0);
+                li.dataset.orders = String(category.orders_count != null ? category.orders_count : 0);
+                li.dataset.vars = String(category.variants_count != null ? category.variants_count : 0);
 
                 return li;
             }
@@ -569,6 +575,7 @@
                 // update count
                 document.getElementById('chipCats').textContent =
                     ' Categories: ' + treeRoot.querySelectorAll('li').length;
+                if (typeof updateAllBadgeCounts === 'function') updateAllBadgeCounts();
             }
 
             // ================= RENDER FULL TREE =================
@@ -577,6 +584,7 @@
                 root.innerHTML = '';
                 TREE.forEach(n => root.appendChild(createLi(n)));
                 document.getElementById('chipCats').textContent = ' Categories: ' + root.querySelectorAll('li').length;
+                if (typeof updateAllBadgeCounts === 'function') updateAllBadgeCounts();
             }
 
             // ================= LOAD FROM SERVER =================

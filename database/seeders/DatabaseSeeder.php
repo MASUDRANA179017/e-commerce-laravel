@@ -20,6 +20,7 @@ class DatabaseSeeder extends Seeder
             BusinessSetupSeeder::class,
             \Database\Seeders\CatalogSeeder::class,
             \Database\Seeders\BrandTemplateSeeder::class,
+            \Database\Seeders\SizeChartTemplateSeeder::class,
             ProductSeeder::class,
             PageSeeder::class,
         ]);

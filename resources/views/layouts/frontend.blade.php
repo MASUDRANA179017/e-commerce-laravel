@@ -35,6 +35,7 @@
     <link rel="stylesheet" href="{{ asset('frontend/css/swiper-slider.css') }}">
     <link rel="stylesheet" href="{{ asset('frontend/css/custom.css') }}">
     <link rel="stylesheet" href="{{ asset('frontend/css/qbit-bms-style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.css">
 
     <style>
         :root {
@@ -229,6 +230,26 @@
             background: linear-gradient(135deg, #089d56 0%, #078048 100%);
             color: #fff;
             transform: translateY(-2px);
+        }
+        .action-btn-soft-success {
+            background: rgba(10, 185, 105, 0.12);
+            color: #0ab969 !important;
+            border: 1px solid #0ab969;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            transition: all 0.3s;
+            font-size: 13px;
+            font-weight: 600;
+            box-shadow: 0 6px 16px rgba(10, 185, 105, 0.15);
+        }
+        .action-btn-soft-success:hover {
+            background: linear-gradient(135deg, #089d56 0%, #078048 100%);
+            color: #fff !important;
+            border-color: transparent;
+            transform: translateY(-2px);
+            box-shadow: 0 10px 22px rgba(10, 185, 105, 0.25);
         }
 
         .action-btn-danger {
@@ -1123,6 +1144,18 @@
     <script src="{{ asset('frontend/js/ScrollTrigger.min.js') }}"></script>
     <script src="{{ asset('frontend/js/gsap.min.js') }}"></script>
     <script src="{{ asset('frontend/js/swiper-slider.js') }}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+    <script>
+        if (typeof toastr !== 'undefined') {
+            toastr.options = {
+                closeButton: true,
+                progressBar: true,
+                positionClass: 'toast-top-right',
+                timeOut: '3000'
+            };
+        }
+    </script>
 
     <!-- Polyfill for missing plugins and elements -->
     <script>
@@ -1163,22 +1196,22 @@
             } catch (e) {}
         })();
 
-        // Toast Notification Function
         function showToast(type, message) {
-            document.querySelectorAll('.toast-notification').forEach(t => t.remove());
-
-            const toast = document.createElement('div');
-            toast.className = `toast-notification toast-${type}`;
-            toast.innerHTML = `
-                <i class="fa-solid fa-${type === 'success' ? 'check-circle' : 'exclamation-circle'} me-2"></i>
-                <span>${message}</span>
-            `;
+            if (typeof toastr !== 'undefined') {
+                var map = { success: 'success', error: 'error', warning: 'warning', info: 'info' };
+                var fn = map[type] || 'info';
+                toastr[fn](String(message || ''));
+                return;
+            }
+            document.querySelectorAll('.toast-notification').forEach(function (t) { t.remove(); });
+            var toast = document.createElement('div');
+            toast.className = 'toast-notification toast-' + type;
+            toast.innerHTML = '<i class="fa-solid fa-' + (type === 'success' ? 'check-circle' : 'exclamation-circle') + ' me-2"></i><span>' + String(message || '') + '</span>';
             document.body.appendChild(toast);
-
-            setTimeout(() => toast.classList.add('show'), 100);
-            setTimeout(() => {
+            setTimeout(function () { toast.classList.add('show'); }, 100);
+            setTimeout(function () {
                 toast.classList.remove('show');
-                setTimeout(() => toast.remove(), 300);
+                setTimeout(function () { toast.remove(); }, 300);
             }, 3000);
         }
 
@@ -1416,6 +1449,62 @@
     </script>
 
     <script>
+        (function () {
+            function proceed(target) {
+                if (target.tagName === 'A' && target.href) {
+                    window.location.href = target.href;
+                    return;
+                }
+                var form = target.closest('form');
+                if (form) {
+                    form.submit();
+                    return;
+                }
+                target.click();
+            }
+            document.addEventListener('click', function (e) {
+                var el = e.target.closest('[data-confirm]');
+                if (!el) return;
+                e.preventDefault();
+                var msg = el.getAttribute('data-confirm') || 'Are you sure?';
+                if (typeof Swal !== 'undefined') {
+                    Swal.fire({
+                        title: 'Are you sure?',
+                        text: msg,
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#3085d6',
+                        cancelButtonColor: '#d33',
+                        confirmButtonText: 'Yes'
+                    }).then(function (result) {
+                        if (result.isConfirmed) proceed(el);
+                    });
+                } else {
+                    if (window.confirm(msg)) proceed(el);
+                }
+            });
+            document.addEventListener('submit', function (e) {
+                var form = e.target;
+                var msg = form.getAttribute('data-confirm');
+                if (!msg) return;
+                e.preventDefault();
+                if (typeof Swal !== 'undefined') {
+                    Swal.fire({
+                        title: 'Are you sure?',
+                        text: msg,
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#3085d6',
+                        cancelButtonColor: '#d33',
+                        confirmButtonText: 'Yes'
+                    }).then(function (result) {
+                        if (result.isConfirmed) form.submit();
+                    });
+                } else {
+                    if (window.confirm(msg)) form.submit();
+                }
+            });
+        })();
         document.addEventListener('DOMContentLoaded', function() {
             @if(Session::has('success'))
                 showToast('success', "{{ Session::get('success') }}");

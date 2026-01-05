@@ -309,21 +309,16 @@
             </ul>
         </div>
 
-        <div class="mt-0 pt-0 pb-2 btn-area1 text-center d-flex align-items-center justify-content-center">
-            <a href="{{ route('product.show', $product->slug ?? $product->id) }}"
-                class="action-btn-primary p-3 h-30px w-auto rounded-3">
-                <i class="bx bx-show fs-15 me-1"></i>View
+        <div class="mt-0 pt-0 btn-area1 text-center d-flex align-items-center justify-content-center">
+            <a href="{{ route('product.show', $product->slug ?? $product->id) }}" class="action-btn-soft-success p-3 h-30px w-auto rounded-pill">
+                <i class="bx bx-show fs-15 me-1"></i>View Details
             </a>
-            <button type="button" title="Add to Wishlist" data-id="{{ $product->id }}"
-                class="add-to-wishlist action-btn-danger p-3 ms-2 h-30px w-30px rounded-5 border-0">
+            <a href="#" title="Add to Wishlist" data-id="{{ $product->id }}" class="action-btn-danger p-3 ms-2 h-30px w-30px rounded-5">
                 <i class="bx bxs-heart fs-20"></i>
-            </button>
-            @if($inStock)
-                <button type="button" title="Add to Cart" data-id="{{ $product->id }}"
-                    class="add-to-cart action-btn-primary p-3 ms-2 h-30px w-auto rounded-3 border-0">
-                    <i class="bx bxs-cart fs-15 me-1"></i>Cart
-                </button>
-            @endif
+            </a>
+            <a href="#" title="Add to Cart" data-id="{{ $product->id }}" class="action-btn-soft-success p-3 ms-2 h-30px w-auto rounded-pill add-to-cart">
+                <i class="bx bxs-cart fs-15 me-1"></i>Add to Cart
+            </a>
         </div>
     </div>
 </div>

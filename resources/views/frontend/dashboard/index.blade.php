@@ -8,7 +8,7 @@
     <nav style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb">
         <ol class="breadcrumb align-items-center mb-0 lh-1">
             <li class="breadcrumb-item">
-                <a href="#" class="d-flex align-items-center text-decoration-none">
+                <a href="{{ route('user.dashboard') }}" class="d-flex align-items-center text-decoration-none">
                     <i class="ri-home-4-line fs-18 text-primary me-1"></i>
                     <span class="text-secondary fw-medium hover">Dashboard</span>
                 </a>

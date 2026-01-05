@@ -219,7 +219,7 @@
                                 {{ $product->title }}
                             </h1>
                             <div class="d-flex align-items-center gap-1 mt-1">
-                                <i class="fa-solid fa-star text-dark small"></i>
+                                <i class="bx bxs-star text-dark small"></i>
                                 <span class="fw-bold small">5.0</span>
                             </div>
                         </div>
@@ -248,6 +248,21 @@
                             </div>
                         </div>
 
+                        <div class="mb-4 p-3 border rounded-3">
+                            <div class="d-flex align-items-center justify-content-between mb-2">
+                                <span class="fw-semibold">Quick Overview</span>
+                                <span class="badge bg-success-subtle text-success border border-success">In Stock</span>
+                            </div>
+                            <ul class="list-unstyled mb-0">
+                                <li class="d-flex align-items-center gap-2 mb-1"><i class="bx bx-check text-success"></i> SKU: {{ $product->sku ?? $product->slug }}</li>
+                                <li class="d-flex align-items-center gap-2 mb-1"><i class="bx bx-check text-success"></i> Category: {{ $category->name ?? 'N/A' }}</li>
+                                @if($product->brand)
+                                    <li class="d-flex align-items-center gap-2 mb-1"><i class="bx bx-check text-success"></i> Brand: {{ $product->brand->name }}</li>
+                                @endif
+                                <li class="d-flex align-items-center gap-2"><i class="bx bx-check text-success"></i> {{ $product->short_desc ? Str::limit($product->short_desc, 60) : 'Fast delivery and easy returns' }}</li>
+                            </ul>
+                        </div>
+
                         <form action="{{ route('cart.add') }}" method="POST" id="add-to-cart-form">
                             @csrf
                             <input type="hidden" name="product_id" value="{{ $product->id }}">
@@ -265,16 +280,17 @@
                                             if ($tid && !isset($axes[$an][$tid])) $axes[$an][$tid] = $tn;
                                         }
                                     }
-                                @endphp
-                                <div class="mb-4">
-                                    @foreach($axes as $attrName => $terms)
-                                        @php
-                                            $isColor = stripos($attrName, 'color') !== false || stripos($attrName, 'colour') !== false;
-                                        @endphp
-                                        <div class="mb-3">
-                                            <div class="d-flex justify-content-between mb-2">
-                                                <label class="fw-medium text-dark">Select {{ $attrName }}</label>
-                                                <span class="text-muted small">Guide</span>
+                @endphp
+                <div class="mb-4">
+                    @foreach($axes as $attrName => $terms)
+                        @php
+                            $isColor = stripos($attrName, 'color') !== false || stripos($attrName, 'colour') !== false;
+                            $hasSizeAxis = ($hasSizeAxis ?? false) || (stripos($attrName, 'size') !== false);
+                        @endphp
+                        <div class="mb-3">
+                            <div class="d-flex justify-content-between mb-2">
+                                <label class="fw-medium text-dark">Select {{ $attrName }}</label>
+                                <span class="text-muted small">Guide</span>
                                             </div>
                                             <div class="d-flex flex-wrap gap-2" data-attr="{{ $attrName }}">
                                                 @foreach($terms as $tid => $tname)
@@ -298,6 +314,13 @@
                                     <input type="hidden" name="variant_id" id="variant_id" value="">
                                     <input type="hidden" name="variant" id="variant_name" value="">
                                 </div>
+                                @if($hasSizeAxis ?? false)
+                                    <div class="mb-3">
+                                        <button type="button" class="btn btn-light border rounded-3 px-3" data-bs-toggle="modal" data-bs-target="#sizeChartModal">
+                                            <i class="bx bx-ruler me-1"></i> Size Guide
+                                        </button>
+                                    </div>
+                                @endif
                             @endif
 
                             <!-- Quantity -->
@@ -325,69 +348,77 @@
                             </div>
                         </form>
 
+                        <div class="d-flex flex-wrap gap-2 mb-4">
+                            <a href="#" class="btn btn-light border rounded-3 px-3" data-bs-toggle="modal" data-bs-target="#quickOverviewModal"><i class="bx bx-info-circle me-1"></i> Quick Overview</a>
+                            <a href="#" class="btn btn-light border rounded-3 px-3"><i class="bx bx-heart me-1"></i> Add to Wishlist</a>
+                            <a href="#" class="btn btn-light border rounded-3 px-3"><i class="bx bx-git-compare me-1"></i> Compare</a>
+                        </div>
+
                         <!-- Short Description Text -->
                         <div class="mb-5">
                             <p class="text-secondary" style="line-height: 1.6;">
                                 {{ $product->short_desc ?? 'Celebrate the power and simplicity of the design. This warm, brushed fleece hoodie is made with some extra room through the shoulder.' }}
                             </p>
                         </div>
-
-                        <!-- Accordions (Description, Shipping, Details) -->
-                        <div class="accordion product-accordion" id="productAccordion">
-                            <div class="accordion-item">
-                                <h2 class="accordion-header">
-                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseDesc">
-                                        Description
-                                    </button>
-                                </h2>
-                                <div id="collapseDesc" class="accordion-collapse collapse" data-bs-parent="#productAccordion">
-                                    <div class="accordion-body">
-                                        {!! $product->description ?? 'No detailed description available.' !!}
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="accordion-item">
-                                <h2 class="accordion-header">
-                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseShipping">
-                                        Shipping & Returns
-                                    </button>
-                                </h2>
-                                <div id="collapseShipping" class="accordion-collapse collapse" data-bs-parent="#productAccordion">
-                                    <div class="accordion-body pt-2">
-                                        <p class="mb-0">Free standard shipping on orders over ৳5000. Returns accepted within 30 days of delivery.</p>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="accordion-item">
-                                <h2 class="accordion-header">
-                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseDetails">
-                                        Details
-                                    </button>
-                                </h2>
-                                <div id="collapseDetails" class="accordion-collapse collapse" data-bs-parent="#productAccordion">
-                                    <div class="accordion-body">
-                                        <ul class="list-unstyled mb-0">
-                                            <li class="mb-2"><strong>SKU:</strong> {{ $product->sku ?? $product->slug }}</li>
-                                            <li class="mb-2"><strong>Category:</strong> {{ $category->name ?? 'N/A' }}</li>
-                                            @if($product->brand)
-                                                <li><strong>Brand:</strong> {{ $product->brand->name }}</li>
-                                            @endif
-                                        </ul>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
                     </div>
                 </div>
             </div>
+            <div> 
+                 <ul class="nav nav-tabs mb-3" role="tablist">
+                                <li class="nav-item" role="presentation">
+                                    <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#tab-details" type="button" role="tab">Product Details</button>
+                                </li>
+                                <li class="nav-item" role="presentation">
+                                    <button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-additional" type="button" role="tab">Additional Information</button>
+                                </li>
+                                <li class="nav-item" role="presentation">
+                                    <button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-reviews" type="button" role="tab">Reviews</button>
+                                </li>
+                                <li class="nav-item" role="presentation">
+                                    <button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-faq" type="button" role="tab">FAQ</button>
+                                </li>
+                            </ul>
+                            <div class="tab-content">
+                                <div class="tab-pane fade show active" id="tab-details" role="tabpanel">
+                                    <h4 class="fw-semibold mb-3">{{ $product->title }}</h4>
+                                    <p class="text-secondary">{{ $product->description ? strip_tags($product->description) : ($product->short_desc ?? '') }}</p>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <ul class="list-unstyled">
+                                                <li class="mb-2"><i class="bx bx-check text-success me-2"></i> Premium fabric</li>
+                                                <li class="mb-2"><i class="bx bx-check text-success me-2"></i> Lightweight and breathable</li>
+                                                <li class="mb-2"><i class="bx bx-check text-success me-2"></i> Ideal for all seasons</li>
+                                            </ul>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <ul class="list-unstyled">
+                                                <li class="mb-2"><i class="bx bx-check text-success me-2"></i> Modern slim-fit</li>
+                                                <li class="mb-2"><i class="bx bx-check text-success me-2"></i> Button-down collar</li>
+                                                <li class="mb-2"><i class="bx bx-check text-success me-2"></i> Easy care</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="tab-pane fade" id="tab-additional" role="tabpanel">
+                                    <ul class="list-unstyled mb-0">
+                                        <li class="mb-2"><strong>SKU:</strong> {{ $product->sku ?? $product->slug }}</li>
+                                        <li class="mb-2"><strong>Category:</strong> {{ $category->name ?? 'N/A' }}</li>
+                                        @if($product->brand)
+                                            <li><strong>Brand:</strong> {{ $product->brand->name }}</li>
+                                        @endif
+                                    </ul>
+                                </div>
+                                <div class="tab-pane fade" id="tab-reviews" role="tabpanel">
+                                    <p class="text-secondary mb-0">Reviews will appear here.</p>
+                                </div>
+                                <div class="tab-pane fade" id="tab-faq" role="tabpanel">
+                                    <p class="text-secondary mb-0">Frequently asked questions will appear here.</p>
+                                </div>
+                            </div>
+    
+            </div>
         </div>
     </section>
-
-    <!-- Review Section (Separate or bottom?) - Image doesn't show it, but typically below. I'll keep it hidden or simple for now as requested 'exact same design' which implies matching the screenshot viewport. But for functional completeness, I should probably leave reviews below or remove them if strictly matching the UI. User said "exact same design", screenshot ends at accordions. I will remove the bottom Tabs section entirely to match the clean look. -->
-
-    <!-- Review Section (Hidden for exact design match) -->
-
 
     <!-- Related Products Section -->
     @if(isset($relatedProducts) && $relatedProducts->count() > 0)
@@ -405,6 +436,47 @@
             </div>
         </section>
     @endif
+
+    <!-- Size Chart Modal -->
+    <div class="modal fade" id="sizeChartModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-md modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Size Chart</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <img src="{{ asset('frontend/assets/images/size-chart.png') }}" alt="Size Chart" class="img-fluid">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Overview Modal -->
+    <div class="modal fade" id="quickOverviewModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-md modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Quick Overview</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <strong>{{ $product->title }}</strong>
+                    </div>
+                    <ul class="list-unstyled mb-0">
+                        <li class="mb-2"><strong>Price:</strong> ৳{{ number_format($effectivePrice, 0) }}</li>
+                        <li class="mb-2"><strong>SKU:</strong> {{ $product->sku ?? $product->slug }}</li>
+                        <li class="mb-2"><strong>Category:</strong> {{ $category->name ?? 'N/A' }}</li>
+                        @if($product->brand)
+                            <li class="mb-2"><strong>Brand:</strong> {{ $product->brand->name }}</li>
+                        @endif
+                        <li class="mb-2"><strong>Status:</strong> {{ $inStock ? 'In Stock' : 'Out of Stock' }}</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <!-- Image Zoom Modal -->
     <div class="modal fade" id="imageZoomModal" tabindex="-1" aria-hidden="true">

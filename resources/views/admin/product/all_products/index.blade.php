@@ -281,6 +281,7 @@
                                 <tr>
                                     <th scope="col">ID</th>
                                     <th scope="col">Product</th>
+                                    <th scope="col">Price</th>
                                     <th scope="col">Brand</th>
                                     <th scope="col">Category</th>
                                     <th scope="col">Status</th>
@@ -365,6 +366,7 @@ document.addEventListener("DOMContentLoaded", function() {
             columns: [
                 { data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false },
                 { data: 'product_info', name: 'title' },
+                { data: 'price', name: 'price' },
                 { data: 'brand_name', name: 'brand.name', orderable: false },
                 { data: 'category_name', name: 'category_name', orderable: false, searchable: false },
                 { data: 'status', name: 'status', orderable: false, searchable: false },
@@ -605,10 +607,10 @@ document.addEventListener("DOMContentLoaded", function() {
                     }
                     
                     let priceHtml = '';
-                    if (p.discount_price && p.discount_price < p.price) {
-                        const discountPercent = Math.round((1 - p.discount_price / p.price) * 100);
+                    if (p.sale_price && p.sale_price < p.price) {
+                        const discountPercent = Math.round((1 - p.sale_price / p.price) * 100);
                         priceHtml = `
-                            <span class="product-price-current">৳${parseFloat(p.discount_price).toLocaleString()}</span>
+                            <span class="product-price-current">৳${parseFloat(p.sale_price).toLocaleString()}</span>
                             <span class="product-price-original">৳${parseFloat(p.price).toLocaleString()}</span>
                             <span class="product-price-discount">${discountPercent}% OFF</span>
                         `;
