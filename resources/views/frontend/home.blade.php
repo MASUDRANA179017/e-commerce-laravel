@@ -647,30 +647,25 @@
     @endphp
     <section class="testimonial-six-area">
         <div class="container">
-            <div class="col-xl-6 col-lg-6 d-block d-lg-none text-center">
-                <div class="testimonial-six-right" data-aos="fade-up">
-                    <div class="section-eight-wrapper mb-0 text-center text-md-start" data-aos="fade-up"
-                        data-aos-duration="1000" data-aos-delay="200">
-                        <h6 class="sub-title-main"><i class="fa-solid fa-building"></i> Explore by Category</h6>
-                        <h2 class="title-animation">Browse Our <span>Featured Products</span></h2>
-                    </div>
-                    <div class="section-six-wrapper mb-4">
-                        <h6 class="sub-title-main">Testimonials</h6>
-                        <h2 class="title-animation">Real Reviews<span>from Our Customers</span></h2>
-                        <p class="section-six-paragraph">
-                            We pride ourselves on providing high-quality products and an exceptional shopping
-                            experience. Hear directly from our satisfied customers about their purchases, fast
-                            delivery, and excellent customer service.
-                        </p>
-                    </div>
-                    <div class="text-center">
-                        <div class="testimonial-six-rating">
-                            <h6>{{ number_format($avgRating, 1) }}/5 Rating</h6>
-                            <p class="text-center">Based on {{ $totalReviews }} verified purchases & feedback.</p>
+                <div class="col-xl-6 col-lg-6 d-block d-lg-none text-center">
+                    <div class="testimonial-six-right" data-aos="fade-up">
+                        <div class="section-six-wrapper mb-4">
+                            <h6 class="sub-title-main">Testimonials</h6>
+                            <h2 class="title-animation">Real Reviews from Our Customers</h2>
+                            <p class="section-six-paragraph">
+                                We pride ourselves on providing high-quality products and an exceptional shopping
+                                experience. Hear directly from our satisfied customers about their purchases, fast
+                                delivery, and excellent customer service.
+                            </p>
+                        </div>
+                        <div class="text-center">
+                            <div class="testimonial-six-rating">
+                                <h6>4.9/5 Rating</h6>
+                                <p class="text-center">Based on verified purchases & feedback.</p>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
             <div class="row align-items-center testimonial-six-frist-row">
                 <div class="col-xl-6 col-lg-6">
                     <div class="row justify-content-center">
@@ -854,66 +849,25 @@
         </div>
     </section>
 
-    @if (isset($store_sections) && $store_sections->count() > 0)
-        <section class="ecosystem-section py-5">
-            <div class="container">
-                <div class="row justify-content-center mb-4">
-                    <div class="col-lg-8 text-center">
-                        <h6 class="sub-title-main"><i class="fa-solid fa-layer-group"></i> Partners</h6>
-                        <h2 class="title-animation">
-                            Part Of The <span>{{ config('app.name', 'E-Commerce') }}</span> Partners
-                        </h2>
-                    </div>
-                </div>
-                <div class="position-relative">
-                    <div id="storeSectionSlider" class="swiper ecosystem-slider">
-                        <div class="swiper-wrapper">
-                            @foreach ($store_sections as $section)
-                                <div class="swiper-slide">
-                                    <div class="ecosystem-card">
-                                        @if ($section->link)
-                                            <a href="{{ $section->link }}" class="stretched-link"></a>
-                                        @endif
-                                        <div class="ecosystem-image"
-                                            style="background-image: url('{{ asset('storage/' . $section->image) }}');">
-                                        </div>
-                                        @if ($section->title)
-                                            <div class="ecosystem-card-title">{{ $section->title }}</div>
-                                        @endif
-                                    </div>
-                                </div>
-                            @endforeach
-                        </div>
-                    </div>
-                    <div class="ecosystem-nav ecosystem-prev" aria-label="Previous">
-                        <i class="fa-solid fa-chevron-left"></i>
-                    </div>
-                    <div class="ecosystem-nav ecosystem-next" aria-label="Next">
-                        <i class="fa-solid fa-chevron-right"></i>
-                    </div>
-                </div>
-            </div>
-        </section>
-    @endif
 
 
     <!-- FAQ Section -->
     <section class="faq-eight-area">
         <div class="container">
-            <div class="col-xl-6 col-lg-10 d-block d-xl-none text-center">
-                <div class="faq-eight-right" data-aos="fade-up" data-aos-duration="1000" data-aos-delay="300">
-                    <div class="section-eight-wrapper mb-0">
-                        <h6 class="sub-title-main">Question & Answer</h6>
-                        <h2 class="title-animation">Frequently Asked Questions</h2>
-                        <p class="section-eight-paragraph mb-2">
-                            Have questions about shopping with us? Find answers to common queries about ordering,
-                            shipping, payments, and returns. If you need more help, our customer support team
-                            is always ready to assist you.
-                        </p>
-
+                <div class="col-xl-6 col-lg-10 d-block d-xl-none text-center">
+                    <div class="faq-eight-right" data-aos="fade-up" data-aos-duration="1000" data-aos-delay="300">
+                        <div class="section-eight-wrapper mb-0">
+                            <h6 class="sub-title-main">Question & Answer</h6>
+                            <h2 class="title-animation">Frequently Asked Questions</h2>
+                            <p class="section-eight-paragraph mb-2">
+                                Have questions about shopping with us? Find answers to common queries about ordering,
+                                shipping, payments, and returns. If you need more help, our customer support team
+                                is always ready to assist you.
+                            </p>
+                           
+                        </div>
                     </div>
                 </div>
-            </div>
             <div class="row align-items-center">
                 <div class="col-xl-6">
                     <div class="faq-eight-wrapper" data-aos="fade-up" data-aos-duration="1000" data-aos-delay="200">
@@ -996,11 +950,9 @@
                                 shipping, payments, and returns. If you need more help, our customer support team
                                 is always ready to assist you.
                             </p>
-                            <div class="d-inline-block mt-3 mb-4">
-                                <a href="{{ route('frontend.contact') }}"
-                                    class="btn--primary p-2 px-5 d-none d-md-inline-block">Contact with Us <i
-                                        class="bx bx-right-arrow-alt"></i>
-                                </a>
+                            <div class="about-eight-button event-eight-btn d-block d-inline-block mt-3 mb-4">
+                                <a href="{{ route('frontend.contact') }}" class="btn--primary">Contact with Us <i
+                                        class="bx bx-right-arrow-alt"></i></a>
                             </div>
 
 
@@ -1013,61 +965,76 @@
     </section>
 
     <!-- Latest Blog Posts Section -->
-    @if ($latestBlogs && $latestBlogs->count() > 0)
-        <section class="blog fc-blog py-5 bg-light">
-            <div class="container">
-                <div class="row justify-content-center">
-                    <div class="col-xl-6">
-                        <div class="section-six-wrapper text-center" data-aos="fade-up" data-aos-duration="1000"
-                            data-aos-delay="200">
-                            <h6 class="sub-title-main"><i class="fa-solid fa-user-graduate"></i>News &amp; Blog</h6>
-                            <h2 class="title-animation mb-5">
-                                Latest Articles &amp; News
-                            </h2>
-                        </div>
+    @if($latestBlogs && $latestBlogs->count() > 0)
+    <section class="blog fc-blog py-5 bg-light">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-xl-6">
+                    <div class="section-six-wrapper text-center" data-aos="fade-up" data-aos-duration="1000" data-aos-delay="200">
+                        <h6 class="sub-title-main"><i class="fa-solid fa-user-graduate"></i>News &amp; Blog</h6>
+                        <h2 class="title-animation mb-5">
+                            <div style="position:relative;display:inline-block;">
+                                <div style="position: relative; display: inline-block; translate: none; rotate: none; scale: none; opacity: 1; visibility: inherit; transform: translate(0px, 0px);">L</div>
+                                <div style="position: relative; display: inline-block; translate: none; rotate: none; scale: none; opacity: 1; visibility: inherit; transform: translate(0px, 0px);">a</div>
+                                <div style="position: relative; display: inline-block; translate: none; rotate: none; scale: none; opacity: 1; visibility: inherit; transform: translate(0px, 0px);">t</div>
+                                <div style="position: relative; display: inline-block; translate: none; rotate: none; scale: none; opacity: 1; visibility: inherit; transform: translate(0px, 0px);">e</div>
+                                <div style="position: relative; display: inline-block; translate: none; rotate: none; scale: none; opacity: 1; visibility: inherit; transform: translate(0px, 0px);">s</div>
+                                <div style="position: relative; display: inline-block; translate: none; rotate: none; scale: none; opacity: 1; visibility: inherit; transform: translate(0px, 0px);">t</div>
+                            </div>
+                            <div style="position:relative;display:inline-block;">
+                                <div style="position: relative; display: inline-block; translate: none; rotate: none; scale: none; opacity: 1; visibility: inherit; transform: translate(0px, 0px);">N</div>
+                                <div style="position: relative; display: inline-block; translate: none; rotate: none; scale: none; opacity: 1; visibility: inherit; transform: translate(0px, 0px);">e</div>
+                                <div style="position: relative; display: inline-block; translate: none; rotate: none; scale: none; opacity: 1; visibility: inherit; transform: translate(0px, 0px);">w</div>
+                                <div style="position: relative; display: inline-block; translate: none; rotate: none; scale: none; opacity: 1; visibility: inherit; transform: translate(0px, 0px);">s</div>
+                            </div>
+                            <div style="position:relative;display:inline-block;">
+                                <div style="position: relative; display: inline-block; translate: none; rotate: none; scale: none; opacity: 1; visibility: inherit; transform: translate(0px, 0px);">&amp;</div>
+                            </div>
+                            <div style="position:relative;display:inline-block;">
+                                <div style="position: relative; display: inline-block; translate: none; rotate: none; scale: none; opacity: 1; visibility: inherit; transform: translate(0px, 0px);">B</div>
+                                <div style="position: relative; display: inline-block; translate: none; rotate: none; scale: none; opacity: 1; visibility: inherit; transform: translate(0px, 0px);">l</div>
+                                <div style="position: relative; display: inline-block; translate: none; rotate: none; scale: none; opacity: 1; visibility: inherit; transform: translate(0px, 0px);">o</div>
+                                <div style="position: relative; display: inline-block; translate: none; rotate: none; scale: none; opacity: 1; visibility: inherit; transform: translate(0px, 0px);">g</div>
+                            </div>
+                        </h2>
                     </div>
                 </div>
-                <div class="row">
-                    @foreach ($latestBlogs as $blog)
-                        <div class="col-12 col-lg-6 col-xl-4">
-                            <div class="blog__single-wrapper m-3" data-aos="fade-up" data-aos-duration="1000">
-                                <div class="blog__single van-tilt">
-                                    <div class="blog__single-thumb">
-                                        <a href="{{ route('blog.show', $blog->slug) }}">
-                                            @if ($blog->featured_image)
-                                                <img src="{{ asset('storage/' . $blog->featured_image) }}"
-                                                    alt="{{ $blog->title }}" class="img-fluid rounded w-100"
-                                                    style="height: 220px; object-fit: cover;" loading="lazy">
-                                            @else
-                                                <img src="{{ asset('frontend/assets/images/event-1.jpg') }}"
-                                                    alt="{{ $blog->title }}" class="img-fluid rounded w-100"
-                                                    style="height: 220px; object-fit: cover;" loading="lazy">
-                                            @endif
-                                        </a>
-                                        <div class="tag flex-column" style="color: var(--home-text-color);">
-                                            <span>{{ \Carbon\Carbon::parse($blog->created_at)->format('M') }}</span>
-                                            <span>{{ \Carbon\Carbon::parse($blog->created_at)->format('d') }} </span>
-                                            <span> {{ \Carbon\Carbon::parse($blog->created_at)->format('y') }}</span>
-                                        </div>
+            </div>
+            <div class="row">
+                @foreach($latestBlogs as $blog)
+                    <div class="col-12 col-lg-6 col-xl-4">
+                        <div class="blog__single-wrapper" data-aos="fade-up" data-aos-duration="1000">
+                            <div class="blog__single van-tilt">
+                                <div class="blog__single-thumb">
+                                    <a href="{{ route('blog.show', $blog->slug) }}">
+                                        @if($blog->featured_image)
+                                            <img src="{{ asset('storage/' . $blog->featured_image) }}" alt="{{ $blog->title }}">
+                                        @else
+                                            <img src="assets/images/event-1.jpg" alt="{{ $blog->title }}">
+                                        @endif
+                                    </a>
+                                    <div class="tag">
+                                        <span>{{ \Carbon\Carbon::parse($blog->created_at)->format('M') }}</span>
+                                        <span>{{ \Carbon\Carbon::parse($blog->created_at)->format('d') }} / {{ \Carbon\Carbon::parse($blog->created_at)->format('y') }}</span>
                                     </div>
-                                    <div class="blog__single-inner px-3 py-4">
-                                        <div class="blog__single-content">
-                                            <div class="blog__single-meta mb-0">
-                                                <p><i class="icon-user"></i> {{ $blog->author->name ?? 'Admin' }}</p>
-                                            </div>
-                                            <h6 class="blog-title">
-                                                <a
-                                                    href="{{ route('blog.show', $blog->slug) }}">{{ Str::limit($blog->title, 60) }}</a>
-                                            </h6>
+                                </div>
+                                <div class="blog__single-inner px-3 py-4">
+                                    <div class="blog__single-content">
+                                        <div class="blog__single-meta mb-0">
+                                            <p><i class="icon-user"></i> {{ $blog->author->name ?? 'Admin' }}</p>
                                         </div>
+                                        <h6 class="blog-title">
+                                            <a href="{{ route('blog.show', $blog->slug) }}">{{ Str::limit($blog->title, 60) }}</a>
+                                        </h6>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                    @endforeach
-                </div>
+                    </div>
+                @endforeach
             </div>
-        </section>
+        </div>
+    </section>
     @endif
 @endsection
 

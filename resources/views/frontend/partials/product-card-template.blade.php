@@ -444,27 +444,16 @@
             </ul>
         </div>
 
-        <div class="p-0 m-0 px-3 btn-area1 text-center d-flex align-items-center justify-content-between">
-            <a href="{{ route('product.show', $product->slug ?? $product->id) }}"
-                class="create-btn-info btn-view text-white fs-15 fw-600 px-3 h-25px w-40 rounded-3 me-2">
-                <i class="bx bx-show fs-15 me-1"></i>View
+        <div class="mt-0 pt-0 btn-area1 text-center d-flex align-items-center justify-content-center">
+            <a href="{{ route('product.show', $product->slug ?? $product->id) }}" class="action-btn-soft-success p-3 h-30px w-auto rounded-pill">
+                <i class="bx bx-show fs-15 me-1"></i>View Details
             </a>
-            <a type="button" title="Add to Wishlist" data-id="{{ $product->id }}"
-                class="create-btn-primary btn-wishlist text-white fs-15 fw-600 px-3 h-25px w-25px rounded-3 add-to-wishlist border-0 bg-red"
-                data-has-in-wishlist="{{ $hasInWishList ? 'true' : 'false' }}">
-                <i class="bx bxs-heart fs-20 {{ $hasInWishList ? 'text-danger' : '' }}"></i>
+            <a href="#" title="Add to Wishlist" data-id="{{ $product->id }}" class="action-btn-danger p-3 ms-2 h-30px w-30px rounded-5">
+                <i class="bx bxs-heart fs-20"></i>
             </a>
-            @if (isset($hasVariants) && $hasVariants)
-                <a href="#" title="Select Options" onclick="openQuickView({{ $product->id }}); return false;"
-                    class="create-btn-primary btn-cart text-white fs-15 fw-600 px-3 h-25px w-40 rounded-3 ms-2">
-                    <i class="bx bxs-cart fs-15 me-1"></i>Add Cart
-                </a>
-            @else
-                <a href="#" title="Add to Cart" data-id="{{ $product->id }}"
-                    class="create-btn-primary btn-cart text-white fs-15 fw-600 px-3 h-25px w-40 rounded-3 ms-2 add-to-cart">
-                    <i class="bx bxs-cart fs-15 me-1"></i>Add Cart
-                </a>
-            @endif
+            <a href="#" title="Add to Cart" data-id="{{ $product->id }}" class="action-btn-soft-success p-3 ms-2 h-30px w-auto rounded-pill add-to-cart">
+                <i class="bx bxs-cart fs-15 me-1"></i>Add to Cart
+            </a>
         </div>
     </div>
 </div>

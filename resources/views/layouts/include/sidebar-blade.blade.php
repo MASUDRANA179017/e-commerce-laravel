@@ -123,7 +123,7 @@
                     <li class="menu-item {{ request()->routeIs('admin.customers.index') ? 'active' : '' }}">
                         <a href="{{ route('admin.customers.index') }}" class="menu-link">All Customers</a>
                     </li>
-
+                   
                 </ul>
             </li>
 

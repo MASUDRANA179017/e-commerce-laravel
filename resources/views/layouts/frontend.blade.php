@@ -253,6 +253,26 @@
         [class*="border-"] {
             border-color: var(--border-color) !important;
         }
+        .action-btn-soft-success {
+            background: rgba(10, 185, 105, 0.12);
+            color: #0ab969 !important;
+            border: 1px solid #0ab969;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            transition: all 0.3s;
+            font-size: 13px;
+            font-weight: 600;
+            box-shadow: 0 6px 16px rgba(10, 185, 105, 0.15);
+        }
+        .action-btn-soft-success:hover {
+            background: linear-gradient(135deg, #089d56 0%, #078048 100%);
+            color: #fff !important;
+            border-color: transparent;
+            transform: translateY(-2px);
+            box-shadow: 0 10px 22px rgba(10, 185, 105, 0.25);
+        }
 
         /* Input focus states */
         .form-control:focus,
@@ -1516,32 +1536,20 @@
 
         function showToast(type, message) {
             if (typeof toastr !== 'undefined') {
-                var map = {
-                    success: 'success',
-                    error: 'error',
-                    warning: 'warning',
-                    info: 'info'
-                };
+                var map = { success: 'success', error: 'error', warning: 'warning', info: 'info' };
                 var fn = map[type] || 'info';
                 toastr[fn](String(message || ''));
                 return;
             }
-            document.querySelectorAll('.toast-notification').forEach(function(t) {
-                t.remove();
-            });
+            document.querySelectorAll('.toast-notification').forEach(function (t) { t.remove(); });
             var toast = document.createElement('div');
             toast.className = 'toast-notification toast-' + type;
-            toast.innerHTML = '<i class="fa-solid fa-' + (type === 'success' ? 'check-circle' : 'exclamation-circle') +
-                ' me-2"></i><span>' + String(message || '') + '</span>';
+            toast.innerHTML = '<i class="fa-solid fa-' + (type === 'success' ? 'check-circle' : 'exclamation-circle') + ' me-2"></i><span>' + String(message || '') + '</span>';
             document.body.appendChild(toast);
-            setTimeout(function() {
-                toast.classList.add('show');
-            }, 100);
-            setTimeout(function() {
+            setTimeout(function () { toast.classList.add('show'); }, 100);
+            setTimeout(function () {
                 toast.classList.remove('show');
-                setTimeout(function() {
-                    toast.remove();
-                }, 300);
+                setTimeout(function () { toast.remove(); }, 300);
             }, 3000);
         }
 
@@ -1848,7 +1856,7 @@
     </script>
 
     <script>
-        (function() {
+        (function () {
             function proceed(target) {
                 if (target.tagName === 'A' && target.href) {
                     window.location.href = target.href;
@@ -1861,7 +1869,7 @@
                 }
                 target.click();
             }
-            document.addEventListener('click', function(e) {
+            document.addEventListener('click', function (e) {
                 var el = e.target.closest('[data-confirm]');
                 if (!el) return;
                 e.preventDefault();
@@ -1875,14 +1883,14 @@
                         confirmButtonColor: '#3085d6',
                         cancelButtonColor: '#d33',
                         confirmButtonText: 'Yes'
-                    }).then(function(result) {
+                    }).then(function (result) {
                         if (result.isConfirmed) proceed(el);
                     });
                 } else {
                     if (window.confirm(msg)) proceed(el);
                 }
             });
-            document.addEventListener('submit', function(e) {
+            document.addEventListener('submit', function (e) {
                 var form = e.target;
                 var msg = form.getAttribute('data-confirm');
                 if (!msg) return;
@@ -1896,7 +1904,7 @@
                         confirmButtonColor: '#3085d6',
                         cancelButtonColor: '#d33',
                         confirmButtonText: 'Yes'
-                    }).then(function(result) {
+                    }).then(function (result) {
                         if (result.isConfirmed) form.submit();
                     });
                 } else {

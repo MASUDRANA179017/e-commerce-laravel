@@ -4,10 +4,6 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Customer;
-use App\Models\Order;
-use App\Models\Admin\Brand\Brand;
-use Illuminate\Support\Facades\DB;
-use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\DataTables;
 
@@ -15,11 +11,9 @@ class CustomerController extends Controller
 {
     public function index()
     {
+        // Get all customers
         $customers = Customer::orderBy('created_at', 'desc')->paginate(20);
-        $newThisMonth = Customer::whereMonth('created_at', Carbon::now()->month)->whereYear('created_at', Carbon::now()->year)->count();
-        $withOrders = Order::whereNotNull('user_id')->distinct('user_id')->count();
-        $brandsCount = Brand::count();
-        return view('admin.customers.index', compact('customers', 'newThisMonth', 'withOrders', 'brandsCount'));
+        return view('admin.customers.index', compact('customers'));
     }
 
     public function getData(Request $request)

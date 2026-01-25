@@ -118,10 +118,19 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-12 col-md-7 col-lg-7">
-                    <div class="product-details__content" data-aos="fade-up" data-aos-duration="1000" data-aos-delay="100">
-                        <div class="mt-0 product-meta">
-                            <h3 class="mb-1 title-animation">{{ $product->title }}</h3>
+
+                <!-- Product Info (Right Column) -->
+                <div class="col-12 col-md-5">
+                    <div class="product-info ps-lg-4">
+                        <!-- Title & Rating -->
+                        <div class="d-flex justify-content-between align-items-start mb-2">
+                            <h1 class="display-6 fw-bold mb-0 text-dark" style="font-size: 28px; letter-spacing: -0.5px;">
+                                {{ $product->title }}
+                            </h1>
+                            <div class="d-flex align-items-center gap-1 mt-1">
+                                <i class="bx bxs-star text-dark small"></i>
+                                <span class="fw-bold small">5.0</span>
+                            </div>
                         </div>
                         <div class="mt-0 product-price">
                             @if ($purchaseMin)
@@ -148,6 +157,22 @@
                                 @endif
                             @endif
                         </div>
+
+                        <div class="mb-4 p-3 border rounded-3">
+                            <div class="d-flex align-items-center justify-content-between mb-2">
+                                <span class="fw-semibold">Quick Overview</span>
+                                <span class="badge bg-success-subtle text-success border border-success">In Stock</span>
+                            </div>
+                            <ul class="list-unstyled mb-0">
+                                <li class="d-flex align-items-center gap-2 mb-1"><i class="bx bx-check text-success"></i> SKU: {{ $product->sku ?? $product->slug }}</li>
+                                <li class="d-flex align-items-center gap-2 mb-1"><i class="bx bx-check text-success"></i> Category: {{ $category->name ?? 'N/A' }}</li>
+                                @if($product->brand)
+                                    <li class="d-flex align-items-center gap-2 mb-1"><i class="bx bx-check text-success"></i> Brand: {{ $product->brand->name }}</li>
+                                @endif
+                                <li class="d-flex align-items-center gap-2"><i class="bx bx-check text-success"></i> {{ $product->short_desc ? Str::limit($product->short_desc, 60) : 'Fast delivery and easy returns' }}</li>
+                            </ul>
+                        </div>
+
                         <form action="{{ route('cart.add') }}" method="POST" id="add-to-cart-form">
                             @csrf
                             <input type="hidden" name="product_id" value="{{ $product->id }}">
@@ -174,81 +199,45 @@
                                             }
                                         }
                                     }
-                                @endphp
-
-                                <div class="variant-options-container">
-                                    @foreach ($axes as $attrName => $terms)
-                                        @php
-                                            $isColor =
-                                                stripos($attrName, 'color') !== false ||
-                                                stripos($attrName, 'colour') !== false;
-                                        @endphp
-                                        <div class="mb-2 variant-option-group">
-                                            <label class="mb-2 variant-label fw-600 fs-14 d-block" style="color: #333;">
-                                                {{ $attrName }}:
-                                            </label>
-
-                                            @if ($isColor)
-                                                <div class="variant-colors-wrapper">
-                                                    @foreach ($terms as $tid => $tname)
-                                                        <div class="variant-chip-wrapper">
-                                                            <button type="button"
-                                                                class="variant-color-chip variant-chip-btn"
-                                                                style="background-color: {{ strtolower($tname) }};"
-                                                                data-attr="{{ $attrName }}"
-                                                                data-term-id="{{ $tid }}"
-                                                                data-term-name="{{ $tname }}"
-                                                                title="{{ $tname }}" onclick="return false;">
-                                                                <i class="bx bx-x deselect-icon-color"
-                                                                    style="display: none; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 1.2rem; color: white; text-shadow: 0 0 3px rgba(0,0,0,0.5);"></i>
-                                                                <span class="color-label">{{ $tname }}</span>
-                                                            </button>
-                                                            <span class="availability-badge" style="display: none;"></span>
-                                                        </div>
-                                                    @endforeach
-                                                </div>
-                                            @else
-                                                <div class="variant-options-grid">
-                                                    @foreach ($terms as $tid => $tname)
-                                                        <div class="variant-chip-wrapper">
-                                                            <button type="button"
-                                                                class="variant-option-btn variant-chip-btn action-btn-success"
-                                                                data-attr="{{ $attrName }}"
-                                                                data-term-id="{{ $tid }}"
-                                                                data-term-name="{{ $tname }}">
-                                                                <span class="btn-text">{{ $tname }}</span>
-                                                                <i class="bx bx-x deselect-icon"
-                                                                    style="display: none;"></i>
-                                                                <span class="availability-badge"
-                                                                    style="display: none; font-size: 0.65rem; margin-left: 3px;"></span>
-                                                            </button>
-                                                        </div>
-                                                    @endforeach
-                                                </div>
-                                            @endif
+                @endphp
+                <div class="mb-4">
+                    @foreach($axes as $attrName => $terms)
+                        @php
+                            $isColor = stripos($attrName, 'color') !== false || stripos($attrName, 'colour') !== false;
+                            $hasSizeAxis = ($hasSizeAxis ?? false) || (stripos($attrName, 'size') !== false);
+                        @endphp
+                        <div class="mb-3">
+                            <div class="d-flex justify-content-between mb-2">
+                                <label class="fw-medium text-dark">Select {{ $attrName }}</label>
+                                <span class="text-muted small">Guide</span>
+                                            </div>
+                                            <div class="d-flex flex-wrap gap-2" data-attr="{{ $attrName }}">
+                                                @foreach($terms as $tid => $tname)
+                                                    @if($isColor)
+                                                        <!-- Color Circle -->
+                                                        <button type="button" class="variant-option-color"
+                                                            style="background-color: {{ strtolower($tname) }};"
+                                                            data-attr="{{ $attrName }}" data-term-id="{{ $tid }}"
+                                                            title="{{ $tname }}"></button>
+                                                    @else
+                                                        <!-- Size/Other Rectangle -->
+                                                        <button type="button" class="variant-option-size px-3"
+                                                            data-attr="{{ $attrName }}" data-term-id="{{ $tid }}">
+                                                            {{ $tname }}
+                                                        </button>
+                                                    @endif
+                                                @endforeach
+                                            </div>
                                         </div>
                                     @endforeach
                                 </div>
-
-                                <!-- Stock Information - Shows only when variant is selected -->
-                                <div id="variant-stock-info" class="p-3 mb-4 border alert alert-light d-none"
-                                    style="background: #f8f9fa;">
-                                    <div class="d-flex align-items-center justify-content-between">
-                                        <div>
-                                            <strong>Stock Available:</strong>
-                                            <span id="stock-quantity" class="ms-2 badge bg-success"
-                                                style="font-size: 0.9rem;">-</span>
-                                        </div>
-                                        <div>
-                                            <strong>SKU:</strong>
-                                            <span id="variant-sku" class="ms-2 text-muted">-</span>
-                                        </div>
+                                @if($hasSizeAxis ?? false)
+                                    <div class="mb-3">
+                                        <button type="button" class="btn btn-light border rounded-3 px-3" data-bs-toggle="modal" data-bs-target="#sizeChartModal">
+                                            <i class="bx bx-ruler me-1"></i> Size Guide
+                                        </button>
                                     </div>
-                                </div>
-
-                                <input type="hidden" name="variant_id" id="variant_id" value="">
-                                <input type="hidden" name="variant" id="variant_name" value="">
-                                <input type="hidden" name="variant_price" id="variant_price" value="">
+                                @endif
                             @endif
 
                             <div
@@ -280,38 +269,147 @@
                             </div>
                         </form>
 
-                        <div class="sku">
-                            <p><strong>SKU:</strong> {{ $product->sku ?? 'N/A' }}</p>
-                            @if ($category)
-                                <p><strong>Category:</strong> {{ $category->name }}</p>
-                            @endif
-                            <!-- Tags could be added here if available in model -->
+                        <div class="d-flex flex-wrap gap-2 mb-4">
+                            <a href="#" class="btn btn-light border rounded-3 px-3" data-bs-toggle="modal" data-bs-target="#quickOverviewModal"><i class="bx bx-info-circle me-1"></i> Quick Overview</a>
+                            <a href="#" class="btn btn-light border rounded-3 px-3"><i class="bx bx-heart me-1"></i> Add to Wishlist</a>
+                            <a href="#" class="btn btn-light border rounded-3 px-3"><i class="bx bx-git-compare me-1"></i> Compare</a>
                         </div>
 
-                        <div class="mt-3 product-actions d-flex align-items-center justify-content-between">
-                            <button class="p-3 border-0 action-btn-warning h-30px w-30 rounded-3 add-to-wishlist"
-                                data-product-id="{{ $product->id }}">
-                                <i class='bx bx-heart'></i> Add to Wishlist
-                            </button>
-                            <button class="p-3 border-0 action-btn-primary ms-2 h-30px w-30 rounded-3" id="compareBtn">
-                                <i class='bx bx-git-compare'></i> Compare
-                            </button>
+                        <!-- Short Description Text -->
+                        <div class="mb-5">
+                            <p class="text-secondary" style="line-height: 1.6;">
+                                {{ $product->short_desc ?? 'Celebrate the power and simplicity of the design. This warm, brushed fleece hoodie is made with some extra room through the shoulder.' }}
+                            </p>
                         </div>
                     </div>
                 </div>
             </div>
+            <div> 
+                 <ul class="nav nav-tabs mb-3" role="tablist">
+                                <li class="nav-item" role="presentation">
+                                    <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#tab-details" type="button" role="tab">Product Details</button>
+                                </li>
+                                <li class="nav-item" role="presentation">
+                                    <button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-additional" type="button" role="tab">Additional Information</button>
+                                </li>
+                                <li class="nav-item" role="presentation">
+                                    <button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-reviews" type="button" role="tab">Reviews</button>
+                                </li>
+                                <li class="nav-item" role="presentation">
+                                    <button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-faq" type="button" role="tab">FAQ</button>
+                                </li>
+                            </ul>
+                            <div class="tab-content">
+                                <div class="tab-pane fade show active" id="tab-details" role="tabpanel">
+                                    <h4 class="fw-semibold mb-3">{{ $product->title }}</h4>
+                                    <p class="text-secondary">{{ $product->description ? strip_tags($product->description) : ($product->short_desc ?? '') }}</p>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <ul class="list-unstyled">
+                                                <li class="mb-2"><i class="bx bx-check text-success me-2"></i> Premium fabric</li>
+                                                <li class="mb-2"><i class="bx bx-check text-success me-2"></i> Lightweight and breathable</li>
+                                                <li class="mb-2"><i class="bx bx-check text-success me-2"></i> Ideal for all seasons</li>
+                                            </ul>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <ul class="list-unstyled">
+                                                <li class="mb-2"><i class="bx bx-check text-success me-2"></i> Modern slim-fit</li>
+                                                <li class="mb-2"><i class="bx bx-check text-success me-2"></i> Button-down collar</li>
+                                                <li class="mb-2"><i class="bx bx-check text-success me-2"></i> Easy care</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="tab-pane fade" id="tab-additional" role="tabpanel">
+                                    <ul class="list-unstyled mb-0">
+                                        <li class="mb-2"><strong>SKU:</strong> {{ $product->sku ?? $product->slug }}</li>
+                                        <li class="mb-2"><strong>Category:</strong> {{ $category->name ?? 'N/A' }}</li>
+                                        @if($product->brand)
+                                            <li><strong>Brand:</strong> {{ $product->brand->name }}</li>
+                                        @endif
+                                    </ul>
+                                </div>
+                                <div class="tab-pane fade" id="tab-reviews" role="tabpanel">
+                                    <p class="text-secondary mb-0">Reviews will appear here.</p>
+                                </div>
+                                <div class="tab-pane fade" id="tab-faq" role="tabpanel">
+                                    <p class="text-secondary mb-0">Frequently asked questions will appear here.</p>
+                                </div>
+                            </div>
+    
+            </div>
         </div>
     </section>
 
-    <!-- Modals -->
-    <div id="sizeChartModal" class="modal fade" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
+    <!-- Related Products Section -->
+    @if(isset($relatedProducts) && $relatedProducts->count() > 0)
+        <section class="related-products py-5">
+            <div class="container">
+                <div class="text-center mb-5">
+                    <span class="sub-title-main"><i class="fa-solid fa-link"></i> You May Also Like</span>
+                    <h2 class="title-animation">Related <span>Products</span></h2>
+                </div>
+                <div class="row">
+                    @foreach($relatedProducts as $relatedProduct)
+                        @include('frontend.partials.product-card-template', ['product' => $relatedProduct])
+                    @endforeach
+                </div>
+            </div>
+        </section>
+    @endif
+
+    <!-- Size Chart Modal -->
+    <div class="modal fade" id="sizeChartModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-md modal-dialog-centered">
             <div class="modal-content">
-                <span class="close-btn" data-bs-dismiss="modal">&times;</span>
-                <div class="size-chart-content">
-                    <h4 class="mb-3">Size Chart</h4>
-                    <img src="{{ asset('frontend/assets/images/size-chart.png') }}" alt="Size Chart Image"
-                        class="img-fluid">
+                <div class="modal-header">
+                    <h5 class="modal-title">Size Chart</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <img src="{{ asset('frontend/assets/images/size-chart.png') }}" alt="Size Chart" class="img-fluid">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Overview Modal -->
+    <div class="modal fade" id="quickOverviewModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-md modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Quick Overview</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <strong>{{ $product->title }}</strong>
+                    </div>
+                    <ul class="list-unstyled mb-0">
+                        <li class="mb-2"><strong>Price:</strong> ৳{{ number_format($effectivePrice, 0) }}</li>
+                        <li class="mb-2"><strong>SKU:</strong> {{ $product->sku ?? $product->slug }}</li>
+                        <li class="mb-2"><strong>Category:</strong> {{ $category->name ?? 'N/A' }}</li>
+                        @if($product->brand)
+                            <li class="mb-2"><strong>Brand:</strong> {{ $product->brand->name }}</li>
+                        @endif
+                        <li class="mb-2"><strong>Status:</strong> {{ $inStock ? 'In Stock' : 'Out of Stock' }}</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Image Zoom Modal -->
+    <div class="modal fade" id="imageZoomModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-xl modal-dialog-centered">
+            <div class="modal-content bg-transparent border-0">
+                <div class="modal-body text-center p-0">
+                    <button type="button" class="btn-close btn-close-white position-absolute top-0 end-0 m-3"
+                        data-bs-dismiss="modal" aria-label="Close"></button>
+                    @if($mainImage)
+                        <img src="{{ asset('storage/' . ($mainImage->path ?? $mainImage->image)) }}" alt="{{ $product->title }}"
+                            class="img-fluid rounded-3" style="max-height: 90vh;" id="zoomedImage">
+                    @endif
                 </div>
             </div>
         </div>

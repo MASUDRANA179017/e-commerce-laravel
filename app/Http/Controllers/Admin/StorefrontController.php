@@ -134,69 +134,34 @@ class StorefrontController extends Controller
 
     public function menus()
     {
-        $this->ensureMenusSeeded();
-
-        $active = request('menu', 'main');
-        $menuModels = Menu::orderBy('name')->get();
-        $activeMenu = $menuModels->firstWhere('key', $active) ?? $menuModels->first();
-        if (!$activeMenu) {
-            $activeMenu = Menu::create(['key' => 'main', 'name' => 'Main']);
-        }
-        $active = $activeMenu->key;
-
-        // Build associative array keyed by menu key to keep view compatible
-        $menus = [];
-        foreach ($menuModels as $menu) {
-            $menus[$menu->key] = $this->buildMenuTree($menu);
-        }
-
-        // Always include static pages
-        $pages = [
-            ['label' => 'Home', 'url' => '/'],
-            ['label' => 'About Us', 'url' => '/about'],
-            ['label' => 'Contact', 'url' => '/contact'],
-            ['label' => 'Terms & Conditions', 'url' => '/terms-and-conditions'],
-            ['label' => 'Privacy Policy', 'url' => '/privacy-policy'],
-        ];
-
-        // Add database pages
-        $dbPages = Page::orderBy('title')->get(['title','slug'])->map(function($p){
-            return [
-                'label' => $p->title,
-                'url' => '/page/' . $p->slug,
+        $path = 'menus.json';
+        if (Storage::disk('local')->exists($path)) {
+            $menus = json_decode(Storage::disk('local')->get($path), true);
+        } else {
+            $menus = [
+                'main' => [
+                    ['label' => 'Home', 'url' => url('/')],
+                    ['label' => 'Shop', 'url' => route('shop.index')],
+                    ['label' => 'Blog', 'url' => route('blog.index')],
+                    ['label' => 'Contact', 'url' => route('frontend.contact')],
+                ],
+                'footer' => [
+                    ['label' => 'Shop', 'url' => route('shop.index')],
+                    ['label' => 'About', 'url' => route('frontend.about')],
+                    ['label' => 'Blog', 'url' => route('blog.index')],
+                    ['label' => 'Contact', 'url' => route('frontend.contact')],
+                ],
+                'mobile' => [
+                    ['label' => 'Home', 'url' => url('/')],
+                    ['label' => 'Shop', 'url' => route('shop.index')],
+                    ['label' => 'Categories', 'url' => route('shop.index')],
+                    ['label' => 'Contact', 'url' => route('frontend.contact')],
+                ],
             ];
-        })->values()->toArray();
-
-        // Merge both lists, avoiding duplicates
-        foreach ($dbPages as $page) {
-            if (!in_array($page, $pages)) {
-                $pages[] = $page;
-            }
+            Storage::disk('local')->put($path, json_encode($menus));
         }
-
-        $categories = \App\Models\Admin\Product\ProductCategory::with('childrenRecursive')
-            ->whereNull('parent_id')
-            ->orderByRaw('CASE WHEN `order` = 0 OR `order` IS NULL THEN 1 ELSE 0 END, `order` ASC')
-            ->get()
-            ->map(function($c){
-                $mapChild = function($child) use (&$mapChild){
-                    return [
-                        'label' => $child->name,
-                        'url' => '/shop?category=' . $child->slug,
-                        'children' => ($child->childrenRecursive ?? collect())->map(function($cc) use (&$mapChild){
-                            return $mapChild($cc);
-                        })->values()->toArray()
-                    ];
-                };
-                return [
-                    'label' => $c->name,
-                    'url' => '/shop?category=' . $c->slug,
-                    'children' => ($c->childrenRecursive ?? collect())->map(function($ch) use (&$mapChild){
-                        return $mapChild($ch);
-                    })->values()->toArray()
-                ];
-            })->values()->toArray();
-        return view('admin.storefront.menus', compact('menus', 'active', 'pages', 'categories'));
+        $active = request('menu', 'main');
+        return view('admin.storefront.menus', compact('menus', 'active'));
     }
 
     public function storeMenu(Request $request)
@@ -204,156 +169,52 @@ class StorefrontController extends Controller
         $request->validate([
             'name' => 'required|string|max:50',
         ]);
-
+        $path = 'menus.json';
+        $menus = [];
+        if (Storage::disk('local')->exists($path)) {
+            $menus = json_decode(Storage::disk('local')->get($path), true) ?: [];
+        }
         $key = Str::slug($request->name);
-        Menu::firstOrCreate(['key' => $key], ['name' => $request->name]);
-
+        if (!isset($menus[$key])) {
+            $menus[$key] = [];
+            Storage::disk('local')->put($path, json_encode($menus));
+        }
         return redirect()->route('admin.storefront.menus', ['menu' => $key])->with('success', 'Menu created');
     }
 
     public function updateMenu(Request $request, $menu)
     {
-        $menuModel = Menu::firstOrCreate(['key' => $menu], ['name' => ucfirst($menu)]);
-
         $labels = $request->input('label', []);
         $urls = $request->input('url', []);
-        $depths = $request->input('depth', []);
-        $root = [];
-        $parents = [];
+        $items = [];
         foreach ($labels as $i => $label) {
             $label = trim($label ?? '');
             $url = trim($urls[$i] ?? '');
-            $depth = (int) ($depths[$i] ?? 0);
-            if ($label === '' || $url === '') {
-                continue;
-            }
-            if ($depth < 0) $depth = 0;
-            if ($depth > 3) $depth = 3;
-            $node = ['label' => $label, 'url' => $url];
-            if ($depth === 0) {
-                $root[] = $node;
-                $parents = [];
-                $parents[0] = &$root[count($root) - 1];
-            } else {
-                $parentDepth = $depth - 1;
-                if (!isset($parents[$parentDepth])) {
-                    $root[] = $node;
-                    $parents = [];
-                    $parents[0] = &$root[count($root) - 1];
-                } else {
-                    if (!isset($parents[$parentDepth]['children'])) {
-                        $parents[$parentDepth]['children'] = [];
-                    }
-                    $parents[$parentDepth]['children'][] = $node;
-                    $parents[$depth] = &$parents[$parentDepth]['children'][count($parents[$parentDepth]['children']) - 1];
-                    foreach ($parents as $k => $v) {
-                        if ($k > $depth) {
-                            unset($parents[$k]);
-                        }
-                    }
-                }
+            if ($label !== '' && $url !== '') {
+                $items[] = ['label' => $label, 'url' => $url];
             }
         }
-
-        // Replace menu items in DB
-        \DB::transaction(function () use ($menuModel, $root) {
-            MenuItem::where('menu_id', $menuModel->id)->delete();
-            $this->saveMenuItems($menuModel->id, $root);
-        });
-
-        return redirect()->route('admin.storefront.menus', ['menu' => $menuModel->key])->with('success', 'Menu saved');
+        $path = 'menus.json';
+        $menus = [];
+        if (Storage::disk('local')->exists($path)) {
+            $menus = json_decode(Storage::disk('local')->get($path), true) ?: [];
+        }
+        $menus[$menu] = $items;
+        Storage::disk('local')->put($path, json_encode($menus));
+        return redirect()->route('admin.storefront.menus', ['menu' => $menu])->with('success', 'Menu saved');
     }
 
     public function destroyMenu($menu)
     {
-        if ($menuModel = Menu::where('key', $menu)->first()) {
-            $menuModel->delete();
-        }
-        return redirect()->route('admin.storefront.menus')->with('success', 'Menu deleted');
-    }
-
-    /**
-     * Ensure DB menus are seeded from existing file or defaults.
-     */
-    private function ensureMenusSeeded(): void
-    {
-        if (Menu::count() > 0) {
-            return;
-        }
-
-        $menusData = [];
-        // Prefer private/menus.json if present
-        if (Storage::disk('local')->exists('private/menus.json')) {
-            $menusData = json_decode(Storage::disk('local')->get('private/menus.json'), true) ?: [];
-        } elseif (Storage::disk('local')->exists('menus.json')) {
-            $menusData = json_decode(Storage::disk('local')->get('menus.json'), true) ?: [];
-        } else {
-            $menusData = [
-                'main' => [
-                    ['label' => 'Home', 'url' => '/'],
-                    ['label' => 'Shop', 'url' => '/shop'],
-                    ['label' => 'Blog', 'url' => '/blog'],
-                    ['label' => 'Contact', 'url' => '/contact'],
-                ],
-                'footer' => [
-                    ['label' => 'Shop', 'url' => '/shop'],
-                    ['label' => 'About', 'url' => '/about'],
-                    ['label' => 'Blog', 'url' => '/blog'],
-                    ['label' => 'Contact', 'url' => '/contact'],
-                ],
-                'mobile' => [
-                    ['label' => 'Home', 'url' => '/'],
-                    ['label' => 'Shop', 'url' => '/shop'],
-                    ['label' => 'Categories', 'url' => '/shop'],
-                    ['label' => 'Contact', 'url' => '/contact'],
-                ],
-            ];
-        }
-
-        foreach ($menusData as $key => $items) {
-            $menu = Menu::firstOrCreate(['key' => $key], ['name' => ucfirst($key)]);
-            $this->saveMenuItems($menu->id, $items);
-        }
-    }
-
-    /**
-     * Save menu items recursively for a menu.
-     */
-    private function saveMenuItems(int $menuId, array $items, ?int $parentId = null): void
-    {
-        foreach (array_values($items) as $idx => $item) {
-            $node = MenuItem::create([
-                'menu_id' => $menuId,
-                'parent_id' => $parentId,
-                'label' => $item['label'] ?? '',
-                'url' => $item['url'] ?? '',
-                'sort_order' => $idx,
-            ]);
-            if (!empty($item['children']) && is_array($item['children'])) {
-                $this->saveMenuItems($menuId, $item['children'], $node->id);
+        $path = 'menus.json';
+        if (Storage::disk('local')->exists($path)) {
+            $menus = json_decode(Storage::disk('local')->get($path), true) ?: [];
+            if (isset($menus[$menu])) {
+                unset($menus[$menu]);
+                Storage::disk('local')->put($path, json_encode($menus));
             }
         }
-    }
-
-    /**
-     * Build nested array of menu items for the view.
-     */
-    private function buildMenuTree(Menu $menu): array
-    {
-        $items = MenuItem::where('menu_id', $menu->id)
-            ->orderBy('sort_order')
-            ->get();
-        $byParent = $items->groupBy('parent_id');
-        $build = function($parentId) use (&$build, $byParent) {
-            return ($byParent[$parentId] ?? collect())->map(function($item) use (&$build) {
-                return [
-                    'label' => $item->label,
-                    'url' => $item->url,
-                    'children' => $build($item->id),
-                ];
-            })->values()->toArray();
-        };
-        return $build(null);
+        return redirect()->route('admin.storefront.menus')->with('success', 'Menu deleted');
     }
 
     public function blog()
