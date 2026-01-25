@@ -14,7 +14,7 @@ class InventoryController extends Controller
 {
     public function stock()
     {
-        $products = Product::with('categories', 'brand', 'coverImage')->paginate(20);
+        $products = Product::with(['categories', 'brand', 'coverImage', 'variants.options.term'])->paginate(20);
         return view('admin.inventory.stock', compact('products'));
     }
 
@@ -48,6 +48,41 @@ class InventoryController extends Controller
 
         return response()->json(['success' => true, 'new_stock' => $product->fresh()->stock_quantity]);
     }
+    
+    public function adjustVariantStock(Request $request)
+    {
+        $request->validate([
+            'variant_id' => 'required|exists:product_variants,id',
+            'quantity' => 'required|integer',
+            'type' => 'required|in:add,subtract,set',
+        ]);
+        $variant = \App\Models\ProductVariant::find($request->variant_id);
+        if (!$variant) {
+            return response()->json(['success' => false], 404);
+        }
+        $before = (int) $variant->stock_quantity;
+        switch ($request->type) {
+            case 'add':
+                $variant->increment('stock_quantity', $request->quantity);
+                $variant->product->increment('stock_quantity', $request->quantity);
+                break;
+            case 'subtract':
+                $variant->decrement('stock_quantity', $request->quantity);
+                $variant->product->decrement('stock_quantity', $request->quantity);
+                break;
+            case 'set':
+                $new = (int) $request->quantity;
+                $delta = $new - $before;
+                $variant->update(['stock_quantity' => $new]);
+                $variant->product->increment('stock_quantity', $delta);
+                break;
+        }
+        return response()->json([
+            'success' => true,
+            'new_variant_stock' => $variant->fresh()->stock_quantity,
+            'new_product_stock' => $variant->product->fresh()->stock_quantity,
+        ]);
+    }
 
     public function lowStock()
     {
@@ -59,14 +94,21 @@ class InventoryController extends Controller
 
     public function purchases()
     {
-        $purchases = Purchase::with('vendor', 'items')->latest()->paginate(15);
+        $purchases = Purchase::with([
+            'vendor',
+            'items.product',
+            'items.variant.options.term'
+        ])->latest()->paginate(15);
         return view('admin.inventory.purchases', compact('purchases'));
     }
 
     public function createPurchase()
     {
         $vendors = Vendor::where('status', 'active')->orderBy('name')->get();
-        $products = Product::select('id', 'title', 'sku')->where('status', 'active')->orderBy('title')->get();
+        $products = Product::with(['variants.options.term'])
+            ->where('status', 'active')
+            ->orderBy('title')
+            ->get();
         return view('admin.inventory.purchases-create', compact('vendors', 'products'));
     }
 
@@ -78,8 +120,10 @@ class InventoryController extends Controller
             'expected_delivery_date' => 'nullable|date',
             'items' => 'required|array|min:1',
             'items.*.product_id' => 'required|exists:products,id',
+            'items.*.variant_id' => 'nullable|exists:product_variants,id',
             'items.*.quantity' => 'required|integer|min:1',
             'items.*.unit_cost' => 'required|numeric|min:0',
+            'items.*.sell_price' => 'required|numeric|min:0',
         ]);
 
         $totalAmount = 0;
@@ -101,8 +145,10 @@ class InventoryController extends Controller
             PurchaseItem::create([
                 'purchase_id' => $purchase->id,
                 'product_id' => $item['product_id'],
+                'variant_id' => $item['variant_id'] ?? null,
                 'quantity' => $item['quantity'],
                 'unit_cost' => $item['unit_cost'],
+                'sell_price' => $item['sell_price'],
                 'total_cost' => $item['quantity'] * $item['unit_cost'],
             ]);
         }
@@ -112,7 +158,11 @@ class InventoryController extends Controller
 
     public function showPurchase($purchase)
     {
-        $purchase = Purchase::with('vendor', 'items.product')->findOrFail($purchase);
+        $purchase = Purchase::with([
+            'vendor',
+            'items.product',
+            'items.variant.options.term'
+        ])->findOrFail($purchase);
         return view('admin.inventory.purchases-show', compact('purchase'));
     }
 
@@ -132,25 +182,7 @@ class InventoryController extends Controller
             return redirect()->back()->with('success', 'Purchase order updated successfully');
         }
 
-        // Handle Stock Adjustment
-        if ($newStatus === 'received' && $oldStatus !== 'received') {
-            // Add stock
-            foreach ($purchase->items as $item) {
-                $product = Product::find($item->product_id);
-                if ($product) {
-                    $product->increment('stock_quantity', $item->quantity);
-                }
-            }
-        } elseif ($oldStatus === 'received' && $newStatus !== 'received') {
-            // Remove stock (revert operation)
-            foreach ($purchase->items as $item) {
-                $product = Product::find($item->product_id);
-                if ($product) {
-                    $product->decrement('stock_quantity', $item->quantity);
-                }
-            }
-        }
-
+        // Update purchase - Observer will handle stock adjustments automatically
         $purchase->update([
             'status' => $newStatus,
             'notes' => $request->has('notes') ? $request->notes : $purchase->notes,
@@ -161,9 +193,43 @@ class InventoryController extends Controller
 
     public function destroyPurchase($id)
     {
-        $purchase = Purchase::findOrFail($id);
-        $purchase->delete();
-        return redirect()->route('admin.inventory.purchases')->with('success', 'Purchase order deleted successfully');
+        try {
+            $purchase = Purchase::findOrFail($id);
+            $purchase->delete(); // Soft delete
+            return redirect()->route('admin.inventory.purchases')->with('success', 'Purchase order moved to trash');
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            return redirect()->route('admin.inventory.purchases')->with('error', 'Purchase order not found or already deleted');
+        } catch (\Exception $e) {
+            return redirect()->route('admin.inventory.purchases')->with('error', 'Failed to delete purchase order: ' . $e->getMessage());
+        }
+    }
+
+    public function trashedPurchases()
+    {
+        $purchases = Purchase::onlyTrashed()->latest()->paginate(15);
+        return view('admin.inventory.purchases-trash', compact('purchases'));
+    }
+
+    public function restorePurchase($id)
+    {
+        try {
+            $purchase = Purchase::onlyTrashed()->findOrFail($id);
+            $purchase->restore();
+            return redirect()->route('admin.inventory.purchases')->with('success', 'Purchase order restored successfully');
+        } catch (\Exception $e) {
+            return redirect()->route('admin.inventory.purchases')->with('error', 'Failed to restore purchase order');
+        }
+    }
+
+    public function forceDeletePurchase($id)
+    {
+        try {
+            $purchase = Purchase::onlyTrashed()->findOrFail($id);
+            $purchase->forceDelete();
+            return redirect()->route('admin.inventory.purchases.trash')->with('success', 'Purchase order permanently deleted');
+        } catch (\Exception $e) {
+            return redirect()->route('admin.inventory.purchases.trash')->with('error', 'Failed to permanently delete purchase order');
+        }
     }
 
     public function vendors()

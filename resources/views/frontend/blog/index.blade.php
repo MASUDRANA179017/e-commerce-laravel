@@ -4,7 +4,7 @@
 
     @section('content')
         <!-- Blog Banner -->
-        <section class="banner-two">
+        <section class="banner-two pt-120 pb-120">
             <div class="banner-two__slider swiper">
                 <div class="swiper-wrapper">
                     <div class="swiper-slide">
@@ -196,4 +196,3 @@
             }
         </style>
     @endpush
-@endsection

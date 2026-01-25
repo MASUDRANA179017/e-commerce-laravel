@@ -5,7 +5,7 @@ node_modules/
 /vendor/
 
 ## Laravel / PHP
-.env
+/.env
 .env.*.local
 /public/storage
 /storage/*.key

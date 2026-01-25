@@ -45,6 +45,17 @@
                                         <div>
                                             <span class="d-block fw-medium">{{ $item->product->title ?? 'Unknown Product' }}</span>
                                             <small class="text-muted">{{ $item->product->sku ?? '' }}</small>
+                                            @if($item->variant)
+                                                <div class="small text-muted">
+                                                    @php
+                                                        $variantTerms = $item->variant->options->map(function($opt){ return $opt->term->name ?? null; })->filter()->values()->all();
+                                                    @endphp
+                                                    @if(!empty($variantTerms))
+                                                        <span>{{ implode(', ', $variantTerms) }}</span>
+                                                    @endif
+                                                    <span> • Stock: {{ $item->variant->stock_quantity }}</span>
+                                                </div>
+                                            @endif
                                         </div>
                                     </div>
                                 </td>

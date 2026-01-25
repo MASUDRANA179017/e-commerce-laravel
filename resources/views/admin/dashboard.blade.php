@@ -562,6 +562,54 @@
             </div>
         </div>
     </div>
+
+    <!-- Dashboard Footer -->
+    <div class="col-12 mt-5 pt-4">
+        <div class="card border-0 bg-light">
+            <div class="card-body p-4">
+                <div class="row">
+                    <div class="col-md-6 mb-3 mb-md-0">
+                        <h6 class="fw-bold mb-2">{{ config('app.name', 'QBit Tech') }} E-Commerce</h6>
+                        <p class="text-muted mb-0 small">
+                            © {{ date('Y') }} {{ config('app.name', 'QBit Tech') }}. All rights reserved.
+                        </p>
+                        <p class="text-muted small mt-2">
+                            <strong>Company Information:</strong><br>
+                            📞 Contact: +880 1700-000000<br>
+                            📧 Email: support@qbittech.com<br>
+                            📍 Address: Dhaka, Bangladesh
+                        </p>
+                    </div>
+                    <div class="col-md-6">
+                        <h6 class="fw-bold mb-2">Important Links</h6>
+                        <ul class="list-unstyled small">
+                            <li>
+                                <a href="{{ route('admin.terms_condition.index') }}" class="text-muted text-decoration-none">
+                                    <i class="bx bx-link-external"></i> Terms & Conditions
+                                </a>
+                            </li>
+                            <li class="mt-2">
+                                <a href="{{ route('admin.business.setup') }}" class="text-muted text-decoration-none">
+                                    <i class="bx bx-link-external"></i> Business Settings
+                                </a>
+                            </li>
+                            <li class="mt-2">
+                                <span class="text-muted small">
+                                    <i class="bx bx-info-circle"></i> Platform Version: 1.0
+                                </span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <hr class="my-3">
+                <div class="text-center">
+                    <p class="text-muted small mb-0">
+                        🔒 This is a secure admin panel. Unauthorized access is prohibited.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 @endsection
 

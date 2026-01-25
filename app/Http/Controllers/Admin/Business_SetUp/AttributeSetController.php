@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\DB;
 use App\Models\Catalog\Category;
 use App\Models\Catalog\AttributeSet;
 use App\Models\Catalog\AttributeSetItem;
+use App\Models\Product;
 
 class AttributeSetController extends Controller
 {
@@ -115,10 +116,14 @@ class AttributeSetController extends Controller
 
     public function destroy(AttributeSet $attribute_set)
     {
-        // Optional guard if sets can be attached elsewhere
-        // if ($attribute_set->products()->exists()) {
-        //     return response()->json(['message' => 'Set is in use'], 409);
-        // }
+        // Block delete if products are using this attribute set to avoid FK violation
+        $productCount = Product::where('attribute_set_id', $attribute_set->id)->count();
+        if ($productCount > 0) {
+            return response()->json([
+                'ok' => false,
+                'message' => "Cannot delete. This attribute set is linked to {$productCount} product(s). Reassign products to a different attribute set first."
+            ], 409);
+        }
 
         DB::transaction(function () use ($attribute_set): void {
             // If FK is not ON DELETE CASCADE:

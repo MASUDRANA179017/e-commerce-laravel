@@ -36,6 +36,47 @@ class ProductController extends Controller
             abort(404, 'Product not found');
         }
 
+        $purchaseMin = null;
+        $purchaseMax = null;
+        try {
+            if ($product->variants && $product->variants->count() > 0) {
+                // For variants, we only fetch purchase price range if we don't have variant-specific manual prices?
+                // Or maybe we should check if the main product has a price?
+                // For now, let's keep variant logic as is, or maybe apply similar logic if needed.
+                // But usually variants are complex. Let's focus on simple products first which is the most common issue.
+                
+                $vids = $product->variants->pluck('id')->all();
+                $range = \Illuminate\Support\Facades\DB::table('purchase_items')
+                    ->join('purchases', 'purchase_items.purchase_id', '=', 'purchases.id')
+                    ->whereIn('purchase_items.variant_id', $vids)
+                    ->where('purchases.status', 'received')
+                    ->selectRaw('MIN(purchase_items.sell_price) AS min_price, MAX(purchase_items.sell_price) AS max_price')
+                    ->first();
+                if ($range) {
+                    $purchaseMin = $range->min_price !== null ? (float) $range->min_price : null;
+                    $purchaseMax = $range->max_price !== null ? (float) $range->max_price : null;
+                }
+            } else {
+                // For simple products, ONLY fetch purchase price if manual price is not set
+                $manualPrice = $product->sale_price > 0 ? $product->sale_price : $product->price;
+                
+                if ($manualPrice <= 0) {
+                    $range = \Illuminate\Support\Facades\DB::table('purchase_items')
+                        ->join('purchases', 'purchase_items.purchase_id', '=', 'purchases.id')
+                        ->where('purchase_items.product_id', $product->id)
+                        ->whereNull('purchase_items.variant_id')
+                        ->where('purchases.status', 'received')
+                        ->selectRaw('MIN(purchase_items.sell_price) AS min_price, MAX(purchase_items.sell_price) AS max_price')
+                        ->first();
+                    if ($range) {
+                        $purchaseMin = $range->min_price !== null ? (float) $range->min_price : null;
+                        $purchaseMax = $range->max_price !== null ? (float) $range->max_price : null;
+                    }
+                }
+            }
+        } catch (\Exception $e) {
+        }
+
         // Get related products from same category
         $relatedProducts = collect();
         try {
@@ -71,12 +112,12 @@ class ProductController extends Controller
             // If query fails, use empty collection
         }
 
-        return view('frontend.product-details', compact('product', 'relatedProducts'));
+        return view('frontend.product-details', compact('product', 'relatedProducts', 'purchaseMin', 'purchaseMax'));
     }
 
     public function variants($id)
     {
-        $variants = ProductVariant::with(['options.attribute', 'options.term'])
+        $variants = ProductVariant::with(['options.attribute', 'options.term', 'product'])
             ->where('product_id', $id)
             ->get()
             ->map(function ($variant) {
@@ -85,13 +126,67 @@ class ProductController extends Controller
                     $tn = $opt->term->name ?? '';
                     return $an . ': ' . $tn;
                 })->join(' | ');
+                $base = $variant->price;
+                if ($base === null || $base <= 0) {
+                    $purchaseSell = \Illuminate\Support\Facades\DB::table('purchase_items')
+                        ->join('purchases', 'purchase_items.purchase_id', '=', 'purchases.id')
+                        ->where('purchase_items.variant_id', $variant->id)
+                        ->where('purchases.status', 'received')
+                        ->orderByDesc('purchases.purchase_date')
+                        ->value('purchase_items.sell_price');
+                    $base = $purchaseSell ?? ($variant->product->sale_price ?? $variant->product->price);
+                }
                 return [
                     'id' => $variant->id,
                     'name' => $name ?: 'Default',
                     'sku' => $variant->sku,
+                    'price' => $base,
                 ];
             });
         return response()->json(['variants' => $variants]);
+    }
+
+    public function quickView($id)
+    {
+        $product = Product::with(['images', 'categories', 'brand', 'variants.options.attribute', 'variants.options.term'])
+            ->where('id', $id)
+            ->firstOrFail();
+
+        $purchaseMin = null;
+        $purchaseMax = null;
+        try {
+            if ($product->variants && $product->variants->count() > 0) {
+                $vids = $product->variants->pluck('id')->all();
+                $range = \Illuminate\Support\Facades\DB::table('purchase_items')
+                    ->join('purchases', 'purchase_items.purchase_id', '=', 'purchases.id')
+                    ->whereIn('purchase_items.variant_id', $vids)
+                    ->where('purchases.status', 'received')
+                    ->selectRaw('MIN(purchase_items.sell_price) AS min_price, MAX(purchase_items.sell_price) AS max_price')
+                    ->first();
+                if ($range) {
+                    $purchaseMin = $range->min_price !== null ? (float) $range->min_price : null;
+                    $purchaseMax = $range->max_price !== null ? (float) $range->max_price : null;
+                }
+            } else {
+                $manualPrice = $product->sale_price > 0 ? $product->sale_price : $product->price;
+                if ($manualPrice <= 0) {
+                    $range = \Illuminate\Support\Facades\DB::table('purchase_items')
+                        ->join('purchases', 'purchase_items.purchase_id', '=', 'purchases.id')
+                        ->where('purchase_items.product_id', $product->id)
+                        ->whereNull('purchase_items.variant_id')
+                        ->where('purchases.status', 'received')
+                        ->selectRaw('MIN(purchase_items.sell_price) AS min_price, MAX(purchase_items.sell_price) AS max_price')
+                        ->first();
+                    if ($range) {
+                        $purchaseMin = $range->min_price !== null ? (float) $range->min_price : null;
+                        $purchaseMax = $range->max_price !== null ? (float) $range->max_price : null;
+                    }
+                }
+            }
+        } catch (\Exception $e) {
+        }
+
+        return view('frontend.partials.quick-view-content', compact('product', 'purchaseMin', 'purchaseMax'));
     }
 
     /**
@@ -101,38 +196,42 @@ class ProductController extends Controller
     {
         $request->validate([
             'rating' => 'required|integer|min:1|max:5',
-            'comment' => 'required|string|max:1000',
+            'title' => 'nullable|string|max:255',
+            'comment' => 'required|string|min:10|max:1000',
         ]);
 
         $product = Product::findOrFail($productId);
+        $user = auth()->user();
 
-        // Check if product has reviews relationship
-        if (method_exists($product, 'reviews')) {
-            // Check if user already reviewed this product
-            $existingReview = $product->reviews()
-                ->where('user_id', auth()->id())
-                ->first();
+        // Check if user already reviewed this product
+        $existingReview = \App\Models\ProductReview::where('product_id', $productId)
+            ->where('user_id', $user->id)
+            ->first();
 
-            if ($existingReview) {
-                // Update existing review
-                $existingReview->update([
-                    'rating' => $request->rating,
-                    'comment' => $request->comment,
-                ]);
-                $message = 'Your review has been updated!';
-            } else {
-                // Create new review
-                $product->reviews()->create([
-                    'user_id' => auth()->id(),
-                    'rating' => $request->rating,
-                    'comment' => $request->comment,
-                ]);
-                $message = 'Thank you for your review!';
-            }
-        } else {
-            $message = 'Thank you for your feedback! Reviews feature coming soon.';
+        if ($existingReview) {
+            return back()->with('error', 'You have already reviewed this product.');
         }
 
-        return back()->with('success', $message);
+        // Check if user purchased this product (verified purchase)
+        $verifiedPurchase = \App\Models\Order::where('user_id', $user->id)
+            ->whereHas('items', function ($q) use ($productId) {
+                $q->where('product_id', $productId);
+            })
+            ->where('status', 'delivered')
+            ->exists();
+
+        \App\Models\ProductReview::create([
+            'product_id' => $productId,
+            'user_id' => $user->id,
+            'reviewer_name' => $user->name,
+            'reviewer_email' => $user->email,
+            'rating' => $request->rating,
+            'title' => $request->title,
+            'comment' => $request->comment,
+            'status' => 'pending',
+            'verified_purchase' => $verifiedPurchase,
+        ]);
+
+        return back()->with('success', 'Thank you for your review! It will be visible after approval.');
     }
 }

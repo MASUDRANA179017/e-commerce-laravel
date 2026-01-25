@@ -1,273 +1,215 @@
 <!-- Footer Start -->
-<footer class="footer-area" style="background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); padding-top: 80px;">
-    <div class="container">
-        <!-- Footer Top -->
-        <div class="row g-4 pb-5">
-            <!-- Company Info -->
-            <div class="col-lg-4 col-md-6">
-                <div class="footer-widget">
-                    <a href="{{ route('home') }}" class="d-inline-flex align-items-center text-decoration-none mb-4">
-                        @if($business_setup && $business_setup->logo)
-                            <img src="{{ asset('storage/' . $business_setup->logo) }}" alt="{{ $business_setup->company_name }}" style="height: 50px;">
-                        @else
-                            <div class="logo-icon me-2" style="width: 50px; height: 50px; background: #0496ff; border-radius: 12px; display: flex; align-items: center; justify-content: center;">
-                                <i class="fa-solid fa-cart-shopping text-white" style="font-size: 22px;"></i>
+<footer class="footer-two footer-six-area footer-eight-area"
+            data-background="{{ asset('frontend/assets/images/footer-eight-bg.jpg') }}">
+            <div class="container">
+                <div class="footer-eight-top">
+                    <div class="row">
+                        <div class="col-xl-3 col-lg-3 col-md-3 d-flex align-items-center">
+                            <div class="footer-eight-top-wrap">
+                                <h4>Subscribe to Our Newsletter</h4>
                             </div>
-                            <div class="logo-text">
-                                <h4 class="mb-0 text-white" style="font-weight: 700;">{{ $business_setup->company_name ?? 'GrowUp' }}</h4>
-                                <small style="font-size: 10px; color: rgba(255,255,255,0.5); letter-spacing: 1px;">E-COMMERCE</small>
+                        </div>
+                        <div class="col-xl-3 col-lg-3 col-md-3 d-flex align-items-center">
+                            <div class="footer-eight-top-wrap">
+                                <div class="subscribe-six-input">
+                                    <input type="email" placeholder="Enter your email">
+                                    <div class="subscribe-six-button subscribe-eight-button">
+                                        <button
+                                            class="btn--primary btn-six-primary d-none d-md-flex text-white fw-medium rounded-5">Subscribe</button>
+                                    </div>
+                                </div>
                             </div>
+                        </div>
+                        @if($business_setup && ($business_setup->official_contact_number[0] ?? null))
+                        <div class="col-xl-3 col-lg-3 col-md-3 d-flex align-items-center">
+                            <div class="footer-eight-top-info position-relative call">
+                                <div class="footer-eight-top-icon">
+                                    <span><i class="fa-solid fa-phone"></i></span>
+                                </div>
+                                <div class="footer-eight-top-info-con">
+                                    <p>Sales Hotline</p>
+                                    <a class="apece-link-line" href="tel:{{ str_replace([' ', '-'], '', $business_setup->official_contact_number[0]) }}">{{ $business_setup->official_contact_number[0] }}</a>
+                                </div>
+                            </div>
+                        </div>
                         @endif
-                    </a>
-                    <p style="color: rgba(255,255,255,0.6); font-size: 14px; line-height: 1.8; margin-bottom: 25px;">
-                        {{ $business_setup->footer_text ?? 'Your ultimate shopping destination for quality products at the best prices. We deliver happiness right to your doorstep.' }}
-                    </p>
-                    
-                    <!-- Social Icons -->
-                    <div class="social-icons d-flex gap-2">
-                        @if($business_setup && $business_setup->facebook_status && $business_setup->facebook_url)
-                        <a href="{{ $business_setup->facebook_url }}" target="_blank" class="social-icon" style="width: 42px; height: 42px; background: rgba(255,255,255,0.1); border-radius: 10px; display: flex; align-items: center; justify-content: center; color: #fff; text-decoration: none; transition: all 0.3s;">
-                            <i class="fab fa-facebook-f"></i>
-                        </a>
-                        @endif
-                        @if($business_setup && $business_setup->twitter_status && $business_setup->twitter_url)
-                        <a href="{{ $business_setup->twitter_url }}" target="_blank" class="social-icon" style="width: 42px; height: 42px; background: rgba(255,255,255,0.1); border-radius: 10px; display: flex; align-items: center; justify-content: center; color: #fff; text-decoration: none; transition: all 0.3s;">
-                            <i class="fab fa-twitter"></i>
-                        </a>
-                        @endif
-                        @if($business_setup && $business_setup->instagram_status && $business_setup->instagram_url)
-                        <a href="{{ $business_setup->instagram_url }}" target="_blank" class="social-icon" style="width: 42px; height: 42px; background: rgba(255,255,255,0.1); border-radius: 10px; display: flex; align-items: center; justify-content: center; color: #fff; text-decoration: none; transition: all 0.3s;">
-                            <i class="fab fa-instagram"></i>
-                        </a>
-                        @endif
-                        @if($business_setup && $business_setup->youtube_status && $business_setup->youtube_url)
-                        <a href="{{ $business_setup->youtube_url }}" target="_blank" class="social-icon" style="width: 42px; height: 42px; background: rgba(255,255,255,0.1); border-radius: 10px; display: flex; align-items: center; justify-content: center; color: #fff; text-decoration: none; transition: all 0.3s;">
-                            <i class="fab fa-youtube"></i>
-                        </a>
-                        @endif
-                        @if($business_setup && $business_setup->linkedin_status && $business_setup->linkedin_url)
-                        <a href="{{ $business_setup->linkedin_url }}" target="_blank" class="social-icon" style="width: 42px; height: 42px; background: rgba(255,255,255,0.1); border-radius: 10px; display: flex; align-items: center; justify-content: center; color: #fff; text-decoration: none; transition: all 0.3s;">
-                            <i class="fab fa-linkedin-in"></i>
-                        </a>
+                        @if($business_setup && ($business_setup->hotline_number[0] ?? null))
+                        <div class="col-xl-3 col-lg-3 col-md-3 d-flex align-items-center">
+                            <div class="footer-eight-top-info position-relative gamil">
+                                <div class="footer-eight-top-icon">
+                                    <span><i class="fa-solid fa-headset"></i></span>
+                                </div>
+                                <div class="footer-eight-top-info-con">
+                                    <p>Support</p>
+                                    <a class="apece-link-line" href="tel:{{ str_replace([' ', '-'], '', $business_setup->hotline_number[0]) }}">{{ $business_setup->hotline_number[0] }}</a>
+                                </div>
+                            </div>
+                        </div>
                         @endif
                     </div>
                 </div>
-            </div>
-            
-            <!-- Quick Links -->
-            <div class="col-lg-2 col-md-6">
-                <div class="footer-widget">
-                    <h5 style="color: #fff; font-weight: 600; margin-bottom: 25px; position: relative; padding-bottom: 15px;">
-                        Quick Links
-                        <span style="position: absolute; bottom: 0; left: 0; width: 40px; height: 3px; background: #0496ff; border-radius: 2px;"></span>
-                    </h5>
-                    <ul class="list-unstyled">
-                        <li class="mb-3">
-                            <a href="{{ route('home') }}" style="color: rgba(255,255,255,0.6); text-decoration: none; font-size: 14px; transition: all 0.3s; display: flex; align-items: center;">
-                                <i class="fa-solid fa-angle-right me-2" style="color: #0496ff; font-size: 12px;"></i> Home
-                            </a>
-                        </li>
-                        <li class="mb-3">
-                            <a href="{{ route('shop.index') }}" style="color: rgba(255,255,255,0.6); text-decoration: none; font-size: 14px; transition: all 0.3s; display: flex; align-items: center;">
-                                <i class="fa-solid fa-angle-right me-2" style="color: #0496ff; font-size: 12px;"></i> Shop
-                            </a>
-                        </li>
-                        <li class="mb-3">
-                            <a href="{{ route('frontend.about') }}" style="color: rgba(255,255,255,0.6); text-decoration: none; font-size: 14px; transition: all 0.3s; display: flex; align-items: center;">
-                                <i class="fa-solid fa-angle-right me-2" style="color: #0496ff; font-size: 12px;"></i> About Us
-                            </a>
-                        </li>
-                        <li class="mb-3">
-                            <a href="{{ route('frontend.contact') }}" style="color: rgba(255,255,255,0.6); text-decoration: none; font-size: 14px; transition: all 0.3s; display: flex; align-items: center;">
-                                <i class="fa-solid fa-angle-right me-2" style="color: #0496ff; font-size: 12px;"></i> Contact
-                            </a>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-            
-            <!-- Customer Service -->
-            <div class="col-lg-2 col-md-6">
-                <div class="footer-widget">
-                    <h5 style="color: #fff; font-weight: 600; margin-bottom: 25px; position: relative; padding-bottom: 15px;">
-                        Support
-                        <span style="position: absolute; bottom: 0; left: 0; width: 40px; height: 3px; background: #0496ff; border-radius: 2px;"></span>
-                    </h5>
-                    <ul class="list-unstyled">
-                        <li class="mb-3">
-                            <a href="#" style="color: rgba(255,255,255,0.6); text-decoration: none; font-size: 14px; transition: all 0.3s; display: flex; align-items: center;">
-                                <i class="fa-solid fa-angle-right me-2" style="color: #0496ff; font-size: 12px;"></i> FAQs
-                            </a>
-                        </li>
-                        <li class="mb-3">
-                            <a href="#" style="color: rgba(255,255,255,0.6); text-decoration: none; font-size: 14px; transition: all 0.3s; display: flex; align-items: center;">
-                                <i class="fa-solid fa-angle-right me-2" style="color: #0496ff; font-size: 12px;"></i> Shipping Info
-                            </a>
-                        </li>
-                        <li class="mb-3">
-                            <a href="#" style="color: rgba(255,255,255,0.6); text-decoration: none; font-size: 14px; transition: all 0.3s; display: flex; align-items: center;">
-                                <i class="fa-solid fa-angle-right me-2" style="color: #0496ff; font-size: 12px;"></i> Returns
-                            </a>
-                        </li>
-                        <li class="mb-3">
-                            <a href="{{ route('frontend.terms') }}" style="color: rgba(255,255,255,0.6); text-decoration: none; font-size: 14px; transition: all 0.3s; display: flex; align-items: center;">
-                                <i class="fa-solid fa-angle-right me-2" style="color: #0496ff; font-size: 12px;"></i> Terms & Conditions
-                            </a>
-                        </li>
-                        <li class="mb-3">
-                            <a href="{{ route('frontend.privacy') }}" style="color: rgba(255,255,255,0.6); text-decoration: none; font-size: 14px; transition: all 0.3s; display: flex; align-items: center;">
-                                <i class="fa-solid fa-angle-right me-2" style="color: #0496ff; font-size: 12px;"></i> Privacy Policy
-                            </a>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-            
-            <!-- Contact Info -->
-            <div class="col-lg-4 col-md-6">
-                <div class="footer-widget">
-                    <h5 style="color: #fff; font-weight: 600; margin-bottom: 25px; position: relative; padding-bottom: 15px;">
-                        Contact Us
-                        <span style="position: absolute; bottom: 0; left: 0; width: 40px; height: 3px; background: #0496ff; border-radius: 2px;"></span>
-                    </h5>
-                    
-                    <!-- Contact Cards -->
-                    <div class="contact-cards">
-                        <div class="contact-card d-flex align-items-start gap-3 mb-4" style="padding: 15px; background: rgba(255,255,255,0.05); border-radius: 12px;">
-                            <div style="width: 45px; height: 45px; background: rgba(4, 150, 255, 0.2); border-radius: 10px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
-                                <i class="fa-solid fa-location-dot" style="color: #0496ff; font-size: 18px;"></i>
+
+                <div class="row">
+                    <!-- Brand / About -->
+                    <div class="col-12 col-md-6 col-xl-3">
+                        <div class="footer-two__widget">
+                            <div class="footer-two__widget-logo mb-2">
+                                <a href="{{ route('home') }}">
+                                    <img src="{{ $business_setup && $business_setup->logo ? asset('storage/' . $business_setup->logo) : asset('frontend/assets/images/logo.png') }}"
+                                        alt="{{ config('app.name') }}" height="50">
+                                </a>
                             </div>
-                            <div>
-                                <h6 style="color: #fff; font-weight: 500; margin-bottom: 5px; font-size: 14px;">Address</h6>
-                                <p style="color: rgba(255,255,255,0.6); font-size: 13px; margin-bottom: 0; line-height: 1.6;">
-                                    {{ $business_setup->street_address ?? '123 Commerce Street' }}<br>
-                                    {{ $business_setup->city_thana ?? '' }} {{ $business_setup->district ?? 'Dhaka-1000, Bangladesh' }}
+                            <div class="footer-two__widget-content">
+                                <p class="sub-itle-lg">
+                                    {{ $business_setup->footer_text ?? 'Your one-stop destination for quality products at affordable prices. Shop with confidence and enjoy fast delivery.' }}
+                                </p>
+                                <div class="social">
+                                    @if($business_setup && $business_setup->facebook_status && $business_setup->facebook_url)
+                                        <a href="{{ $business_setup->facebook_url }}" target="_blank" aria-label="facebook"><i class="fa-brands fa-facebook-f"></i></a>
+                                    @endif
+                                    @if(isset($business_setup->instagram_status) && isset($business_setup->instagram_url) && $business_setup->instagram_status && $business_setup->instagram_url)
+                                        <a href="{{ $business_setup->instagram_url }}" target="_blank" aria-label="instagram"><i class="fa-brands fa-instagram"></i></a>
+                                    @endif
+                                    @if($business_setup && $business_setup->twitter_status && $business_setup->twitter_url)
+                                        <a href="{{ $business_setup->twitter_url }}" target="_blank" aria-label="twitter"><i class="fa-brands fa-twitter"></i></a>
+                                    @endif
+                                    @if($business_setup && $business_setup->youtube_status && $business_setup->youtube_url)
+                                        <a href="{{ $business_setup->youtube_url }}" target="_blank" aria-label="youtube"><i class="fa-brands fa-youtube"></i></a>
+                                    @endif
+                                    @if($business_setup && $business_setup->linkedin_status && $business_setup->linkedin_url)
+                                        <a href="{{ $business_setup->linkedin_url }}" target="_blank" aria-label="linkedin"><i class="fa-brands fa-linkedin-in"></i></a>
+                                    @endif
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Quick Links -->
+                    <div class="col-12 col-md-6 col-xl-2 offset-xl-1">
+                        <div class="footer-two__widget">
+                            <div class="footer-two__widget-intro">
+                                <h5>Quick Links</h5>
+                                <div class="line">
+                                    <span class="large-line"></span>
+                                    <span class="small-line"></span>
+                                    <span class="small-line"></span>
+                                </div>
+                            </div>
+                            <div class="footer-two__widget-content">
+                                <ul>
+                                    @php
+                                        // Load footer menu from database
+                                        $footerMenuModel = \App\Models\Menu::where('key', 'footer')->first();
+                                        $footerMenu = [];
+                                        if ($footerMenuModel && $footerMenuModel->children) {
+                                            $footerMenu = $footerMenuModel->children->where('parent_id', null)->map(function($item) {
+                                                return ['label' => $item->label, 'url' => $item->url];
+                                            })->values()->toArray();
+                                        }
+                                    @endphp
+                                    @foreach($footerMenu as $m)
+                                        <li>
+                                            <a class="text-white sub-title-lg" href="{{ $m['url'] }}">
+                                                <span><i class="fa-solid fa-angle-right me-2"></i></span> {{ $m['label'] }}
+                                            </a>
+                                        </li>
+                                    @endforeach
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Customer Service -->
+                    <div class="col-12 col-md-6 col-xl-3">
+                        <div class="footer-two__widget footer-two__widget--alternate">
+                            <div class="footer-two__widget-intro">
+                                <h5>Customer Service</h5>
+                                <div class="line">
+                                    <span class="large-line"></span>
+                                    <span class="small-line"></span>
+                                    <span class="small-line"></span>
+                                </div>
+                            </div>
+                            <div class="footer-two__widget-content">
+                                <ul>
+                                    <li><a class="text-white sub-title-lg" href="{{ route('cart.index') }}"><span><i
+                                                    class="fa-solid fa-angle-right me-2"></i></span> My Cart</a></li>
+                                    <li><a class="text-white sub-title-lg" href="{{ route('wishlist.index') }}"><span><i
+                                                    class="fa-solid fa-angle-right me-2"></i></span> Wishlist</a></li>
+                                    <li><a class="text-white sub-title-lg" href="#"><span><i
+                                                    class="fa-solid fa-angle-right me-2"></i></span> Track Order</a>
+                                    </li>
+                                    <li><a class="text-white sub-title-lg" href="#"><span><i
+                                                    class="fa-solid fa-angle-right me-2"></i></span> Returns &
+                                            Refunds</a></li>
+                                    <li><a class="text-white sub-title-lg" href="#"><span><i
+                                                    class="fa-solid fa-angle-right me-2"></i></span> FAQs</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Contact -->
+                    <div class="col-12 col-md-6 col-xl-3">
+                        <div class="footer-two__widget footer-two__widget--alternate">
+                            <div class="footer-two__widget-intro">
+                                <h5>Get In Touch</h5>
+                                <div class="line">
+                                    <span class="large-line"></span>
+                                    <span class="small-line"></span>
+                                    <span class="small-line"></span>
+                                </div>
+                            </div>
+                            <div class="footer-two__widget-content footer-two__widget-content--contact">
+                                <ul>
+                                    @if($business_setup && ($business_setup->street_address || $business_setup->city_thana || $business_setup->district))
+                                    <li>
+                                        <a class="text-white sub-title-lg footer-address" href="#">
+                                            <i class="fa-solid fa-location-dot"></i> {{ $business_setup->street_address ?? '' }}{{ ($business_setup->street_address ?? '') && ($business_setup->city_thana ?? '') ? ', ' : '' }}{{ $business_setup->city_thana ?? '' }}{{ ($business_setup->district ?? '') ? ', ' . $business_setup->district : '' }}
+                                        </a>
+                                    </li>
+                                    @endif
+                                    @if($business_setup && ($business_setup->official_contact_number[0] ?? null))
+                                    <li><a class="text-white sub-title-lg" href="tel:{{ str_replace([' ', '-'], '', $business_setup->official_contact_number[0]) }}"><i
+                                                class="fa-solid fa-phone"></i> {{ $business_setup->official_contact_number[0] }}</a></li>
+                                    @endif
+                                    @if($business_setup && ($business_setup->email_address[0] ?? null))
+                                    <li><a class="text-white sub-title-lg" href="mailto:{{ $business_setup->email_address[0] }}"><i
+                                                class="fa-solid fa-envelope"></i> {{ $business_setup->email_address[0] }}</a></li>
+                                    @endif
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="footer-two__copyright footer-six-copyright">
+                <div class="container">
+                    <div class="row align-items-center gutter-12 footer-six-copyright-border position-relative">
+                        <div class="col-12 col-lg-6">
+                            <div class="footer-two__copyright-inner text-center text-lg-start">
+                                <p>
+                                    @if($business_setup && $business_setup->copyright_text)
+                                        {{ $business_setup->copyright_text }}
+                                    @else
+                                        Copyright &copy; <span id="copyrightYear">{{ date('Y') }}</span> <a href="{{ url('/') }}">{{ $business_setup->company_name ?? config('app.name') }}</a>. All rights reserved.
+                                    @endif
                                 </p>
                             </div>
                         </div>
-                        
-                        <div class="contact-card d-flex align-items-start gap-3 mb-4" style="padding: 15px; background: rgba(255,255,255,0.05); border-radius: 12px;">
-                            <div style="width: 45px; height: 45px; background: rgba(4, 150, 255, 0.2); border-radius: 10px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
-                                <i class="fa-solid fa-phone" style="color: #0496ff; font-size: 18px;"></i>
-                            </div>
-                            <div>
-                                <h6 style="color: #fff; font-weight: 500; margin-bottom: 5px; font-size: 14px;">Phone</h6>
-                                <a href="tel:{{ $business_setup->official_contact_number[0] ?? '+8801713269591' }}" style="color: rgba(255,255,255,0.6); text-decoration: none; font-size: 13px;">{{ $business_setup->official_contact_number[0] ?? '+880 1713-269591' }}</a>
-                            </div>
-                        </div>
-                        
-                        <div class="contact-card d-flex align-items-start gap-3" style="padding: 15px; background: rgba(255,255,255,0.05); border-radius: 12px;">
-                            <div style="width: 45px; height: 45px; background: rgba(4, 150, 255, 0.2); border-radius: 10px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
-                                <i class="fa-regular fa-envelope" style="color: #0496ff; font-size: 18px;"></i>
-                            </div>
-                            <div>
-                                <h6 style="color: #fff; font-weight: 500; margin-bottom: 5px; font-size: 14px;">Email</h6>
-                                <a href="mailto:{{ $business_setup->email_address[0] ?? 'info@growup.com' }}" style="color: rgba(255,255,255,0.6); text-decoration: none; font-size: 13px;">{{ $business_setup->email_address[0] ?? 'info@growup.com' }}</a>
+                        <div class="col-12 col-lg-6">
+                            <div class="footer__bottom-left">
+                                <ul class="footer__bottom-list justify-content-center justify-content-lg-end">
+                                    <li><a href="{{ route('frontend.terms') }}">Terms & Conditions</a></li>
+                                    <li><a href="{{ route('frontend.privacy') }}">Privacy Policy</a></li>
+                                </ul>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
-        
-        <!-- Newsletter -->
-        <div class="newsletter-area py-5" style="border-top: 1px solid rgba(255,255,255,0.1); border-bottom: 1px solid rgba(255,255,255,0.1);">
-            <div class="row align-items-center">
-                <div class="col-lg-6 mb-4 mb-lg-0">
-                    <div class="d-flex align-items-center gap-3">
-                        <div style="width: 60px; height: 60px; background: rgba(4, 150, 255, 0.2); border-radius: 15px; display: flex; align-items: center; justify-content: center;">
-                            <i class="fa-regular fa-paper-plane" style="color: #0496ff; font-size: 24px;"></i>
-                        </div>
-                        <div>
-                            <h5 style="color: #fff; font-weight: 600; margin-bottom: 5px;">Subscribe Newsletter</h5>
-                            <p style="color: rgba(255,255,255,0.6); font-size: 14px; margin-bottom: 0;">Get updates about new products and special offers.</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-6">
-                    <form class="newsletter-form">
-                        <div class="input-group" style="border-radius: 50px; overflow: hidden; box-shadow: 0 10px 40px rgba(0,0,0,0.2);">
-                            <input type="email" class="form-control" placeholder="Enter your email address..." style="padding: 18px 25px; border: none; font-size: 14px;">
-                            <button type="submit" class="btn" style=" color: #fff; padding: 0 35px; font-weight: 500;">
-                                Subscribe <i class="fa-solid fa-arrow-right ms-2"></i>
-                            </button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-        
-        <!-- Payment Methods -->
-        <div class="payment-area py-4">
-            <div class="row align-items-center">
-                <div class="col-lg-6 mb-3 mb-lg-0 text-center text-lg-start">
-                    <span style="color: rgba(255,255,255,0.5); font-size: 14px;">We Accept:</span>
-                    <div class="payment-methods d-inline-flex align-items-center gap-3 ms-3">
-                        @php
-                            $methods = [
-                                'visa' => ['icon' => 'fab fa-cc-visa', 'color' => '#1A1F71'],
-                                'mastercard' => ['icon' => 'fab fa-cc-mastercard', 'color' => '#EB001B'],
-                                'paypal' => ['icon' => 'fab fa-cc-paypal', 'color' => '#003087'],
-                                'amex' => ['icon' => 'fab fa-cc-amex', 'color' => '#006FCF'],
-                                'stripe' => ['icon' => 'fab fa-cc-stripe', 'color' => '#6772E5'],
-                                'discover' => ['icon' => 'fab fa-cc-discover', 'color' => '#FF6000'],
-                                'jcb' => ['icon' => 'fab fa-cc-jcb', 'color' => '#007940'],
-                                'apple-pay' => ['icon' => 'fab fa-cc-apple-pay', 'color' => '#000000'],
-                            ];
-                            $selectedMethods = $business_setup->payment_methods ?? [];
-                        @endphp
-                        @forelse($selectedMethods as $methodKey)
-                            @if(isset($methods[$methodKey]))
-                                <div style="width: 50px; height: 32px; background: #fff; border-radius: 5px; display: flex; align-items: center; justify-content: center;">
-                                    <i class="{{ $methods[$methodKey]['icon'] }}" style="font-size: 24px; color: {{ $methods[$methodKey]['color'] }};"></i>
-                                </div>
-                            @endif
-                        @empty
-                            <div style="width: 50px; height: 32px; background: #fff; border-radius: 5px; display: flex; align-items: center; justify-content: center;">
-                                <i class="fab fa-cc-visa" style="font-size: 24px; color: #1A1F71;"></i>
-                            </div>
-                            <div style="width: 50px; height: 32px; background: #fff; border-radius: 5px; display: flex; align-items: center; justify-content: center;">
-                                <i class="fab fa-cc-mastercard" style="font-size: 24px; color: #EB001B;"></i>
-                            </div>
-                        @endforelse
-                    </div>
-                </div>
-                <div class="col-lg-6 text-center text-lg-end">
-                    <div class="security-badges d-inline-flex align-items-center gap-3">
-                        <span style="color: rgba(255,255,255,0.5); font-size: 13px;">
-                            <i class="fa-solid fa-shield-halved me-1" style="color: #0496ff;"></i> Secure Checkout
-                        </span>
-                        <span style="color: rgba(255,255,255,0.5); font-size: 13px;">
-                            <i class="fa-solid fa-lock me-1" style="color: #0496ff;"></i> SSL Encrypted
-                        </span>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    
-    <!-- Footer Bottom -->
-    <div class="footer-bottom" style="background: rgba(0,0,0,0.2); padding: 20px 0;">
-        <div class="container">
-            <div class="row align-items-center">
-                <div class="col-md-6 text-center text-md-start mb-2 mb-md-0">
-                    <p style="color: rgba(255,255,255,0.5); font-size: 14px; margin-bottom: 0;">
-                        @if($business_setup->copyright_text)
-                            {{ $business_setup->copyright_text }}
-                        @else
-                            © {{ date('Y') }} <span style="color: #0496ff;">{{ $business_setup->company_name ?? 'GrowUp' }}</span>. All Rights Reserved.
-                        @endif
-                    </p>
-                </div>
-                <div class="col-md-6 text-center text-md-end">
-                    <p style="color: rgba(255,255,255,0.4); font-size: 13px; margin-bottom: 0;">
-                        Made with <i class="fa-solid fa-heart" style="color: #dc3545;"></i> by QBit Technology
-                    </p>
-                </div>
-            </div>
-        </div>
-    </div>
-</footer>
+        </footer>
 <!-- Footer End -->
 
 <style>
@@ -279,6 +221,10 @@
         color: #fff !important;
         padding-left: 5px;
     }
+        /* Keep store address casing as entered */
+        .footer-address {
+            text-transform: none !important;
+        }
     .contact-card:hover {
         background: rgba(255,255,255,0.08) !important;
     }

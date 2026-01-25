@@ -38,6 +38,38 @@
                 <!-- Billing Details -->
                 <div class="col-lg-7 mb-4 mb-lg-0">
                     <div class="billing-details bg-white rounded-4 shadow-sm p-4" data-aos="fade-up">
+                        <div class="mb-4">
+                            <div class="p-3 rounded-3" style="background:#1f2937;color:#e5e7eb;">
+                                <div class="text-center mb-2" style="font-weight:600;">Special Discount For All Scout Member</div>
+                                <button type="button" id="btnScoutToggle" class="btn w-100" style="background:#7fbf3f;color:#102a0f;font-weight:600;">
+                                    Check Eligibility ↗
+                                </button>
+                                <div id="scoutFormWrap" class="mt-3 d-none">
+                                    <div class="row g-2">
+                                        <div class="col-12">
+                                            <label class="form-label">Full Name</label>
+                                            <input type="text" class="form-control" id="scFullName" placeholder="Enter full name">
+                                        </div>
+                                        <div class="col-12">
+                                            <label class="form-label">BS ID</label>
+                                            <input type="text" class="form-control" id="scBsId" placeholder="Enter BS ID">
+                                        </div>
+                                        <div class="col-12">
+                                            <label class="form-label">Unit Name</label>
+                                            <input type="text" class="form-control" id="scUnitName" placeholder="Enter unit name">
+                                        </div>
+                                        <div class="col-12">
+                                            <label class="form-label">Unit Leader Name</label>
+                                            <input type="text" class="form-control" id="scLeaderName" placeholder="Enter leader name">
+                                        </div>
+                                    </div>
+                                    <button type="button" id="btnApplyScout" class="btn w-100 mt-3" style="background:#22c55e;color:#062b12;font-weight:600;">
+                                        Apply {{ $scoutDiscountPercent ?? 10 }}% Discount
+                                    </button>
+                                    <div id="scoutMsg" class="small mt-2"></div>
+                                </div>
+                            </div>
+                        </div>
                         <h5 class="mb-4 pb-3 border-bottom">
                             <i class="fa-solid fa-truck me-2"></i>Delivery Information
                         </h5>
@@ -80,7 +112,7 @@
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label class="form-label">City <span class="text-danger">*</span></label>
-                                <input type="text" name="city" class="form-control @error('city') is-invalid @enderror" value="{{ old('city', optional($lastOrder)->city ?? '') }}" required>
+                                <input type="text" name="city" id="cityInput" class="form-control @error('city') is-invalid @enderror" value="{{ old('city', optional($lastOrder)->city ?? '') }}" required>
                                 @error('city')<div class="invalid-feedback">{{ $message }}</div>@enderror
                             </div>
                             <div class="col-md-3 mb-3">
@@ -185,24 +217,30 @@
                         <div class="order-totals">
                             <div class="d-flex justify-content-between mb-3">
                                 <span class="text-muted" style="font-size: 16px;">Subtotal</span>
-                                <span style="font-size: 16px; font-weight: 600;">৳{{ number_format($subtotal ?? 0, 2) }}</span>
+                                <span id="subtotalAmount" style="font-size: 16px; font-weight: 600;">৳{{ number_format($subtotal ?? 0, 2) }}</span>
                             </div>
                             @if(($discount ?? 0) > 0)
-                            <div class="d-flex justify-content-between mb-3 text-success">
+                            <div id="discountRow" class="d-flex justify-content-between mb-3 text-success">
                                 <span style="font-size: 16px;">Discount</span>
-                                <span style="font-size: 16px; font-weight: 600;">-৳{{ number_format($discount, 2) }}</span>
+                                <span id="discountAmount" style="font-size: 16px; font-weight: 600;">-৳{{ number_format($discount, 2) }}</span>
                             </div>
                             @endif
+                            <div id="discountRow" class="d-flex justify-content-between mb-3 text-success d-none">
+                                <span style="font-size: 16px;">Discount</span>
+                                <span id="discountAmount" style="font-size: 16px; font-weight: 600;">-৳0.00</span>
+                            </div>
                             <div class="d-flex justify-content-between mb-3">
                                 <span class="text-muted" style="font-size: 16px;">Shipping</span>
-                                <span style="font-size: 16px; font-weight: 600;">{{ ($shipping ?? 0) > 0 ? '৳' . number_format($shipping, 2) : 'Free' }}</span>
+                                <span id="shippingAmount" style="font-size: 16px; font-weight: 600;">{{ ($shipping ?? 0) > 0 ? '৳' . number_format($shipping, 2) : 'Free' }}</span>
                             </div>
                             <hr>
                             <div class="d-flex justify-content-between mb-4 pt-2">
                                 <span style="font-size: 20px; font-weight: 700; color: #1a1a2e;">Total</span>
-                                <span style="font-size: 24px; font-weight: 700; color: #0496ff;">৳{{ number_format($total ?? 0, 2) }}</span>
+                                <span id="totalAmount" style="font-size: 24px; font-weight: 700; color: #0496ff;">৳{{ number_format($total ?? 0, 2) }}</span>
                             </div>
                         </div>
+
+                        
                         
                         <!-- Terms Agreement -->
                         <div class="mb-4">
@@ -269,6 +307,140 @@
         btn.disabled = true;
         btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Processing...';
     });
+</script>
+<script>
+    (function(){
+        const btnToggle = document.getElementById('btnScoutToggle');
+        const wrap = document.getElementById('scoutFormWrap');
+        const btnApply = document.getElementById('btnApplyScout');
+        const msg = document.getElementById('scoutMsg');
+        const csrf = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
+        const discountRow = document.getElementById('discountRow');
+        const discountAmount = document.getElementById('discountAmount');
+        const totalAmount = document.getElementById('totalAmount');
+
+        function fmtBDT(n){ try { return '৳' + (Number(n).toFixed(2)); } catch(e){ return '৳' + n; } }
+        function show(el){ el && el.classList.remove('d-none'); }
+
+        btnToggle?.addEventListener('click', () => {
+            if (!wrap) return;
+            wrap.classList.toggle('d-none');
+        });
+
+        btnApply?.addEventListener('click', async () => {
+            msg.textContent = '';
+            const name = document.getElementById('scFullName')?.value.trim();
+            const bsid = document.getElementById('scBsId')?.value.trim();
+            const unit = document.getElementById('scUnitName')?.value.trim();
+            const leader = document.getElementById('scLeaderName')?.value.trim();
+            if (!name || !bsid || !unit || !leader) {
+                msg.className = 'small mt-2 text-danger';
+                msg.textContent = 'Please fill all fields to check eligibility.';
+                return;
+            }
+            btnApply.disabled = true;
+            btnApply.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Applying...';
+            try {
+                const scoutCode = '{{ $scoutDiscountCode ?? "SCOUT" }}';
+                let res = await fetch('{{ route("cart.coupon") }}', {
+                    method: 'POST',
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': csrf
+                    },
+                    body: JSON.stringify({ coupon_code: scoutCode })
+                });
+                const data = await res.json();
+                if (data && data.success) {
+                    msg.className = 'small mt-2 text-success';
+                    msg.textContent = data.message || 'Discount applied!';
+                    if (discountRow && discountAmount) {
+                        const amt = data.discount ? Number(data.discount) : 0;
+                        discountAmount.textContent = ('-৳' + amt.toFixed(2));
+                        show(discountRow);
+                    }
+                    if (totalAmount) {
+                        totalAmount.textContent = fmtBDT(data.total ?? 0);
+                    }
+                } else {
+                    msg.className = 'small mt-2 text-danger';
+                    msg.textContent = (data && data.message) ? data.message : 'Eligibility failed or discount unavailable.';
+                }
+            } catch (e) {
+                msg.className = 'small mt-2 text-danger';
+                msg.textContent = 'Network error while applying discount.';
+            } finally {
+                btnApply.disabled = false;
+                btnApply.textContent = 'Apply {{ $scoutDiscountPercent ?? 10 }}% Discount';
+            }
+        });
+
+        // Handle shipping cost recalculation based on address
+        const cityInput = document.getElementById('cityInput');
+        const addressInput = document.querySelector('input[name="address"]');
+        const shippingAmount = document.getElementById('shippingAmount');
+        const subtotal = parseFloat('{{ $subtotal ?? 0 }}');
+        const discount = parseFloat('{{ $discount ?? 0 }}');
+
+        function updateShipping() {
+            const city = (cityInput?.value || '') + ' ' + (addressInput?.value || '');
+            
+            if (!city || city.trim().length < 2) {
+                return; // Don't update if city is empty
+            }
+
+            fetch('{{ route("checkout.calculate-shipping") }}', {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': csrf
+                },
+                body: JSON.stringify({ 
+                    address: city,
+                    subtotal: subtotal
+                })
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    const shipping = parseFloat(data.shipping);
+                    const newTotal = subtotal - discount + shipping;
+                    
+                    // Update shipping display
+                    if (shippingAmount) {
+                        if (shipping > 0) {
+                            shippingAmount.textContent = fmtBDT(shipping);
+                        } else {
+                            shippingAmount.textContent = 'Free';
+                        }
+                    }
+                    
+                    // Update total
+                    if (totalAmount) {
+                        totalAmount.textContent = fmtBDT(newTotal);
+                    }
+                }
+            })
+            .catch(err => console.error('Error calculating shipping:', err));
+        }
+
+        // Add event listeners for address changes with debounce
+        let shippingTimeout;
+        if (cityInput) {
+            cityInput.addEventListener('input', () => {
+                clearTimeout(shippingTimeout);
+                shippingTimeout = setTimeout(updateShipping, 500);
+            });
+        }
+        if (addressInput) {
+            addressInput.addEventListener('input', () => {
+                clearTimeout(shippingTimeout);
+                shippingTimeout = setTimeout(updateShipping, 500);
+            });
+        }
+    })();
 </script>
 @endpush
 

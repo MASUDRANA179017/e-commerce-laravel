@@ -56,10 +56,10 @@ class BlogController extends Controller
                             <a href="'.$editUrl.'" class="btn btn-sm btn-outline-primary" title="Edit">
                                 <i class="bx bx-edit"></i>
                             </a>
-                            <form action="'.$deleteUrl.'" method="POST" class="d-inline" onsubmit="return confirm(\'Are you sure you want to delete this blog post?\');">
+                            <form action="'.$deleteUrl.'" method="POST" class="d-inline delete-form" data-title="'.htmlspecialchars($row->title).'">
                                 '.$csrf.'
                                 '.$method.'
-                                <button type="submit" class="btn btn-sm btn-outline-danger" title="Delete">
+                                <button type="button" class="btn btn-sm btn-outline-danger delete-btn" title="Delete">
                                     <i class="bx bx-trash"></i>
                                 </button>
                             </form>

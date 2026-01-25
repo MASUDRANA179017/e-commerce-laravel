@@ -108,6 +108,73 @@
             </div>
         </div>
     </div>
+
+    <!-- Store Sections -->
+    <div class="col-12">
+        <div class="card border-0">
+            <div class="card-header bg-white">
+                <h5 class="mb-0 fw-bold">Store Sections (Homepage)</h5>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                        <thead class="bg-light">
+                            <tr>
+                                <th class="ps-3">Preview</th>
+                                <th>Title</th>
+                                <th>Link</th>
+                                <th>Position</th>
+                                <th>Status</th>
+                                <th class="text-end pe-3">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @forelse($store_sections as $section)
+                            <tr>
+                                <td class="ps-3">
+                                    <img src="{{ asset('storage/' . $section->image) }}" alt="Section" style="height: 50px; width: auto;" class="rounded">
+                                </td>
+                                <td><strong>{{ $section->title ?? 'N/A' }}</strong></td>
+                                <td>
+                                    @if($section->link)
+                                        <small class="text-muted">{{ substr($section->link, 0, 40) }}...</small>
+                                    @else
+                                        <small class="text-danger">No link</small>
+                                    @endif
+                                </td>
+                                <td>{{ $section->position }}</td>
+                                <td>
+                                    @if($section->status)
+                                    <span class="badge bg-success">Active</span>
+                                    @else
+                                    <span class="badge bg-secondary">Inactive</span>
+                                    @endif
+                                </td>
+                                <td class="text-end pe-3">
+                                    <button class="btn btn-sm btn-light" onclick='editBanner(@json($section))'><i class="bx bx-edit"></i></button>
+                                    <form action="{{ route('admin.storefront.banners.destroy', $section->id) }}" method="POST" class="d-inline">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button class="btn btn-sm btn-light text-danger" onclick="return confirm('Are you sure?')"><i class="bx bx-trash"></i></button>
+                                    </form>
+                                </td>
+                            </tr>
+                            @empty
+                            <tr>
+                                <td colspan="6" class="text-center py-5">
+                                    <div class="text-muted">
+                                        <span class="material-symbols-outlined fs-1 d-block mb-2">image</span>
+                                        <p class="mb-0">No store sections yet. <a href="#addBannerModal" data-bs-toggle="modal" class="text-primary">Add one</a></p>
+                                    </div>
+                                </td>
+                            </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
 <!-- Add/Edit Modal -->
@@ -124,18 +191,20 @@
                 <div class="modal-body">
                     <div class="mb-3">
                         <label class="form-label">Type</label>
-                        <select name="type" id="bannerType" class="form-select">
+                        <select name="type" id="bannerType" class="form-select" onchange="updateImageRecommendation()">
                             <option value="hero_slider">Hero Slider</option>
                             <option value="promotional_banner">Promotional Banner</option>
+                            <option value="store_section">Store Section</option>
                         </select>
                     </div>
                     <div class="mb-3">
-                        <label class="form-label">Title (Optional)</label>
-                        <input type="text" name="title" id="bannerTitle" class="form-control" placeholder="e.g. Summer Sale">
+                        <label class="form-label">Title <span class="text-danger">*</span></label>
+                        <input type="text" name="title" id="bannerTitle" class="form-control" placeholder="e.g. Summer Sale" required>
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Link (Optional)</label>
                         <input type="url" name="link" id="bannerLink" class="form-control" placeholder="https://...">
+                                            <small class="text-muted">Leave empty if you don't want a link</small>
                     </div>
                     <div class="mb-3 form-check">
                         <input type="checkbox" class="form-check-input" id="bannerStatus" name="status" value="1" checked>
@@ -144,16 +213,18 @@
                     <div class="mb-3">
                         <label class="form-label">Position</label>
                         <input type="number" name="position" id="bannerPosition" class="form-control" value="0">
+                                            <small class="text-muted">Lower numbers appear first</small>
                     </div>
                     <div class="mb-3">
-                        <label class="form-label">Image</label>
-                        <input type="file" name="image" id="bannerImage" class="form-control" accept="image/*">
-                        <small class="text-muted d-block mt-1">Recommended size: 1920x600px for Sliders, 800x400px for Banners</small>
+                        <label class="form-label">Image <span class="text-danger">*</span></label>
+                        <input type="file" name="image" id="bannerImage" class="form-control" accept="image/*" required>
+                        <small class="text-muted d-block mt-1" id="imageRecommendation">Recommended size: 1920x600px for Sliders, 800x400px for Banners</small>
                     </div>
                 </div>
                 <div class="modal-footer border-0">
                     <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
                     <button type="submit" class="create-btn-base">Save Banner</button>
+                </div>
                 </div>
             </div>
         </form>
@@ -189,6 +260,7 @@
         $('#bannerImage').removeAttr('required');
         
         $('#addBannerModal').modal('show');
+        updateImageRecommendation();
     }
 
     $('#addBannerModal').on('hidden.bs.modal', function () {
@@ -197,7 +269,24 @@
         $('#methodField').empty();
         $('#bannerForm')[0].reset();
         $('#bannerImage').attr('required', 'required');
+        $('#bannerType').val('hero_slider');
+        updateImageRecommendation();
     });
+
+    function updateImageRecommendation() {
+        const type = $('#bannerType').val();
+        let recommendation = '';
+        
+        if (type === 'hero_slider') {
+            recommendation = 'Recommended size: 1920x600px';
+        } else if (type === 'promotional_banner') {
+            recommendation = 'Recommended size: 800x400px';
+        } else if (type === 'store_section') {
+            recommendation = 'Recommended size: 600x400px (Square or nearly square images work best)';
+        }
+        
+        $('#imageRecommendation').text(recommendation);
+    }
 </script>
 <style>
     .group-action:hover .group-action-show {

@@ -1,10 +1,13 @@
 <div class="sidebar-area" id="sidebar-area">
     <div class="logo position-relative">
         <a href="{{ route('dashboard') }}" class="d-flex align-items-center text-decoration-none position-relative">
-            <img src="{{ isset($business_setup) && $business_setup->logo ? asset('storage/' . $business_setup->logo) : asset('assets/images/landing/logo.svg') }}" class="h-37px" alt="logo-icon">
+            <img src="{{ isset($business_setup) && $business_setup->logo ? asset('storage/' . $business_setup->logo) : asset('assets/images/landing/logo.svg') }}"
+                class="h-37px" alt="logo-icon">
             <!-- <span class="logo-text fw-bold text-dark ms-2">QBit Ecommerce</span> -->
         </a>
-        <button class="sidebar-burger-menu bg-transparent p-0 border-0 opacity-0 z-n1 position-absolute top-50 end-0 translate-middle-y" id="sidebar-burger-menu">
+        <button
+            class="sidebar-burger-menu bg-transparent p-0 border-0 opacity-0 z-n1 position-absolute top-50 end-0 translate-middle-y"
+            id="sidebar-burger-menu">
             <i data-feather="x"></i>
         </button>
     </div>
@@ -43,47 +46,61 @@
             </li>
 
             <!-- Products -->
-            <li class="menu-item {{ request()->routeIs('admin.users.products.*') || request()->routeIs('admin.product-create.*') || request()->routeIs('admin.product.all') || request()->routeIs('admin.product.category.*') || request()->routeIs('admin.product.barcode.*') ? 'open active' : '' }}">
+            <li
+                class="menu-item {{ request()->routeIs('admin.users.products.*') || request()->routeIs('admin.product-create.*') || request()->routeIs('admin.product.all') || request()->routeIs('admin.product.category.*') || request()->routeIs('admin.product.barcode.*') || request()->routeIs('admin.all-attributes.*') || request()->routeIs('admin.users.varient-build.*') ? 'open active' : '' }}">
                 <a href="javascript:void(0);" class="menu-link menu-toggle">
                     <span class="material-symbols-outlined menu-icon">inventory_2</span>
                     <span class="title">Products</span>
                 </a>
                 <ul class="menu-sub">
-                    <li class="menu-item {{ request()->routeIs('admin.product-create.index') ? 'active' : '' }}">
-                        <a href="{{ route('admin.product-create.index') }}" class="menu-link">Create Product</a>
-                    </li>
                     <li class="menu-item {{ request()->routeIs('admin.product.all') ? 'active' : '' }}">
                         <a href="{{ route('admin.product.all') }}" class="menu-link">All Products</a>
                     </li>
+                    <li class="menu-item {{ request()->routeIs('admin.all-attributes.*') ? 'active' : '' }}">
+                        <a href="{{ route('admin.all-attributes.all-attributes.index') }}" class="menu-link">All
+                            Attributes</a>
+                    </li>
+                    <li class="menu-item {{ request()->routeIs('admin.users.varient-build.index') ? 'active' : '' }}">
+                        <a href="{{ route('admin.users.varient-build.index') }}" class="menu-link">Variant Build</a>
+                    </li>
+                    <li class="menu-item {{ request()->routeIs('admin.product-create.index') ? 'active' : '' }}">
+                        <a href="{{ route('admin.product-create.index') }}" class="menu-link">Create Product</a>
+                    </li>
+
                     <li class="menu-item {{ request()->routeIs('admin.product.category.index') ? 'active' : '' }}">
                         <a href="{{ route('admin.product.category.index') }}" class="menu-link">Categories</a>
                     </li>
                     <li class="menu-item {{ request()->routeIs('admin.product.barcode.list') ? 'active' : '' }}">
                         <a href="{{ route('admin.product.barcode.list') }}" class="menu-link">Barcode Generator</a>
                     </li>
+                    <li class="menu-item {{ request()->routeIs('admin.reviews.index') ? 'active' : '' }}">
+                        <a href="{{ route('admin.reviews.index') }}" class="menu-link">
+                            Product Reviews
+                            @php $pendingReviews = \App\Models\ProductReview::pending()->count(); @endphp
+                            @if($pendingReviews > 0)
+                                <span class="badge bg-warning ms-auto">{{ $pendingReviews }}</span>
+                            @endif
+                        </a>
+                    </li>
                 </ul>
             </li>
 
             <!-- Business Setup -->
-            <li class="menu-item {{ request()->routeIs('admin.users.business-setup.*') || request()->routeIs('admin.all-attributes.*') || request()->routeIs('admin.users.varient-build.*') ? 'open active' : '' }}">
+            <li class="menu-item {{ request()->routeIs('admin.users.business-setup.*') ? 'open active' : '' }}">
                 <a href="javascript:void(0);" class="menu-link menu-toggle">
                     <span class="material-symbols-outlined menu-icon">settings</span>
                     <span class="title">Business Setup</span>
                 </a>
                 <ul class="menu-sub">
                     <li class="menu-item {{ request()->routeIs('admin.users.business-setup.index') ? 'active' : '' }}">
-                        <a href="{{ route('admin.users.business-setup.index') }}" class="menu-link">Business Settings</a>
+                        <a href="{{ route('admin.users.business-setup.index') }}" class="menu-link">Business
+                            Settings</a>
                     </li>
-                    <li class="menu-item {{ request()->routeIs('admin.all-attributes.*') ? 'active' : '' }}">
-                        <a href="{{ route('admin.all-attributes.all-attributes.index') }}" class="menu-link">All Attributes</a>
-                    </li>
-                    <li class="menu-item {{ request()->routeIs('admin.users.varient-build.index') ? 'active' : '' }}">
-                        <a href="{{ route('admin.users.varient-build.index') }}" class="menu-link">Variant Build</a>
-                    </li>
-                    @if(Route::has('catalog.size_charts.view'))
-                    <li class="menu-item {{ request()->routeIs('catalog.size_charts.view') ? 'active' : '' }}">
-                        <a href="{{ route('catalog.size_charts.view') }}" class="menu-link">Size Charts</a>
-                    </li>
+
+                    @if (Route::has('catalog.size_charts.view'))
+                        <li class="menu-item {{ request()->routeIs('catalog.size_charts.view') ? 'active' : '' }}">
+                            <a href="{{ route('catalog.size_charts.view') }}" class="menu-link">Size Charts</a>
+                        </li>
                     @endif
                 </ul>
             </li>
@@ -106,9 +123,7 @@
                     <li class="menu-item {{ request()->routeIs('admin.customers.index') ? 'active' : '' }}">
                         <a href="{{ route('admin.customers.index') }}" class="menu-link">All Customers</a>
                     </li>
-                    <li class="menu-item {{ request()->routeIs('admin.customers.groups') ? 'active' : '' }}">
-                        <a href="{{ route('admin.customers.groups') }}" class="menu-link">Customer Groups</a>
-                    </li>
+
                 </ul>
             </li>
 
@@ -151,11 +166,14 @@
                     <li class="menu-item {{ request()->routeIs('admin.storefront.menus') ? 'active' : '' }}">
                         <a href="{{ route('admin.storefront.menus') }}" class="menu-link">Navigation Menus</a>
                     </li>
-                    <li class="menu-item {{ request()->routeIs('admin.storefront.blog') ? 'active' : '' }}">
-                        <a href="{{ route('admin.storefront.blog') }}" class="menu-link">Blog Management</a>
+                    <li class="menu-item {{ request()->routeIs('admin.blogs.index') ? 'active' : '' }}">
+                        <a href="{{ route('admin.blogs.index') }}" class="menu-link">Blog Management</a>
                     </li>
                     <li class="menu-item {{ request()->routeIs('admin.storefront.banners') ? 'active' : '' }}">
                         <a href="{{ route('admin.storefront.banners') }}" class="menu-link">Banners & Sliders</a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="{{ route('admin.settings.index') }}#seo" class="menu-link">SEO Setup</a>
                     </li>
                 </ul>
             </li>
@@ -203,7 +221,8 @@
             </li>
 
             <!-- User Management -->
-            <li class="menu-item {{ request()->routeIs('admin.users.index') || request()->routeIs('admin.roles.*') || request()->routeIs('admin.permissions.*') ? 'open active' : '' }}">
+            <li
+                class="menu-item {{ request()->routeIs('admin.users.index') || request()->routeIs('admin.roles.*') || request()->routeIs('admin.permissions.*') ? 'open active' : '' }}">
                 <a href="javascript:void(0);" class="menu-link menu-toggle">
                     <span class="material-symbols-outlined menu-icon">manage_accounts</span>
                     <span class="title">User Management</span>
@@ -246,13 +265,13 @@
             </li>
 
             <!-- Terms & Conditions -->
-            @if(Route::has('terms.index'))
-            <li class="menu-item {{ request()->routeIs('terms.*') ? 'active' : '' }}">
-                <a href="{{ route('terms.index') }}" class="menu-link">
-                    <span class="material-symbols-outlined menu-icon">description</span>
-                    <span class="title">Terms & Conditions</span>
-                </a>
-            </li>
+            @if (Route::has('terms.index'))
+                <li class="menu-item {{ request()->routeIs('terms.*') ? 'active' : '' }}">
+                    <a href="{{ route('terms.index') }}" class="menu-link">
+                        <span class="material-symbols-outlined menu-icon">description</span>
+                        <span class="title">Terms & Conditions</span>
+                    </a>
+                </li>
             @endif
 
             <!-- Settings -->

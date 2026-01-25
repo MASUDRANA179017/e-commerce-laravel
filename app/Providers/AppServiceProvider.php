@@ -3,8 +3,12 @@
 namespace App\Providers;
 
 use App\Models\Admin\Business_SetUp\BusinessSetup;
+use App\Models\Purchase;
+use App\Observers\PurchaseObserver;
 use Illuminate\Foundation\AliasLoader;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Log;
 use Barryvdh\Debugbar\Facades\Debugbar;
 use Illuminate\Support\ServiceProvider;
 
@@ -24,7 +28,20 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        // Register Model Observers
+        Purchase::observe(PurchaseObserver::class);
+        
         try {
+            try {
+                $publicStorage = public_path('storage');
+                $localStorage = storage_path('app/public');
+                if (is_dir($localStorage) && !is_link($publicStorage) && !file_exists($publicStorage)) {
+                    Artisan::call('storage:link');
+                }
+            } catch (\Throwable $ex) {
+                Log::warning('storage:link failed: ' . $ex->getMessage());
+            }
+
             if (Schema::hasTable('business_setups') && Schema::hasTable('products')) {
                 // Use first() to avoid throwing during migrations when no BusinessSetup row exists yet.
                 $business_setup = BusinessSetup::first();

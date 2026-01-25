@@ -7,6 +7,7 @@ use App\Models\Coupon;
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\User;
+use App\Helpers\ShippingHelper;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
@@ -29,8 +30,15 @@ class CheckoutController extends Controller
 
         $subtotal = $this->calculateSubtotal($cartItems);
         $discount = session()->get('discount', 0);
-        $shipping = $subtotal >= 5000 ? 0 : 100;
+        
+        // Default shipping - will be calculated based on address
+        $shipping = ShippingHelper::calculateShippingCost($subtotal);
         $total = $subtotal - $discount + $shipping;
+
+        // Get scout discount settings
+        $scoutDiscountEnabled = \App\Models\SystemSetting::scoutDiscountEnabled();
+        $scoutDiscountPercent = \App\Models\SystemSetting::scoutDiscountPercent();
+        $scoutDiscountCode = \App\Models\SystemSetting::scoutDiscountCode();
 
         // Convert cart items to collection
         $cartItems = collect($cartItems)->map(function ($item, $rowId) {
@@ -47,7 +55,7 @@ class CheckoutController extends Controller
             $lastOrder = Order::where('user_id', $user->id)->latest()->first();
         }
 
-        return view('frontend.checkout', compact('cartItems', 'subtotal', 'discount', 'shipping', 'total', 'lastOrder', 'user'));
+        return view('frontend.checkout', compact('cartItems', 'subtotal', 'discount', 'shipping', 'total', 'lastOrder', 'user', 'scoutDiscountEnabled', 'scoutDiscountPercent', 'scoutDiscountCode'));
     }
 
     /**
@@ -82,7 +90,10 @@ class CheckoutController extends Controller
 
         $subtotal = $this->calculateSubtotal($cartItems);
         $discount = session()->get('discount', 0);
-        $shipping = $subtotal >= 5000 ? 0 : 100;
+        
+        // Calculate shipping based on customer address
+        $address = $request->city . ' ' . $request->address;
+        $shipping = ShippingHelper::calculateShippingCost($subtotal, $address);
         $total = $subtotal - $discount + $shipping;
 
         try {
@@ -157,11 +168,17 @@ class CheckoutController extends Controller
                     'options' => $item['options'] ?? null,
                 ]);
 
-                // Update product stock (optional)
-                if (isset($item['id'])) {
-                    DB::table('products')
-                        ->where('id', $item['id'])
-                        ->decrement('stock_quantity', $item['qty']);
+                // Update stock: decrement variant (if present) and product
+                $qty = (int) ($item['qty'] ?? 0);
+                if ($qty > 0) {
+                    $pid = $item['id'] ?? null;
+                    $vid = $item['options']['variant_id'] ?? null;
+                    if ($vid) {
+                        DB::table('product_variants')->where('id', $vid)->decrement('stock_quantity', $qty);
+                    }
+                    if ($pid) {
+                        DB::table('products')->where('id', $pid)->decrement('stock_quantity', $qty);
+                    }
                 }
             }
 
@@ -222,6 +239,29 @@ class CheckoutController extends Controller
             'order' => $orderData,
             'orderNumber' => $order,
             'sessionOrder' => $sessionOrder,
+        ]);
+    }
+
+    /**
+     * Calculate shipping cost based on address
+     */
+    public function calculateShipping(Request $request)
+    {
+        $request->validate([
+            'address' => 'required|string',
+            'subtotal' => 'required|numeric|min:0',
+        ]);
+
+        $address = $request->address;
+        $subtotal = $request->subtotal;
+
+        // Calculate shipping using helper
+        $shipping = ShippingHelper::calculateShippingCost($subtotal, $address);
+
+        return response()->json([
+            'success' => true,
+            'shipping' => $shipping,
+            'formatted' => ShippingHelper::getShippingCostText($subtotal, ShippingHelper::isAddressInDhaka($address)),
         ]);
     }
 

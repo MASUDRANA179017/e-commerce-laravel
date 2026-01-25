@@ -27,6 +27,7 @@
                     <div>
                         <h4 class="mb-0 fw-bold">{{ $customers->total() ?? 0 }}</h4>
                         <span class="text-muted">Total Customers</span>
+                        <div class="small text-muted mt-1">Brands: {{ $brandsCount ?? 0 }}</div>
                     </div>
                 </div>
             </div>
@@ -40,7 +41,7 @@
                         <span class="material-symbols-outlined text-success">person_add</span>
                     </div>
                     <div>
-                        <h4 class="mb-0 fw-bold">0</h4>
+                        <h4 class="mb-0 fw-bold">{{ $newThisMonth ?? 0 }}</h4>
                         <span class="text-muted">New This Month</span>
                     </div>
                 </div>
@@ -55,7 +56,7 @@
                         <span class="material-symbols-outlined text-info">shopping_cart</span>
                     </div>
                     <div>
-                        <h4 class="mb-0 fw-bold">0</h4>
+                        <h4 class="mb-0 fw-bold">{{ $withOrders ?? 0 }}</h4>
                         <span class="text-muted">With Orders</span>
                     </div>
                 </div>

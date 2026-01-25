@@ -818,6 +818,9 @@
                     <button type="button" class="select-btn-primary edit-card-btn">Edit</button>
                 </div>
                 <div class="panel-body">
+                    <div class="mb-2">
+                        <button type="button" class="btn btn-sm btn-primary add-hour-row" disabled>Add Day</button>
+                    </div>
                     <div class="table-responsive">
                         <table class="table operational-hours-table">
                             <thead class="table-light">
@@ -828,24 +831,27 @@
                                     <th>Office End Time</th>
                                 </tr>
                             </thead>
-                            @foreach ($operational_hours as $hour)
-                                <tr>
-                                    <td>{{ $hour->day }}</td>
-                                    <td>
-                                        <select class="form-select" id="{{ strtolower($hour->day) }}"
-                                            name="status_{{ $hour->day }}" disabled>
-                                            <option value="Working Day" {{ $hour->status == 'Working Day' ? 'selected' : '' }}>
-                                                Working Day</option>
-                                            <option value="Holiday" {{ $hour->status == 'Holiday' ? 'selected' : '' }}>Holiday
-                                            </option>
-                                        </select>
-                                    </td>
-                                    <td><input type="time" class="form-control" name="start_{{ $hour->day }}"
-                                            value="{{ $hour->start_time }}" disabled></td>
-                                    <td><input type="time" class="form-control" name="end_{{ $hour->day }}"
-                                            value="{{ $hour->end_time }}" disabled></td>
-                                </tr>
-                            @endforeach
+                            <tbody>
+                                @foreach ($operational_hours as $hour)
+                                    <tr>
+                                        <td>{{ $hour->day }}</td>
+                                        <td>
+                                            <select class="form-select status-select" id="{{ strtolower($hour->day) }}"
+                                                name="status_{{ $hour->day }}" disabled>
+                                                <option value="Working Day" {{ $hour->status == 'Working Day' ? 'selected' : '' }}>
+                                                    Working Day</option>
+                                                <option value="Holiday" {{ $hour->status == 'Holiday' ? 'selected' : '' }}>Holiday
+                                                </option>
+                                                <option value="No" {{ $hour->status == 'No' ? 'selected' : '' }}>No</option>
+                                            </select>
+                                        </td>
+                                        <td><input type="time" class="form-control" name="start_{{ $hour->day }}"
+                                                value="{{ $hour->start_time }}" disabled></td>
+                                        <td><input type="time" class="form-control" name="end_{{ $hour->day }}"
+                                                value="{{ $hour->end_time }}" disabled></td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
                         </table>
                     </div>
                 </div>
@@ -1573,10 +1579,23 @@ hydrateRepeaters(document);
                             form.find('input[type="file"]').prop('disabled', !isEditing);
                         }
 
+                        // operational hours add button
+                        if (part === 'operational_hours') {
+                            form.find('.add-hour-row').prop('disabled', !isEditing);
+                        }
+
                         // keep Select2 UI synced
                         form.find('select').each(function() {
                             $(this).trigger('change.select2');
                         });
+                        
+                        // operational hours: re-evaluate time input disabled state after mode change
+                        form.find('.operational-hours-table select').each(function () {
+                            $(this).trigger('change');
+                        });
+                        
+                        // notify listeners of edit mode change
+                        form.trigger('edit-mode-changed', [isEditing]);
 
                         if (editBtn.length) editBtn.toggleClass('d-none', isEditing);
                         if (footer.length) footer.toggleClass('d-none', !isEditing);
@@ -1588,27 +1607,36 @@ hydrateRepeaters(document);
                     });
 
                    // --- inside $('.card-form').each(...) ---
-cancelBtn.on('click', function (e) {
-  e.preventDefault();
+                    cancelBtn.on('click', function (e) {
+                    e.preventDefault();
 
-  // 1) reset non-repeater fields to their defaults
-  form[0].reset();
+                    // 1) reset non-repeater fields to their defaults
+                    form[0].reset();
 
-  // 2) restore repeater HTML snapshot AFTER reset so brackets can't come back
-  form.find('.repeater').each(function (i, el) {
-    el.innerHTML = repeaterSnapshot[i];
-    // rebind clicks and lock defaults of visible values
-    bindRepeater(el);
-    $(el).find('input').each(function () {
-      this.defaultValue = this.value;
-    });
-    // mark hydrated to prevent any future auto-hydration here
-    el.dataset.hydrated = '1';
-  });
+                    // 2) restore repeater HTML snapshot AFTER reset so brackets can't come back
+                    form.find('.repeater').each(function (i, el) {
+                        el.innerHTML = repeaterSnapshot[i];
+                        // rebind clicks and lock defaults of visible values
+                        bindRepeater(el);
+                        $(el).find('input').each(function () {
+                        this.defaultValue = this.value;
+                        });
+                        // mark hydrated to prevent any future auto-hydration here
+                        el.dataset.hydrated = '1';
+                    });
 
-  // 3) lock view mode
-  toggleFormState(false);
-});
+                    // 2b) restore operational hours table to original snapshot if present
+                    if (part === 'operational_hours' && form.data('opHoursSnapshot')) {
+                        form.find('.operational-hours-table tbody').html(form.data('opHoursSnapshot'));
+                        // rebind holiday/no disabling on restored rows
+                        form.find('.operational-hours-table select').each(function () {
+                            $(this).trigger('change');
+                        });
+                    }
+
+                    // 3) lock view mode
+                    toggleFormState(false);
+                    });
 
 
                     saveBtn.on('click', function(e) {
@@ -1620,11 +1648,19 @@ cancelBtn.on('click', function (e) {
                         if (part === 'operational_hours') {
                             let hours = {};
                             form.find('.operational-hours-table tbody tr').each(function() {
-                                const day = $(this).find('td:first').text().trim();
+                                // day might be static text or an input/select for new rows
+                                let day = $(this).find('td:first :input').val();
+                                if (!day) {
+                                    day = $(this).find('td:first').text().trim();
+                                }
+                                if (!day) return; // skip if day empty
                                 const status = $(this).find('select').val();
-                                const start_time = $(this).find('input[type="time"]').eq(0)
-                                .val();
-                                const end_time = $(this).find('input[type="time"]').eq(1).val();
+                                let start_time = $(this).find('input[type="time"]').eq(0).val();
+                                let end_time = $(this).find('input[type="time"]').eq(1).val();
+                                if (status === 'Holiday' || status === 'No') {
+                                    start_time = '';
+                                    end_time = '';
+                                }
                                 hours[day] = {
                                     status,
                                     start_time,
@@ -1655,6 +1691,12 @@ cancelBtn.on('click', function (e) {
                                     fresh[i] = el.innerHTML;
                                 });
                                 Object.assign(repeaterSnapshot, fresh);
+
+                                // refresh operational hours snapshot to current DOM
+                                if (part === 'operational_hours') {
+                                    const html = form.find('.operational-hours-table tbody').html();
+                                    form.data('opHoursSnapshot', html);
+                                }
 
                                 toggleFormState(false);
                             },
@@ -1691,17 +1733,96 @@ cancelBtn.on('click', function (e) {
                 (function() {
                     const table = $('.operational-hours-table');
                     if (!table.length) return;
+                    function bindRow(row) {
+                        const select = row.find('select');
+                        const inputs = row.find('input[type="time"]');
+                        function update() {
+                            const v = select.val();
+                            const isHoliday = (v === 'Holiday' || v === 'No');
+                            const disabledGlobally = select.prop('disabled');
+                            inputs.prop('disabled', isHoliday || disabledGlobally);
+                        }
+                        update();
+                        select.off('change._op').on('change._op', update);
+                    }
                     table.find('select').each(function() {
                         const select = $(this);
                         const row = select.closest('tr');
+                        bindRow(row);
+                    });
+                    // Also refresh when form edit mode changes
+                    table.closest('form').on('edit-mode-changed', function () {
+                        table.find('select').each(function () {
+                            $(this).trigger('change');
+                        });
+                    });
+                })();
 
-                        function update() {
-                            const isHoliday = select.val() === 'Holiday';
-                            const disabledGlobally = select.prop('disabled');
-                            row.find('input[type="time"]').prop('disabled', isHoliday || disabledGlobally);
+                /* ===========================
+                 * Operational hours: Add Day row
+                 * =========================== */
+                (function () {
+                    const form = $('#opHoursForm');
+                    const btn = form.find('.add-hour-row');
+                    // cache initial snapshot of tbody so cancel can restore
+                    const tbody = form.find('.operational-hours-table tbody');
+                    if (tbody.length) {
+                        form.data('opHoursSnapshot', tbody.html());
+                    }
+                    btn.on('click', function (e) {
+                        e.preventDefault();
+                        // available days
+                        const allDays = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+                        const usedDays = tbody.find('tr').map(function () {
+                            const t = $(this).find('td:first').text().trim();
+                            return t;
+                        }).get();
+                        const remaining = allDays.filter(d => !usedDays.includes(d));
+                        if (!remaining.length) {
+                            Swal.fire({
+                                icon: 'info',
+                                title: 'All days added',
+                                text: 'You have already configured all 7 days.'
+                            });
+                            return;
                         }
-                        update();
-                        select.on('change', update);
+                        const daySelect = $('<select class="form-select day-select"></select>');
+                        daySelect.append('<option value="">Select Day</option>');
+                        remaining.forEach(d => daySelect.append(`<option value="${d}">${d}</option>`));
+
+                        const statusSelect = $(
+                          '<select class="form-select status-select">' +
+                            '<option value="Working Day">Working Day</option>' +
+                            '<option value="Holiday">Holiday</option>' +
+                            '<option value="No">No</option>' +
+                          '</select>'
+                        );
+                        const startInput = $('<input type="time" class="form-control">');
+                        const endInput = $('<input type="time" class="form-control">');
+
+                        const row = $('<tr class="new-hour-row"></tr>');
+                        row.append($('<td></td>').append(daySelect));
+                        row.append($('<td></td>').append(statusSelect));
+                        row.append($('<td></td>').append(startInput));
+                        row.append($('<td></td>').append(endInput));
+                        tbody.append(row);
+
+                        // bind holiday/no disabling for this new row
+                        (function bindRow() {
+                            function update() {
+                                const v = statusSelect.val();
+                                const isHoliday = (v === 'Holiday' || v === 'No');
+                                const disabledGlobally = statusSelect.prop('disabled');
+                                startInput.prop('disabled', isHoliday || disabledGlobally);
+                                endInput.prop('disabled', isHoliday || disabledGlobally);
+                                if (isHoliday) {
+                                    startInput.val('');
+                                    endInput.val('');
+                                }
+                            }
+                            statusSelect.on('change._opnew', update);
+                            update();
+                        })();
                     });
                 })();
 

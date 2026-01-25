@@ -1,95 +1,56 @@
 <!-- Topbar Start -->
-<div class="topbar-area d-none d-lg-block" style="background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); padding: 10px 0;">
-    <div class="container">
-        <div class="row align-items-center">
-            <!-- Left Side - Contact Info -->
-            <div class="col-lg-8">
-                <ul class="topbar-list d-flex align-items-center gap-4 mb-0 list-unstyled">
-                    <li>
-                        <a href="mailto:{{ $business_setup->email_address[0] ?? 'info@growup.com' }}" class="d-flex align-items-center text-white-50 text-decoration-none" style="font-size: 13px; transition: all 0.3s;">
-                            <i class="fa-regular fa-envelope me-2" style="color: #0496ff;"></i>
-                            {{ $business_setup->email_address[0] ?? 'info@growup.com' }}
-                        </a>
-                    </li>
-                    <li>
-                        <a href="tel:{{ $business_setup->official_contact_number[0] ?? '+8801713269591' }}" class="d-flex align-items-center text-white-50 text-decoration-none" style="font-size: 13px; transition: all 0.3s;">
-                            <i class="fa-solid fa-phone me-2" style="color: #0496ff;"></i>
-                            {{ $business_setup->official_contact_number[0] ?? '+880 1713-269591' }}
-                        </a>
-                    </li>
-                    <li>
-                        <span class="d-flex align-items-center text-white-50" style="font-size: 13px;">
-                            <i class="fa-solid fa-location-dot me-2" style="color: #0496ff;"></i>
-                            {{ $business_setup->street_address ?? 'Dhaka, Bangladesh' }}
-                        </span>
-                    </li>
-                </ul>
-            </div>
-            
-            <!-- Right Side - Auth Links & Social -->
-            <div class="col-lg-4">
-                <div class="d-flex align-items-center justify-content-end gap-4">
-                    <!-- Social Icons -->
-                    <div class="social-icons d-flex gap-2">
-                        @if($business_setup->facebook_url)
-                        <a href="{{ $business_setup->facebook_url }}" target="_blank" class="social-icon" style="width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; background: rgba(255,255,255,0.1); border-radius: 50%; color: #fff; font-size: 12px; transition: all 0.3s;">
-                            <i class="fab fa-facebook-f"></i>
-                        </a>
-                        @endif
-                        @if($business_setup->twitter_url)
-                        <a href="{{ $business_setup->twitter_url }}" target="_blank" class="social-icon" style="width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; background: rgba(255,255,255,0.1); border-radius: 50%; color: #fff; font-size: 12px; transition: all 0.3s;">
-                            <i class="fab fa-twitter"></i>
-                        </a>
-                        @endif
-                        @if($business_setup->linkedin_url)
-                        <a href="{{ $business_setup->linkedin_url }}" target="_blank" class="social-icon" style="width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; background: rgba(255,255,255,0.1); border-radius: 50%; color: #fff; font-size: 12px; transition: all 0.3s;">
-                            <i class="fab fa-linkedin-in"></i>
-                        </a>
-                        @endif
-                        @if($business_setup->youtube_url)
-                        <a href="{{ $business_setup->youtube_url }}" target="_blank" class="social-icon" style="width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; background: rgba(255,255,255,0.1); border-radius: 50%; color: #fff; font-size: 12px; transition: all 0.3s;">
-                            <i class="fab fa-youtube"></i>
-                        </a>
-                        @endif
+<div class="topbar topbar-six-area d-none d-lg-block overflow-visible z-2">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-12">
+                        <div class="topbar-six__wrapper d-flex justify-content-between align-items-center">
+                            <!-- left -->
+                            <div class="topbar__list-wrapper">
+                                <ul class="topbar__list topbar-six-list">
+                                    @if($business_setup && ($business_setup->email_address[0] ?? null))
+                                    <li>
+                                        <a class="fw-normal"
+                                            href="mailto:{{ $business_setup->email_address[0] }}">
+                                            <i class="fa-regular fa-envelope"></i> {{ $business_setup->email_address[0] }}
+                                        </a>
+                                    </li>
+                                    @endif
+                                    @if($business_setup && ($business_setup->official_contact_number[0] ?? null))
+                                    <li>
+                                        <a class="fw-normal" href="tel:{{ str_replace([' ', '-'], '', $business_setup->official_contact_number[0]) }}">
+                                            <i class="fa-solid fa-phone"></i> Sales: {{ $business_setup->official_contact_number[0] }}
+                                        </a>
+                                    </li>
+                                    @endif
+                                    @if($business_setup && ($business_setup->hotline_number[0] ?? null))
+                                    <li>
+                                        <a class="fw-normal" href="tel:{{ str_replace([' ', '-'], '', $business_setup->hotline_number[0]) }}">
+                                            <i class="fa-solid fa-headset"></i> Hotline: {{ $business_setup->hotline_number[0] }}
+                                        </a>
+                                    </li>
+                                    @endif
+                                </ul>
+                            </div>
+                            <!-- right -->
+                            <div class="topbar-six-right">
+                                <ul
+                                    class="d-flex footer__bottom-list gap-4 justify-content-center justify-content-lg-end">
+                                    @guest
+                                        <li><a class="fw-normal" href="{{ route('login') }}"><i class='bx bx-user'></i>
+                                                Login</a></li>
+                                        <li><a class="fw-normal" href="{{ route('register') }}"><i
+                                                    class='bx bx-user-plus'></i> Register</a></li>
+                                    @else
+                                        <li><a class="fw-normal" href="{{ route('dashboard') }}"><i class='bx bx-user'></i>
+                                                My Account</a></li>
+                                    @endguest
+                                </ul>
+                            </div>
+                        </div>
                     </div>
-                    
-                    <!-- Divider -->
-                    <div style="width: 1px; height: 20px; background: rgba(255,255,255,0.2);"></div>
-                    
-                    <!-- Auth Links -->
-                    <ul class="auth-links d-flex align-items-center gap-3 mb-0 list-unstyled">
-                        @guest
-                            <li>
-                                <a href="{{ route('login') }}" class="text-white-50 text-decoration-none d-flex align-items-center" style="font-size: 13px; transition: all 0.3s;">
-                                    <i class="fa-regular fa-user me-1"></i> Login
-                                </a>
-                            </li>
-                            <li>
-                                <a href="{{ route('register') }}" class="text-white text-decoration-none d-flex align-items-center" style="font-size: 13px; background: #0496ff; padding: 5px 15px; border-radius: 20px; transition: all 0.3s;">
-                                    <i class="fa-solid fa-user-plus me-1"></i> Sign Up
-                                </a>
-                            </li>
-                        @else
-                            <li>
-                                <a href="{{ route('dashboard') }}" class="text-white-50 text-decoration-none d-flex align-items-center" style="font-size: 13px; transition: all 0.3s;">
-                                    <i class="fa-solid fa-user-circle me-1"></i> My Account
-                                </a>
-                            </li>
-                            <li>
-                                <form method="POST" action="{{ route('logout') }}" class="d-inline">
-                                    @csrf
-                                    <button type="submit" class="btn btn-link text-white-50 text-decoration-none p-0 d-flex align-items-center" style="font-size: 13px;">
-                                        <i class="fa-solid fa-sign-out-alt me-1"></i> Logout
-                                    </button>
-                                </form>
-                            </li>
-                        @endguest
-                    </ul>
                 </div>
             </div>
         </div>
-    </div>
-</div>
 <!-- Topbar End -->
 
 <style>
@@ -97,8 +58,9 @@
     .topbar-area .auth-links li a:hover {
         color: #fff !important;
     }
+
     .topbar-area .social-icon:hover {
-        background: #0496ff !important;
+        background: #122f2a !important;
         transform: translateY(-2px);
     }
 </style>

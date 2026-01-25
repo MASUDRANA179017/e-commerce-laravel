@@ -8,6 +8,7 @@ use App\Models\Catalog\AttributeSet;
 use App\Models\Catalog\AttributeSetItem;
 use App\Models\Catalog\AttributeTerm;
 use App\Models\Catalog\Category;
+use App\Models\VariantSet;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
@@ -101,30 +102,45 @@ public function variantRules(Request $request)
 
     if (!empty($axes)) {
         $rows[] = [
-            'id'           => $set->id,
+            'id'           => 'derived_' . $set->id,
             'name'         => 'Derived from Attribute Set',
             'set_of_rules' => $axes,
         ];
     }
 
-    if (Schema::hasTable('variant_rules')) {
-        try {
-            $dbRules = DB::table('variant_rules')
-                ->select('id', 'category_id', 'category_name', 'set_of_rules', 'status')
-                ->where('category_id', $set->category_id)
-                ->get()
-                ->map(function ($r) {
-                    return [
-                        'id'           => $r->id,
-                        'name'         => $r->category_name ?: ('Rule ' . $r->id),
-                        'set_of_rules' => $r->set_of_rules ? json_decode($r->set_of_rules, true) : [],
-                    ];
-                })
-                ->toArray();
-            $rows = array_merge($rows, $dbRules);
-        } catch (\Throwable $e) {
-            Log::warning('variant_rules query failed: ' . $e->getMessage());
-        }
+    // Get variant sets from the variant_sets table
+    try {
+        $variantSets = VariantSet::with('attributeSet')
+            ->where('attribute_set_id', $setId)
+            ->where('status', '!=', 'deleted')
+            ->get()
+            ->map(function ($vs) {
+                // Extract attribute IDs from the variants array
+                $attributeIds = [];
+                
+                if (is_array($vs->variants) && !empty($vs->variants)) {
+                    // Get first variant to extract attribute structure
+                    $firstVariant = $vs->variants[0] ?? null;
+                    if ($firstVariant && isset($firstVariant['options']) && is_array($firstVariant['options'])) {
+                        foreach ($firstVariant['options'] as $option) {
+                            if (isset($option['attribute_id'])) {
+                                $attributeIds[] = (int) $option['attribute_id'];
+                            }
+                        }
+                    }
+                }
+                
+                return [
+                    'id'           => $vs->id,
+                    'name'         => $vs->name,
+                    'set_of_rules' => array_values(array_unique($attributeIds)),
+                ];
+            })
+            ->toArray();
+        
+        $rows = array_merge($rows, $variantSets);
+    } catch (\Throwable $e) {
+        Log::warning('variant_sets query failed: ' . $e->getMessage());
     }
 
     return response()->json($rows);

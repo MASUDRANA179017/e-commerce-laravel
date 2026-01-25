@@ -118,6 +118,98 @@ body {
   overflow-x: clip;
   text-transform: capitalize;
 }
+
+/* Ecosystem store section */
+.ecosystem-section {
+  background: #f7fbf7;
+}
+
+.ecosystem-kicker {
+  font-size: 14px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #6c8c75;
+}
+
+.ecosystem-title {
+  font-weight: 800;
+  color: #0e3f2f;
+}
+
+.ecosystem-title span {
+  color: #8cbf1f;
+}
+
+.ecosystem-subtitle {
+  color: #5c6b61;
+}
+
+.ecosystem-slider {
+  padding: 10px 0 40px;
+}
+
+.ecosystem-card {
+  position: relative;
+  border-radius: 18px;
+  overflow: hidden;
+  height: 220px;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
+  background: #0d1a16;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.ecosystem-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 18px 36px rgba(0, 0, 0, 0.12);
+}
+
+.ecosystem-image {
+  width: 100%;
+  height: 100%;
+  background-size: cover;
+  background-position: center;
+  filter: saturate(0.95);
+}
+
+.ecosystem-card-title {
+  position: absolute;
+  left: 16px;
+  bottom: 14px;
+  color: #f5f8f2;
+  font-weight: 600;
+  font-size: 16px;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.35);
+}
+
+.ecosystem-nav {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.08);
+  color: #1a2c24;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  transition: background 0.2s ease, color 0.2s ease;
+  z-index: 2;
+}
+
+.ecosystem-prev { left: -12px; }
+.ecosystem-next { right: -12px; }
+
+.ecosystem-nav:hover {
+  background: #1a2c24;
+  color: #e9f6e9;
+}
+
+@media (max-width: 768px) {
+  .ecosystem-card { height: 200px; }
+  .ecosystem-prev { left: -4px; }
+  .ecosystem-next { right: -4px; }
+}
 body::-webkit-scrollbar {
   width: 5px;
 }
@@ -1110,6 +1202,11 @@ div {
   line-height: 50px;
   gap: 0 !important;
 }
+
+.title-animation span {
+  color: red ;
+}
+
 .title-animation > div > div:nth-child(1) {
   text-transform: uppercase;
 }
@@ -2861,9 +2958,9 @@ background: var(--bs-secondary-bg);
   transition: var(--transition);
   -webkit-box-shadow: var(--shadow);
           box-shadow: var(--shadow);
-  padding: 20px 0px;
+  /* padding: 20px 0px; */
   border-radius: 5px;
-  z-index: 9;
+  /* z-index: 9; */
 }
 .header .navbar__sub-menu li:nth-last-of-type(1) > a {
   border-bottom: 0px;
@@ -2884,6 +2981,7 @@ background: var(--bs-secondary-bg);
   content: "";
   position: absolute;
   top: 50%;
+  right: 0;
   -webkit-transform: translateY(-50%);
       -ms-transform: translateY(-50%);
           transform: translateY(-50%);
@@ -2999,7 +3097,7 @@ font-size: 14px;
   color: var(--black);
 }
 .header .search-box button:hover {
-  color: var(--hover-color);
+  color: var(--apece-primary);
 }
 .header .open-offcanvas-nav {
   padding: 0px;
@@ -3253,7 +3351,7 @@ font-size: 14px;
 }
 .header-tertiary .navbar__options,
 .header-tertiary .navbar__mobile-options {
-  gap: 30px;
+  gap: 15px;
 }
 .header-tertiary .navbar__options .btn--secondary i,
 .header-tertiary .navbar__mobile-options .btn--secondary i {
@@ -9223,7 +9321,7 @@ padding: 15px 40px;
 }
 .blog .blog__single-thumb .tag {
 position: absolute;
-  padding: 7px 5px;
+  padding: 15px 10px;
 }
 .blog .blog__single-thumb .tag a {
   padding: 8px 24px;
@@ -11472,7 +11570,7 @@ gap: 8px;
   display: flex;
   -webkit-box-align: center;
       -ms-flex-align: center;
-          align-items: center;
+          align-items: flex-start;
   gap: 16px;
   -ms-flex-wrap: wrap;
       flex-wrap: wrap;
@@ -14666,6 +14764,7 @@ display: flex;
   right: 15px;
   width: 70px;
   height: 55px;
+  color: var(--white) !important;
   background-color: var(--apece-primary);
   display: -webkit-box;
   display: -ms-flexbox;
@@ -14687,7 +14786,7 @@ display: flex;
 }
 .fc-blog .tag span {
 width: 100%;
-  color: var(--white);
+  color: var(--secondary-color);
   text-align: center;
   font-size: 15px;
   font-weight: 600;
@@ -16790,7 +16889,7 @@ color: var(--apece-title);
 
 /* Header Css */
 .topbar-six-area {
-	background: #123458;
+	background: #122f2a !important;
 	padding: 5px 80px;
   z-index: 999 !important;
 }
@@ -20295,7 +20394,7 @@ position: absolute;
   transition: .6s ease-in-out;
   opacity: 0;
   visibility: hidden;
-  backdrop-filter: blur(10.5px);
+  backdrop-filter: blur(1px);
 }
 .ministrie-eight-button {
 	text-align: right;

@@ -114,47 +114,62 @@ class UserController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'full_name'     => 'required|string|max:255',
+            'username'      => 'nullable|string|max:255|unique:users',
             'email'         => 'required|string|email|max:255|unique:users',
             'phone'         => 'nullable|string|max:20',
             'password'      => 'required|string|min:8|confirmed',
             'department'    => 'nullable|exists:departments,id',
             'designation'   => 'nullable|exists:designations,id',
             'role'          => 'required|exists:roles,id',
-            'profile_image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:800',
+            'profile_image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+        ], [
+            'profile_image.max' => 'Profile image must not exceed 2 MB.',
+            'profile_image.image' => 'Profile image must be a valid image file.',
+            'profile_image.mimes' => 'Profile image must be a JPEG, PNG, JPG, or GIF file.',
         ]);
 
         if ($validator->fails()) {
             return response()->json(['errors' => $validator->errors()], 422);
         }
 
-        // Handle image upload
-        $avatarPath = null;
-        if ($request->hasFile('profile_image')) {
+        try {
+            // Handle image upload
+            $avatarPath = null;
+            if ($request->hasFile('profile_image')) {
+                $avatarPath = uploadFile($request->file('profile_image'), 'users/images');
+            }
 
-            $avatarPath = uploadFile($request->file('profile_image'), 'users/images');
+            // Generate username if not provided (from email)
+            $username = $request->username;
+            if (empty($username)) {
+                $username = explode('@', $request->email)[0] . rand(100, 999);
+            }
+
+            // Create user (map department/designation to *_id columns)
+            $user = User::create([
+                'name'           => $request->full_name,
+                'username'       => $username,
+                'email'          => $request->email,
+                'phone'          => $request->phone,
+                'department_id'  => $request->department,
+                'designation_id' => $request->designation,
+                'address'        => $request->address,
+                'is_active'      => $request->status ?? 1,
+                'image'          => $avatarPath,
+                'password'       => Hash::make($request->password),
+            ]);
+
+            // Assign Role
+            $role = Role::find($request->role);
+            if ($role) {
+                $user->assignRole($role->name);
+            }
+
+            return response()->json(['success' => 'User created successfully.']);
+        } catch (\Exception $e) {
+            \Log::error('User creation failed: ' . $e->getMessage());
+            return response()->json(['error' => 'Something went wrong: ' . $e->getMessage()], 500);
         }
-
-        // Create user (map department/designation to *_id columns)
-        $user = User::create([
-            'name'           => $request->full_name,
-            'username'       => $request->username,
-            'email'          => $request->email,
-            'phone'          => $request->phone,
-            'department_id'  => $request->department,
-            'designation_id' => $request->designation,
-            'address'        => $request->address,
-            'is_active'      => $request->status ?? 1,
-            'image'          => $avatarPath,
-            'password'       => Hash::make($request->password),
-        ]);
-
-        // Assign Role
-        $role = Role::find($request->role);
-        if ($role) {
-            $user->assignRole($role->name);
-        }
-
-        return response()->json(['success' => 'User created successfully.']);
     }
 
 
@@ -172,67 +187,76 @@ class UserController extends Controller
             'department'    => 'nullable|string|max:255',
             'designation'   => 'nullable|string|max:255',
             'role'     => 'required|exists:roles,id',
-            'image'    => 'nullable|image|mimes:jpeg,png,jpg,gif|max:800',
+            'profile_image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+        ], [
+            'profile_image.max' => 'Profile image must not exceed 2 MB.',
+            'profile_image.image' => 'Profile image must be a valid image file.',
+            'profile_image.mimes' => 'Profile image must be a JPEG, PNG, JPG, or GIF file.',
         ]);
 
         if ($validator->fails()) {
             return response()->json(['errors' => $validator->errors()], 422);
         }
 
-        // Handle profile image upload (if any)
-        $avatarPath = $user->image;
-        if ($request->hasFile('profile_image')) {
-            if ($user->image && Storage::disk('public')->exists($user->image)) {
-                Storage::disk('public')->delete($user->image);
+        try {
+            // Handle profile image upload (if any)
+            $avatarPath = $user->image;
+            if ($request->hasFile('profile_image')) {
+                if ($user->image && Storage::disk('public')->exists($user->image)) {
+                    Storage::disk('public')->delete($user->image);
+                }
+                $avatarPath = uploadFile($request->file('profile_image'), 'users/images');
             }
-            $avatarPath = uploadFile($request->file('profile_image'), 'users/images');
-        }
 
-        // Build update payload only from request keys that exist in the model's fillable
-        $fillable = $user->getFillable();
-        $updateData = [];
-        $skipKeys = ['password', 'password_confirmation', '_token', '_method', 'profile_image'];
-        foreach ($request->all() as $k => $v) {
-            if (in_array($k, $skipKeys, true)) continue;
-            if (in_array($k, $fillable, true)) {
-                $updateData[$k] = $v;
+            // Build update payload only from request keys that exist in the model's fillable
+            $fillable = $user->getFillable();
+            $updateData = [];
+            $skipKeys = ['password', 'password_confirmation', '_token', '_method', 'profile_image'];
+            foreach ($request->all() as $k => $v) {
+                if (in_array($k, $skipKeys, true)) continue;
+                if (in_array($k, $fillable, true)) {
+                    $updateData[$k] = $v;
+                }
             }
-        }
 
-        // Map front-end `status` to DB `is_active` when provided
-        if ($request->has('status')) {
-            $updateData['is_active'] = $request->input('status');
-        }
+            // Map front-end `status` to DB `is_active` when provided
+            if ($request->has('status')) {
+                $updateData['is_active'] = $request->input('status');
+            }
 
-        // Map department/designation to *_id columns when provided
-        if ($request->has('department')) {
-            $updateData['department_id'] = $request->input('department');
-        }
-        if ($request->has('designation')) {
-            $updateData['designation_id'] = $request->input('designation');
-        }
+            // Map department/designation to *_id columns when provided
+            if ($request->has('department')) {
+                $updateData['department_id'] = $request->input('department');
+            }
+            if ($request->has('designation')) {
+                $updateData['designation_id'] = $request->input('designation');
+            }
 
-        // Ensure uploaded image path is applied when file provided
-        if ($request->hasFile('profile_image')) {
-            $updateData['image'] = $avatarPath;
-        }
+            // Ensure uploaded image path is applied when file provided
+            if ($request->hasFile('profile_image')) {
+                $updateData['image'] = $avatarPath;
+            }
 
-        // Handle password separately (hash)
-        if ($request->filled('password')) {
-            $updateData['password'] = Hash::make($request->password);
-        }
+            // Handle password separately (hash)
+            if ($request->filled('password')) {
+                $updateData['password'] = Hash::make($request->password);
+            }
 
-        if (!empty($updateData)) {
-            $user->update($updateData);
-        }
+            if (!empty($updateData)) {
+                $user->update($updateData);
+            }
 
-        // Sync Role
-        $role = Role::find($request->role);
-        if ($role) {
-            $user->syncRoles([$role->name]);
-        }
+            // Sync Role
+            $role = Role::find($request->role);
+            if ($role) {
+                $user->syncRoles([$role->name]);
+            }
 
-        return response()->json(['success' => 'User updated successfully.']);
+            return response()->json(['success' => 'User updated successfully.']);
+        } catch (\Exception $e) {
+            \Log::error('User update failed: ' . $e->getMessage());
+            return response()->json(['error' => 'Something went wrong: ' . $e->getMessage()], 500);
+        }
     }
 
 

@@ -168,6 +168,8 @@ class ShopController extends Controller
             ->selectRaw('MIN(COALESCE(sale_price, price)) as min_price, MAX(price) as max_price')
             ->first();
 
+
+
         return view('frontend.shop', compact('products', 'categories', 'brands', 'priceRange', 'totalProducts'));
     }
 }

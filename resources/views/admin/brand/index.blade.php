@@ -445,6 +445,10 @@
                         $.ajax({
                             url: '/admin/brand/delete/' + id,
                             type: 'DELETE',
+                            headers: {
+                                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
+                                'Accept': 'application/json'
+                            },
                             data: {
                                 _token: $('meta[name="csrf-token"]').attr('content')
                             },
@@ -463,7 +467,18 @@
                                 }
                             },
                             error: function(xhr) {
-                                Swal.fire('Error!', 'Something went wrong.', 'error');
+                                var message = 'Something went wrong.';
+                                if (xhr.responseJSON && xhr.responseJSON.message) {
+                                    message = xhr.responseJSON.message;
+                                } else if (xhr.responseText) {
+                                    try {
+                                        var parsed = JSON.parse(xhr.responseText);
+                                        if (parsed && parsed.message) message = parsed.message;
+                                    } catch (e) {
+                                        message = xhr.responseText;
+                                    }
+                                }
+                                Swal.fire('Error!', message, 'error');
                             }
                         });
                     }

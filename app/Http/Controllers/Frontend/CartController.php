@@ -20,11 +20,13 @@ class CartController extends Controller
         $shipping = $subtotal >= 5000 ? 0 : 100; // Free shipping over ৳5000
         $total = $subtotal - $discount + $shipping;
 
-        // Convert cart items to collection for easier handling
+        // Convert cart items to collection for easier handling with product details
         $cartItems = collect($cartItems)->map(function ($item, $rowId) {
+            $product = \App\Models\Product::find($item['id']);
             return (object) array_merge($item, [
                 'rowId' => $rowId,
-                'options' => (object) ($item['options'] ?? [])
+                'options' => (object) ($item['options'] ?? []),
+                'price_range' => $product ? $product->formatted_price_range : null,
             ]);
         });
 
@@ -61,20 +63,47 @@ class CartController extends Controller
         $variantId = $request->variant_id ?? null;
         $rowId = 'product_' . $product->id . ($variantId ? '_v_' . $variantId : '');
 
-        // Determine price
+        // Determine price (variant-aware with purchase sell price fallback)
         $price = $product->sale_price && $product->sale_price < $product->price 
             ? $product->sale_price 
             : $product->price;
 
         $variantLabel = $request->variant ?? null;
+        $variantSku = $product->sku ?? null;
         if ($variantId) {
-            $v = \App\Models\ProductVariant::with(['options.attribute', 'options.term'])->find($variantId);
+            $v = \App\Models\ProductVariant::with(['options.attribute', 'options.term', 'product'])->find($variantId);
             if ($v) {
+                $variantSku = $v->sku ?? $variantSku;
                 $variantLabel = $v->options->map(function ($opt) {
                     $an = $opt->attribute->name ?? 'Option';
                     $tn = $opt->term->name ?? '';
                     return $an . ': ' . $tn;
                 })->join(' | ');
+                $base = $v->price;
+                if ($base === null || $base <= 0) {
+                    $purchaseSell = \Illuminate\Support\Facades\DB::table('purchase_items')
+                        ->join('purchases', 'purchase_items.purchase_id', '=', 'purchases.id')
+                        ->where('purchase_items.variant_id', $v->id)
+                        ->where('purchases.status', 'received')
+                        ->orderByDesc('purchases.purchase_date')
+                        ->value('purchase_items.sell_price');
+                    $base = $purchaseSell ?? ($v->product->sale_price ?? $v->product->price);
+                }
+                $price = $base ?? $price;
+            }
+        } else {
+            // Only fetch purchase price if manual price is not set or 0
+            if ($price <= 0) {
+                $purchPrice = \Illuminate\Support\Facades\DB::table('purchase_items')
+                    ->join('purchases', 'purchase_items.purchase_id', '=', 'purchases.id')
+                    ->where('purchase_items.product_id', $product->id)
+                    ->whereNull('purchase_items.variant_id')
+                    ->where('purchases.status', 'received')
+                    ->orderByDesc('purchases.purchase_date')
+                    ->value('purchase_items.sell_price');
+                if ($purchPrice !== null && (float) $purchPrice > 0) {
+                    $price = (float) $purchPrice;
+                }
             }
         }
 
@@ -92,7 +121,7 @@ class CartController extends Controller
                     'image' => $product->cover_image ?? null,
                     'slug' => $product->slug ?? $product->id,
                     'variant' => $variantLabel,
-                    'sku' => $product->sku ?? null,
+                    'sku' => $variantSku,
                 ]
             ];
         }

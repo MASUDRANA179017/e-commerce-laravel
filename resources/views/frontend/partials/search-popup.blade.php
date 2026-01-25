@@ -9,13 +9,10 @@
     <div class="search-popup-content" style="width: 100%; max-width: 700px; padding: 20px; transform: translateY(-30px); transition: all 0.4s;">
         <!-- Logo -->
         <div class="text-center mb-4">
-            <a href="{{ route('home') }}" class="d-inline-flex align-items-center text-decoration-none">
-                <div class="logo-icon me-2" style="width: 50px; height: 50px; background: #0496ff; border-radius: 12px; display: flex; align-items: center; justify-content: center;">
-                    <i class="fa-solid fa-cart-shopping text-white" style="font-size: 22px;"></i>
-                </div>
-                <div class="logo-text">
-                    <h3 class="mb-0 text-white" style="font-weight: 700;">Grow<span style="color: #0496ff;">Up</span></h3>
-                </div>
+            <a href="{{ route('home') }}" class="d-inline-block text-decoration-none">
+                <img src="{{ $business_setup && $business_setup->logo ? asset('storage/' . $business_setup->logo) : asset('frontend/assets/images/logo.png') }}" 
+                     alt="{{ config('app.name') }}" 
+                     style="height: 60px; max-width: 100%; object-fit: contain;">
             </a>
         </div>
         

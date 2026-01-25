@@ -124,14 +124,47 @@ class SettingsController extends Controller
 
     public function updateShipping(Request $request)
     {
-        // Update shipping settings
-        return response()->json(['success' => true, 'message' => 'Shipping settings updated']);
+        $request->validate([
+            'default_shipping_method' => 'required|in:flat_rate,free_shipping,weight_based',
+            'shipping_cost_dhaka' => 'required|numeric|min:0',
+            'shipping_cost_outside' => 'required|numeric|min:0',
+            'free_shipping_threshold' => 'required|numeric|min:0',
+        ]);
+
+        $settings = BusinessSetup::first();
+        if (!$settings) {
+            return response()->json(['error' => 'Business Setup not found'], 404);
+        }
+
+        $settings->update($request->only([
+            'default_shipping_method',
+            'shipping_cost_dhaka',
+            'shipping_cost_outside',
+            'free_shipping_threshold',
+        ]));
+
+        return response()->json(['success' => true, 'message' => 'Shipping settings updated successfully']);
     }
 
     public function updateTax(Request $request)
     {
         // Update tax settings
         return response()->json(['success' => true, 'message' => 'Tax settings updated']);
+    }
+
+    public function updateScout(Request $request)
+    {
+        $request->validate([
+            'scout_discount_enabled' => 'nullable|in:0,1',
+            'scout_discount_percent' => 'required|numeric|min:0|max:100',
+            'scout_discount_code' => 'required|string|max:50',
+        ]);
+
+        \App\Models\SystemSetting::set('scout_discount_enabled', $request->has('scout_discount_enabled') && $request->scout_discount_enabled == '1' ? '1' : '0', 'boolean');
+        \App\Models\SystemSetting::set('scout_discount_percent', $request->scout_discount_percent, 'number');
+        \App\Models\SystemSetting::set('scout_discount_code', $request->scout_discount_code, 'string');
+
+        return response()->json(['success' => true, 'message' => 'Scout discount settings updated successfully']);
     }
 
     public function updateCurrency(Request $request)
@@ -166,7 +199,25 @@ class SettingsController extends Controller
 
     public function updateSeo(Request $request)
     {
-        // Update SEO settings
+        $request->validate([
+            'meta_title' => 'nullable|string|max:255',
+            'meta_description' => 'nullable|string',
+            'meta_keywords' => 'nullable|string',
+            'google_analytics_id' => 'nullable|string|max:255',
+        ]);
+
+        $settings = BusinessSetup::first();
+        if (!$settings) {
+            return response()->json(['error' => 'Business Setup not found'], 404);
+        }
+
+        $settings->update($request->only([
+            'meta_title',
+            'meta_description',
+            'meta_keywords',
+            'google_analytics_id',
+        ]));
+
         return response()->json(['success' => true, 'message' => 'SEO settings updated']);
     }
 }

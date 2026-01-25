@@ -75,7 +75,6 @@
                 </a>
                 <ul class="menu-sub">
                     <li class="menu-item"><a href="customers-all.php" class="menu-link">All Customers</a></li>
-                    <li class="menu-item"><a href="customers-groups.php" class="menu-link">Customer Groups</a></li>
                 </ul>
             </li>
 

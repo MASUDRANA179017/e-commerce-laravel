@@ -23,4 +23,19 @@ class VariantSet extends Model
         'variant_rules' => 'array',
         'variants' => 'array',
     ];
+
+    public function businessCategory()
+    {
+        return $this->belongsTo(\App\Models\Catalog\Category::class, 'category_id');
+    }
+
+    public function attributeSet()
+    {
+        return $this->belongsTo(\App\Models\Catalog\AttributeSet::class, 'attribute_set_id');
+    }
+
+    public function getVariantsCountAttribute()
+    {
+        return is_array($this->variants) ? count($this->variants) : 0;
+    }
 }

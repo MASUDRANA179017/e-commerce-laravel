@@ -233,7 +233,7 @@
 
             <!-- Start Footer Area -->
             <footer class="footer-area bg-white text-center rounded-top-7">
-                <p class="fs-14">© <span class="text-primary-div">GrowUp</span> is Proudly Owned by <a
+                <p class="fs-14">© <span class="text-primary-div">{{ date('Y') }} {{ config('app.name') }}</span> is Proudly Owned by <a
                         href="https://qbittechnology.com/" target="_blank"
                         class="text-decoration-none text-primary">QBit Technology</a></p>
             </footer>
@@ -243,7 +243,6 @@
 
     <!-- jQuery (required for DataTables AJAX) -->
     <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
-
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
@@ -314,6 +313,63 @@
         document.getElementById('header-burger-menu').addEventListener('click', function () {
             document.getElementById('sidebar-area').classList.toggle('collapsed');
         });
+        
+        (function () {
+            function proceed(target) {
+                if (target.tagName === 'A' && target.href) {
+                    window.location.href = target.href;
+                    return;
+                }
+                var form = target.closest('form');
+                if (form) {
+                    form.submit();
+                    return;
+                }
+                target.click();
+            }
+            document.addEventListener('click', function (e) {
+                var el = e.target.closest('[data-confirm]');
+                if (!el) return;
+                e.preventDefault();
+                var msg = el.getAttribute('data-confirm') || 'Are you sure?';
+                if (typeof Swal !== 'undefined') {
+                    Swal.fire({
+                        title: 'Are you sure?',
+                        text: msg,
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#3085d6',
+                        cancelButtonColor: '#d33',
+                        confirmButtonText: 'Yes'
+                    }).then(function (result) {
+                        if (result.isConfirmed) proceed(el);
+                    });
+                } else {
+                    if (window.confirm(msg)) proceed(el);
+                }
+            });
+            document.addEventListener('submit', function (e) {
+                var form = e.target;
+                var msg = form.getAttribute('data-confirm');
+                if (!msg) return;
+                e.preventDefault();
+                if (typeof Swal !== 'undefined') {
+                    Swal.fire({
+                        title: 'Are you sure?',
+                        text: msg,
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#3085d6',
+                        cancelButtonColor: '#d33',
+                        confirmButtonText: 'Yes'
+                    }).then(function (result) {
+                        if (result.isConfirmed) form.submit();
+                    });
+                } else {
+                    if (window.confirm(msg)) form.submit();
+                }
+            });
+        })();
     </script>
     @stack('scripts')
 </body>

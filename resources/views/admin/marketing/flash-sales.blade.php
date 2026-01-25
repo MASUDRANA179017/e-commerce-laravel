@@ -209,14 +209,24 @@
                         
                         <div class="col-12">
                             <label class="form-label fw-bold">Select Products</label>
-                            <select class="form-select" name="products[]" id="flashSaleProducts" multiple style="height: 200px;">
+                            <select class="form-select" name="products[]" id="flashSaleProducts" multiple style="height: 300px; font-size: 14px;">
                                 @foreach($products ?? [] as $product)
-                                <option value="{{ $product->id }}">
-                                    {{ $product->title }} - ৳{{ number_format($product->sale_price ?? $product->price, 0) }}
+                                <option value="{{ $product->id }}" style="padding: 8px;">
+                                    {{ $product->title }} - 
+                                    @if($product->sale_price && $product->sale_price < $product->price)
+                                        <span style="text-decoration: line-through; color: #999;">৳{{ number_format($product->price, 0) }}</span>
+                                        <span style="color: #dc3545; font-weight: bold;">৳{{ number_format($product->sale_price, 0) }}</span>
+                                        <span style="color: #28a745; font-weight: bold;">({{ round((($product->price - $product->sale_price) / $product->price) * 100) }}% OFF)</span>
+                                    @else
+                                        ৳{{ number_format($product->price, 0) }}
+                                    @endif
                                 </option>
                                 @endforeach
                             </select>
-                            <small class="text-muted">Hold Ctrl/Cmd to select multiple products</small>
+                            <small class="text-muted">
+                                <i class="bx bx-info-circle"></i> Hold Ctrl/Cmd to select multiple products. 
+                                Products with existing discounts show strikethrough price.
+                            </small>
                         </div>
                     </div>
                 </div>

@@ -30,33 +30,19 @@ class HomeController extends Controller
             // Use empty collection
         }
 
-        // Get categories with active product counts
+        // Get ALL parent categories with children relationship (for product count including child categories)
         $categories = collect();
         try {
             $categories = ProductCategory::whereNull('parent_id')
-                ->withCount([
-                    'products' => function ($query) {
-                        $query->where('status', 'Active');
-                    }
-                ])
+                ->with('children') // Load children for product counting
                 ->orderBy('order')
-                ->limit(8)
                 ->get();
         } catch (\Exception $e) {
-            // Fallback: manually count products
+            // Fallback
             try {
                 $categories = ProductCategory::whereNull('parent_id')
                     ->orderBy('order')
-                    ->limit(8)
-                    ->get()
-                    ->map(function ($category) {
-                        $category->products_count = DB::table('product_category_map')
-                            ->join('products', 'product_category_map.product_id', '=', 'products.id')
-                            ->where('product_category_map.category_id', $category->id)
-                            ->where('products.status', 'Active')
-                            ->count();
-                        return $category;
-                    });
+                    ->get();
             } catch (\Exception $e2) {
                 // Use empty collection
             }
@@ -196,6 +182,28 @@ class HomeController extends Controller
             // Blog table might not exist yet or error occurred
         }
 
+        // Get promotional banners
+        $promotional_banners = collect();
+        try {
+            $promotional_banners = Banner::where('type', 'promotional_banner')
+                ->where('status', true)
+                ->orderBy('position')
+                ->get();
+        } catch (\Exception $e) {
+            // Use empty collection
+        }
+        
+            // Get store sections
+            $store_sections = collect();
+            try {
+                $store_sections = Banner::where('type', 'store_section')
+                    ->where('status', true)
+                    ->orderBy('position')
+                    ->get();
+            } catch (\Exception $e) {
+                // Use empty collection
+            }
+
         return view('frontend.home', compact(
             'sliders',
             'categories',
@@ -205,7 +213,9 @@ class HomeController extends Controller
             'brands',
             'flashSale',
             'flashSaleProducts',
-            'latestBlogs'
+            'latestBlogs',
+                'promotional_banners',
+                'store_sections'
         ));
     }
 }

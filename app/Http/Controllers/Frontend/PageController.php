@@ -10,8 +10,19 @@ class PageController extends Controller
 {
     public function show($slug)
     {
-        $page = Page::where('slug', $slug)->where('status', true)->firstOrFail();
-        return view('frontend.page', compact('page'));
+            $page = Page::where('slug', $slug)->where('status', true)->first();
+        
+            if (!$page) {
+                // Return a generic page if not found (no 404)
+                return view('frontend.page', ['page' => (object)[
+                    'title' => ucwords(str_replace('-', ' ', $slug)),
+                    'content' => null,
+                    'meta_title' => ucwords(str_replace('-', ' ', $slug)),
+                    'meta_description' => 'Page coming soon'
+                ]]);
+            }
+        
+            return view('frontend.page', compact('page'));
     }
 
     public function about()
@@ -40,29 +51,11 @@ class PageController extends Controller
 
     public function terms()
     {
-        $page = Page::where('slug', 'terms-and-conditions')->orWhere('slug', 'terms')->first();
-        if (!$page) {
-             return view('frontend.page', ['page' => (object)[
-                'title' => 'Terms & Conditions',
-                'content' => '<p>Terms and conditions content goes here.</p>',
-                'meta_title' => 'Terms & Conditions',
-                'meta_description' => 'Terms & Conditions'
-            ]]);
-        }
-        return view('frontend.page', compact('page'));
+        return view('frontend.pages.terms-and-conditions');
     }
 
     public function privacy()
     {
-        $page = Page::where('slug', 'privacy-policy')->orWhere('slug', 'privacy')->first();
-        if (!$page) {
-            return view('frontend.page', ['page' => (object)[
-                'title' => 'Privacy Policy',
-                'content' => '<p>Privacy policy content goes here.</p>',
-                'meta_title' => 'Privacy Policy',
-                'meta_description' => 'Privacy Policy'
-            ]]);
-        }
-        return view('frontend.page', compact('page'));
+        return view('frontend.pages.privacy-policy');
     }
 }

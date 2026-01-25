@@ -9,6 +9,11 @@ use App\Http\Controllers\Admin\StorefrontController;
 use App\Http\Controllers\Admin\MarketingController;
 use App\Http\Controllers\Admin\InventoryController;
 use App\Http\Controllers\Admin\SettingsController;
+use App\Http\Controllers\Admin\FAQController;
+use App\Http\Controllers\Admin\NewsletterController;
+use App\Http\Controllers\Admin\Marketing\DiscountController;
+use App\Http\Controllers\Admin\Settings\ShippingController;
+use App\Http\Controllers\Admin\Settings\PaymentSettingsController;
 
 /*
 |--------------------------------------------------------------------------
@@ -98,6 +103,7 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
         Route::get('/pages', [StorefrontController::class, 'pages'])->name('pages');
         Route::get('/pages/create', [StorefrontController::class, 'createPage'])->name('pages.create');
         Route::post('/pages', [StorefrontController::class, 'storePage'])->name('pages.store');
+        Route::post('/pages/upload-image', [StorefrontController::class, 'uploadPageImage'])->name('pages.upload_image');
         Route::get('/pages/{page}/edit', [StorefrontController::class, 'editPage'])->name('pages.edit');
         Route::put('/pages/{page}', [StorefrontController::class, 'updatePage'])->name('pages.update');
         Route::delete('/pages/{page}', [StorefrontController::class, 'destroyPage'])->name('pages.destroy');
@@ -105,12 +111,6 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
         Route::post('/menus', [StorefrontController::class, 'storeMenu'])->name('menus.store');
         Route::put('/menus/{menu}', [StorefrontController::class, 'updateMenu'])->name('menus.update');
         Route::delete('/menus/{menu}', [StorefrontController::class, 'destroyMenu'])->name('menus.destroy');
-        Route::get('/blog', [StorefrontController::class, 'blog'])->name('blog');
-        Route::get('/blog/create', [StorefrontController::class, 'createBlog'])->name('blog.create');
-        Route::post('/blog', [StorefrontController::class, 'storeBlog'])->name('blog.store');
-        Route::get('/blog/{post}/edit', [StorefrontController::class, 'editBlog'])->name('blog.edit');
-        Route::put('/blog/{post}', [StorefrontController::class, 'updateBlog'])->name('blog.update');
-        Route::delete('/blog/{post}', [StorefrontController::class, 'destroyBlog'])->name('blog.destroy');
         Route::get('/banners', [StorefrontController::class, 'banners'])->name('banners');
         Route::post('/banners', [StorefrontController::class, 'storeBanner'])->name('banners.store');
         Route::put('/banners/{banner}', [StorefrontController::class, 'updateBanner'])->name('banners.update');
@@ -151,13 +151,22 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
         Route::get('/stock', [InventoryController::class, 'stock'])->name('stock');
         Route::get('/stock/data', [InventoryController::class, 'stockData'])->name('stock.data');
         Route::post('/stock/adjust', [InventoryController::class, 'adjustStock'])->name('stock.adjust');
+        Route::post('/stock/adjust-variant', [InventoryController::class, 'adjustVariantStock'])->name('stock.adjustVariant');
         Route::get('/stock/low', [InventoryController::class, 'lowStock'])->name('stock.low');
+        
+        // Purchases - Order matters! Specific routes must come BEFORE {purchase} parameter
         Route::get('/purchases', [InventoryController::class, 'purchases'])->name('purchases');
+        Route::get('/purchases/trash', [InventoryController::class, 'trashedPurchases'])->name('purchases.trash');
         Route::get('/purchases/create', [InventoryController::class, 'createPurchase'])->name('purchases.create');
         Route::post('/purchases', [InventoryController::class, 'storePurchase'])->name('purchases.store');
-        Route::get('/purchases/{purchase}', [InventoryController::class, 'showPurchase'])->name('purchases.show');
-        Route::put('/purchases/{purchase}', [InventoryController::class, 'updatePurchase'])->name('purchases.update');
+        
+        // Parameterized routes for single purchase
+        Route::delete('/purchases/{purchase}/force', [InventoryController::class, 'forceDeletePurchase'])->name('purchases.force-delete');
+        Route::post('/purchases/{purchase}/restore', [InventoryController::class, 'restorePurchase'])->name('purchases.restore');
         Route::delete('/purchases/{purchase}', [InventoryController::class, 'destroyPurchase'])->name('purchases.destroy');
+        Route::put('/purchases/{purchase}', [InventoryController::class, 'updatePurchase'])->name('purchases.update');
+        Route::get('/purchases/{purchase}', [InventoryController::class, 'showPurchase'])->name('purchases.show');
+        
         Route::get('/vendors', [InventoryController::class, 'vendors'])->name('vendors');
         Route::post('/vendors', [InventoryController::class, 'storeVendor'])->name('vendors.store');
         Route::get('/vendors/{vendor}', [InventoryController::class, 'showVendor'])->name('vendors.show');
@@ -176,7 +185,8 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
         Route::post('/store', [SettingsController::class, 'updateStoreInfo'])->name('store');
         Route::post('/email', [SettingsController::class, 'updateEmail'])->name('email');
         Route::post('/payment', [SettingsController::class, 'updatePayment'])->name('payment');
-        Route::post('/shipping', [SettingsController::class, 'updateShipping'])->name('shipping');
+        Route::post('/shipping-settings', [SettingsController::class, 'updateShipping'])->name('shipping');
+        Route::post('/scout-discount', [SettingsController::class, 'updateScout'])->name('scout');
         Route::post('/tax', [SettingsController::class, 'updateTax'])->name('tax');
         Route::post('/currency', [SettingsController::class, 'updateCurrency'])->name('currency');
         Route::post('/social', [SettingsController::class, 'updateSocial'])->name('social');
@@ -195,6 +205,72 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
         Route::get('/{blog}/edit', [\App\Http\Controllers\Admin\BlogController::class, 'edit'])->name('edit');
         Route::put('/{blog}', [\App\Http\Controllers\Admin\BlogController::class, 'update'])->name('update');
         Route::delete('/{blog}', [\App\Http\Controllers\Admin\BlogController::class, 'destroy'])->name('destroy');
+    });
+
+    /*
+    |--------------------------------------------------------------------------
+    | FAQ Management
+    |--------------------------------------------------------------------------
+    */
+    Route::prefix('faqs')->name('faqs.')->group(function () {
+        Route::get('/', [FAQController::class, 'index'])->name('index');
+        Route::get('/create', [FAQController::class, 'create'])->name('create');
+        Route::post('/', [FAQController::class, 'store'])->name('store');
+        Route::get('/{faq}/edit', [FAQController::class, 'edit'])->name('edit');
+        Route::put('/{faq}', [FAQController::class, 'update'])->name('update');
+        Route::delete('/{faq}', [FAQController::class, 'destroy'])->name('destroy');
+        Route::post('/{faq}/toggle', [FAQController::class, 'toggleStatus'])->name('toggle-status');
+    });
+
+    /*
+    |--------------------------------------------------------------------------
+    | Newsletter Management
+    |--------------------------------------------------------------------------
+    */
+    Route::prefix('newsletters')->name('newsletters.')->group(function () {
+        Route::get('/', [NewsletterController::class, 'index'])->name('index');
+        Route::delete('/{newsletter}', [NewsletterController::class, 'destroy'])->name('destroy');
+        Route::get('/export', [NewsletterController::class, 'export'])->name('export');
+        Route::post('/send', [NewsletterController::class, 'send'])->name('send');
+    });
+
+    /*
+    |--------------------------------------------------------------------------
+    | Discount Management
+    |--------------------------------------------------------------------------
+    */
+    Route::prefix('discounts')->name('discounts.')->group(function () {
+        Route::get('/', [DiscountController::class, 'index'])->name('index');
+        Route::get('/create', [DiscountController::class, 'create'])->name('create');
+        Route::post('/', [DiscountController::class, 'store'])->name('store');
+        Route::get('/{discount}/edit', [DiscountController::class, 'edit'])->name('edit');
+        Route::put('/{discount}', [DiscountController::class, 'update'])->name('update');
+        Route::delete('/{discount}', [DiscountController::class, 'destroy'])->name('destroy');
+        Route::post('/{discount}/toggle', [DiscountController::class, 'toggleStatus'])->name('toggle-status');
+    });
+
+    /*
+    |--------------------------------------------------------------------------
+    | Advanced Settings
+    |--------------------------------------------------------------------------
+    */
+    Route::prefix('settings')->name('settings.')->group(function () {
+        // Shipping
+        Route::prefix('shipping')->name('shipping.')->group(function () {
+            Route::get('/', [ShippingController::class, 'index'])->name('index');
+            Route::get('/create', [ShippingController::class, 'create'])->name('create');
+            Route::post('/', [ShippingController::class, 'store'])->name('store');
+            Route::get('/{zone}/edit', [ShippingController::class, 'edit'])->name('edit');
+            Route::put('/{zone}', [ShippingController::class, 'update'])->name('update');
+            Route::delete('/{zone}', [ShippingController::class, 'destroy'])->name('destroy');
+            Route::post('/{zone}/toggle', [ShippingController::class, 'toggleStatus'])->name('toggle-status');
+        });
+
+        // Payment Settings
+        Route::prefix('payment')->name('payment.')->group(function () {
+            Route::get('/', [PaymentSettingsController::class, 'index'])->name('index');
+            Route::post('/', [PaymentSettingsController::class, 'update'])->name('update');
+        });
     });
 });
 

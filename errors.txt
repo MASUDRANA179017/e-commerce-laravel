@@ -1,0 +1,15 @@
+1. button loader like product publish button when post to take some time ---------done
+2. image upload progress
+3. product update to price remove but i have purchases inventory ---------done
+4. product price minimum price 0 show but i don't want it show price in purchase price minimum and maximum ---------done
+5. product card template add to cart button click to open modal select variant then add to cart add ---------done
+6. Wishlist variant product(product card page ) direct add to cart modal show with variant like frontend add to cart  ---------done
+7. variant with out select add to cart and  buy now button disable ---------done
+8. Wishlist card price not show  ---------done
+9. Wishlist add to count number design not ok 
+10. Filter By Price need to update 
+11. parent category items count show also subcategory product count   ---------done
+12. category item na thakle show korbe na -------------dorkar nai 
+13. customer review not dynamic  ---------done
+14. Delete this attribute set (Server Error) ----------------- no need 
+15. home page product category section blur section need to full section and tensparent and only text section blur   ---------done

@@ -66,8 +66,8 @@
 
     <!-- Add/Edit Modal -->
     <div class="modal fade" id="categoryModal" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-lg modal-dialog-scrollable">
-            <div class="modal-content">
+        <div class="modal-dialog modal-lg modal-dialog-scrollable" style="max-height: 90vh;">
+            <div class="modal-content" style="max-height: 90vh;">
                 <div class="modal-header">
                     <h5 class="modal-title"><i class="bx bx-folder-plus me-2"></i><span id="modalTitle">Add Category</span>
                     </h5>
@@ -100,9 +100,27 @@
                                 <label class="form-label">Icon (Boxicons)</label>
                                 <input id="catIcon" class="form-control" placeholder="e.g., bx-mobile-alt">
                             </div>
-                            <div class="col-6">
-                                <label class="form-label">Thumb URL (optional)</label>
-                                <input id="catThumb" class="form-control" placeholder="https://…/thumb.jpg">
+                            <div class="col-12">
+                                <label class="form-label">Category Image</label>
+                                <div class="mb-2">
+                                    <input type="file" id="catImageFile" class="form-control" accept="image/*">
+                                    <small class="text-muted">Upload an image file (JPG, PNG, WebP) - Max 2MB</small>
+                                </div>
+                                <div id="currentImagePreview" class="mb-2" style="display: none;">
+                                    <label class="form-label d-block">Current Image:</label>
+                                    <img id="currentImageThumb" src="" alt="Current category image" style="max-width: 150px; max-height: 150px; border-radius: 8px; border: 1px solid #ddd;">
+                                    <button type="button" id="btnRemoveImage" class="btn btn-sm btn-danger ms-2">
+                                        <i class="bx bx-trash"></i> Remove
+                                    </button>
+                                </div>
+                                <div class="text-center my-2">
+                                    <small class="text-muted">— OR —</small>
+                                </div>
+                                <div>
+                                    <label class="form-label">Thumb URL (optional)</label>
+                                    <input id="catThumb" class="form-control" placeholder="https://…/thumb.jpg">
+                                    <small class="text-muted">Enter an image URL as an alternative</small>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -294,8 +312,10 @@
             // Open modal on button click
             $("#btnOpenAdd").on("click", function () {
                 // Reset form and data-id
-                $("#categoryForm1").trigger("reset").data("id", "");
+                $("#categoryForm1").trigger("reset").data("id", "").data("remove-image", false);
                 $("#modalTitle").text("Add Category");
+                $("#currentImagePreview").hide();
+                $("#catImageFile").val('');
 
                 // Load parent categories into dropdown
                 loadParentCategories();
@@ -304,24 +324,59 @@
                 $("#categoryModal").modal("show");
             });
 
+            // Handle image removal
+            $("#btnRemoveImage").on("click", function () {
+                $("#categoryForm1").data("remove-image", true);
+                $("#currentImagePreview").hide();
+                $("#catThumb").val('');
+            });
+
+            // Preview uploaded image
+            $("#catImageFile").on("change", function(e) {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function(event) {
+                        $("#currentImageThumb").attr("src", event.target.result);
+                        $("#currentImagePreview").show();
+                        $("#categoryForm1").data("remove-image", false);
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+
 
 
             // Save category via AJAX
             $("#categoryForm1").on("submit", function (e) {
                 e.preventDefault();
 
+                var formData = new FormData();
+                formData.append('id', $("#categoryForm1").data("id") || '');
+                formData.append('name', $("#catName").val());
+                formData.append('parent_id', $("#parentSelect").val() || '');
+                formData.append('order', $("#catOrder").val());
+                formData.append('show_on_menu', $("#catMenu").is(":checked") ? 1 : 0);
+                formData.append('icon', $("#catIcon").val() || '');
+                formData.append('thumb_url', $("#catThumb").val() || '');
+                
+                // Append file if selected
+                var imageFile = $("#catImageFile")[0].files[0];
+                if (imageFile) {
+                    formData.append('image_file', imageFile);
+                }
+                
+                // Check if image should be removed
+                if ($("#categoryForm1").data("remove-image")) {
+                    formData.append('remove_image', '1');
+                }
+
                 $.ajax({
                     url: "/admin/product/categories/store",
                     type: "POST",
-                    data: {
-                        id: $("#categoryForm1").data("id"),
-                        name: $("#catName").val(),
-                        parent_id: $("#parentSelect").val(),
-                        order: $("#catOrder").val(),
-                        show_on_menu: $("#catMenu").is(":checked") ? 1 : 0,
-                        icon: $("#catIcon").val(),
-                        thumb_url: $("#catThumb").val()
-                    },
+                    data: formData,
+                    processData: false,
+                    contentType: false,
                     success: function (res) {
                         if (res.success) {
                             Swal.fire({
@@ -336,8 +391,26 @@
                             // load updated tree
                             updateTreeOnSave(res.data);
                         } else {
-                            alert(res.message || "Failed to save category");
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error!',
+                                text: res.message || "Failed to save category"
+                            });
                         }
+                    },
+                    error: function (xhr) {
+                        console.error('Category save error:', xhr.responseText);
+                        var errorMsg = 'Failed to save category';
+                        if (xhr.responseJSON && xhr.responseJSON.errors) {
+                            errorMsg = Object.values(xhr.responseJSON.errors).flat().join('\n');
+                        } else if (xhr.responseJSON && xhr.responseJSON.message) {
+                            errorMsg = xhr.responseJSON.message;
+                        }
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error!',
+                            text: errorMsg
+                        });
                     }
                 });
             });
@@ -346,18 +419,32 @@
             $("#btnSaveNew").on("click", function (e) {
                 e.preventDefault(); // prevent default form submit
 
+                var formData = new FormData();
+                formData.append('id', $("#categoryForm1").data("id") || '');
+                formData.append('name', $("#catName").val());
+                formData.append('parent_id', $("#parentSelect").val() || '');
+                formData.append('order', $("#catOrder").val());
+                formData.append('show_on_menu', $("#catMenu").is(":checked") ? 1 : 0);
+                formData.append('icon', $("#catIcon").val() || '');
+                formData.append('thumb_url', $("#catThumb").val() || '');
+                
+                // Append file if selected
+                var imageFile = $("#catImageFile")[0].files[0];
+                if (imageFile) {
+                    formData.append('image_file', imageFile);
+                }
+                
+                // Check if image should be removed
+                if ($("#categoryForm1").data("remove-image")) {
+                    formData.append('remove_image', '1');
+                }
+
                 $.ajax({
                     url: "/admin/product/categories/store",
                     type: "POST",
-                    data: {
-                        id: $("#categoryForm1").data("id"),
-                        name: $("#catName").val(),
-                        parent_id: $("#parentSelect").val(),
-                        order: $("#catOrder").val(),
-                        show_on_menu: $("#catMenu").is(":checked") ? 1 : 0,
-                        icon: $("#catIcon").val(),
-                        thumb_url: $("#catThumb").val()
-                    },
+                    data: formData,
+                    processData: false,
+                    contentType: false,
                     success: function (res) {
                         if (res.success) {
                             Swal.fire({
@@ -369,13 +456,33 @@
                             });
 
                             // Reset form for next entry
-                            $("#categoryForm1").trigger("reset").data("id", "");
+                            $("#categoryForm1").trigger("reset").data("id", "").data("remove-image", false);
+                            $("#currentImagePreview").hide();
+                            $("#catImageFile").val('');
                             loadParentCategories(); // refresh parent dropdown
                             // load updated tree
                             updateTreeOnSave(res.data);
                         } else {
-                            alert(res.message || "Failed to save category");
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error!',
+                                text: res.message || "Failed to save category"
+                            });
                         }
+                    },
+                    error: function (xhr) {
+                        console.error('Category save error:', xhr.responseText);
+                        var errorMsg = 'Failed to save category';
+                        if (xhr.responseJSON && xhr.responseJSON.errors) {
+                            errorMsg = Object.values(xhr.responseJSON.errors).flat().join('\n');
+                        } else if (xhr.responseJSON && xhr.responseJSON.message) {
+                            errorMsg = xhr.responseJSON.message;
+                        }
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error!',
+                            text: errorMsg
+                        });
                     }
                 });
             });
@@ -416,6 +523,8 @@
 
 
         <script>
+            // Resolve storage base for relative image paths
+            const STORAGE_BASE = '{{ asset('storage') }}';
             // ================= CREATE LI =================
             function createLi(category) {
                 const li = document.createElement('li');
@@ -423,20 +532,27 @@
 
                 if (category.children_recursive?.length) li.classList.add('collapsed');
 
+                // Build image src: use full URL if relative path stored
+                const thumbSrc = category.thumb_url
+                    ? (category.thumb_url.startsWith('http')
+                        ? category.thumb_url
+                        : STORAGE_BASE + '/' + category.thumb_url)
+                    : 'https://via.placeholder.com/28x28?text=%20';
+
                 li.innerHTML = `
                         <div class="category-item">
                             <div class="cat-left">
                                 ${category.children_recursive?.length
                         ? `<button class="node-toggle" title="Toggle"><i class="bx bx-chevron-right"></i></button>`
                         : `<span class="node-toggle" style="visibility:hidden"><i class="bx bx-chevron-right"></i></span>`}
-                                <img class="thumb" src="${category.thumb_url || 'https://via.placeholder.com/28x28?text=%20'}" alt="">
+                                <img class="thumb" src="${thumbSrc}" alt="">
                                 <i class="bx ${category.icon || 'bx-folder'} text-secondary"></i>
                                 <div class="cat-title">${category.name}</div>
                                 <div class="cat-meta">
                                     ${category.show_on_menu ? `<span class="badge-soft rounded-pill px-2">Menu</span>` : ''}
-                                    <span class="badge badge-products rounded-pill px-2 badge-pill-click" title="View products">0</span>
-                                    <span class="badge badge-orders rounded-pill px-2 badge-pill-click" title="View orders">0</span>
-                                    <span class="badge badge-variants rounded-pill px-2 badge-pill-click" title="View variants">0</span>
+                                    <span class="badge badge-products rounded-pill px-2 badge-pill-click" title="View products">${(category.products_count != null ? category.products_count : 0)}</span>
+                                    <span class="badge badge-orders rounded-pill px-2 badge-pill-click" title="View orders">${(category.orders_count != null ? category.orders_count : 0)}</span>
+                                    <span class="badge badge-variants rounded-pill px-2 badge-pill-click" title="View variants">${(category.variants_count != null ? category.variants_count : 0)}</span>
                                     <span class="badge badge-order rounded-pill px-2">order: ${category.order || 0}</span>
                                 </div>
                             </div>
@@ -463,12 +579,25 @@
                 li.querySelector('[data-edit]')?.addEventListener('click', () => {
                     $.get('/admin/product/categories/' + category.id + '/edit', function (res) {
                         $('#modalTitle').text('Edit Category');
-                        $('#categoryForm1').data('id', res.id);
+                        $('#categoryForm1').data('id', res.id).data('remove-image', false);
                         $('#catName').val(res.name);
                         $('#catOrder').val(res.order);
                         $('#catMenu').prop('checked', res.show_on_menu == 1);
                         $('#catIcon').val(res.icon);
                         $('#catThumb').val(res.thumb_url);
+                        $('#catImageFile').val('');
+                        
+                        // Show existing image if available
+                        if (res.thumb_url) {
+                            var imageUrl = res.thumb_url.startsWith('http') 
+                                ? res.thumb_url 
+                                : '{{ asset("storage") }}/' + res.thumb_url;
+                            $('#currentImageThumb').attr('src', imageUrl);
+                            $('#currentImagePreview').show();
+                        } else {
+                            $('#currentImagePreview').hide();
+                        }
+                        
                         loadParentCategories(res.parent_id);
                         $('#categoryModal').modal('show');
                     });
@@ -496,6 +625,7 @@
                                         li.remove();
                                         document.getElementById('chipCats').textContent =
                                             ' Categories: ' + document.querySelectorAll('#treeRoot li').length;
+                                        if (typeof updateAllBadgeCounts === 'function') updateAllBadgeCounts();
                                         Swal.fire('Deleted!', res.message, 'success');
                                     } else {
                                         Swal.fire('Failed!', 'Could not delete category', 'error');
@@ -516,6 +646,11 @@
                     category.children_recursive.forEach(c => ul.appendChild(createLi(c)));
                     li.appendChild(ul);
                 }
+
+                // store immediate counts for roll-up
+                li.dataset.prod = String(category.products_count != null ? category.products_count : 0);
+                li.dataset.orders = String(category.orders_count != null ? category.orders_count : 0);
+                li.dataset.vars = String(category.variants_count != null ? category.variants_count : 0);
 
                 return li;
             }
@@ -569,6 +704,7 @@
                 // update count
                 document.getElementById('chipCats').textContent =
                     ' Categories: ' + treeRoot.querySelectorAll('li').length;
+                if (typeof updateAllBadgeCounts === 'function') updateAllBadgeCounts();
             }
 
             // ================= RENDER FULL TREE =================
@@ -577,6 +713,7 @@
                 root.innerHTML = '';
                 TREE.forEach(n => root.appendChild(createLi(n)));
                 document.getElementById('chipCats').textContent = ' Categories: ' + root.querySelectorAll('li').length;
+                if (typeof updateAllBadgeCounts === 'function') updateAllBadgeCounts();
             }
 
             // ================= LOAD FROM SERVER =================

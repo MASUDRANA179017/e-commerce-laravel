@@ -526,7 +526,7 @@ window.updateCartQty = function(rowId, change) {
     .then(function(data) {
         if (data.success) {
             // Update cart count in header
-            document.querySelectorAll('.cart-count').forEach(function(el) {
+            document.querySelectorAll('.cart-count:not(.wishlist-count)').forEach(function(el) {
                 el.textContent = data.cartCount;
             });
             // Update subtotal
@@ -600,7 +600,7 @@ window.removeFromCart = function(rowId) {
                 itemEl.remove();
             }
             // Update cart count
-            document.querySelectorAll('.cart-count').forEach(function(el) {
+            document.querySelectorAll('.cart-count:not(.wishlist-count)').forEach(function(el) {
                 el.textContent = data.cartCount;
             });
             // Update items count text

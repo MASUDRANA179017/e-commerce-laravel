@@ -79,6 +79,30 @@
             dom: '<"top"l>rt<"bottom d-flex justify-content-between align-items-center"ip><"clear">',
             order: [[7, 'desc']] // Order by Published/Created Date
         });
+
+        // SweetAlert2 Delete Confirmation
+        $(document).on('click', '.delete-btn', function(e) {
+            e.preventDefault();
+            const form = $(this).closest('.delete-form');
+            const blogTitle = form.data('title');
+            
+            Swal.fire({
+                title: 'Delete Blog Post?',
+                html: `Are you sure you want to delete <strong>"${blogTitle}"</strong>?<br><small class="text-muted">This action cannot be undone.</small>`,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#6c757d',
+                confirmButtonText: '<i class="bx bx-trash"></i> Yes, Delete',
+                cancelButtonText: '<i class="bx bx-x"></i> Cancel',
+                reverseButtons: true,
+                focusCancel: true
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    form.submit();
+                }
+            });
+        });
     });
 </script>
 @endpush

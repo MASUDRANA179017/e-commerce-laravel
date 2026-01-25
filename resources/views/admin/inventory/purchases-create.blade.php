@@ -59,10 +59,12 @@
                         <table class="table mb-0" id="itemsTable">
                             <thead class="bg-light">
                                 <tr>
-                                    <th style="width: 40%">Product</th>
+                                    <th style="width: 30%">Product</th>
+                                    <th style="width: 25%">Variant</th>
                                     <th style="width: 15%">Quantity</th>
-                                    <th style="width: 20%">Unit Cost</th>
-                                    <th style="width: 20%">Total</th>
+                                    <th style="width: 15%">Unit Cost</th>
+                                    <th style="width: 15%">Sell Price</th>
+                                    <th style="width: 10%">Total</th>
                                     <th style="width: 5%"></th>
                                 </tr>
                             </thead>
@@ -112,7 +114,12 @@ document.addEventListener('DOMContentLoaded', function() {
             <td>
                 <select name="items[${itemIndex}][product_id]" class="form-select product-select" required>
                     <option value="">Select Product</option>
-                    ${products.map(p => `<option value="${p.id}">${p.title} (${p.sku})</option>`).join('')}
+                    ${products.map(p => `<option value="${p.id}">${p.title} (${p.sku || '-'})</option>`).join('')}
+                </select>
+            </td>
+            <td>
+                <select name="items[${itemIndex}][variant_id]" class="form-select variant-select" disabled>
+                    <option value="">Select Variant (optional)</option>
                 </select>
             </td>
             <td>
@@ -120,6 +127,9 @@ document.addEventListener('DOMContentLoaded', function() {
             </td>
             <td>
                 <input type="number" name="items[${itemIndex}][unit_cost]" class="form-control cost-input" min="0" step="0.01" value="0" required>
+            </td>
+            <td>
+                <input type="number" name="items[${itemIndex}][sell_price]" class="form-control sell-input" min="0" step="0.01" value="0" required>
             </td>
             <td>
                 <span class="row-total">৳0.00</span>
@@ -142,8 +152,30 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
+    tbody.addEventListener('change', function(e) {
+        if (e.target.classList.contains('product-select')) {
+            const row = e.target.closest('tr');
+            const variantSelect = row.querySelector('.variant-select');
+            const pid = parseInt(e.target.value || '0', 10);
+            variantSelect.innerHTML = '<option value="">Select Variant (optional)</option>';
+            variantSelect.disabled = true;
+            const p = products.find(x => x.id === pid);
+            if (p && Array.isArray(p.variants) && p.variants.length) {
+                p.variants.forEach(v => {
+                    const terms = Array.isArray(v.options) ? v.options.map(o => (o.term && o.term.name) ? o.term.name : '').filter(Boolean) : [];
+                    const label = (v.sku || '-') + (terms.length ? (' — ' + terms.join(', ')) : '');
+                    const opt = document.createElement('option');
+                    opt.value = v.id;
+                    opt.textContent = label;
+                    variantSelect.appendChild(opt);
+                });
+                variantSelect.disabled = false;
+            }
+        }
+    });
+
     tbody.addEventListener('input', function(e) {
-        if (e.target.classList.contains('quantity-input') || e.target.classList.contains('cost-input')) {
+        if (e.target.classList.contains('quantity-input') || e.target.classList.contains('cost-input') || e.target.classList.contains('sell-input')) {
             const row = e.target.closest('tr');
             const qty = parseFloat(row.querySelector('.quantity-input').value) || 0;
             const cost = parseFloat(row.querySelector('.cost-input').value) || 0;

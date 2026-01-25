@@ -199,4 +199,30 @@
             font-size: .8rem;
             background: #fff
         }
+
+        /* Modal scrolling improvements */
+        #categoryModal .modal-dialog {
+            margin: 1.75rem auto;
+        }
+
+        #categoryModal .modal-body {
+            overflow-y: auto;
+            max-height: calc(90vh - 140px);
+        }
+
+        #categoryModal .modal-content {
+            display: flex;
+            flex-direction: column;
+        }
+
+        #categoryModal .modal-header,
+        #categoryModal .modal-footer {
+            flex-shrink: 0;
+        }
+
+        @media (max-height: 768px) {
+            #categoryModal .modal-body {
+                max-height: calc(100vh - 200px);
+            }
+        }
     </style>

@@ -10,6 +10,28 @@
                 <div id="productImagesContainer" class="d-flex flex-wrap justify-content-center gap-3">
                     <!-- Images will load dynamically here -->
                 </div>
+
+                {{-- Upload Image --}}
+
+                <div class="panel">
+                    <div class="panel-header d-flex justify-content-between align-items-center">
+                        <h5 class="panel-title">Gallery</h5>
+                        <div class="small-muted">Max 8 images (Demo)</div>
+                    </div>
+                    <div class="panel-body">
+                        <div class="drop mb-2">
+                            <div><i class="bx bx-cloud-upload"></i> <strong>Upload</strong> or drag files</div>
+                            <input type="file" id="galleryInput" name="gallery[]" accept="image/*" multiple
+                                class="form-control mt-2" />
+                        </div>
+                        <div class="d-flex justify-conent-end">
+                            <button class="btn btn-sm btn-primary image-upload-btn"><i
+                                    class="fas fa-info-circle me-2 "></i>
+                                Upload
+                            </button>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

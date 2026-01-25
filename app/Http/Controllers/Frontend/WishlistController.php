@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Frontend;
 
 use App\Http\Controllers\Controller;
+use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -20,18 +21,8 @@ class WishlistController extends Controller
         $products = collect();
         
         if (!empty($productIds)) {
-            $products = DB::table('products')
-                ->leftJoin('product_images', function ($join) {
-                    $join->on('products.id', '=', 'product_images.product_id')
-                        ->where('product_images.is_cover', true);
-                })
-                ->leftJoin('brands', 'products.brand_id', '=', 'brands.id')
-                ->whereIn('products.id', $productIds)
-                ->select(
-                    'products.*', 
-                    'product_images.path as cover_image',
-                    'brands.name as brand_name'
-                )
+            $products = Product::whereIn('id', $productIds)
+                ->with(['images', 'brand', 'variants'])
                 ->get();
         }
 

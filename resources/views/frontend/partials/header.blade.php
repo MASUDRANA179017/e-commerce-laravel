@@ -1,176 +1,178 @@
 <!-- Header Start -->
-<header class="header-area"
-    style="background: #fff; box-shadow: 0 2px 20px rgba(0,0,0,0.08); position: sticky; top: 0; z-index: 1000;">
-    <div class="container">
-        <div class="row align-items-center">
+<header class="header header-tertiary header-six-area">
+    <div class="container-fluid">
+        <div class="row">
             <div class="col-12">
-                <nav class="navbar-main d-flex align-items-center justify-content-between" style="padding: 15px 0;">
+                <div class="main-header__menu-box">
+                    <nav class="navbar p-0">
+                        <!-- Brand -->
+                        <div class="navbar-logo">
+                            <a href="{{ url('/') }}" aria-label="Home">
+                                <img src="{{ $business_setup && $business_setup->logo ? asset('storage/' . $business_setup->logo) : asset('frontend/assets/images/logo.png') }}"
+                                    alt="{{ config('app.name') }}" height="50">
+                            </a>
+                        </div>
 
-                    <!-- Logo -->
-                    <div class="logo-area">
-                        <a href="{{ route('home') }}" class="d-flex align-items-center text-decoration-none">
-                            @if(isset($business_setup) && $business_setup?->logo)
-                                <img src="{{ asset('storage/' . $business_setup->logo) }}" alt="{{ $business_setup->company_name ?? config('app.name') }}" style="height: 45px; border-radius: 8px;" class="me-2">
-                                <div class="logo-text">
-                                    <h4 class="mb-0" style="font-weight: 700; color: #1a1a2e; font-size: 22px;">{{ $business_setup->company_name ?? config('app.name') }}</h4>
-                                    <small style="font-size: 10px; color: #888; letter-spacing: 1px;">E-COMMERCE</small>
-                                </div>
-                            @else
-                                <div class="logo-icon me-2"
-                                    style="width: 45px; height: 45px; background: linear-gradient(135deg, #0496ff 0%, #0380d9 100%); border-radius: 12px; display: flex; align-items: center; justify-content: center;">
-                                    <i class="fa-solid fa-cart-shopping text-white" style="font-size: 20px;"></i>
-                                </div>
-                                <div class="logo-text">
-                                    <h4 class="mb-0" style="font-weight: 700; color: #1a1a2e; font-size: 22px;">{{ $business_setup->company_name ?? 'GrowUp' }}</h4>
-                                    <small style="font-size: 10px; color: #888; letter-spacing: 1px;">E-COMMERCE</small>
-                                </div>
-                            @endif
-                        </a>
-                    </div>
-
-                    <!-- Search Bar (Desktop) -->
-                    <div class="search-area d-none d-lg-block" style="flex: 1; max-width: 500px; margin: 0 40px;">
-                        <form action="{{ route('shop.index') }}" method="GET" class="search-form">
-                            <div class="input-group"
-                                style="border: 2px solid #e9ecef; border-radius: 50px; overflow: hidden;">
-                                <input type="text" name="search" class="form-control border-0"
-                                    placeholder="Search for products..." style="padding: 12px 20px; font-size: 14px;"
-                                    value="{{ request('search') }}">
-                                <button type="submit" class="btn"
-                                    style="background: #0496ff; color: #fff; padding: 0 25px; border-radius: 0 50px 50px 0 !important;">
-                                    <i class="fa-solid fa-magnifying-glass"></i>
-                                </button>
-                            </div>
-                        </form>
-                    </div>
-
-                    <!-- Navigation Menu (Desktop) -->
-                    <nav class="main-nav d-none d-xl-block">
-                        <ul class="nav-list d-flex align-items-center gap-4 mb-0 list-unstyled">
-                            <li class="nav-item">
-                                <a href="{{ route('home') }}"
-                                    class="nav-link {{ request()->routeIs('home') ? 'active' : '' }}"
-                                    style="font-weight: 500; color: {{ request()->routeIs('home') ? '#0496ff' : '#333' }}; text-decoration: none; font-size: 15px; transition: all 0.3s;">
-                                    Home
-                                </a>
-                            </li>
-                            <li class="nav-item position-relative dropdown-nav">
-                                <a href="{{ route('shop.index') }}"
-                                    class="nav-link d-flex align-items-center {{ request()->routeIs('shop.*') ? 'active' : '' }}"
-                                    style="font-weight: 500; color: {{ request()->routeIs('shop.*') ? '#0496ff' : '#333' }}; text-decoration: none; font-size: 15px; transition: all 0.3s;">
-                                    Shop <i class="fa-solid fa-chevron-down ms-1" style="font-size: 10px;"></i>
-                                </a>
-                                <!-- Dropdown Menu -->
-                                <ul class="dropdown-menu-custom"
-                                    style="position: absolute; top: 100%; left: 0; background: #fff; min-width: 220px; padding: 15px 0; border-radius: 10px; box-shadow: 0 10px 40px rgba(0,0,0,0.1); opacity: 0; visibility: hidden; transform: translateY(10px); transition: all 0.3s; list-style: none; margin-top: 15px;">
+                        <!-- Nav -->
+                        <div class="navbar__options">
+                            <div class="header-six-navbar-space d-flex justify-content-end">
+                                <nav class="navbar__menu d-none d-xl-block" aria-label="Primary">
                                     @php
-                                        try {
-                                            $navCategories = \App\Models\Admin\Product\ProductCategory::whereNull('parent_id')->where('show_on_menu', true)->orderBy('order')->limit(8)->get();
-                                        } catch (\Exception $e) {
-                                            $navCategories = collect();
+                                        // Load main menu from database
+                                        $mainMenuModel = \App\Models\Menu::where('key', 'main')
+                                            ->with('children')
+                                            ->first();
+
+                                        // Build nested array from MenuItem relationships
+                                        $mainMenu = [];
+                                        if ($mainMenuModel && $mainMenuModel->children) {
+                                            $buildTree = function ($items) use (&$buildTree) {
+                                                return $items
+                                                    ->map(function ($item) use (&$buildTree) {
+                                                        return [
+                                                            'label' => $item->label,
+                                                            'url' => $item->url,
+                                                            'children' => $buildTree($item->children),
+                                                        ];
+                                                    })
+                                                    ->values()
+                                                    ->toArray();
+                                            };
+                                            $mainMenu = $buildTree($mainMenuModel->children->where('parent_id', null));
                                         }
                                     @endphp
-                                    @foreach($navCategories as $category)
-                                        <li>
-                                            <a href="{{ route('shop.index', ['category' => $category->name]) }}"
-                                                class="dropdown-item-custom d-flex align-items-center"
-                                                style="padding: 10px 25px; color: #666; text-decoration: none; font-size: 14px; transition: all 0.3s;">
-                                                <i class="fa-solid fa-angle-right me-2"
-                                                    style="color: #0496ff; font-size: 12px;"></i>
-                                                {{ $category->name }}
-                                            </a>
-                                        </li>
-                                    @endforeach
-                                    <li style="border-top: 1px solid #eee; margin-top: 10px; padding-top: 10px;">
-                                        <a href="{{ route('shop.index') }}"
-                                            class="dropdown-item-custom d-flex align-items-center"
-                                            style="padding: 10px 25px; color: #0496ff; text-decoration: none; font-size: 14px; font-weight: 600;">
-                                            <i class="fa-solid fa-th-large me-2"></i>
-                                            View All Categories
-                                        </a>
-                                    </li>
-                                </ul>
-                            </li>
-                            <li class="nav-item">
-                                <a href="{{ route('frontend.about') }}"
-                                    class="nav-link {{ request()->routeIs('frontend.about') ? 'active' : '' }}"
-                                    style="font-weight: 500; color: {{ request()->routeIs('frontend.about') ? '#0496ff' : '#333' }}; text-decoration: none; font-size: 15px; transition: all 0.3s;">
-                                    About
+                                    @php
+                                        $renderDesktopMenu = function ($items) {
+                                            echo '<ul class="navbar__list">';
+                                            foreach ($items as $m) {
+                                                $hasChildren =
+                                                    is_array($m) &&
+                                                    isset($m['children']) &&
+                                                    is_array($m['children']) &&
+                                                    count($m['children']) > 0;
+                                                if ($hasChildren) {
+                                                    echo '<li class="navbar__item navbar__item--has-children nav-fade">';
+                                                    echo '<a href="' . e($m['url']) . '">' . e($m['label']) . '</a>';
+                                                    // First-level dropdown
+                                                    echo '<ul class="navbar__sub-menu">';
+                                                    foreach ($m['children'] as $c) {
+                                                        $cHasChildren =
+                                                            is_array($c) &&
+                                                            isset($c['children']) &&
+                                                            is_array($c['children']) &&
+                                                            count($c['children']) > 0;
+                                                        if ($cHasChildren) {
+                                                            echo '<li class="navbar__item has-nested">';
+                                                            echo '<a href="' .
+                                                                e($c['url']) .
+                                                                '" class="desktop-sub-toggle d-flex align-items-center justify-content-between">' .
+                                                                e($c['label']) .
+                                                                ' <i class="fa-solid fa-chevron-down fs-12"></i></a>';
+                                                            echo '<ul class="navbar__sub-menu nested">';
+                                                            foreach ($c['children'] as $cc) {
+                                                                echo '<li><a href="' .
+                                                                    e($cc['url']) .
+                                                                    '">' .
+                                                                    e($cc['label']) .
+                                                                    '</a></li>';
+                                                            }
+                                                            echo '</ul>';
+                                                            echo '</li>';
+                                                        } else {
+                                                            echo '<li><a href="' .
+                                                                e($c['url']) .
+                                                                '">' .
+                                                                e($c['label']) .
+                                                                '</a></li>';
+                                                        }
+                                                    }
+                                                    echo '</ul>';
+                                                    echo '</li>';
+                                                } else {
+                                                    echo '<li class="navbar__item nav-fade"><a href="' .
+                                                        e($m['url']) .
+                                                        '">' .
+                                                        e($m['label']) .
+                                                        '</a></li>';
+                                                }
+                                            }
+                                            echo '</ul>';
+                                        };
+                                    @endphp
+                                    {!! $renderDesktopMenu($mainMenu) !!}
+                                </nav>
+                            </div>
+
+                            <!-- Cart & Wishlist -->
+                            <div class="contact-btn d-flex align-items-center gap-3">
+                                <a href="#" class="open-search" aria-label="Open search">
+                                    <i class="fa-solid fa-magnifying-glass fs-4"></i>
                                 </a>
-                            </li>
-                            <li class="nav-item">
-                                <a href="{{ route('blog.index') }}"
-                                    class="nav-link {{ request()->routeIs('blog.*') ? 'active' : '' }}"
-                                    style="font-weight: 500; color: {{ request()->routeIs('blog.*') ? '#0496ff' : '#333' }}; text-decoration: none; font-size: 15px; transition: all 0.3s;">
-                                    Blog
+
+                                <a class="btn open-cart position-relative text-dark border-0 bg-transparent"
+                                    title="Wishlist" style="text-decoration: none; cursor: pointer;"
+                                    href="{{ route('wishlist.index') }}">
+                                    <i class='bx bx-heart fs-4'></i>
+                                    @php $wishlistCount = count(session('wishlist', [])); @endphp
+                                    <span class="cart-count"
+                                        style="{{ $wishlistCount > 0 ? '' : 'display: none;' }}">{{ $wishlistCount }}</span>
                                 </a>
-                            </li>
-                            <li class="nav-item">
-                                <a href="{{ route('frontend.contact') }}"
-                                    class="nav-link {{ request()->routeIs('frontend.contact') ? 'active' : '' }}"
-                                    style="font-weight: 500; color: {{ request()->routeIs('frontend.contact') ? '#0496ff' : '#333' }}; text-decoration: none; font-size: 15px; transition: all 0.3s;">
-                                    Contact
-                                </a>
-                            </li>
-                        </ul>
+                                <button type="button"
+                                    class="open-cart position-relative text-dark border-0 bg-transparent" title="Cart"
+                                    style="text-decoration: none; cursor: pointer;" onclick="openSidebarCart()">
+                                    <i class='bx bx-cart fs-4'></i>
+                                    @php $cartCount = array_sum(array_column(session('cart', []), 'qty')); @endphp
+                                    <span class="cart-count"
+                                        style="{{ $cartCount > 0 ? '' : 'display: none;' }}">{{ $cartCount }}</span>
+                                </button>
+                            </div>
+                            <!-- Mobile toggle -->
+                            <button class="open-offcanvas-nav d-flex d-xl-none" aria-label="toggle mobile menu"
+                                title="Open menu">
+                                <span class="icon-bar top-bar"></span>
+                                <span class="icon-bar middle-bar"></span>
+                                <span class="icon-bar bottom-bar"></span>
+                            </button>
+                        </div>
                     </nav>
-
-                    <!-- Right Icons -->
-                    <div class="header-icons d-flex align-items-center gap-3">
-                        <!-- Search Icon (Mobile) -->
-                        <button class="icon-btn d-lg-none open-search"
-                            style="width: 42px; height: 42px; border: none; background: #f5f5f5; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #333; font-size: 16px; transition: all 0.3s; cursor: pointer;">
-                            <i class="fa-solid fa-magnifying-glass"></i>
-                        </button>
-
-                        <!-- Wishlist Icon -->
-                        @php
-                            $wishlistCount = count(session()->get('wishlist', []));
-                            $cartCount = 0;
-                            $cart = session()->get('cart', []);
-                            foreach ($cart as $item) {
-                                $cartCount += $item['qty'] ?? 1;
-                            }
-                        @endphp
-                        <a href="{{ route('wishlist.index') }}" class="icon-btn position-relative"
-                            style="width: 42px; height: 42px; border: none; background: #f5f5f5; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #333; font-size: 16px; text-decoration: none; transition: all 0.3s;"
-                            title="My Wishlist">
-                            <i class="fa-regular fa-heart"></i>
-                            <span class="badge-count wishlist-count"
-                                style="position: absolute; top: -5px; right: -5px; width: 20px; height: 20px; background: #dc3545; color: #fff; border-radius: 50%; font-size: 10px; display: flex; align-items: center; justify-content: center; font-weight: 600;">{{ $wishlistCount }}</span>
-                        </a>
-
-                        <!-- Cart Icon -->
-                        <button class="icon-btn position-relative open-cart"
-                            style="width: 42px; height: 42px; border: none; background: #0496ff; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 16px; cursor: pointer; transition: all 0.3s;"
-                            title="Shopping Cart">
-                            <i class="fa-solid fa-shopping-bag"></i>
-                            <span class="badge-count cart-count"
-                                style="position: absolute; top: -5px; right: -5px; width: 20px; height: 20px; background: #dc3545; color: #fff; border-radius: 50%; font-size: 10px; display: flex; align-items: center; justify-content: center; font-weight: 600;">{{ $cartCount }}</span>
-                        </button>
-
-
-                        <!-- Mobile Menu Toggle -->
-                        <button class="mobile-menu-toggle d-xl-none"
-                            style="width: 42px; height: 42px; border: none; background: #1a1a2e; border-radius: 10px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 5px; cursor: pointer; transition: all 0.3s;">
-                            <span
-                                style="width: 20px; height: 2px; background: #fff; border-radius: 2px; transition: all 0.3s;"></span>
-                            <span
-                                style="width: 20px; height: 2px; background: #fff; border-radius: 2px; transition: all 0.3s;"></span>
-                            <span
-                                style="width: 14px; height: 2px; background: #fff; border-radius: 2px; transition: all 0.3s; align-self: flex-start; margin-left: 11px;"></span>
-                        </button>
-                    </div>
-                </nav>
+                </div>
             </div>
         </div>
     </div>
 </header>
 <!-- Header End -->
 
+@push('styles')
+    <style>
+        .contact-btn .cart-count {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            min-width: 18px;
+            height: 18px;
+            padding: 0 4px;
+            border-radius: 99px;
+            background: #ef4444;
+            color: #fff;
+            font-size: 10px;
+            font-weight: 700;
+            line-height: 18px;
+            text-align: center;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            border: 1px solid #fff;
+        }
+    </style>
+@endpush
+
 <!-- Mobile Menu Sidebar -->
-<div class="mobile-menu-overlay" id="mobileMenuOverlay" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1001; opacity: 0; visibility: hidden; transition: all 0.3s;"></div>
-<div class="mobile-menu-sidebar" id="mobileMenuSidebar" style="position: fixed; top: 0; left: -300px; width: 300px; height: 100%; background: #fff; z-index: 1002; transition: all 0.3s; overflow-y: auto; box-shadow: 2px 0 10px rgba(0,0,0,0.1);">
+<div class="mobile-menu-overlay" id="mobileMenuOverlay"
+    style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255, 255, 255, 0.5); z-index: 1001; opacity: 0; visibility: hidden; transition: all 0.3s;">
+</div>
+<div class="mobile-menu-sidebar" id="mobileMenuSidebar"
+    style="position: fixed; top: 0; left: -300px; width: 300px; height: 100%; background: #fff; z-index: 1002; transition: all 0.3s; overflow-y: auto; box-shadow: 2px 0 10px rgba(0,0,0,0.1);">
     <div class="p-3 border-bottom d-flex align-items-center justify-content-between">
         <h5 class="m-0 fw-bold">Menu</h5>
         <button class="btn-close" id="closeMobileMenu"></button>
@@ -179,141 +181,444 @@
         <!-- Mobile Search -->
         <form action="{{ route('shop.index') }}" method="GET" class="mb-4">
             <div class="input-group">
-                <input type="text" name="search" class="form-control" placeholder="Search..." value="{{ request('search') }}">
+                <input type="text" name="search" class="form-control" placeholder="Search..."
+                    value="{{ request('search') }}">
                 <button class="btn btn-primary" type="submit"><i class="fa-solid fa-magnifying-glass"></i></button>
             </div>
         </form>
 
-        <!-- Mobile Nav Links -->
-        <ul class="list-unstyled d-flex flex-column gap-3">
-            <li>
-                <a href="{{ route('home') }}" class="text-dark text-decoration-none fw-medium d-block py-2 {{ request()->routeIs('home') ? 'text-primary' : '' }}">Home</a>
-            </li>
-            <li>
-                <div class="d-flex align-items-center justify-content-between cursor-pointer" data-bs-toggle="collapse" data-bs-target="#mobileShopDropdown">
-                    <a href="{{ route('shop.index') }}" class="text-dark text-decoration-none fw-medium py-2 {{ request()->routeIs('shop.*') ? 'text-primary' : '' }}">Shop</a>
-                    <i class="fa-solid fa-chevron-down text-muted fs-12"></i>
-                </div>
-                <div class="collapse ps-3 mt-2" id="mobileShopDropdown">
-                    <ul class="list-unstyled d-flex flex-column gap-2 border-start ps-3 border-2">
-                        @php
-                            try {
-                                $navCategories = \App\Models\Admin\Product\ProductCategory::whereNull('parent_id')->where('show_on_menu', true)->orderBy('order')->limit(8)->get();
-                            } catch (\Exception $e) {
-                                $navCategories = collect();
-                            }
-                        @endphp
-                        @foreach($navCategories as $category)
-                            <li>
-                                <a href="{{ route('shop.index', ['category' => $category->name]) }}" class="text-secondary text-decoration-none fs-14 d-block py-1">{{ $category->name }}</a>
-                            </li>
-                        @endforeach
-                        <li>
-                            <a href="{{ route('shop.index') }}" class="text-primary text-decoration-none fs-14 d-block py-1 fw-medium">View All Categories</a>
-                        </li>
-                    </ul>
-                </div>
-            </li>
-            <li>
-                <a href="{{ route('frontend.about') }}" class="text-dark text-decoration-none fw-medium d-block py-2 {{ request()->routeIs('frontend.about') ? 'text-primary' : '' }}">About</a>
-            </li>
-            <li>
-                <a href="{{ route('blog.index') }}" class="text-dark text-decoration-none fw-medium d-block py-2 {{ request()->routeIs('blog.*') ? 'text-primary' : '' }}">Blog</a>
-            </li>
-            <li>
-                <a href="{{ route('frontend.contact') }}" class="text-dark text-decoration-none fw-medium d-block py-2 {{ request()->routeIs('frontend.contact') ? 'text-primary' : '' }}">Contact</a>
-            </li>
-        </ul>
+        <!-- Mobile Nav Links (dynamic from database) -->
+        @php
+            // Load main menu from database for mobile
+            $mainMenuModel = \App\Models\Menu::where('key', 'main')->with('children')->first();
+            $mainMenu = [];
+            if ($mainMenuModel && $mainMenuModel->children) {
+                $buildTree = function ($items) use (&$buildTree) {
+                    return $items
+                        ->map(function ($item) use (&$buildTree) {
+                            return [
+                                'label' => $item->label,
+                                'url' => $item->url,
+                                'children' => $buildTree($item->children),
+                            ];
+                        })
+                        ->values()
+                        ->toArray();
+                };
+                $mainMenu = $buildTree($mainMenuModel->children->where('parent_id', null));
+            }
+        @endphp
+
+        @php
+            $renderMobileMenu = function ($items) use (&$renderMobileMenu) {
+                echo '<ul class="list-unstyled d-flex flex-column gap-2">';
+                foreach ($items as $m) {
+                    $hasChildren =
+                        is_array($m) && isset($m['children']) && is_array($m['children']) && count($m['children']) > 0;
+                    if ($hasChildren) {
+                        echo '<li class="mb-1">';
+                        echo '<a href="' .
+                            e($m['url']) .
+                            '" class="mobile-item-toggle d-flex align-items-center justify-content-between text-dark text-decoration-none fw-medium d-block py-2 px-2">';
+                        echo '<span class="d-flex align-items-center gap-2"><i class="fa-regular fa-folder" style="font-size:14px;"></i>' .
+                            e($m['label']) .
+                            '</span>';
+                        echo '<i class="fa-solid fa-chevron-down text-muted fs-12"></i>';
+                        echo '</a>';
+                        echo '<div class="ps-2 mt-1 mobile-submenu navbar__sub-menu" style="display:none; padding:6px 0;">';
+                        echo $renderMobileMenu($m['children']);
+                        echo '</div>';
+                        echo '</li>';
+                    } else {
+                        echo '<li class="mb-1"><a href="' .
+                            e($m['url']) .
+                            '" class="text-dark text-decoration-none d-block py-2 px-3">' .
+                            e($m['label']) .
+                            '</a></li>';
+                    }
+                }
+                echo '</ul>';
+            };
+        @endphp
+
+        {!! $renderMobileMenu($mainMenu) !!}
     </div>
 </div>
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        const mobileMenuToggle = document.querySelector('.mobile-menu-toggle');
+        const mobileMenuToggles = document.querySelectorAll('.mobile-menu-toggle, .open-offcanvas-nav');
         const mobileMenuOverlay = document.getElementById('mobileMenuOverlay');
         const mobileMenuSidebar = document.getElementById('mobileMenuSidebar');
         const closeMobileMenu = document.getElementById('closeMobileMenu');
-        
+        const shopToggle = document.querySelector('.shop-toggle');
+        const shopDropdown = document.querySelector('.shop-dropdown');
+        const mobileItemToggles = document.querySelectorAll('.mobile-item-toggle');
+        const desktopDropdownItems = document.querySelectorAll('.navbar__menu .navbar__item--has-children');
+
         function openMenu() {
             mobileMenuOverlay.style.opacity = '1';
             mobileMenuOverlay.style.visibility = 'visible';
             mobileMenuSidebar.style.left = '0';
         }
-        
+
         function closeMenu() {
             mobileMenuOverlay.style.opacity = '0';
             mobileMenuOverlay.style.visibility = 'hidden';
             mobileMenuSidebar.style.left = '-300px';
         }
-        
-        if(mobileMenuToggle) {
-            mobileMenuToggle.addEventListener('click', function(e) {
-                e.preventDefault();
-                openMenu();
+
+        if (mobileMenuToggles && mobileMenuToggles.length) {
+            mobileMenuToggles.forEach(btn => {
+                btn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    openMenu();
+                });
             });
         }
-        
-        if(closeMobileMenu) {
+
+        // Mobile submenu toggles
+        if (mobileItemToggles && mobileItemToggles.length) {
+            mobileItemToggles.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    // Allow the link to act as toggle without navigating immediately
+                    e.preventDefault();
+                    const submenu = this.nextElementSibling;
+                    const chevron = this.querySelector('i');
+                    const isOpen = submenu && submenu.style.display === 'block';
+                    if (!submenu) return;
+                    if (!isOpen) {
+                        submenu.style.display = 'block';
+                        if (chevron) chevron.style.transform = 'rotate(180deg)';
+                    } else {
+                        submenu.style.display = 'none';
+                        if (chevron) chevron.style.transform = 'rotate(0deg)';
+                    }
+                });
+            });
+        }
+
+        // Desktop submenu (hover/click) toggle
+        function bindDesktopDropdowns() {
+            const isDesktop = window.matchMedia('(min-width: 1200px)').matches;
+            // Close any open menus when switching to mobile
+            if (!isDesktop) {
+                document.querySelectorAll('.navbar__menu .navbar__item--has-children.open').forEach(el => el
+                    .classList.remove('open'));
+                return;
+            }
+            desktopDropdownItems.forEach(item => {
+                const link = item.querySelector(':scope > a');
+                const submenu = item.querySelector(':scope > .navbar__sub-menu');
+                if (!link || !submenu) return;
+                // Hover behavior
+                item.addEventListener('mouseenter', () => {
+                    // Close siblings
+                    document.querySelectorAll('.navbar__menu .navbar__item--has-children.open')
+                        .forEach(el => {
+                            if (el !== item) el.classList.remove('open');
+                        });
+                    item.classList.add('open');
+                });
+                item.addEventListener('mouseleave', () => {
+                    item.classList.remove('open');
+                });
+                // Click to toggle (for touch/keyboard)
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const isOpen = item.classList.contains('open');
+                    document.querySelectorAll('.navbar__menu .navbar__item--has-children.open')
+                        .forEach(el => el.classList.remove('open'));
+                    if (!isOpen) item.classList.add('open');
+                });
+            });
+            // Close when clicking outside
+            document.addEventListener('click', function(e) {
+                const menu = document.querySelector('.navbar__menu');
+                if (!menu) return;
+                if (!menu.contains(e.target)) {
+                    document.querySelectorAll('.navbar__menu .navbar__item--has-children.open').forEach(
+                        el => el.classList.remove('open'));
+                }
+            });
+        }
+        bindDesktopDropdowns();
+        window.addEventListener('resize', bindDesktopDropdowns);
+
+        // Click to expand nested submenu inside desktop dropdown
+        document.addEventListener('click', function(e) {
+            const toggle = e.target.closest('.desktop-sub-toggle');
+            if (toggle && window.matchMedia('(min-width: 1200px)').matches) {
+                e.preventDefault();
+                const li = toggle.parentElement;
+                if (li && li.classList.contains('has-nested')) {
+                    li.classList.toggle('open');
+                }
+            }
+        });
+
+        if (closeMobileMenu) {
             closeMobileMenu.addEventListener('click', closeMenu);
         }
-        
-        if(mobileMenuOverlay) {
+
+        if (mobileMenuOverlay) {
             mobileMenuOverlay.addEventListener('click', closeMenu);
         }
+
+        // Shop dropdown toggle
+        if (shopToggle && shopDropdown) {
+            shopToggle.addEventListener('click', function(e) {
+                e.preventDefault();
+                const chevron = shopToggle.querySelector('i');
+                const isOpen = shopDropdown.style.display === 'block';
+
+                if (!isOpen) {
+                    shopDropdown.style.display = 'block';
+                    setTimeout(() => {
+                        shopDropdown.style.opacity = '1';
+                        shopDropdown.style.visibility = 'visible';
+                        shopDropdown.style.transform = 'translateY(0)';
+                        shopDropdown.style.pointerEvents = 'auto';
+                    }, 10);
+                } else {
+                    shopDropdown.style.opacity = '0';
+                    shopDropdown.style.visibility = 'hidden';
+                    shopDropdown.style.transform = 'translateY(12px)';
+                    shopDropdown.style.pointerEvents = 'none';
+                    setTimeout(() => {
+                        shopDropdown.style.display = 'none';
+                    }, 300);
+                }
+
+                if (chevron) {
+                    chevron.style.transform = isOpen ? 'rotate(0deg)' : 'rotate(180deg)';
+                }
+            });
+        }
+
+        // Close shop dropdown when clicking outside
+        document.addEventListener('click', function(e) {
+            if (shopDropdown && !shopDropdown.contains(e.target) && !shopToggle.contains(e.target)) {
+                shopDropdown.style.opacity = '0';
+                shopDropdown.style.visibility = 'hidden';
+                shopDropdown.style.transform = 'translateY(12px)';
+                shopDropdown.style.pointerEvents = 'none';
+                setTimeout(() => {
+                    shopDropdown.style.display = 'none';
+                }, 300);
+                const chevron = shopToggle.querySelector('i');
+                if (chevron) {
+                    chevron.style.transform = 'rotate(0deg)';
+                }
+            }
+        });
+
+        // Category toggle
+        document.querySelectorAll('.category-toggle').forEach(function(toggle) {
+            toggle.addEventListener('click', function(e) {
+                e.preventDefault();
+                const submenu = this.nextElementSibling;
+                const chevron = this.querySelector('i:last-child');
+                const isOpen = submenu.style.display === 'block';
+
+                // Toggle current submenu
+                if (!isOpen) {
+                    submenu.style.display = 'block';
+                    if (chevron) chevron.style.transform = 'rotate(180deg)';
+                } else {
+                    submenu.style.display = 'none';
+                    if (chevron) chevron.style.transform = 'rotate(0deg)';
+                }
+            });
+        });
+
+        // Subcategory toggle with dynamic height
+        document.querySelectorAll('.subcategory-toggle').forEach(function(toggle) {
+            toggle.addEventListener('click', function(e) {
+                e.preventDefault();
+                const submenu = this.nextElementSibling;
+                const chevron = this.querySelector('i:last-child');
+                const isOpen = submenu.classList.contains('active');
+
+                if (!isOpen) {
+                    // Calculate actual height
+                    const children = submenu.querySelectorAll('a');
+                    let totalHeight = 0;
+                    children.forEach(child => {
+                        totalHeight += child.offsetHeight;
+                    });
+
+                    submenu.classList.add('active');
+                    submenu.style.maxHeight = (totalHeight + 10) + 'px';
+                    if (chevron) chevron.style.transform = 'rotate(180deg)';
+                } else {
+                    submenu.classList.remove('active');
+                    submenu.style.maxHeight = '0px';
+                    if (chevron) chevron.style.transform = 'rotate(0deg)';
+                }
+            });
+        });
     });
 </script>
 
 <style>
-    /* Navigation Hover Effects */
-    .nav-link:hover {
-        color: #0496ff !important;
+    /* Minimal responsive utilities (Bootstrap-like) for header */
+    .open-offcanvas-nav {
+        display: none;
     }
 
-    /* Dropdown Show on Hover */
-    .dropdown-nav:hover .dropdown-menu-custom {
-        opacity: 1;
-        visibility: visible;
-        transform: translateY(0);
+    @media (max-width: 1199.98px) {
+        .navbar__menu {
+            display: none !important;
+        }
+
+        .open-offcanvas-nav {
+            display: flex !important;
+        }
     }
 
-    .dropdown-item-custom:hover {
-        background: #f8f9fa;
-        color: #0496ff !important;
-        padding-left: 30px !important;
+    @media (min-width: 1200px) {
+        .navbar__menu {
+            display: block !important;
+        }
     }
 
-    /* User Dropdown */
-    .user-dropdown:hover .user-dropdown-menu {
-        opacity: 1;
-        visibility: visible;
-        transform: translateY(0);
+    /* Desktop dropdown positioning and animation */
+    @media (min-width: 1200px) {
+        .navbar__menu .navbar__item {
+            position: relative;
+        }
+
+        .navbar__menu .navbar__sub-menu {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            min-width: 240px;
+            border-radius: 6px;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.12);
+            transform: translateY(10px);
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+            transition: all 0.2s ease;
+            display: block;
+            /* keep block, hidden via visibility */
+            /* z-index: 1050; */
+        }
+
+        .navbar__menu .navbar__item.open>.navbar__sub-menu {
+            transform: translateY(0);
+            opacity: 1;
+            visibility: visible;
+            pointer-events: auto;
+        }
+
+        .navbar__menu .navbar__sub-menu li a {
+            display: block;
+            /* padding: 10px 14px; */
+        }
+
+        /* nested submenu shows downward inside dropdown */
+        .navbar__menu .navbar__sub-menu .nested {
+            position: static;
+            margin-left: 6px;
+            border-left: 2px solid #374151;
+            padding-left: 6px;
+            display: none;
+            box-shadow: none;
+            min-width: auto;
+        }
+
+        .navbar__menu .navbar__sub-menu li.open>.nested {
+            display: block;
+        }
+
+        .navbar__menu .navbar__sub-menu .desktop-sub-toggle {
+            /* padding: 10px 14px; */
+        }
+
+        .navbar__menu .navbar__sub-menu .desktop-sub-toggle i {
+            transition: transform 0.2s ease;
+        }
+
+        .navbar__menu .navbar__sub-menu li.open>.desktop-sub-toggle i {
+            transform: rotate(180deg);
+        }
     }
 
-    .user-dropdown-menu li a:hover,
-    .user-dropdown-menu li button:hover {
-        background: #f8f9fa;
+    /* Mobile sidebar sizing for small devices */
+    .mobile-menu-sidebar {
+        width: 80vw;
+        max-width: 340px;
     }
 
-    /* Icon Button Hover */
-    .icon-btn:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    @media (max-width: 360px) {
+        .mobile-menu-sidebar {
+            width: 90vw;
+        }
     }
 
-    /* Search Form Focus */
-    .search-form .input-group:focus-within {
-        border-color: #0496ff !important;
-        box-shadow: 0 0 0 4px rgba(4, 150, 255, 0.1);
+    /* Ensure dark submenu styling if needed */
+    .navbar__sub-menu,
+    .navbar__sub-menu .navbar__sub-menu {
+        background-color: #ffffff !important;
+        color: #000000 !important;
+        /* border: 1px solid #374151 !important; */
     }
 
-    /* Mobile Menu Toggle Animation */
-    .mobile-menu-toggle:hover {
-        background: #0496ff;
+    .navbar__sub-menu a {
+        color: #000000 !important;
     }
 
-    .mobile-menu-toggle:hover span:last-child {
-        width: 20px;
-        margin-left: 0;
-        align-self: center;
+    .navbar__sub-menu a:hover {
+        background-color: var(--apece-primary) !important;
+        color: #fff !important;
+    }
+
+    /* Mobile submenu indentation and dividers */
+    .mobile-submenu ul {
+        margin: 0;
+        padding: 0;
+    }
+
+    .mobile-submenu li>a {
+        border-left: 2px solid rgba(255, 255, 255, 0.18);
+        padding-left: 14px;
+    }
+
+    .mobile-submenu .navbar__sub-menu {
+        border-color: #374151 !important;
+    }
+
+    .mobile-item-toggle:hover {
+        background: rgba(255, 255, 255, 0.06);
+    }
+
+    /* Keep hamburger bars color and shape stable on hover/active */
+    .header .open-offcanvas-nav span {
+        background-color: var(--apece-primary) !important;
+    }
+
+    .header .open-offcanvas-nav:hover span {
+        background-color: var(--apece-primary) !important;
+    }
+
+    .header .open-offcanvas-nav-active .middle-bar {
+        opacity: 1 !important;
+    }
+
+    .header .open-offcanvas-nav-active .top-bar,
+    .header .open-offcanvas-nav-active .bottom-bar {
+        transform: none !important;
+    }
+
+    .header .open-offcanvas-nav-active .top-bar {
+        width: 30px !important;
+        background-color: var(--apece-primary) !important;
+    }
+
+    .header .open-offcanvas-nav-active .bottom-bar {
+        width: 16px !important;
+        background-color: var(--apece-primary) !important;
     }
 </style>

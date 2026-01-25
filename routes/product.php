@@ -9,6 +9,9 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
 
     // Move data route to top to avoid conflicts
     Route::get('/get-all-products-data', [ProductController::class, 'allProductsData'])->name('product.all.data');
+    Route::get('/all-attributes/data', [CreateProductApiController::class, 'attributesAll'])->name('attributes.all');
+    Route::get('/catalog/attribute-sets/data', [CreateProductApiController::class, 'attributeSets'])->name('attribute_sets.data');
+    Route::post('/product/get/varient-rules', [CreateProductApiController::class, 'variantRules'])->name('product.variant_rules');
 
     /*
     |--------------------------------------------------------------------------
@@ -60,6 +63,8 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
     Route::post('/product/{id}/update-status', [ProductController::class, 'updateStatus'])
         ->name('product.updateStatus');
 
+    Route::get('/product/stats', [ProductController::class, 'stats'])->name('product.stats');
+
     // images
     Route::get('/product/{id}/images', [ProductController::class, 'getImages'])->name('product.images');
     Route::delete('/product/image/{id}', [ProductController::class, 'deleteImage'])->name('product.image.delete');
@@ -70,7 +75,7 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
     Route::get('/product/{id}/images', [ProductController::class, 'getImages'])->name('product.images');
     Route::get('/product/{id}/variants', [ProductController::class, 'getVariants'])->name('product.variants');
     Route::get('/product/{id}/details', [ProductController::class, 'getProductDetails'])->name('product.details');
-    
+
     // Barcode
     Route::get('/product/barcode-list', [ProductController::class, 'barcodeList'])->name('product.barcode.list');
     Route::get('/product/{id}/barcode', [ProductController::class, 'barcode'])->name('product.barcode');
@@ -81,6 +86,7 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
     Route::get('/product/{id}/notification', [ProductController::class, 'notification'])->name('product.notification');
     Route::post('/product/{id}/notification/send', [ProductController::class, 'sendNotification'])->name('product.notification.send');
 
+    Route::post('/product/{id}/upload-images', [ProductController::class, 'uploadImages'])->name('product.upload_images');
 });
 
 

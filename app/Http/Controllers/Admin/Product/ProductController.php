@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\Storage;
 use Yajra\DataTables\Facades\DataTables;
 use Picqer\Barcode\BarcodeGeneratorPNG;
 
@@ -104,7 +105,7 @@ class ProductController extends Controller
                 ->where('id', $product->category_id)
                 ->value('slug');
         }
-        
+
         $bootstrap['primaryCategory'] = $primaryCatSlug;
         $bootstrap['assignedCategories'] = $assignedCats;
 
@@ -142,11 +143,11 @@ class ProductController extends Controller
     public function allProductsData(Request $request)
     {
         Log::info('Entered allProductsData (Dedicated JSON Route)');
-        
+
         try {
             $query = Product::with(['brand'])
                 ->withCount(['images', 'variants'])
-                ->with(['categories' => function($q) {
+                ->with(['categories' => function ($q) {
                     $q->wherePivot('is_primary', true);
                 }])
                 ->select('products.*');
@@ -154,13 +155,13 @@ class ProductController extends Controller
             return DataTables::of($query)
                 ->addIndexColumn()
                 ->addColumn('product_info', function ($row) {
-                    $coverImg = $row->images->sortByDesc('is_cover')->first(); 
+                    $coverImg = $row->images->sortByDesc('is_cover')->first();
                     $title = e($row->title);
                     $sku = e($row->sku ?? 'N/A');
 
                     $imageHtml = $coverImg && $coverImg->path ?
                         '<img src="' . asset('storage/' . $coverImg->path) . '" alt="' . $title . '" class="product-thumb">' :
-                        '<div class="product-thumb-placeholder"><i class="fas fa-image"></i></div>';
+                        '';
 
                     return '
                         <div class="product-info">
@@ -171,12 +172,55 @@ class ProductController extends Controller
                             </div>
                         </div>';
                 })
-                ->addColumn('brand_name', function($row) {
+                ->addColumn('brand_name', function ($row) {
                     return $row->brand ? e($row->brand->name) : 'No Brand';
                 })
-                ->addColumn('category_name', function($row) {
+                ->addColumn('category_name', function ($row) {
                     $primaryCat = $row->categories->first();
                     return $primaryCat ? e($primaryCat->name) : 'No Category';
+                })
+                ->addColumn('price', function ($row) {
+                    $currency = '৳';
+                    $variants = $row->variants ?? collect();
+                    if ($variants && $variants->count() > 0) {
+                        $prices = [];
+                        foreach ($variants as $v) {
+                            $latestSell = \Illuminate\Support\Facades\DB::table('purchase_items')
+                                ->join('purchases', 'purchase_items.purchase_id', '=', 'purchases.id')
+                                ->where('purchase_items.variant_id', $v->id)
+                                ->where('purchases.status', 'received')
+                                ->orderByDesc('purchases.purchase_date')
+                                ->value('purchase_items.sell_price');
+                            if ($latestSell !== null && (float) $latestSell > 0) {
+                                $prices[] = (float) $latestSell;
+                            }
+                        }
+                        if (!empty($prices)) {
+                            $min = min($prices);
+                            $max = max($prices);
+                            if ($min === $max) {
+                                return '<span class="fw-semibold">' . $currency . number_format($min, 2) . '</span>';
+                            }
+                            return '<span class="fw-semibold">' . $currency . number_format($min, 2) . ' - ' . $currency . number_format($max, 2) . '</span>';
+                        }
+                    } else {
+                        $range = \Illuminate\Support\Facades\DB::table('purchase_items')
+                            ->join('purchases', 'purchase_items.purchase_id', '=', 'purchases.id')
+                            ->where('purchase_items.product_id', $row->id)
+                            ->whereNull('purchase_items.variant_id')
+                            ->where('purchases.status', 'received')
+                            ->selectRaw('MIN(purchase_items.sell_price) AS min_price, MAX(purchase_items.sell_price) AS max_price')
+                            ->first();
+                        if ($range && ((float) $range->min_price > 0 || (float) $range->max_price > 0)) {
+                            $min = (float) $range->min_price;
+                            $max = (float) $range->max_price;
+                            if ($min === $max) {
+                                return '<span class="fw-semibold">' . $currency . number_format($min, 2) . '</span>';
+                            }
+                            return '<span class="fw-semibold">' . $currency . number_format($min, 2) . ' - ' . $currency . number_format($max, 2) . '</span>';
+                        }
+                    }
+                    return '<span class="text-muted">-</span>';
                 })
                 ->addColumn('status', function ($row) {
                     $checked = $row->status === 'Active' ? 'checked' : '';
@@ -189,7 +233,7 @@ class ProductController extends Controller
                 ->addColumn('media', function ($row) {
                     $imagesCount = $row->images_count;
                     $variantsCount = $row->variants_count;
-                    
+
                     $imagesBtn = '<button class="info-badge info-badge-images btn-view-images" data-product-id="' . $row->id . '"><i class="fas fa-images me-1"></i>' . $imagesCount . '</button>';
                     $variantsBtn = '<button class="info-badge info-badge-variants btn-view-variants" data-product-id="' . $row->id . '"><i class="fas fa-layer-group me-1"></i>' . $variantsCount . '</button>';
                     return '<div class="d-flex gap-2">' . $imagesBtn . ' ' . $variantsBtn . '</div>';
@@ -220,7 +264,7 @@ class ProductController extends Controller
                             </button>
                         </div>';
                 })
-                ->rawColumns(['product_info', 'status', 'media', 'action'])
+                ->rawColumns(['product_info', 'price', 'status', 'media', 'action'])
                 ->make(true);
         } catch (\Exception $e) {
             Log::error('DataTables Error: ' . $e->getMessage());
@@ -237,10 +281,22 @@ class ProductController extends Controller
 
         // Calculate stats using Eloquent
         $totalProducts = Product::count();
-        $activeProducts = Product::where('status', 'Active')->count();
-        $inactiveProducts = Product::where('status', '!=', 'Active')->count();
+        $activeProducts = Product::where(function ($q) {
+            $q->where('status', 'Active')->orWhereRaw('LOWER(status) = ?', ['active']);
+        })->count();
+        $inactiveProducts = $totalProducts - $activeProducts;
 
         return view('admin.product.all_products.index', compact('totalProducts', 'activeProducts', 'inactiveProducts'));
+    }
+
+    public function stats()
+    {
+        $total = Product::count();
+        $active = Product::where(function ($q) {
+            $q->where('status', 'Active')->orWhereRaw('LOWER(status) = ?', ['active']);
+        })->count();
+        $inactive = $total - $active;
+        return response()->json(['success' => true, 'total' => $total, 'active' => $active, 'inactive' => $inactive]);
     }
 
     /**
@@ -281,17 +337,18 @@ class ProductController extends Controller
             $payload = json_decode($request->input('data', '{}'), true);
             Log::info($payload);
 
+
             // Check if this is an update (product_id provided)
             $existingProductId = $payload['product_id'] ?? $request->input('product_id') ?? null;
             $isUpdate = !empty($existingProductId);
 
             return DB::transaction(function () use ($request, $payload, $existingProductId, $isUpdate) {
                 $slug = $payload['slug'] ?? Str::slug($payload['title'] ?? (string) Str::uuid());
-                
+
                 // Ensure unique slug
                 $originalSlug = $slug;
                 $counter = 1;
-                while (DB::table('products')->where('slug', $slug)->when($existingProductId, function($q) use ($existingProductId) {
+                while (DB::table('products')->where('slug', $slug)->when($existingProductId, function ($q) use ($existingProductId) {
                     return $q->where('id', '!=', $existingProductId);
                 })->exists()) {
                     $slug = $originalSlug . '-' . $counter++;
@@ -341,7 +398,8 @@ class ProductController extends Controller
 
                     // Clear existing variants for update ONLY if variants are provided
                     if (isset($payload['variants'])) {
-                        DB::table('product_variant_options')->whereIn('variant_id', 
+                        DB::table('product_variant_options')->whereIn(
+                            'variant_id',
                             DB::table('product_variants')->where('product_id', $productId)->pluck('id')
                         )->delete();
                         DB::table('product_variants')->where('product_id', $productId)->delete();
@@ -409,8 +467,8 @@ class ProductController extends Controller
                 if (!empty($deletedImages)) {
                     $imgsToDelete = DB::table('product_images')->whereIn('id', $deletedImages)->get();
                     foreach ($imgsToDelete as $img) {
-                        if ($img->path && \Illuminate\Support\Facades\Storage::disk('public')->exists($img->path)) {
-                            \Illuminate\Support\Facades\Storage::disk('public')->delete($img->path);
+                        if ($img->path && Storage::disk('public')->exists($img->path)) {
+                            Storage::disk('public')->delete($img->path);
                         }
                     }
                     DB::table('product_images')->whereIn('id', $deletedImages)->delete();
@@ -420,6 +478,29 @@ class ProductController extends Controller
                 $galleryFiles = $request->file('gallery');
                 $galleryFiles = is_array($galleryFiles) ? $galleryFiles : ($galleryFiles ? [$galleryFiles] : []);
                 $coverIdx = (int) $request->input('gallery_cover_index', 0);
+                
+                // Filter out invalid files FIRST
+                $validFiles = [];
+                foreach ($galleryFiles as $idx => $file) {
+                    if (!($file instanceof \Illuminate\Http\UploadedFile)) {
+                        continue;
+                    }
+                    
+                    if (!$file->isValid()) {
+                        Log::warning('File ' . $idx . ' failed validation: ' . $file->getErrorMessage());
+                        continue;
+                    }
+                    
+                    $filePath = $file->getPathname();
+                    if (empty($filePath)) {
+                        Log::warning('File ' . $idx . ' has empty path');
+                        continue;
+                    }
+                    
+                    $validFiles[] = $file;
+                }
+                
+                $galleryFiles = $validFiles;
 
                 // Only process images if new files are uploaded
                 if (count($galleryFiles) > 0) {
@@ -430,15 +511,40 @@ class ProductController extends Controller
                     $sort = $maxSort + 1;
 
                     foreach ($galleryFiles as $idx => $file) {
-                        if (!($file instanceof \Illuminate\Http\UploadedFile) || !$file->isValid())
+                        try {
+                            // Verify the temp file is a valid uploaded file
+                            $pathname = $file->getPathname();
+                            
+                            if (!is_uploaded_file($pathname)) {
+                                Log::warning('File is not a valid uploaded file: ' . $file->getClientOriginalName());
+                                continue;
+                            }
+                            
+                            // Create destination directory if needed
+                            $destDir = storage_path('app/public/product/images');
+                            if (!is_dir($destDir)) {
+                                mkdir($destDir, 0755, true);
+                            }
+                            
+                            // Generate unique filename and move file
+                            $fileName = 'IMG_' . time() . '_' . uniqid() . '.' . $file->extension();
+                            $fullPath = $destDir . DIRECTORY_SEPARATOR . $fileName;
+                            $relPath = 'product/images/' . $fileName;
+                            
+                            if (move_uploaded_file($pathname, $fullPath)) {
+                                DB::table('product_images')->insert([
+                                    'product_id' => $productId,
+                                    'path' => $relPath,
+                                    'is_cover' => (!$isUpdate && (int) $idx === 0) ? 1 : 0,
+                                    'sort_order' => $sort++,
+                                ]);
+                            } else {
+                                Log::warning('Failed to move uploaded file: ' . $file->getClientOriginalName());
+                            }
+                        } catch (\Exception $fileError) {
+                            Log::error('Image upload exception: ' . $fileError->getMessage());
                             continue;
-                        $path = $file->store('product/images', 'public');
-                        DB::table('product_images')->insert([
-                            'product_id' => $productId,
-                            'path' => $path,
-                            'is_cover' => (!$isUpdate && (string) $idx === (string) $coverIdx) ? 1 : 0,
-                            'sort_order' => $sort++,
-                        ]);
+                        }
                     }
                 }
 
@@ -490,6 +596,8 @@ class ProductController extends Controller
                         'sku' => $sku,
                         'combination_key' => $combo,
                         'active' => true,
+                        'stock_quantity' => (int) ($v['stock_quantity'] ?? ($v['stock'] ?? ($v['quantity'] ?? 0))),
+                        'price' => isset($v['price']) ? (float) $v['price'] : null,
                         'created_at' => now(),
                         'updated_at' => now(),
                     ]);
@@ -502,19 +610,48 @@ class ProductController extends Controller
                         ]);
                     }
 
-                    if ($wantImages && isset($files[$i]) && $files[$i] && $files[$i]->isValid()) {
-                        $path = $files[$i]->store('product/variants', 'public');
-                        if (Schema::hasTable('product_variant_images')) {
-                            DB::table('product_variant_images')->insert([
-                                'variant_id' => $variantId,
-                                'path' => $path,
-                                'created_at' => now(),
-                                'updated_at' => now(),
-                            ]);
+                    if ($wantImages && isset($files[$i]) && $files[$i] instanceof \Illuminate\Http\UploadedFile) {
+                        // Comprehensive file validation
+                        if (!$files[$i]->isValid()) {
+                            Log::warning('Invalid variant image at index ' . $i . ': ' . $files[$i]->getErrorMessage());
+                        } else {
+                            $pathname = $files[$i]->getPathname();
+                            if (empty($pathname) || !file_exists($pathname) || filesize($pathname) === 0) {
+                                Log::warning('Empty or missing variant image file at index ' . $i);
+                            } else {
+                                try {
+                                    $path = $files[$i]->store('product/variants', 'public');
+                                    
+                                    // Only insert if path is valid
+                                    if (!empty($path) && Schema::hasTable('product_variant_images')) {
+                                        DB::table('product_variant_images')->insert([
+                                            'variant_id' => $variantId,
+                                            'path' => $path,
+                                            'created_at' => now(),
+                                            'updated_at' => now(),
+                                        ]);
+                                    }
+                                } catch (\Exception $fileError) {
+                                    Log::warning('Variant image upload failed for variant ' . $variantId . ': ' . $fileError->getMessage());
+                                }
+                            }
                         }
                     }
                 }
 
+                // Sync product stock as sum of variant quantities if variants provided
+                if (!empty($variants)) {
+                    $totalStock = (int) DB::table('product_variants')
+                        ->where('product_id', $productId)
+                        ->sum('stock_quantity');
+                    DB::table('products')->where('id', $productId)->update([
+                        'stock_quantity' => $totalStock,
+                        'updated_at' => now(),
+                    ]);
+                }
+
+                Log::info('Product save completed successfully. Product ID: ' . $productId . ', Is Update: ' . ($isUpdate ? 'yes' : 'no'));
+                
                 return response()->json([
                     'ok' => true,
                     'product_id' => $productId,
@@ -614,7 +751,7 @@ class ProductController extends Controller
     {
         try {
             $image = DB::table('product_images')->where('id', $id)->first();
-            
+
             if (!$image) {
                 return response()->json(['success' => false, 'message' => 'Image not found'], 404);
             }
@@ -660,7 +797,7 @@ class ProductController extends Controller
 
     public function getVariants($id)
     {
-        $variants = \App\Models\ProductVariant::with(['options.attribute', 'options.term'])
+        $variants = \App\Models\ProductVariant::with(['options.attribute', 'options.term', 'product'])
             ->where('product_id', $id)
             ->get();
 
@@ -669,11 +806,25 @@ class ProductController extends Controller
                 return "{$opt->attribute->name}: {$opt->term->name}";
             })->join(' | ');
 
+            $base = $variant->price;
+            if ($base === null || $base <= 0) {
+                $purchaseSell = \Illuminate\Support\Facades\DB::table('purchase_items')
+                    ->join('purchases', 'purchase_items.purchase_id', '=', 'purchases.id')
+                    ->where('purchase_items.variant_id', $variant->id)
+                    ->where('purchases.status', 'received')
+                    ->orderByDesc('purchases.purchase_date')
+                    ->value('purchase_items.sell_price');
+                $base = $purchaseSell !== null && $purchaseSell > 0 ? $purchaseSell : null;
+            }
+            $p = $variant->product;
+            $fallback = $p ? ($p->sale_price ?? $p->price) : null;
+            $effective = ($base !== null && $base > 0) ? $base : ($fallback ?? null);
+
             return [
                 'name' => $combination ?: 'Default',
                 'sku' => $variant->sku,
-                // 'price' => $variant->price ?? null,
-                // 'stock' => $variant->stock ?? null,
+                'price' => $effective,
+                'stock' => $variant->stock_quantity,
             ];
         });
 
@@ -686,7 +837,7 @@ class ProductController extends Controller
     public function getProductDetails($id)
     {
         $product = Product::with(['brand', 'categories', 'images', 'variants.options.attribute', 'variants.options.term'])->findOrFail($id);
-        
+
         $images = $product->images->map(function ($img) {
             return [
                 'id' => $img->id,
@@ -695,11 +846,23 @@ class ProductController extends Controller
             ];
         });
 
-        $variants = $product->variants->map(function ($v) {
+        $variants = $product->variants->map(function ($v) use ($product) {
+            $base = $v->price;
+            if ($base === null || $base <= 0) {
+                $purchaseSell = \Illuminate\Support\Facades\DB::table('purchase_items')
+                    ->join('purchases', 'purchase_items.purchase_id', '=', 'purchases.id')
+                    ->where('purchase_items.variant_id', $v->id)
+                    ->where('purchases.status', 'received')
+                    ->orderByDesc('purchases.purchase_date')
+                    ->value('purchase_items.sell_price');
+                $base = $purchaseSell !== null && $purchaseSell > 0 ? $purchaseSell : null;
+            }
+            $fallback = $product->sale_price ?? $product->price;
+            $effective = ($base !== null && $base > 0) ? $base : $fallback;
             return [
                 'id' => $v->id,
                 'sku' => $v->sku,
-                'price' => $v->price,
+                'price' => $effective,
                 'stock' => $v->stock_quantity,
                 'options' => $v->options->map(function ($opt) {
                     return [
@@ -744,7 +907,7 @@ class ProductController extends Controller
 
         $generator = new BarcodeGeneratorPNG();
         $barcodeData = $product->sku;
-        
+
         // Default to Code 128
         $barcodeType = $generator::TYPE_CODE_128;
         $error = null;
@@ -790,13 +953,13 @@ class ProductController extends Controller
         $quantity = $request->quantity;
         // Fetch all active products with SKU
         $products = Product::where('status', 'Active')->whereNotNull('sku')->where('sku', '!=', '')->get();
-        
+
         $generator = new BarcodeGeneratorPNG();
         $items = [];
 
         foreach ($products as $product) {
             $barcodeData = $product->sku;
-            
+
             // Default to Code 128
             $barcodeType = $generator::TYPE_CODE_128;
 
@@ -841,9 +1004,9 @@ class ProductController extends Controller
         ]);
 
         $product = Product::findOrFail($id);
-        
+
         $users = collect();
-        
+
         if ($request->audience === 'all') {
             $users = User::where('is_active', true)->get();
         } elseif ($request->audience === 'customers') {
@@ -868,7 +1031,49 @@ class ProductController extends Controller
             return redirect()->back()->with('error', 'Failed to send notification: ' . $e->getMessage());
         }
     }
+
+    // Product Upload Images
+
+    public function uploadImages(Request $request, $id)
+    {
+        try {
+
+            $product = Product::findOrFail($id);
+
+            if (!$product) {
+                return response()->json(['success' => false, 'message' => 'No Product found.'], 400);
+            }
+
+            $uploadedFiles = $request->file('gallery', []);
+            $uploadedFiles = is_array($uploadedFiles) ? $uploadedFiles : ($uploadedFiles ? [$uploadedFiles] : []);
+
+            if (count($uploadedFiles) === 0) {
+                return response()->json(['success' => false, 'message' => 'No images uploaded.'], 400);
+            }
+
+            // Get current max sort order for existing images
+            $maxSort = DB::table('product_images')
+                ->where('product_id', $id)
+                ->max('sort_order') ?? -1;
+            $sort = $maxSort + 1;
+
+            foreach ($uploadedFiles as $file) {
+   
+                if (!($file instanceof \Illuminate\Http\UploadedFile) || !$file->isValid())
+                    continue;
+                $path = $file->store('product/images', 'public');
+                DB::table('product_images')->insert([
+                    'product_id' => $id,
+                    'path' => $path,
+                    'is_cover' => $file->getClientOriginalName() === $request->input('gallery_cover_name', '') ? 1 : 0,
+                    'sort_order' => $sort++,
+                ]);
+            }
+
+            return response()->json(['success' => true, 'message' => 'Images uploaded successfully.']);
+        } catch (\Exception $e) {
+            Log::error('Upload images error: ' . $e->getMessage());
+            return response()->json(['success' => false, 'message' => 'Failed to upload images.'], 500);
+        }
+    }
 }
-
-
-

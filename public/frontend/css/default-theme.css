@@ -1,8 +1,79 @@
+/* Theme overrides: update global palette */
 :root {
-  --base-color: #ffc107;
+  /* Core brand */
+  --primary-color: #0496ff; /* brand blue */
+  --secondary-color: #0b1220; /* dark navy */
+  --tertiary-color: #0ea5e9; /* accent cyan */
+  --quaternary-color: #0369a1; /* hover blue */
+  --hover-color: #0369a1; /* link/button hover */
+
+  /* Surface & text */
+  --template-bg: #ffffff;
+  --template-color: #1f2937; /* slate-700 */
+  --white: #ffffff;
+  --black: #000000;
+
+  /* Shadows */
+  --shadow: 0px 10px 25px 0px rgba(2, 8, 23, 0.08);
+  --shadow-secondary: 0px 10px 30px 0px rgba(2, 8, 23, 0.05);
+  --shadow-tertiary: 0px 4px 8px 0px rgba(2, 8, 23, 0.07);
+
+  /* Optional section palettes */
+  --primary-six: #0b1220;
+  --primary-six-title: #0b1220;
+  --primary-six-light: #0ea5e9;
+  --primary-seven-heading: #0b1220;
+  --primary-seven-text: #374151;
+  --primary-seven-body: #f4f7fb;
+  --primary-eight: #f97316; /* orange accent */
+
+  /* Legacy base color support */
+  --base-color: #0496ff;
 }
 
+/* Recolor monochrome icons/images to match primary */
 .base-img {
-  -webkit-filter: brightness(0) saturate(100%) invert(76%) sepia(74%) saturate(1946%) hue-rotate(354deg) brightness(104%) contrast(102%);
-          filter: brightness(0) saturate(100%) invert(76%) sepia(74%) saturate(1946%) hue-rotate(354deg) brightness(104%) contrast(102%);
+  -webkit-filter: brightness(0) saturate(100%) invert(34%) sepia(95%) saturate(2179%) hue-rotate(193deg) brightness(102%) contrast(101%);
+          filter: brightness(0) saturate(100%) invert(34%) sepia(95%) saturate(2179%) hue-rotate(193deg) brightness(102%) contrast(101%);
 }
+
+/* Utility tweaks to reflect theme across common UI */
+.btn--primary,
+.btn.btn-primary,
+.subscribe-six-button .btn--primary {
+  background-color: var(--primary-color) !important;
+  border-color: var(--primary-color) !important;
+}
+.btn--primary:hover,
+.btn.btn-primary:hover {
+  background-color: var(--hover-color) !important;
+  border-color: var(--hover-color) !important;
+}
+
+/* Ensure cart icon button has no background */
+.open-cart { background-color: transparent !important; border-color: transparent !important; box-shadow: none !important; }
+.open-cart:hover { background-color: transparent !important; border-color: transparent !important; }
+
+.text-primary { color: var(--primary-color) !important; }
+.bg-primary { background-color: var(--primary-color) !important; }
+.border-primary { border-color: var(--primary-color) !important; }
+
+/* Links */
+a:hover { color: var(--hover-color); }
+
+/* Headers */
+.header-area,
+.header-six-area,
+.header-tertiary {
+  box-shadow: var(--shadow);
+}
+
+/* Dropdowns */
+.navbar__sub-menu,
+.navbar__sub-menu .navbar__sub-menu {
+  background-color: #f3f4f6 !important; /* light surface */
+  color: #0b1220 !important;
+  border: 1px solid #e5e7eb !important;
+}
+.navbar__sub-menu a { color: #0b1220 !important; }
+.navbar__sub-menu a:hover { background-color: #e6f2ff !important; color: #0b1220 !important; }

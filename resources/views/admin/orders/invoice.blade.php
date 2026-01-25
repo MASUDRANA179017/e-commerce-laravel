@@ -4,7 +4,7 @@
 
 @section('content')
 <div class="row">
-    <div class="col-12 mb-4">
+    <div class="col-12 mb-4 no-print">
         <div class="d-flex align-items-center justify-content-between flex-wrap gap-3">
             <h3 class="fw-bold mb-0">Invoice #{{ $order->order_number ?? 'N/A' }}</h3>
             <div class="d-flex gap-2">
@@ -91,19 +91,19 @@
                         <tfoot>
                             <tr>
                                 <td colspan="4" class="text-end"><strong>Subtotal:</strong></td>
-                                <td class="text-end">৳{{ number_format($order->subtotal, 2) }}</td>
+                                <td class="text-end">৳{{ number_format($order->subtotal ?? 0, 2) }}</td>
                             </tr>
                             <tr>
                                 <td colspan="4" class="text-end"><strong>Shipping:</strong></td>
-                                <td class="text-end">৳{{ number_format($order->shipping, 2) }}</td>
+                                <td class="text-end">৳{{ number_format($order->shipping ?? 0, 2) }}</td>
                             </tr>
                             <tr>
                                 <td colspan="4" class="text-end"><strong>Tax:</strong></td>
-                                <td class="text-end">৳{{ number_format($order->tax, 2) }}</td>
+                                <td class="text-end">৳{{ number_format($order->tax ?? 0, 2) }}</td>
                             </tr>
                             <tr class="bg-light">
                                 <td colspan="4" class="text-end"><strong class="fs-5">Total:</strong></td>
-                                <td class="text-end"><strong class="fs-5">৳{{ number_format($order->total, 2) }}</strong></td>
+                                <td class="text-end"><strong class="fs-5">৳{{ number_format($order->total ?? 0, 2) }}</strong></td>
                             </tr>
                         </tfoot>
                     </table>
@@ -127,9 +127,11 @@
 
 <style>
 @media print {
-    .sidebar-area, header, .btn, nav { display: none !important; }
+    .sidebar-area, header, nav, .no-print { display: none !important; }
     .main-content { margin: 0 !important; padding: 0 !important; }
     .card { box-shadow: none !important; }
+    .card-body { padding: 0 !important; }
+    .bg-light { background: transparent !important; }
 }
 </style>
 @endsection

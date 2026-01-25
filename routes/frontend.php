@@ -33,6 +33,7 @@ Route::get('/flash-sale', [FlashSaleController::class, 'index'])->name('flash-sa
 Route::get('/shop', [ShopController::class, 'index'])->name('shop.index');
 Route::get('/product/{slug}', [ProductController::class, 'show'])->name('product.show');
 Route::get('/product/{id}/variants', [ProductController::class, 'variants'])->name('product.variants');
+Route::get('/product/{id}/quick-view', [ProductController::class, 'quickView'])->name('product.quickView');
 
 // Product Reviews (requires auth)
 Route::post('/product/{id}/review', [ProductController::class, 'storeReview'])
@@ -65,6 +66,7 @@ Route::prefix('checkout')->name('checkout.')->group(function () {
     Route::get('/', [CheckoutController::class, 'index'])->name('index');
     Route::post('/process', [CheckoutController::class, 'process'])->name('process');
     Route::get('/success/{order}', [CheckoutController::class, 'success'])->name('success');
+    Route::post('/calculate-shipping', [CheckoutController::class, 'calculateShipping'])->name('calculate-shipping');
 });
 
 use App\Http\Controllers\Frontend\PageController;
@@ -76,6 +78,7 @@ Route::post('/contact', [ContactController::class, 'store'])->name('contact.stor
 
 // Additional static pages
 Route::get('/terms-and-conditions', [PageController::class, 'terms'])->name('frontend.terms');
+Route::get('/terms-conditions', [PageController::class, 'terms'])->name('frontend.terms.alt');
 Route::get('/privacy-policy', [PageController::class, 'privacy'])->name('frontend.privacy');
 Route::get('/page/{slug}', [PageController::class, 'show'])->name('frontend.page');
 
@@ -97,4 +100,8 @@ Route::prefix('customer')->name('customer.')->group(function () {
         Route::post('logout', [CustomerController::class, 'logout'])->name('logout');
     });
 });
+
+// Dynamic CMS pages served at root, avoiding reserved prefixes
+Route::get('/{slug}', [PageController::class, 'show'])
+    ->where('slug', '^(?!api|admin|shop|product|cart|wishlist|checkout|blog|flash-sale|terms-and-conditions|privacy-policy|about|contact|user|dashboard|login|register|forgot-password|reset-password|verify-email|confirm-password|email|catalog).+$');
 

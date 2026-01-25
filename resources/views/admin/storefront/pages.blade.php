@@ -7,9 +7,9 @@
     <div class="col-12 mb-4">
         <div class="d-flex align-items-center justify-content-between flex-wrap gap-3">
             <h3 class="fw-bold mb-0">Page Builder</h3>
-            <button class="create-btn-base" data-bs-toggle="modal" data-bs-target="#createPageModal">
+            <a href="{{ route('admin.storefront.pages.create') }}" class="create-btn-base">
                 <span class="material-symbols-outlined fs-14">add</span> Create Page
-            </button>
+            </a>
         </div>
     </div>
 
@@ -50,9 +50,15 @@
                                 </td>
                             </tr>
                             @empty
-                            <tr>
-                                <td colspan="5" class="text-center py-4">No pages found</td>
-                            </tr>
+                                <tr>
+                                    <td colspan="6" class="text-center py-5">
+                                        <div class="alert alert-info mb-0">
+                                            <strong>Terms & Conditions</strong><br>
+                                            This is your system's default Terms & Conditions page. You can add or edit content by clicking <b>Add New</b> above.<br>
+                                            <span class="text-muted">Example: "By using this site, you agree to our terms and conditions. All purchases are subject to our policies. Please review carefully before ordering."</span>
+                                        </div>
+                                    </td>
+                                </tr>
                             @endforelse
                         </tbody>
                     </table>

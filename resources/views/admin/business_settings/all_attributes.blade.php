@@ -9,8 +9,15 @@
             <div class="panel h-100">
                 <div class="panel-header">
                     <h3 class="panel-title">Attributes by Category</h3>
+                    @php
+                      $prefillCategories = \App\Models\Catalog\Category::orderBy('name')
+                        ->get(['slug','name']);
+                    @endphp
                     <select id="categoryFilter" class="form-select form-select-sm" style="max-width:220px;">
-                        <option value="">-- Select a Category --</option>
+                      <option value="">-- Select a Category --</option>
+                      @foreach($prefillCategories as $c)
+                        <option value="{{ $c->slug }}">{{ $c->name }}</option>
+                      @endforeach
                     </select>
                 </div>
                 <div class="panel-body scroll-col" id="attr-source">
@@ -87,17 +94,20 @@
 $(function () {
   // ---------- Globals ----------
   const ROUTES = {
+    // Use Blade-generated URLs so paths respect Apache subpaths / APP_URL
     categories        : @json(route('catalog.categories.index')),
     attributes        : @json(route('catalog.attributes.index')), 
     attributeSetsIndex: @json(route('catalog.attribute_sets.index')),
     termsStore        : @json(route('catalog.terms.store')),
     attributeSetsSave : @json(route('catalog.attribute_sets.bulk_save')),
-    attributeSetDelete : (id) => @json(url('catalog/attribute-sets')).replace(/\/$/,'') + '/' + id,
+    attributeSetDelete: (id) => @json(url('catalog/attribute-sets')).replace(/\/$/,'') + '/' + id,
     termUpdate        : (id) => @json(url('catalog/terms')).replace(/\/$/,'') + '/' + id,
     termDelete        : (id) => @json(url('catalog/terms')).replace(/\/$/,'') + '/' + id,
   };
   const CSRF  = $('meta[name="csrf-token"]').attr('content') || '';
-  const toast = Swal.mixin({ toast:true, position:'top-end', timer:1600, showConfirmButton:false });
+  const toast = (window.Swal && typeof Swal.mixin === 'function')
+    ? Swal.mixin({ toast:true, position:'top-end', timer:1600, showConfirmButton:false })
+    : { fire: ({icon,title}) => console[(icon==='error'?'error':'log')](title || '') };
 
   const $src           = $('#attr-source');
   const $setsArea      = $('#setsArea');
@@ -105,13 +115,14 @@ $(function () {
 
   // Small helpers
   function ajaxJSON(url, method='GET', data) {
-    return $.ajax({
-      url, method,
-      data: data ? JSON.stringify(data) : undefined,
+    const opts = {
+      url,
+      method,
       dataType: 'json',
-      contentType: 'application/json',
       headers: { 'X-CSRF-TOKEN': CSRF, 'X-Requested-With': 'XMLHttpRequest' }
-    });
+    };
+    if (data !== undefined) { opts.data = JSON.stringify(data); opts.contentType = 'application/json'; }
+    return $.ajax(opts);
   }
   function ensureSortable(cb){
     if (window.Sortable) return cb();
@@ -202,7 +213,7 @@ $(function () {
   }
 
   // ---------- Modal & CRUD ----------
-  const termModal = new bootstrap.Modal(document.getElementById('termModal'));
+  const termModal = (window.bootstrap && bootstrap.Modal) ? new bootstrap.Modal(document.getElementById('termModal')) : null;
   function openTermModal(mode, ctx) {
     const { attrId, termId, catSlug, targetRow } = ctx;
     const attr = ATTR_CACHE[+attrId];
@@ -223,7 +234,7 @@ $(function () {
         $code.val(v);
       });
     }
-    termModal.show();
+    if (termModal) termModal.show();
   }
 
   function saveTermFromModal() {
@@ -245,7 +256,7 @@ $(function () {
         const slug = $categoryFilter.val();
         if (slug) loadAttributesFor(slug);
         toast.fire({icon:'success', title:'Value saved!'});
-        termModal.hide();
+        if (termModal) termModal.hide();
       }).fail(x=>{
         toast.fire({icon:'error', title:(x.responseJSON&&x.responseJSON.message)||'Save failed'});
       });
@@ -272,7 +283,7 @@ $(function () {
         });
 
         toast.fire({icon:'success', title:'Value updated!'});
-        termModal.hide();
+        if (termModal) termModal.hide();
       }).fail(x=>{
         toast.fire({icon:'error', title:(x.responseJSON&&x.responseJSON.message)||'Update failed'});
       });
@@ -420,19 +431,35 @@ function createSetCard(name = 'Untitled Set', id = null, collapsed = false){
       }).get().join('');
       $('#previewModalBody').html(`<table class="table table-sm table-bordered"><thead><tr><th>Type</th><th>Attribute</th><th>Value</th></tr></thead><tbody>${html}</tbody></table>`);
     }
-    new bootstrap.Modal('#previewModal').show();
+    if (window.bootstrap && bootstrap.Modal) { new bootstrap.Modal('#previewModal').show(); }
   }
 
   // ---------- Data loads ----------
   function loadCategories(){
+    // If server-side options already exist (> placeholder), skip AJAX load
+    if ($categoryFilter.find('option').length > 1) {
+      return $.Deferred().resolve().promise();
+    }
     return ajaxJSON(ROUTES.categories,'GET').done(res=>{
       $categoryFilter.html(`<option value="">-- Select a Category --</option>`);
       (res.categories||[]).forEach(c => $categoryFilter.append(`<option value="${c.slug}">${c.name}</option>`));
+    }).fail(err=>{
+      console.error('Failed to load categories', err);
+      // keep any prefilled options, otherwise show placeholder
+      if ($categoryFilter.find('option').length <= 1) {
+        $categoryFilter.html(`<option value="">-- Select a Category --</option>`);
+      }
+      $src.html(`<div class="initial-msg"><i class='bx bx-error-circle' style="font-size:2rem"></i><p>Failed to load categories. Please refresh.</p></div>`);
+      toast.fire({icon:'error', title:'Failed to load categories'});
     });
   }
   function loadAttributesFor(slug){
     $src.html(`<div class="initial-msg"><i class='bx bx-loader-alt bx-spin' style="font-size:2rem"></i><p>Loading...</p></div>`);
-    return ajaxJSON(`${ROUTES.attributes}?category=${encodeURIComponent(slug)}`,'GET').done(renderLeftColumn);
+    return ajaxJSON(`${ROUTES.attributes}?category=${encodeURIComponent(slug)}`,'GET').done(renderLeftColumn).fail(err=>{
+      console.error('Failed to load attributes', err);
+      $src.html(`<div class="initial-msg"><i class='bx bx-error-circle' style="font-size:2rem"></i><p>Failed to load attributes for the selected category.</p></div>`);
+      toast.fire({icon:'error', title:'Failed to load attributes'});
+    });
   }
 
   // ---------- Events ----------
@@ -622,6 +649,10 @@ function loadExistingSets(){
       if (!$('#setsArea').children().length) {
         $('#setsArea').html('<div class="initial-msg">No saved attribute sets yet.</div>');
       }
+    }).fail(err=>{
+      console.error('Failed to load attribute sets', err);
+      $setsArea.html('<div class="initial-msg">Failed to load attribute sets.</div>');
+      toast.fire({icon:'error', title:'Failed to load attribute sets'});
     });
   }
 

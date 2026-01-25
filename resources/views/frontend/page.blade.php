@@ -31,7 +31,16 @@
                     <div class="card border-0 shadow-sm rounded-4">
                         <div class="card-body p-4 p-lg-5">
                             <div class="content-body">
-                                {!! $page->content !!}
+                                @if($page->slug === 'terms-and-conditions' && (!$page->content || empty(trim(strip_tags($page->content)))) )
+                                    @include('frontend.pages.terms-content')
+                                @elseif($page->content && !empty(trim(strip_tags($page->content))))
+                                    {!! $page->content !!}
+                                @else
+                                    <div class="alert alert-info" role="alert">
+                                        <strong>Content Coming Soon</strong>
+                                        <p class="mb-0">This page is currently being updated. Please check back later.</p>
+                                    </div>
+                                @endif
                             </div>
                         </div>
                     </div>

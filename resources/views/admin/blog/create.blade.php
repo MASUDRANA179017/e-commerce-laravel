@@ -136,17 +136,38 @@
 
     @push('scripts')
         <script>
-            // Image preview
-            document.getElementById('featured_image').addEventListener('change', function (e) {
-                const file = e.target.files[0];
-                if (file) {
-                    const reader = new FileReader();
-                    reader.onload = function (e) {
-                        const preview = document.getElementById('imagePreview');
-                        preview.querySelector('img').src = e.target.result;
-                        preview.style.display = 'block';
-                    }
-                    reader.readAsDataURL(file);
+            document.addEventListener('DOMContentLoaded', function() {
+                const fileInput = document.getElementById('featured_image');
+                const preview = document.getElementById('imagePreview');
+                const previewImg = preview.querySelector('img');
+                
+                if (fileInput) {
+                    fileInput.addEventListener('change', function(e) {
+                        const file = e.target.files[0];
+                        if (file) {
+                            // Check if file is an image
+                            if (!file.type.startsWith('image/')) {
+                                alert('Please select an image file');
+                                return;
+                            }
+                            
+                            // Check file size (2MB)
+                            if (file.size > 2 * 1024 * 1024) {
+                                alert('File size must be less than 2MB');
+                                return;
+                            }
+                            
+                            const reader = new FileReader();
+                            reader.onload = function(e) {
+                                previewImg.src = e.target.result;
+                                preview.style.display = 'block';
+                            }
+                            reader.readAsDataURL(file);
+                        } else {
+                            preview.style.display = 'none';
+                            previewImg.src = '';
+                        }
+                    });
                 }
             });
         </script>

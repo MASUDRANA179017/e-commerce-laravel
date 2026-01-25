@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Admin\Business_SetUp;
 
 use Illuminate\Http\Request;
-use App\Models\Catalog\Category;
+use App\Models\Admin\Product\ProductCategory;
 use App\Http\Controllers\Controller;
 use App\Models\Catalog\AttributeSet;
 use App\Models\VariantSet;
@@ -12,8 +12,31 @@ use Illuminate\Support\Facades\Validator;
 
 class VarientBuildController extends Controller
 {
-public function index() {
-    $categories = Category::all();
+    public function index(Request $request)
+    {
+        // If AJAX request, return saved variant sets as JSON
+        if ($request->ajax() || $request->query('ajax')) {
+            $variantSets = VariantSet::with(['businessCategory'])
+                ->orderByDesc('created_at')
+                ->get()
+                ->map(function ($set) {
+                    return [
+                        'id' => $set->id,
+                        'name' => $set->name,
+                        'sku_prefix' => $set->sku_prefix,
+                        'variants_count' => $set->variants_count, // Uses the accessor
+                        'business_category' => $set->businessCategory ? [
+                            'id' => $set->businessCategory->id,
+                            'name' => $set->businessCategory->name,
+                        ] : null,
+                        'created_at' => $set->created_at?->format('Y-m-d H:i:s'),
+                    ];
+                });
+
+            return response()->json(['variant_sets' => $variantSets]);
+        }
+
+        $categories = ProductCategory::whereNull('parent_id')->orderBy('name')->get();
 
         $sets = AttributeSet::with([
             'items.attribute',
@@ -58,56 +81,84 @@ public function index() {
 
         // dd($attribute_sets);
 
-    return view('admin.varient_build.index', compact('categories', 'attribute_sets'));
-}
-
-public function store(Request $request)
-{
-    $v = Validator::make($request->all(), [
-        'name' => ['required', 'string', 'max:255'],
-        'sku_prefix' => ['nullable', 'string', 'max:64'],
-        'business' => ['nullable'],
-        'attribute_set_id' => ['required', 'integer', 'exists:attribute_sets,id'],
-        'media_rules' => ['array'],
-        'variant_rules' => ['array'],
-        'variants' => ['array', 'min:1'],
-    ]);
-    if ($v->fails()) {
-        return response()->json(['ok' => false, 'message' => 'Validation failed', 'errors' => $v->errors()], 422);
+        return view('admin.varient_build.index', compact('categories', 'attribute_sets'));
     }
 
-    $data = $v->validated();
-    // Optional server-side enforcement: unique SKUs when the rule is enabled
-    $vr = $data['variant_rules'] ?? [];
-    $enforceUnique = is_array($vr) && (!empty($vr['unique_sku']));
-    if ($enforceUnique) {
-        $seen = [];
-        foreach (($data['variants'] ?? []) as $idx => $vrow) {
-            $sku = strtoupper(trim((string)($vrow['sku'] ?? '')));
-            if ($sku === '') {
-                return response()->json(['ok' => false, 'message' => 'SKU is required when unique SKU rule is enabled', 'errors' => ['variants' => ['SKU required at index '.$idx]]], 422);
-            }
-            if (isset($seen[$sku])) {
-                return response()->json(['ok' => false, 'message' => 'Duplicate SKUs found', 'errors' => ['variants' => ['Duplicate SKU "'.$sku.'" at index '.$idx]]], 422);
-            }
-            $seen[$sku] = true;
+    public function store(Request $request)
+    {
+        $v = Validator::make($request->all(), [
+            'name' => ['required', 'string', 'max:255'],
+            'sku_prefix' => ['nullable', 'string', 'max:64'],
+            'business' => ['nullable'],
+            'attribute_set_id' => ['required', 'integer', 'exists:attribute_sets,id'],
+            'media_rules' => ['array'],
+            'variant_rules' => ['array'],
+            'variants' => ['array', 'min:1'],
+        ]);
+        if ($v->fails()) {
+            return response()->json(['ok' => false, 'message' => 'Validation failed', 'errors' => $v->errors()], 422);
         }
+
+        $data = $v->validated();
+        // Optional server-side enforcement: unique SKUs when the rule is enabled
+        $vr = $data['variant_rules'] ?? [];
+        $enforceUnique = is_array($vr) && (!empty($vr['unique_sku']));
+        if ($enforceUnique) {
+            $seen = [];
+            foreach (($data['variants'] ?? []) as $idx => $vrow) {
+                $sku = strtoupper(trim((string)($vrow['sku'] ?? '')));
+                if ($sku === '') {
+                    return response()->json(['ok' => false, 'message' => 'SKU is required when unique SKU rule is enabled', 'errors' => ['variants' => ['SKU required at index ' . $idx]]], 422);
+                }
+                if (isset($seen[$sku])) {
+                    return response()->json(['ok' => false, 'message' => 'Duplicate SKUs found', 'errors' => ['variants' => ['Duplicate SKU "' . $sku . '" at index ' . $idx]]], 422);
+                }
+                $seen[$sku] = true;
+            }
+        }
+
+        $row = VariantSet::create([
+            'name' => $data['name'],
+            'category_id' => is_numeric($data['business'] ?? null) ? (int) $data['business'] : null,
+            'attribute_set_id' => (int) $data['attribute_set_id'],
+            'sku_prefix' => $data['sku_prefix'] ?? null,
+            'media_rules' => $data['media_rules'] ?? [],
+            'variant_rules' => $data['variant_rules'] ?? [],
+            'variants' => $data['variants'] ?? [],
+            'status' => 'active',
+            'created_by' => optional(Auth::user())->id,
+        ]);
+
+        return response()->json(['ok' => true, 'id' => $row->id, 'message' => 'Variant Set saved'], 201);
     }
 
-    $row = VariantSet::create([
-        'name' => $data['name'],
-        'category_id' => is_numeric($data['business'] ?? null) ? (int) $data['business'] : null,
-        'attribute_set_id' => (int) $data['attribute_set_id'],
-        'sku_prefix' => $data['sku_prefix'] ?? null,
-        'media_rules' => $data['media_rules'] ?? [],
-        'variant_rules' => $data['variant_rules'] ?? [],
-        'variants' => $data['variants'] ?? [],
-        'status' => 'draft',
-        'created_by' => optional(Auth::user())->id,
-    ]);
+    public function show($id)
+    {
+        $variantSet = VariantSet::with(['businessCategory'])->findOrFail($id);
 
-    return response()->json(['ok' => true, 'id' => $row->id, 'message' => 'Variant Set saved'], 201);
-}
+        return response()->json([
+            'ok' => true,
+            'variant_set' => [
+                'id' => $variantSet->id,
+                'name' => $variantSet->name,
+                'sku_prefix' => $variantSet->sku_prefix,
+                'variants_count' => $variantSet->variants_count,
+                'business_category' => $variantSet->businessCategory ? [
+                    'id' => $variantSet->businessCategory->id,
+                    'name' => $variantSet->businessCategory->name,
+                ] : null,
+                'variants' => $variantSet->variants ?? []
+            ]
+        ]);
+    }
+
+    public function destroy($id)
+    {
+        $variantSet = VariantSet::findOrFail($id);
+        $variantSet->delete();
+
+        return response()->json(['ok' => true, 'message' => 'Variant Set deleted successfully']);
+    }
 
 }
 // [

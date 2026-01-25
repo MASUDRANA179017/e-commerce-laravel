@@ -34,6 +34,9 @@
                 <a href="#shipping" class="list-group-item list-group-item-action" data-bs-toggle="list">
                     <i class="material-symbols-outlined fs-14 me-2">local_shipping</i> Shipping
                 </a>
+                <a href="#scout" class="list-group-item list-group-item-action" data-bs-toggle="list">
+                    <i class="material-symbols-outlined fs-14 me-2">shield</i> Scout Discount
+                </a>
                 <a href="#tax" class="list-group-item list-group-item-action" data-bs-toggle="list">
                     <i class="material-symbols-outlined fs-14 me-2">receipt</i> Tax
                 </a>
@@ -276,28 +279,68 @@
                         <h5 class="mb-0 fw-bold">Shipping Settings</h5>
                     </div>
                     <div class="card-body">
-                        <form>
+                        <form id="shippingSettingsForm">
+                            @csrf
                             <div class="mb-3">
                                 <label class="form-label">Default Shipping Method</label>
-                                <select class="form-select">
-                                    <option>Flat Rate</option>
-                                    <option>Free Shipping</option>
-                                    <option>Weight Based</option>
+                                <select class="form-select" name="default_shipping_method">
+                                    <option value="flat_rate" {{ $settings->default_shipping_method == 'flat_rate' ? 'selected' : '' }}>Flat Rate</option>
+                                    <option value="free_shipping" {{ $settings->default_shipping_method == 'free_shipping' ? 'selected' : '' }}>Free Shipping</option>
+                                    <option value="weight_based" {{ $settings->default_shipping_method == 'weight_based' ? 'selected' : '' }}>Weight Based</option>
                                 </select>
                             </div>
                             <div class="row">
                                 <div class="col-md-6 mb-3">
                                     <label class="form-label">Shipping Cost (Inside Dhaka)</label>
-                                    <input type="number" class="form-control" value="60">
+                                    <input type="number" class="form-control" name="shipping_cost_dhaka" value="{{ $settings->shipping_cost_dhaka ?? 60 }}" step="0.01">
                                 </div>
                                 <div class="col-md-6 mb-3">
                                     <label class="form-label">Shipping Cost (Outside Dhaka)</label>
-                                    <input type="number" class="form-control" value="120">
+                                    <input type="number" class="form-control" name="shipping_cost_outside" value="{{ $settings->shipping_cost_outside ?? 120 }}" step="0.01">
                                 </div>
                             </div>
                             <div class="mb-3">
                                 <label class="form-label">Free Shipping Threshold</label>
-                                <input type="number" class="form-control" value="5000" placeholder="Order amount for free shipping">
+                                <input type="number" class="form-control" name="free_shipping_threshold" value="{{ $settings->free_shipping_threshold ?? 5000 }}" step="0.01" placeholder="Order amount for free shipping">
+                            </div>
+                            <button type="submit" class="create-btn-base">Save Changes</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Scout Discount Settings -->
+            <div class="tab-pane fade" id="scout">
+                <div class="card border-0">
+                    <div class="card-header bg-white">
+                        <h5 class="mb-0 fw-bold">Scout Discount Settings</h5>
+                    </div>
+                    <div class="card-body">
+                        <form id="scoutDiscountForm">
+                            @csrf
+                            <div class="mb-3">
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" id="enableScout" name="scout_discount_enabled" value="1" {{ \App\Models\SystemSetting::scoutDiscountEnabled() ? 'checked' : '' }}>
+                                    <label class="form-check-label" for="enableScout">Enable Scout Discount</label>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">Discount Percentage (%)</label>
+                                    <input type="number" class="form-control" name="scout_discount_percent" value="{{ \App\Models\SystemSetting::scoutDiscountPercent() }}" step="0.01" min="0" max="100">
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">Coupon Code</label>
+                                    <input type="text" class="form-control" name="scout_discount_code" value="{{ \App\Models\SystemSetting::scoutDiscountCode() }}" placeholder="e.g., SCOUT">
+                                </div>
+                            </div>
+                            <div class="mb-3 p-3 rounded-3" style="background: #f0f9ff; border: 1px solid #e0f2fe;">
+                                <p class="mb-2"><strong>How it works:</strong></p>
+                                <ul class="mb-0 small">
+                                    <li>Scout members can fill the Scout Member form on checkout</li>
+                                    <li>System will apply the configured discount percentage automatically</li>
+                                    <li>Discount will be applied as a coupon code on successful verification</li>
+                                </ul>
                             </div>
                             <button type="submit" class="create-btn-base">Save Changes</button>
                         </form>
@@ -379,22 +422,23 @@
                         <h5 class="mb-0 fw-bold">SEO Settings</h5>
                     </div>
                     <div class="card-body">
-                        <form>
+                        <form id="seoSettingsForm">
+                            @csrf
                             <div class="mb-3">
                                 <label class="form-label">Meta Title</label>
-                                <input type="text" class="form-control" value="GrowUp E-Commerce - Your Ultimate Shopping Destination">
+                                <input type="text" class="form-control" name="meta_title" value="{{ $settings->meta_title ?? '' }}" placeholder="{{ config('app.name', 'GrowUp E-Commerce') }} - Your Ultimate Shopping Destination">
                             </div>
                             <div class="mb-3">
                                 <label class="form-label">Meta Description</label>
-                                <textarea class="form-control" rows="3">Shop the latest products at the best prices. GrowUp E-Commerce offers quality products with fast delivery across Bangladesh.</textarea>
+                                <textarea class="form-control" name="meta_description" rows="3" placeholder="Shop the latest products at the best prices. {{ config('app.name', 'GrowUp E-Commerce') }} offers quality products with fast delivery across Bangladesh.">{{ $settings->meta_description ?? '' }}</textarea>
                             </div>
                             <div class="mb-3">
                                 <label class="form-label">Meta Keywords</label>
-                                <input type="text" class="form-control" placeholder="e-commerce, online shopping, bangladesh">
+                                <input type="text" class="form-control" name="meta_keywords" value="{{ $settings->meta_keywords ?? '' }}" placeholder="e-commerce, online shopping, bangladesh">
                             </div>
                             <div class="mb-3">
                                 <label class="form-label">Google Analytics ID</label>
-                                <input type="text" class="form-control" placeholder="UA-XXXXXXXXX-X">
+                                <input type="text" class="form-control" name="google_analytics_id" value="{{ $settings->google_analytics_id ?? '' }}" placeholder="UA-XXXXXXXXX-X">
                             </div>
                             <button type="submit" class="create-btn-base">Save Changes</button>
                         </form>
@@ -454,6 +498,186 @@
     handleFormSubmit('storeSettingsForm', '{{ route("admin.settings.store") }}');
     handleFormSubmit('emailSettingsForm', '{{ route("admin.settings.email") }}');
     handleFormSubmit('socialSettingsForm', '{{ route("admin.settings.social") }}');
+    handleFormSubmit('seoSettingsForm', '{{ route("admin.settings.seo") }}');
+
+    // Activate tab based on hash
+    document.addEventListener("DOMContentLoaded", function() {
+        var hash = window.location.hash;
+        if (hash) {
+            var triggerEl = document.querySelector('a[href="' + hash + '"]');
+            if (triggerEl) {
+                // Remove active class from all tabs
+                document.querySelectorAll('.list-group-item').forEach(el => el.classList.remove('active'));
+                document.querySelectorAll('.tab-pane').forEach(el => el.classList.remove('show', 'active'));
+                
+                // Activate the target tab
+                triggerEl.classList.add('active');
+                var targetPane = document.querySelector(hash);
+                if(targetPane) {
+                    targetPane.classList.add('show', 'active');
+                }
+            }
+        }
+    });
+
+    // Handle Shipping Settings Form Submission
+    document.getElementById('shippingSettingsForm')?.addEventListener('submit', function(e) {
+        e.preventDefault();
+        let formData = new FormData(this);
+        
+        fetch('{{ route("admin.settings.shipping") }}', {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-CSRF-TOKEN': document.querySelector('[name="_token"]').value
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if(data.success) {
+                showCustomToast('success', 'Shipping settings saved successfully!', '✓');
+                setTimeout(() => {
+                    location.reload();
+                }, 1500);
+            } else {
+                showCustomToast('error', 'Error: ' + (data.message || 'Failed to save'), '✕');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            showCustomToast('error', 'An error occurred while saving.', '✕');
+        });
+    });
+
+    // Custom Toast Notification
+    function showCustomToast(type, message, icon) {
+        // Remove existing toasts
+        const existingToasts = document.querySelectorAll('.custom-toast');
+        existingToasts.forEach(toast => toast.remove());
+
+        const toast = document.createElement('div');
+        toast.className = `custom-toast custom-toast-${type}`;
+        
+        const colors = {
+            success: { bg: '#10b981', icon: '✓' },
+            error: { bg: '#ef4444', icon: '✕' },
+            warning: { bg: '#f59e0b', icon: '⚠' },
+            info: { bg: '#3b82f6', icon: 'ℹ' }
+        };
+
+        const color = colors[type] || colors.info;
+
+        toast.innerHTML = `
+            <div style="
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: ${color.bg};
+                color: white;
+                padding: 16px 24px;
+                border-radius: 8px;
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+                display: flex;
+                align-items: center;
+                gap: 12px;
+                font-weight: 500;
+                font-size: 14px;
+                z-index: 9999;
+                animation: slideInRight 0.3s ease-out;
+                max-width: 400px;
+                word-wrap: break-word;
+            ">
+                <span style="
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    width: 24px;
+                    height: 24px;
+                    border-radius: 50%;
+                    background: rgba(255, 255, 255, 0.2);
+                    font-weight: bold;
+                    flex-shrink: 0;
+                ">${icon}</span>
+                <span>${message}</span>
+            </div>
+        `;
+
+        document.body.appendChild(toast);
+
+        // Auto remove after 4 seconds
+        setTimeout(() => {
+            toast.style.animation = 'slideOutRight 0.3s ease-out';
+            setTimeout(() => toast.remove(), 300);
+        }, 4000);
+    }
+
+    // Add animation styles if not already present
+    if (!document.getElementById('toast-styles')) {
+        const style = document.createElement('style');
+        style.id = 'toast-styles';
+        style.textContent = `
+            @keyframes slideInRight {
+                from {
+                    transform: translateX(400px);
+                    opacity: 0;
+                }
+                to {
+                    transform: translateX(0);
+                    opacity: 1;
+                }
+            }
+
+            @keyframes slideOutRight {
+                from {
+                    transform: translateX(0);
+                    opacity: 1;
+                }
+                to {
+                    transform: translateX(400px);
+                    opacity: 0;
+                }
+            }
+
+            .custom-toast {
+                animation: slideInRight 0.3s ease-out !important;
+            }
+        `;
+        document.head.appendChild(style);
+    }
+
+    // Handle Scout Discount Settings Form Submission
+    document.getElementById('scoutDiscountForm')?.addEventListener('submit', function(e) {
+        e.preventDefault();
+        let formData = new FormData(this);
+        
+        // Add checkbox value even if unchecked
+        if (!formData.has('scout_discount_enabled')) {
+            formData.append('scout_discount_enabled', '0');
+        }
+        
+        fetch('{{ route("admin.settings.scout") }}', {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-CSRF-TOKEN': document.querySelector('[name="_token"]').value
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if(data.success) {
+                showCustomToast('success', 'Scout discount settings saved successfully!', '✓');
+                setTimeout(() => {
+                    location.reload();
+                }, 1500);
+            } else {
+                showCustomToast('error', 'Error: ' + (data.message || 'Failed to save'), '✕');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            showCustomToast('error', 'An error occurred while saving.', '✕');
+        });
+    });
 </script>
 @endpush
 
