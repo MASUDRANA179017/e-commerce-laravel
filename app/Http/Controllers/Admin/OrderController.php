@@ -19,6 +19,11 @@ class OrderController extends Controller
             $query->where('status', $request->status);
         }
 
+        // Filter by source
+        if ($request->filled('source')) {
+            $query->where('order_source', $request->source);
+        }
+
         // Search
         if ($request->filled('search')) {
             $search = $request->search;

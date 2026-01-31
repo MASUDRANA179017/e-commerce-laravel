@@ -57,7 +57,7 @@
   --primary-six: #211C84;
   --primary-six-title: #0B3D19;
   --primary-six-light: #1230AE;
-  
+
   --primary-seven-heading: #0E253A;
   --primary-seven-text: #4B5563;
   --primary-seven-body: #fcf8ed;
@@ -82,10 +82,10 @@
 }
 
 
-/* ==== 
+/* ====
  --------- (1.02) variables end ---------
  ==== */
-/* ==== 
+/* ====
  --------- (2.01) reset styles start ---------
  ==== */
 * {
@@ -350,10 +350,10 @@ h6 {
   font-family: var(--nunito);
 }
 
-/* ==== 
+/* ====
  --------- (2.01) reset styles end ---------
  ==== */
-/* ==== 
+/* ====
  --------- (2.02) typography styles start ---------
  ==== */
 
@@ -447,10 +447,10 @@ p {
   text-align: justify;
   margin-bottom: 20px;
 }
-/* ==== 
+/* ====
  --------- (2.02) typography styles end ---------
  ==== */
-/* ==== 
+/* ====
  --------- (2.03) global styles start ---------
  ==== */
 img {
@@ -1906,10 +1906,10 @@ display: inline-flex;
   font-size: 18px;
 }
 
-/* ==== 
+/* ====
  --------- (2.03) global styles end ---------
  ==== */
-/* ==== 
+/* ====
  --------- (3.01) buttons styles start ---------
  ==== */
 .btn--primary {
@@ -2095,10 +2095,10 @@ padding: 15px 40px;
   width: 0%;
 }
 
-/* ==== 
+/* ====
  --------- (3.01) buttons styles end ---------
  ==== */
-/* ==== 
+/* ====
  --------- (3.02) forms styles start ---------
  ==== */
 .input-group {
@@ -2451,10 +2451,10 @@ padding: 15px 40px;
   border-radius: 0px;
 }
 
-/* ==== 
+/* ====
  --------- (3.02) forms styles end ---------
  ==== */
-/* ==== 
+/* ====
  --------- (3.03) preloader styles start ---------
  ==== */
 .preloader {
@@ -2567,10 +2567,10 @@ padding: 15px 40px;
     background-position: 0% 50%;
   }
 }
-/* ==== 
+/* ====
  --------- (3.03) preloader styles end ---------
  ==== */
-/* ==== 
+/* ====
  --------- (4.01) header styles start ---------
  ==== */
 .topbar {
@@ -2610,6 +2610,7 @@ padding: 15px 40px;
 }
 .topbar .topbar__list a i {
   color: var(--apece-primary);
+  margin-right: 10px;
 }
 .topbar .topbar__list a:hover {
   color: var(--apece-primary);
@@ -3923,10 +3924,10 @@ font-size: 14px;
     padding-inline: 32px !important;
   }
 }
-/* ==== 
+/* ====
  --------- (4.01) header styles end ---------
  ==== */
-/* ==== 
+/* ====
  --------- (4.02) banner styles start ---------
  ==== */
 .banner {
@@ -4814,10 +4815,10 @@ padding: 30px;
     opacity: 0.5;
   }
 }
-/* ==== 
+/* ====
  --------- (4.02) banner styles end ---------
  ==== */
-/* ==== 
+/* ====
  --------- (4.03) footer styles start ---------
  ==== */
 .footer {
@@ -5748,10 +5749,10 @@ font-weight: 600;
   color: var(--white);
 }
 
-/* ==== 
+/* ====
  --------- (4.03) footer styles end ---------
  ==== */
-/* ==== 
+/* ====
  --------- (5.01) partner section styles start ---------
  ==== */
 .partner {
@@ -5762,10 +5763,10 @@ font-weight: 600;
   text-align: center;
 }
 
-/* ==== 
+/* ====
  --------- (5.01) partner section styles end ---------
  ==== */
-/* ==== 
+/* ====
  --------- (5.02) difference section styles start ---------
  ==== */
 .difference {
@@ -6381,10 +6382,10 @@ font-size: 40px;
   line-height: 1;
 }
 
-/* ==== 
+/* ====
  --------- (5.02) difference section styles end ---------
  ==== */
-/* ==== 
+/* ====
  --------- (5.03) help section styles start ---------
  ==== */
 .help {
@@ -7236,10 +7237,10 @@ font-size: 40px;
             transform: translateX(0) translateY(0);
   }
 }
-/* ==== 
+/* ====
  --------- (5.03) help section styles end ---------
  ==== */
-/* ==== 
+/* ====
  --------- (5.04) cause slider section styles start ---------
  ==== */
 .cause {
@@ -7633,10 +7634,10 @@ font-size: 40px;
   margin-bottom: 35px !important;
 }
 
-/* ==== 
+/* ====
  --------- (5.04) cause slider section styles end ---------
  ==== */
-/* ==== 
+/* ====
  --------- (5.05) cta section styles start ---------
  ==== */
 .cta-section {
@@ -7917,10 +7918,10 @@ padding: 15px 40px;
      object-position: top;
 }
 
-/* ==== 
+/* ====
  --------- (5.05) cta section styles end ---------
  ==== */
-/* ==== 
+/* ====
  --------- (5.06) team section styles start ---------
  ==== */
 .team {
@@ -8445,10 +8446,10 @@ padding: 15px 40px;
   font-size: 18px;
 }
 
-/* ==== 
+/* ====
  --------- (5.06) team section styles end ---------
  ==== */
-/* ==== 
+/* ====
  --------- (5.07) community section styles start ---------
  ==== */
 .community {
@@ -8760,10 +8761,10 @@ padding: 15px 40px;
           animation: pulse 4s infinite ease-in-out;
 }
 
-/* ==== 
+/* ====
  --------- (5.07) community section styles end ---------
  ==== */
-/* ==== 
+/* ====
  --------- (5.08) testimonial section styles start ---------
  ==== */
 .testimonial {
@@ -9240,10 +9241,10 @@ padding: 15px 40px;
   padding: 100px 0px !important;
 }
 
-/* ==== 
+/* ====
  --------- (5.08) testimonial section styles end ---------
  ==== */
-/* ==== 
+/* ====
  --------- (5.09) blog section styles start ---------
  ==== */
 .blog {
@@ -9740,10 +9741,10 @@ position: absolute;
   color: var(--white);
 }
 
-/* ==== 
+/* ====
  --------- (5.09) blog section styles start ---------
  ==== */
-/* ==== 
+/* ====
  --------- (5.10) award section styles start ---------
  ==== */
 .award {
@@ -10009,10 +10010,10 @@ position: absolute;
             transform: translateX(100%);
   }
 }
-/* ==== 
+/* ====
  --------- (5.10) award section styles end ---------
  ==== */
-/* ==== 
+/* ====
  --------- (5.11) faq section styles start ---------
  ==== */
 .faq {
@@ -10165,10 +10166,10 @@ position: absolute;
   height: 100%;
 }
 
-/* ==== 
+/* ====
  --------- (5.11) faq section styles start ---------
  ==== */
-/* ==== 
+/* ====
  --------- (5.12) overview section styles start ---------
  ==== */
 .overview {
@@ -10259,10 +10260,10 @@ position: absolute;
   color: var(--white);
 }
 
-/* ==== 
+/* ====
  --------- (5.12) overview section styles end ---------
  ==== */
-/* ==== 
+/* ====
  --------- (5.13) donation section styles start ---------
  ==== */
 .donation-future {
@@ -10544,10 +10545,10 @@ position: absolute;
   margin: 16px 0px 0px !important;
 }
 
-/* ==== 
+/* ====
  --------- (5.13) donation section styles end ---------
  ==== */
-/* ==== 
+/* ====
  --------- (5.14) counter section styles start ---------
  ==== */
 .counter {
@@ -10681,10 +10682,10 @@ position: absolute;
   min-width: 50px;
 }
 
-/* ==== 
+/* ====
  --------- (5.14) counter section styles end ---------
  ==== */
-/* ==== 
+/* ====
  --------- (5.15) event section styles start ---------
  ==== */
 .event {
@@ -11384,10 +11385,10 @@ gap: 8px;
           transform: rotate(0deg);
 }
 
-/* ==== 
+/* ====
  --------- (5.15) event section styles end ---------
  ==== */
-/* ==== 
+/* ====
  --------- (5.16) contact section styles start ---------
  ==== */
 .contact {
@@ -11534,10 +11535,10 @@ gap: 8px;
   min-height: 250px;
 }
 
-/* ==== 
+/* ====
  --------- (5.16) contact section styles end ---------
  ==== */
-/* ==== 
+/* ====
  --------- (5.17) shop section styles start ---------
  ==== */
 .shop {
@@ -12787,10 +12788,10 @@ gap: 8px;
   background-color: var(--quaternary-color);
 }
 
-/* ==== 
+/* ====
  --------- (5.17) shop section styles end ---------
  ==== */
-/* ==== 
+/* ====
  --------- (5.18) volunteer section styles start ---------
  ==== */
 .volunteer {
@@ -12916,10 +12917,10 @@ gap: 8px;
   width: 0%;
 }
 
-/* ==== 
+/* ====
  --------- (5.18) volunteer section styles end ---------
  ==== */
-/* ==== 
+/* ====
  --------- (5.19) error section styles start ---------
  ==== */
 .error {
@@ -13033,10 +13034,10 @@ gap: 8px;
   color: var(--white);
 }
 
-/* ==== 
+/* ====
  --------- (5.19) error section styles end ---------
  ==== */
-/* ==== 
+/* ====
  --------- (5.20) coming soon section styles start ---------
  ==== */
 .soon {
@@ -13410,7 +13411,7 @@ display: inline-block;
   direction: ltr;
 }
 
-/* ==== 
+/* ====
  --------- (5.20) coming soon section styles end ---------
  ==== */
 .pg-four .pt-120 {
@@ -16627,7 +16628,7 @@ color: var(--apece-title);
   max-width: 38vw;
 }
 
-/* ==== 
+/* ====
  --------- (5.21) color switcher styles start ---------
  ==== */
 .color-palate {
@@ -17993,7 +17994,7 @@ display: flex;
   align-items: center;
   justify-content: end;
   padding: 0 33px 0 33px;
-  position: relative; 
+  position: relative;
 }
 .subscribe-six-input input {
 width: 100%;
@@ -18535,7 +18536,7 @@ width: 100%;
 .childhood-seven-wrapper:hover::before {
   opacity: 1;
   visibility: visible;
-} 
+}
 .childhood-seven-button {
   position: absolute;
   bottom: -60px;
@@ -19167,7 +19168,7 @@ width: 100%;
 }
 .blog-seven-wrapper:hover .blog-seven-thumb img {
   transform: scale(1.2) rotate(6deg);
-  
+
 }
 
 
@@ -20433,8 +20434,10 @@ color: var(--white);
 }
 .ministrie-eight-dot {
   background: rgba(27, 86, 253, 0.5);
-  padding: 8px 6px;
-  width: 115px !important;
+  padding: 8px 30px;
+  width: auto !important;
+  min-width: 160px;
+  display: table;
   border-radius: 25px;
   text-align: center;
   margin:30px auto 0;
@@ -20572,7 +20575,7 @@ color: var(--white);
   transition: .4s ease-in;
   width: 100%;
 }
-.blog-eight-wrap.active .blog-eight-content { 
+.blog-eight-wrap.active .blog-eight-content {
   max-width: 316px;
   width: 100%;
   transition: .4s ease-in;
@@ -20760,6 +20763,7 @@ font-weight: 300;
 }
 .footer-eight-area .footer-two__widget .footer-two__widget-content--contact a i {
 	color: var(--primary-eight);
+    margin-right: 10px;
 }
 .footer-eight-area .footer-two__copyright-inner p a {
 	color: var(--apece-primary);
@@ -20780,7 +20784,7 @@ font-weight: 300;
 
 
 
-/* ==== 
+/* ====
  --------- (5.21) color switcher styles start ---------
  ==== */
 
@@ -20909,7 +20913,7 @@ padding: 10px 40px;
   font-size: 16px;
 }
 .apece-primary-button:hover{
-   background-color: var(--apece-base); 
+   background-color: var(--apece-base);
 }
 .apece-primary-button i {
   -webkit-transform: rotate(-45deg);
@@ -20955,7 +20959,7 @@ width: 200px;
   height: 100px;
 }
 .property-details-content{
-    
+
 }
 .properties2-details{
     padding: 5px 0;
@@ -21352,7 +21356,7 @@ width: 200px;
    z-index: 1;
    overflow: hidden;
    }
-   
+
    .spade {
    position: absolute;
    top: 25%;
@@ -22148,7 +22152,7 @@ padding: 7px 10px;
     font-size: 16px;
     line-height: 26px;
   }
-  
+
   /* Fix Product Card Layout on Mobile */
   .property-details {
       padding: 8px 10px;
@@ -22181,7 +22185,7 @@ padding: 7px 10px;
       -webkit-line-clamp: 2;
       -webkit-box-orient: vertical;
   }
-  
+
   /* Mobile Button Area Redesign - Icons Only */
   .property-single-boxarea .btn-area1 {
       visibility: visible !important;
@@ -22189,7 +22193,7 @@ padding: 7px 10px;
       bottom: auto !important; /* Changed from 0 to auto to respect flow */
       height: auto !important;
       position: relative !important;
-      padding: 0 2px 0px; 
+      padding: 0 2px 0px;
       display: flex !important;
       flex-wrap: nowrap;
       justify-content: center;
@@ -22256,7 +22260,7 @@ padding: 7px 10px;
       background-color: #bb2d3b !important;
       color: #fff !important;
   }
- 
+
   /* Add to Cart Button - Green */
   .property-single-boxarea .btn-area1 .add-to-cart {
       background-color: #28a745 !important;

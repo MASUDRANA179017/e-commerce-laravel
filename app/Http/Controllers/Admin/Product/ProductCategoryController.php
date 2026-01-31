@@ -43,6 +43,30 @@ class ProductCategoryController extends Controller
             $category->thumb_url = null;
         }
 
+        // Handle file upload (takes priority over URL)
+        if ($request->hasFile('image_file')) {
+            // Delete old image if exists
+            if ($category->thumb_url && !str_starts_with($category->thumb_url, 'http')) {
+                deleteFile($category->thumb_url);
+            }
+            // Upload new image
+            $category->thumb_url = uploadFile($request->file('image_file'), 'categories');
+        } elseif ($request->filled('thumb_url') && !$request->has('remove_image')) {
+            // Only use URL if no file uploaded and not removing
+            $category->thumb_url = $request->thumb_url;
+        }
+
+        // Update or create category
+        $category->fill([
+            'name' => $request->name,
+            'parent_id' => $request->parent_id ?: null,
+            'order' => $request->order ?? 0,
+            'show_on_menu' => $request->show_on_menu ? 1 : 0,
+            'icon' => $request->icon,
+        ]);
+        
+        $category->save();
+
         $productsCount = \DB::table('product_category_map as pcm')
             ->join('products as p', 'pcm.product_id', '=', 'p.id')
             ->where('pcm.category_id', $category->id)
@@ -72,6 +96,9 @@ class ProductCategoryController extends Controller
             'variants_count' => $variantsCount,
             'children_recursive' => [],
         ];
+
+        // keep main menu Categories item in sync
+        $this->syncMainMenuCategories();
 
         return response()->json(['success' => true, 'data' => $payload]);
     }

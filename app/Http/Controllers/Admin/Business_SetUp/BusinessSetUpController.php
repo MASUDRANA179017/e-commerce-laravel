@@ -10,6 +10,7 @@ use App\Models\Admin\Business_SetUp\Prefix;
 use App\Models\Admin\Business_SetUp\PublicHoliday;
 use App\Models\SystemCurrency;
 use App\Models\SystemLocalization;
+use App\Models\SystemSetting;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
@@ -44,7 +45,7 @@ class BusinessSetUpController extends Controller
 
     public function updateAll(Request $request, $id)
     {
-        Log::info($request->all());
+        \Log::info($request->all());
         $business = BusinessSetup::findOrFail($id);
         $part     = $request->input('part');
         $dataToUpdate = ['updated_by' => Auth::id()];
@@ -81,12 +82,28 @@ class BusinessSetUpController extends Controller
 
             case 'footer_settings':
                 $validated = $request->validate([
-                    'footer_text'    => 'nullable|string',
-                    'copyright_text' => 'nullable|string|max:255',
-                    'payment_methods' => 'nullable|array',
+                    'footer_text'       => 'nullable|string',
+                    'copyright_text'    => 'nullable|string|max:255',
+                    'payment_methods'   => 'nullable|array',
+                    'flash_sale_banner' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
                 ]);
+
                 $validated['payment_methods'] = $request->input('payment_methods', []);
+
                 $business->update(array_merge($validated, $dataToUpdate));
+
+                // Handle Flash Sale Settings
+                if ($request->hasFile('flash_sale_banner')) {
+                    $oldBanner = SystemSetting::get('footer_flash_sale_banner');
+                    if ($oldBanner) {
+                        qbitDeleteFile($oldBanner);
+                    }
+                    $banner = uploadFile($request->file('flash_sale_banner'), 'flash_sale');
+                    SystemSetting::set('footer_flash_sale_banner', $banner);
+                }
+
+                $status = $request->has('flash_sale_status') ? 1 : 0;
+                SystemSetting::set('footer_flash_sale_status', $status, 'boolean');
                 break;
 
             case 'contact_info':
@@ -122,15 +139,19 @@ class BusinessSetUpController extends Controller
 
             case 'social_media':
                 $validated = $request->validate([
-                    'facebook_url'  => 'nullable|string|max:255',
-                    'linkedin_url'  => 'nullable|string|max:255',
-                    'youtube_url'   => 'nullable|string|max:255',
-                    'twitter_url'   => 'nullable|string|max:255',
+                    'facebook_url'   => 'nullable|url|max:255',
+                    'linkedin_url'   => 'nullable|url|max:255',
+                    'youtube_url'    => 'nullable|url|max:255',
+                    'twitter_url'    => 'nullable|url|max:255',
+                    'instagram_url'  => 'nullable|url|max:255',
+                    'tiktok_url'     => 'nullable|url|max:255',
                 ]);
-                $validated['facebook_status'] = $request->has('facebook_status') ? 1 : 0;
-                $validated['linkedin_status'] = $request->has('linkedin_status') ? 1 : 0;
-                $validated['youtube_status']  = $request->has('youtube_status') ? 1 : 0;
-                $validated['twitter_status']  = $request->has('twitter_status') ? 1 : 0;
+                $validated['facebook_status']  = $request->has('facebook_status') ? 1 : 0;
+                $validated['linkedin_status']  = $request->has('linkedin_status') ? 1 : 0;
+                $validated['youtube_status']   = $request->has('youtube_status') ? 1 : 0;
+                $validated['twitter_status']   = $request->has('twitter_status') ? 1 : 0;
+                $validated['instagram_status'] = $request->has('instagram_status') ? 1 : 0;
+                $validated['tiktok_status']    = $request->has('tiktok_status') ? 1 : 0;
                 $business->update(array_merge($validated, $dataToUpdate));
                 break;
 
@@ -150,23 +171,76 @@ class BusinessSetUpController extends Controller
                 break;
 
             case 'branding':
+                $maxSizeMb = (int) ($business->file_upload_max_size ?? 2);
+                $maxKb     = max(1, $maxSizeMb) * 1024; // Laravel 'max' expects kilobytes
                 $request->validate([
-                    'logo'     => 'nullable|image|mimes:jpg,jpeg,png,svg,gif|max:2048',
-                    'alt_logo' => 'nullable|image|mimes:jpg,jpeg,png,svg,gif|max:2048',
-                    'favicon'  => 'nullable|image|mimes:ico,png,svg|max:1024',
+                    'logo'        => 'nullable|file|mimes:jpg,jpeg,png,svg,gif|max:' . $maxKb,
+                    'alt_logo'    => 'nullable|file|mimes:jpg,jpeg,png,svg,gif|max:' . $maxKb,
+                    'favicon'     => 'nullable|file|mimes:ico,png,svg|max:' . max(1024, $maxKb),
                 ]);
 
                 if ($request->hasFile('logo')) {
-                    deleteFile($business->logo);
-                    $dataToUpdate['logo'] = uploadFile($request->file('logo'), 'business_setup/branding');
+                    $file = $request->file('logo');
+                    if (!$file->isValid()) {
+                        return response()->json([
+                            'status'  => 'error',
+                            'message' => 'Main Logo upload failed (Code: ' . $file->getError() . '). Please check file size limits.'
+                        ], 422);
+                    }
+                    $uploadedLogo = uploadFile($file, 'business_setup/branding');
+                    if ($uploadedLogo) {
+                        if (!empty($business->logo) && is_string($business->logo)) {
+                            qbitDeleteFile($business->logo);
+                        }
+                        $dataToUpdate['logo'] = $uploadedLogo;
+                    } else {
+                        return response()->json([
+                            'status'  => 'error',
+                            'message' => 'Main Logo upload failed. Check server logs/permissions.'
+                        ], 422);
+                    }
                 }
                 if ($request->hasFile('alt_logo')) {
-                    deleteFile($business->alt_logo);
-                    $dataToUpdate['alt_logo'] = uploadFile($request->file('alt_logo'), 'business_setup/branding');
+                    $file = $request->file('alt_logo');
+                    if (!$file->isValid()) {
+                        return response()->json([
+                            'status'  => 'error',
+                            'message' => 'Alternative Logo upload failed (Code: ' . $file->getError() . '). Please check file size limits.'
+                        ], 422);
+                    }
+                    $uploadedAltLogo = uploadFile($file, 'business_setup/branding');
+                    if ($uploadedAltLogo) {
+                        if (!empty($business->alt_logo) && is_string($business->alt_logo)) {
+                            qbitDeleteFile($business->alt_logo);
+                        }
+                        $dataToUpdate['alt_logo'] = $uploadedAltLogo;
+                    } else {
+                        return response()->json([
+                            'status'  => 'error',
+                            'message' => 'Alternative Logo upload failed. Check server logs/permissions.'
+                        ], 422);
+                    }
                 }
                 if ($request->hasFile('favicon')) {
-                    deleteFile($business->favicon);
-                    $dataToUpdate['favicon'] = uploadFile($request->file('favicon'), 'business_setup/branding');
+                    $file = $request->file('favicon');
+                    if (!$file->isValid()) {
+                        return response()->json([
+                            'status'  => 'error',
+                            'message' => 'Favicon upload failed (Code: ' . $file->getError() . '). Please check file size limits.'
+                        ], 422);
+                    }
+                    $uploadedFavicon = uploadFile($file, 'business_setup/branding');
+                    if ($uploadedFavicon) {
+                        if (!empty($business->favicon) && is_string($business->favicon)) {
+                            qbitDeleteFile($business->favicon);
+                        }
+                        $dataToUpdate['favicon'] = $uploadedFavicon;
+                    } else {
+                        return response()->json([
+                            'status'  => 'error',
+                            'message' => 'Favicon upload failed. Check server logs/permissions.'
+                        ], 422);
+                    }
                 }
                 $business->update($dataToUpdate);
                 break;
@@ -189,12 +263,22 @@ class BusinessSetUpController extends Controller
 
                 // Handle image uploads
                 if ($request->hasFile('login_background')) {
-                    deleteFile($business->login_background);
-                    $dataToUpdate['login_background'] = uploadFile($request->file('login_background'), 'business_setup/login');
+                    $uploadedLoginBackground = uploadFile($request->file('login_background'), 'business_setup/login');
+                    if ($uploadedLoginBackground) {
+                        if (!empty($business->login_background) && is_string($business->login_background)) {
+                            qbitDeleteFile($business->login_background);
+                        }
+                        $dataToUpdate['login_background'] = $uploadedLoginBackground;
+                    }
                 }
                 if ($request->hasFile('login_image')) {
-                    deleteFile($business->login_image);
-                    $dataToUpdate['login_image'] = uploadFile($request->file('login_image'), 'business_setup/login');
+                    $uploadedLoginImage = uploadFile($request->file('login_image'), 'business_setup/login');
+                    if ($uploadedLoginImage) {
+                        if (!empty($business->login_image) && is_string($business->login_image)) {
+                            qbitDeleteFile($business->login_image);
+                        }
+                        $dataToUpdate['login_image'] = $uploadedLoginImage;
+                    }
                 }
                 $business->update($dataToUpdate);
                 break;
@@ -325,9 +409,13 @@ class BusinessSetUpController extends Controller
             'file' => 'required|file|mimes:pdf,jpg,jpeg,png|max:2048'
         ]);
 
-        $path = $request->hasFile('file')
-            ? uploadFile($request->file('file'), 'office_documents')
-            : null;
+        $path = null;
+        if ($request->hasFile('file')) {
+            $path = uploadFile($request->file('file'), 'office_documents');
+            if (!$path) {
+                return response()->json(['message' => 'File upload failed or file is invalid.'], 422);
+            }
+        }
 
         $document = OfficeDocument::create([
             'type'       => $request->type,
@@ -341,7 +429,7 @@ class BusinessSetUpController extends Controller
     public function documentsDelete($id)
     {
         $document = OfficeDocument::findOrFail($id);
-        if ($document->file_path) deleteFile($document->file_path);
+        if ($document->file_path) qbitDeleteFile($document->file_path);
         $document->delete();
 
         return response()->json(['success' => true]);
@@ -357,7 +445,7 @@ class BusinessSetUpController extends Controller
 
     public function updateCurrency(Request $request)
     {
-        Log::info($request->all());
+        \Log::info($request->all());
         $request->merge(['part' => 'currency', '_method' => 'PUT']);
         $id = BusinessSetup::query()->value('id');
         return $this->updateAll($request, $id);

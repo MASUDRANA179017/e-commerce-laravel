@@ -48,6 +48,44 @@
         </div>
     </div>
 
+    <!-- Ads Section -->
+    <div class="col-12 mb-4">
+        <div class="card border-0">
+            <div class="card-header bg-white">
+                <h5 class="mb-0 fw-bold">Ads Section (Grid Layout)</h5>
+            </div>
+            <div class="card-body">
+                <div class="row g-3">
+                    @foreach($ads_sections as $banner)
+                    <div class="col-md-4">
+                        <div class="border rounded p-2 position-relative group-action">
+                            <img src="{{ asset('storage/' . $banner->image) }}" class="img-fluid rounded" alt="Ads Banner">
+                            <div class="position-absolute top-0 end-0 p-2 d-none group-action-show">
+                                <button class="btn btn-sm btn-light rounded-circle shadow-sm" onclick='editBanner(@json($banner))'><i class="bx bx-edit"></i></button>
+                                <form action="{{ route('admin.storefront.banners.destroy', $banner->id) }}" method="POST" class="d-inline">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button class="btn btn-sm btn-danger rounded-circle shadow-sm" onclick="return confirm('Are you sure?')"><i class="bx bx-trash"></i></button>
+                                </form>
+                            </div>
+                            <div class="mt-2">
+                                <small class="d-block text-muted">Position: {{ $banner->position }}</small>
+                                <small class="d-block text-truncate"><a href="{{ $banner->link }}" target="_blank">{{ $banner->link }}</a></small>
+                            </div>
+                        </div>
+                    </div>
+                    @endforeach
+                    <div class="col-md-4">
+                        <div class="border rounded p-3 text-center d-flex flex-column align-items-center justify-content-center h-100" style="border-style: dashed !important; min-height: 200px; cursor: pointer;" data-bs-toggle="modal" data-bs-target="#addBannerModal" onclick="$('#bannerType').val('ads_section')">
+                            <span class="material-symbols-outlined fs-1 text-muted d-block mb-2">add_photo_alternate</span>
+                            <p class="mb-2 text-muted">Add Ads Banner</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Promotional Banners -->
     <div class="col-12">
         <div class="card border-0">
@@ -198,8 +236,8 @@
                         </select>
                     </div>
                     <div class="mb-3">
-                        <label class="form-label">Title <span class="text-danger">*</span></label>
-                        <input type="text" name="title" id="bannerTitle" class="form-control" placeholder="e.g. Summer Sale" required>
+                        <label class="form-label">Title</label>
+                        <input type="text" name="title" id="bannerTitle" class="form-control" placeholder="e.g. Summer Sale">
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Link (Optional)</label>

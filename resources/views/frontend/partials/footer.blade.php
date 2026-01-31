@@ -1,7 +1,92 @@
 <!-- Footer Start -->
-<footer class="footer-two footer-six-area footer-eight-area"
-            data-background="{{ asset('frontend/assets/images/footer-eight-bg.jpg') }}">
+<footer class="footer-two footer-six-area footer-eight-area">
             <div class="container">
+                @php
+                    $flashSaleEnabled = \App\Models\SystemSetting::get('footer_flash_sale_status', false);
+                    $flashSaleBanner = \App\Models\SystemSetting::get('footer_flash_sale_banner');
+                    $flashSaleProducts = $flashSaleEnabled ? \App\Models\Product::whereHas('flashSales', function($q) {
+                        $q->active();
+                    })->inRandomOrder()->limit(10)->get() : collect();
+                @endphp
+
+                @if($flashSaleEnabled && $flashSaleProducts->isNotEmpty())
+                <div class="overflow-hidden mb-4 rounded footer-flash-sale-area position-relative" style="background-image: url('{{ asset($flashSaleBanner) }}'); background-size: cover; background-position: center; padding: 40px 20px;">
+                     <!-- Overlay for better text readability if needed -->
+                    <div class="top-0 opacity-25 position-absolute start-0 w-100 h-100 bg-dark" style="z-index: 1;"></div>
+
+                    <div class="row align-items-center position-relative" style="z-index: 2;">
+                        <div class="col-lg-3 d-none d-lg-block">
+                             <!-- Spacer or Banner Text -->
+                        </div>
+                        <div class="col-lg-9">
+                             <div class="footer-flash-sale-slider">
+                                @foreach($flashSaleProducts as $product)
+                                    <div class="px-2">
+                                        @include('frontend.partials.product-card-template', ['product' => $product])
+                                    </div>
+                                @endforeach
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <style>
+                    .footer-flash-sale-slider .slick-prev, .footer-flash-sale-slider .slick-next {
+                        z-index: 10;
+                        width: 40px;
+                        height: 40px;
+                        background: #fff;
+                        border-radius: 50%;
+                        color: #333;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+                        transition: all 0.3s;
+                    }
+                    .footer-flash-sale-slider .slick-prev:hover, .footer-flash-sale-slider .slick-next:hover {
+                        background: var(--theme-color-primary, #ff0000);
+                        color: #fff;
+                    }
+                    .footer-flash-sale-slider .slick-prev { left: -10px; }
+                    .footer-flash-sale-slider .slick-next { right: -10px; }
+                </style>
+                <script>
+                    document.addEventListener('DOMContentLoaded', function() {
+                        if (typeof $ !== 'undefined' && $.fn.slick) {
+                            $('.footer-flash-sale-slider').slick({
+                                dots: false,
+                                infinite: true,
+                                speed: 300,
+                                slidesToShow: 3,
+                                slidesToScroll: 1,
+                                autoplay: true,
+                                autoplaySpeed: 3000,
+                                arrows: true,
+                                prevArrow: '<button type="button" class="slick-prev"><i class="fa-solid fa-chevron-left"></i></button>',
+                                nextArrow: '<button type="button" class="slick-next"><i class="fa-solid fa-chevron-right"></i></button>',
+                                responsive: [
+                                    {
+                                        breakpoint: 1024,
+                                        settings: {
+                                            slidesToShow: 2,
+                                            slidesToScroll: 1
+                                        }
+                                    },
+                                    {
+                                        breakpoint: 600,
+                                        settings: {
+                                            slidesToShow: 1,
+                                            slidesToScroll: 1
+                                        }
+                                    }
+                                ]
+                            });
+                        }
+                    });
+                </script>
+                @endif
+
                 <div class="footer-eight-top">
                     <div class="row">
                         <div class="col-xl-3 col-lg-3 col-md-3 d-flex align-items-center">
@@ -15,7 +100,7 @@
                                     <input type="email" placeholder="Enter your email">
                                     <div class="subscribe-six-button subscribe-eight-button">
                                         <button
-                                            class="btn--primary btn-six-primary d-none d-md-flex text-white fw-medium rounded-5">Subscribe</button>
+                                            class="text-white btn--primary btn-six-primary d-none d-md-flex fw-medium rounded-5">Subscribe</button>
                                     </div>
                                 </div>
                             </div>
@@ -27,7 +112,7 @@
                                     <span><i class="fa-solid fa-phone"></i></span>
                                 </div>
                                 <div class="footer-eight-top-info-con">
-                                    <p>Sales Hotline</p>
+                                    <p>Sales</p>
                                     <a class="apece-link-line" href="tel:{{ str_replace([' ', '-'], '', $business_setup->official_contact_number[0]) }}">{{ $business_setup->official_contact_number[0] }}</a>
                                 </div>
                             </div>
@@ -53,9 +138,9 @@
                     <!-- Brand / About -->
                     <div class="col-12 col-md-6 col-xl-3">
                         <div class="footer-two__widget">
-                            <div class="footer-two__widget-logo mb-2">
+                            <div class="mb-2 footer-two__widget-logo">
                                 <a href="{{ route('home') }}">
-                                    <img src="{{ $business_setup && $business_setup->logo ? asset('storage/' . $business_setup->logo) : asset('frontend/assets/images/logo.png') }}"
+                                    <img src="{{ $business_setup && $business_setup->alt_logo ? asset('storage/' . $business_setup->alt_logo) : ($business_setup && $business_setup->logo ? asset('storage/' . $business_setup->logo) : asset('frontend/assets/images/logo.png')) }}"
                                         alt="{{ config('app.name') }}" height="50">
                                 </a>
                             </div>
@@ -78,6 +163,9 @@
                                     @endif
                                     @if($business_setup && $business_setup->linkedin_status && $business_setup->linkedin_url)
                                         <a href="{{ $business_setup->linkedin_url }}" target="_blank" aria-label="linkedin"><i class="fa-brands fa-linkedin-in"></i></a>
+                                    @endif
+                                    @if($business_setup && ($business_setup->tiktok_status ?? false) && ($business_setup->tiktok_url ?? ''))
+                                        <a href="{{ $business_setup->tiktok_url }}" target="_blank" aria-label="tiktok"><i class="fa-brands fa-tiktok"></i></a>
                                     @endif
                                 </div>
                             </div>
@@ -165,17 +253,17 @@
                                     @if($business_setup && ($business_setup->street_address || $business_setup->city_thana || $business_setup->district))
                                     <li>
                                         <a class="text-white sub-title-lg footer-address" href="#">
-                                            <i class="fa-solid fa-location-dot"></i> {{ $business_setup->street_address ?? '' }}{{ ($business_setup->street_address ?? '') && ($business_setup->city_thana ?? '') ? ', ' : '' }}{{ $business_setup->city_thana ?? '' }}{{ ($business_setup->district ?? '') ? ', ' . $business_setup->district : '' }}
+                                            <i class="mr-10 fa-solid fa-location-dot"> </i>  {{ $business_setup->street_address ?? ' ' }}{{ ($business_setup->street_address ?? '') && ($business_setup->city_thana ?? ' ') ? ', ' : '' }}{{ $business_setup->city_thana ?? '' }}{{ ($business_setup->district ?? '') ? ', ' . $business_setup->district : '' }}
                                         </a>
                                     </li>
                                     @endif
                                     @if($business_setup && ($business_setup->official_contact_number[0] ?? null))
                                     <li><a class="text-white sub-title-lg" href="tel:{{ str_replace([' ', '-'], '', $business_setup->official_contact_number[0]) }}"><i
-                                                class="fa-solid fa-phone"></i> {{ $business_setup->official_contact_number[0] }}</a></li>
+                                                class="mr-10 fa-solid fa-phone"></i> {{ $business_setup->official_contact_number[0] }}</a></li>
                                     @endif
                                     @if($business_setup && ($business_setup->email_address[0] ?? null))
                                     <li><a class="text-white sub-title-lg" href="mailto:{{ $business_setup->email_address[0] }}"><i
-                                                class="fa-solid fa-envelope"></i> {{ $business_setup->email_address[0] }}</a></li>
+                                                class="mr-10 fa-solid fa-envelope"></i> {{ $business_setup->email_address[0] }}</a></li>
                                     @endif
                                 </ul>
                             </div>
@@ -188,7 +276,7 @@
                 <div class="container">
                     <div class="row align-items-center gutter-12 footer-six-copyright-border position-relative">
                         <div class="col-12 col-lg-6">
-                            <div class="footer-two__copyright-inner text-center text-lg-start">
+                            <div class="text-center footer-two__copyright-inner text-lg-start">
                                 <p>
                                     @if($business_setup && $business_setup->copyright_text)
                                         {{ $business_setup->copyright_text }}

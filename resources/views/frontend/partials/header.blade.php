@@ -16,6 +16,37 @@
                         <!-- Nav -->
                         <div class="navbar__options">
                             <div class="header-six-navbar-space d-flex justify-content-end">
+                                <style>
+                                    /* Header Menu Color Overrides */
+                                    .header-six-area .navbar__list > .navbar__item > a {
+                                        color: var(--primary-color) !important;
+                                        font-weight: 600;
+                                        transition: color 0.3s ease;
+                                    }
+                                    .header-six-area .navbar__list > .navbar__item > a:hover,
+                                    .header-six-area .navbar__list > .navbar__item.active > a {
+                                        color: var(--secondary-color) !important;
+                                    }
+                                    
+                                    /* Dropdown Links */
+                                    .navbar__sub-menu li a {
+                                        color: var(--primary-color) !important;
+                                        transition: all 0.2s ease;
+                                    }
+                                    .navbar__sub-menu li a:hover {
+                                        color: var(--secondary-color) !important;
+                                        background-color: rgba(var(--secondary-color-rgb), 0.05);
+                                        padding-left: 25px; /* slight indent effect */
+                                    }
+
+                                    /* Mobile Menu Overrides (if needed) */
+                                    .mobile-menu .navbar__item > a {
+                                        color: var(--primary-color) !important;
+                                    }
+                                    .mobile-menu .navbar__item > a:hover {
+                                        color: var(--secondary-color) !important;
+                                    }
+                                </style>
                                 <nav class="navbar__menu d-none d-xl-block" aria-label="Primary">
                                     @php
                                         // Load main menu from database

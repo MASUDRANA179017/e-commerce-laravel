@@ -1,6 +1,6 @@
 @extends('layouts.frontend')
 
-@section('title', ($product->title ?? 'Product Details') . ' - GrowUp E-Commerce')
+@section('title', ($product->title ?? 'Product Details') . ' - E-Commerce')
 
 @php
 
@@ -18,7 +18,12 @@
     if (method_exists($product, 'getActiveFlashSaleAttribute')) {
         $activeFlashSale = $product->active_flash_sale;
         if ($activeFlashSale) {
-            $flashSalePrice = $activeFlashSale->pivot->flash_price ?? null;
+            $flashSalePrice = $activeFlashSale->pivot->flash_price;
+            $flashDiscountPercent = $activeFlashSale->pivot->flash_discount_percent ?? $activeFlashSale->discount_percent ?? 0;
+            // Fallback: Calculate if pivot price is missing but discount exists
+            if (!$flashSalePrice && $flashDiscountPercent > 0) {
+                 $flashSalePrice = $price - ($price * $flashDiscountPercent / 100);
+            }
             $isFlashSale = true;
         }
     }
@@ -29,6 +34,7 @@
     $originalPrice = $price;
     $isOnSale = $finalPrice < $price;
     $discountPercent = $isOnSale && $price > 0 ? round((($price - $finalPrice) / $price) * 100) : 0;
+    $effectivePrice = $finalPrice;
 
     $stockQty = $product->stock_quantity ?? 0;
     $inStock = $stockQty > 0 || ($product->allow_backorder ?? false);
@@ -38,13 +44,43 @@
     $purchaseMin = $purchaseMin ?? null;
     $purchaseMax = $purchaseMax ?? null;
 
+    // Get price range if product has variants
+    $priceRange = null;
+    $hasVariants = false;
+    $rawPriceRange = null;
+
+    if (isset($product->variants) && $product->variants->count() > 0) {
+        $priceRange = $product->formatted_price_range ?? null;
+        $rawPriceRange = $product->price_range ?? null;
+        $hasVariants = true;
+    }
+
     // Pre-render short description (supports TinyMCE HTML or plain text)
     $shortDescRaw = $product->short_desc ?? '';
-    $shortDescHasMarkup = \Illuminate\Support\Str::contains($shortDescRaw, ['<p', '<br', '<ul', '<ol', '<li', '<div', '<span']);
+    $shortDescHasMarkup = \Illuminate\Support\Str::contains($shortDescRaw, [
+        '<p',
+        '<br',
+        '<ul',
+        '<ol',
+        '<li',
+        '<div',
+        '<span',
+    ]);
     $shortDescHtml = $shortDescHasMarkup ? $shortDescRaw : nl2br(e($shortDescRaw));
 @endphp
 
 @section('content')
+    <style>
+        .product-details .product-price h6.text-dark {
+            color: #212529 !important; /* Force dark color */
+        }
+        .product-details .product-price h6.text-muted {
+            color: #6c757d !important; /* Force muted color */
+        }
+        .flash-sale-countdown .badge {
+            min-width: 40px; /* Ensure badges have width */
+        }
+    </style>
     <!-- Breadcrumb -->
     <section class="py-3 bg-light">
         <div class="container">
@@ -118,59 +154,201 @@
                         </div>
                     </div>
                 </div>
-
-                <!-- Product Info (Right Column) -->
-                <div class="col-12 col-md-5">
-                    <div class="product-info ps-lg-4">
-                        <!-- Title & Rating -->
-                        <div class="d-flex justify-content-between align-items-start mb-2">
-                            <h1 class="display-6 fw-bold mb-0 text-dark" style="font-size: 28px; letter-spacing: -0.5px;">
-                                {{ $product->title }}
-                            </h1>
-                            <div class="d-flex align-items-center gap-1 mt-1">
-                                <i class="bx bxs-star text-dark small"></i>
-                                <span class="fw-bold small">5.0</span>
-                            </div>
+                <div class="col-12 col-md-7 col-lg-7">
+                    <div class="product-details__content" data-aos="fade-up" data-aos-duration="1000" data-aos-delay="100">
+                        <div class="mt-0 product-meta">
+                            <h3 class="mb-1 title-animation">{{ $product->title }}</h3>
                         </div>
                         <div class="mt-0 product-price">
-                            @if ($purchaseMin)
-                                @if ($purchaseMax && $purchaseMax != $purchaseMin)
-                                    <h6>৳{{ number_format($purchaseMin, 0) }} - ৳{{ number_format($purchaseMax, 0) }}</h6>
-                                @else
-                                    <h6>৳{{ number_format($purchaseMin, 0) }}</h6>
-                                @endif
-                            @else
-                                @if ($finalPrice < $originalPrice)
+                            @if ($hasVariants && $priceRange)
+                                @php
+                                    $minPrice = $rawPriceRange['min'] ?? 0;
+                                    $maxPrice = $rawPriceRange['max'] ?? 0;
+                                    $finalMin = $minPrice;
+                                    $finalMax = $maxPrice;
+                                    $hasDiscount = false;
+
+                                    // Determine effective discount percent
+                                    $effectiveDiscountPercent = 0;
+                                    if ($isFlashSale && $flashDiscountPercent > 0) {
+                                        $effectiveDiscountPercent = $flashDiscountPercent;
+                                        $hasDiscount = true;
+                                    } elseif ($isOnSale && $discountPercent > 0) {
+                                        $effectiveDiscountPercent = $discountPercent;
+                                        $hasDiscount = true;
+                                    }
+
+                                    // Apply discount
+                                    if ($effectiveDiscountPercent > 0) {
+                                        $finalMin = $minPrice - ($minPrice * $effectiveDiscountPercent / 100);
+                                        $finalMax = $maxPrice - ($maxPrice * $effectiveDiscountPercent / 100);
+                                    } elseif ($isFlashSale && $flashSalePrice) {
+                                        // Fallback for fixed price flash sale on variants
+                                        $finalMin = $flashSalePrice;
+                                        $finalMax = $flashSalePrice;
+                                        $hasDiscount = true;
+                                    }
+                                @endphp
+
+                                @if ($hasDiscount && $finalMin < $minPrice)
                                     <div class="d-flex flex-column align-items-start">
-                                        <div class="d-flex align-items-center gap-2 mb-1">
-                                            <h6 class="text-danger fw-bold mb-0">৳{{ number_format($finalPrice, 0) }}</h6>
-                                            <h6 class="text-decoration-line-through text-muted mb-0" style="font-size: 0.9em;">৳{{ number_format($originalPrice, 0) }}</h6>
+                                        <div class="gap-2 mb-1 d-flex align-items-center">
+                                            <div class="mb-0 fw-bold text-red price-current fs-12">
+                                                @if ($finalMin <= 0 && $finalMax > 0)
+                                                    ৳{{ number_format($finalMax, 0) }}
+                                                @elseif ($finalMin == $finalMax)
+                                                    ৳{{ number_format($finalMin, 0) }}
+                                                @else
+                                                    ৳{{ number_format($finalMin, 0) }} - ৳{{ number_format($finalMax, 0) }}
+                                                @endif
+                                            </div>
+                                            <div class="mb-0 text-decoration-line-through text-muted fs-13" style="font-size: 0.9em;">
+                                                @if ($minPrice <= 0 && $maxPrice > 0)
+                                                    ৳{{ number_format($maxPrice, 0) }}
+                                                @elseif ($minPrice == $maxPrice)
+                                                    ৳{{ number_format($minPrice, 0) }}
+                                                @else
+                                                    ৳{{ number_format($minPrice, 0) }} - ৳{{ number_format($maxPrice, 0) }}
+                                                @endif
+                                            </div>
                                         </div>
-                                        @if ($discountPercent > 0)
-                                            <small class="text-success fw-600">
-                                                <i class='bx bx-purchase-tag'></i> Save {{ $discountPercent }}%
-                                            </small>
-                                        @endif
+                                        <small class="text-success fw-600">
+                                            <i class='bx bx-purchase-tag'></i> Save {{ $effectiveDiscountPercent }}%
+                                        </small>
                                     </div>
                                 @else
-                                    <h6>৳{{ number_format($price, 0) }}</h6>
+                                    <div class="mb-0 fw-bold text-dark price-current fs-12">
+                                        @if ($minPrice <= 0 && $maxPrice > 0)
+                                            ৳{{ number_format($maxPrice, 0) }}
+                                        @elseif ($minPrice == $maxPrice)
+                                            ৳{{ number_format($minPrice, 0) }}
+                                        @else
+                                            ৳{{ number_format($minPrice, 0) }} - ৳{{ number_format($maxPrice, 0) }}
+                                        @endif
+                                    </div>
                                 @endif
+                            @elseif ($finalPrice < $originalPrice)
+                                <div class="d-flex flex-column align-items-start">
+                                    <div class="gap-2 mb-1 d-flex align-items-center">
+                                        <h4 class="mb-0 fw-bold text-dark">৳{{ number_format($finalPrice, 0) }}</h4>
+                                        <h6 class="mb-0 text-decoration-line-through text-muted" style="font-size: 0.9em;">৳{{ number_format($originalPrice, 0) }}</h6>
+                                    </div>
+                                    @if ($discountPercent > 0)
+                                        <small class="text-success fw-600">
+                                            <i class='bx bx-purchase-tag'></i> Save {{ $discountPercent }}%
+                                        </small>
+                                    @endif
+                                </div>
+                            @else
+                                <h4 class="mb-0 fw-bold text-dark">৳{{ number_format($price, 0) }}</h4>
                             @endif
                         </div>
 
-                        <div class="mb-4 p-3 border rounded-3">
-                            <div class="d-flex align-items-center justify-content-between mb-2">
-                                <span class="fw-semibold">Quick Overview</span>
-                                <span class="badge bg-success-subtle text-success border border-success">In Stock</span>
+                        @if ($isFlashSale && isset($activeFlashSale) && $activeFlashSale->end_time > now())
+                            <div class="p-2 mt-3 mb-3 rounded border bg-light border-danger" style="border-style: dashed !important;">
+                                <div class="d-flex align-items-center justify-content-between">
+                                    <span class="text-danger fw-bold small"><i class='bx bxs-bolt'></i> Flash Sale Ends:</span>
+                                    <div class="flash-sale-countdown d-flex align-items-center" data-end-time="{{ $activeFlashSale->end_time->timestamp * 1000 }}">
+                                        <span class="p-2 badge bg-dark me-1"><span class="fs-days">00</span>d</span>
+                                        <span class="p-2 badge bg-dark me-1"><span class="fs-hours">00</span>h</span>
+                                        <span class="p-2 badge bg-dark me-1"><span class="fs-minutes">00</span>m</span>
+                                        <span class="p-2 badge bg-dark"><span class="fs-seconds">00</span>s</span>
+                                    </div>
+                                </div>
                             </div>
-                            <ul class="list-unstyled mb-0">
-                                <li class="d-flex align-items-center gap-2 mb-1"><i class="bx bx-check text-success"></i> SKU: {{ $product->sku ?? $product->slug }}</li>
-                                <li class="d-flex align-items-center gap-2 mb-1"><i class="bx bx-check text-success"></i> Category: {{ $category->name ?? 'N/A' }}</li>
-                                @if($product->brand)
-                                    <li class="d-flex align-items-center gap-2 mb-1"><i class="bx bx-check text-success"></i> Brand: {{ $product->brand->name }}</li>
+                            <script>
+                                (function() {
+                                    function initCountdown() {
+                                        const containers = document.querySelectorAll('.flash-sale-countdown');
+                                        if (!containers.length) return;
+
+                                        containers.forEach(container => {
+                                            const endTimeAttr = container.getAttribute('data-end-time');
+                                            if (!endTimeAttr) return;
+
+                                            const endTime = parseInt(endTimeAttr);
+                                            if (isNaN(endTime)) return;
+
+                                            const pad = (n) => (n < 10 ? "0" + n : n);
+
+                                            const updateTimer = () => {
+                                                const now = new Date().getTime();
+                                                const distance = endTime - now;
+
+                                                if (distance >= 0) {
+                                                    const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+                                                    const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                                                    const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                                                    const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+                                                    const dEl = container.querySelector('.fs-days');
+                                                    const hEl = container.querySelector('.fs-hours');
+                                                    const mEl = container.querySelector('.fs-minutes');
+                                                    const sEl = container.querySelector('.fs-seconds');
+
+                                                    if(dEl) dEl.textContent = pad(days);
+                                                    if(hEl) hEl.textContent = pad(hours);
+                                                    if(mEl) mEl.textContent = pad(minutes);
+                                                    if(sEl) sEl.textContent = pad(seconds);
+                                                } else {
+                                                    container.innerHTML = '<span class="text-danger fw-bold">Ended</span>';
+                                                    if(container.timerInterval) clearInterval(container.timerInterval);
+                                                }
+                                            };
+
+                                            if(container.timerInterval) clearInterval(container.timerInterval);
+                                            container.timerInterval = setInterval(updateTimer, 1000);
+                                            updateTimer(); // Run immediately
+                                        });
+                                    }
+
+                                    if (document.readyState === 'loading') {
+                                        document.addEventListener('DOMContentLoaded', initCountdown);
+                                    } else {
+                                        initCountdown();
+                                    }
+                                })();
+                            </script>
+                        @endif
+
+                        <div class="mb-4 border card client-details-inner rounded-3">
+                            <div class="card-header">
+                                <h6 class="mb-0 sub-title-main fs-16 fw-600 lh-sm"><i class="bx bxs-analyse"></i>Quick
+                                    Overview</h6>
+                            </div>
+                            <div class="card-body">
+                                <div class="d-flex align-items-center justify-content-between">
+                                    <span class="title-lg fs-16 fw-600 lh-sm d-inline-flex align-items-center">
+                                        <i class="bx bx-hash me-1"></i>
+                                        SKU
+                                    </span>
+                                    <p class="p-0 m-0 w-60 text-dark">{{ $product->sku ?? 'N/A' }}</p>
+                                </div>
+                                <div class="pt-2 d-flex align-items-center justify-content-between">
+                                    <span class="title-lg fs-16 fw-600 lh-sm d-inline-flex align-items-center">
+                                        <i class="bx bx-category me-1"></i>
+                                        Category
+                                    </span>
+                                    <p class="p-0 m-0 w-60 text-dark">{{ $category->name ?? 'N/A' }}</p>
+                                </div>
+                                @if ($product->brand)
+                                    <div class="pt-2 d-flex align-items-center justify-content-between">
+                                        <span class="title-lg fs-16 fw-600 lh-sm d-inline-flex align-items-center">
+                                            <i class="bx bx-purchase-tag me-1"></i>
+                                            Brand
+                                        </span>
+                                        <p class="p-0 m-0 w-60 text-dark">{{ $product->brand->name }}</p>
+                                    </div>
                                 @endif
-                                <li class="d-flex align-items-center gap-2"><i class="bx bx-check text-success"></i> {{ $product->short_desc ? Str::limit($product->short_desc, 60) : 'Fast delivery and easy returns' }}</li>
-                            </ul>
+                                <div class="pt-2 d-flex align-items-center justify-content-between">
+                                    <span class="title-lg fs-16 fw-600 lh-sm d-inline-flex align-items-center">
+                                        <i class="bx bx-check-circle me-1"></i>
+                                        Availability
+                                    </span>
+                                    <p class="w-60 {{ $inStock ? 'text-success' : 'text-danger' }} p-0 m-0">
+                                        {{ $inStock ? 'In Stock' : 'Out of Stock' }}</p>
+                                </div>
+                            </div>
                         </div>
 
                         <form action="{{ route('cart.add') }}" method="POST" id="add-to-cart-form">
@@ -199,45 +377,81 @@
                                             }
                                         }
                                     }
-                @endphp
-                <div class="mb-4">
-                    @foreach($axes as $attrName => $terms)
-                        @php
-                            $isColor = stripos($attrName, 'color') !== false || stripos($attrName, 'colour') !== false;
-                            $hasSizeAxis = ($hasSizeAxis ?? false) || (stripos($attrName, 'size') !== false);
-                        @endphp
-                        <div class="mb-3">
-                            <div class="d-flex justify-content-between mb-2">
-                                <label class="fw-medium text-dark">Select {{ $attrName }}</label>
-                                <span class="text-muted small">Guide</span>
-                                            </div>
-                                            <div class="d-flex flex-wrap gap-2" data-attr="{{ $attrName }}">
-                                                @foreach($terms as $tid => $tname)
-                                                    @if($isColor)
-                                                        <!-- Color Circle -->
-                                                        <button type="button" class="variant-option-color"
-                                                            style="background-color: {{ strtolower($tname) }};"
-                                                            data-attr="{{ $attrName }}" data-term-id="{{ $tid }}"
-                                                            title="{{ $tname }}"></button>
-                                                    @else
-                                                        <!-- Size/Other Rectangle -->
-                                                        <button type="button" class="variant-option-size px-3"
-                                                            data-attr="{{ $attrName }}" data-term-id="{{ $tid }}">
-                                                            {{ $tname }}
-                                                        </button>
-                                                    @endif
-                                                @endforeach
-                                            </div>
+                                @endphp
+
+                                <div class="variant-options-container">
+                                    @foreach ($axes as $attrName => $terms)
+                                        @php
+                                            $isColor =
+                                                stripos($attrName, 'color') !== false ||
+                                                stripos($attrName, 'colour') !== false;
+                                        @endphp
+                                        <div class="mb-2 variant-option-group">
+                                            <label class="mb-2 variant-label fw-600 fs-14 d-block" style="color: #333;">
+                                                {{ $attrName }}:
+                                            </label>
+
+                                            @if ($isColor)
+                                                <div class="variant-colors-wrapper">
+                                                    @foreach ($terms as $tid => $tname)
+                                                        <div class="variant-chip-wrapper">
+                                                            <button type="button"
+                                                                class="variant-color-chip variant-chip-btn"
+                                                                style="background-color: {{ strtolower($tname) }};"
+                                                                data-attr="{{ $attrName }}"
+                                                                data-term-id="{{ $tid }}"
+                                                                data-term-name="{{ $tname }}"
+                                                                title="{{ $tname }}" onclick="return false;">
+                                                                <i class="bx bx-x deselect-icon-color"
+                                                                    style="display: none; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 1.2rem; color: white; text-shadow: 0 0 3px rgba(0,0,0,0.5);"></i>
+                                                                <span class="color-label">{{ $tname }}</span>
+                                                            </button>
+                                                            <span class="availability-badge" style="display: none;"></span>
+                                                        </div>
+                                                    @endforeach
+                                                </div>
+                                            @else
+                                                <div class="variant-options-grid">
+                                                    @foreach ($terms as $tid => $tname)
+                                                        <div class="variant-chip-wrapper">
+                                                            <button type="button"
+                                                                class="variant-option-btn variant-chip-btn action-btn-success"
+                                                                data-attr="{{ $attrName }}"
+                                                                data-term-id="{{ $tid }}"
+                                                                data-term-name="{{ $tname }}">
+                                                                <span class="btn-text">{{ $tname }}</span>
+                                                                <i class="bx bx-x deselect-icon"
+                                                                    style="display: none;"></i>
+                                                                <span class="availability-badge"
+                                                                    style="display: none; font-size: 0.65rem; margin-left: 3px;"></span>
+                                                            </button>
+                                                        </div>
+                                                    @endforeach
+                                                </div>
+                                            @endif
                                         </div>
                                     @endforeach
                                 </div>
-                                @if($hasSizeAxis ?? false)
-                                    <div class="mb-3">
-                                        <button type="button" class="btn btn-light border rounded-3 px-3" data-bs-toggle="modal" data-bs-target="#sizeChartModal">
-                                            <i class="bx bx-ruler me-1"></i> Size Guide
-                                        </button>
+
+                                <!-- Stock Information - Shows only when variant is selected -->
+                                <div id="variant-stock-info" class="p-3 mb-4 border alert alert-light d-none"
+                                    style="background: #f8f9fa;">
+                                    <div class="d-flex align-items-center justify-content-between">
+                                        <div>
+                                            <strong>Stock Available:</strong>
+                                            <span id="stock-quantity" class="ms-2 badge bg-success"
+                                                style="font-size: 0.9rem;">-</span>
+                                        </div>
+                                        <div>
+                                            <strong>SKU:</strong>
+                                            <span id="variant-sku" class="ms-2 text-muted">-</span>
+                                        </div>
                                     </div>
-                                @endif
+                                </div>
+
+                                <input type="hidden" name="variant_id" id="variant_id" value="">
+                                <input type="hidden" name="variant" id="variant_name" value="">
+                                <input type="hidden" name="variant_price" id="variant_price" value="">
                             @endif
 
                             <div
@@ -269,147 +483,38 @@
                             </div>
                         </form>
 
-                        <div class="d-flex flex-wrap gap-2 mb-4">
-                            <a href="#" class="btn btn-light border rounded-3 px-3" data-bs-toggle="modal" data-bs-target="#quickOverviewModal"><i class="bx bx-info-circle me-1"></i> Quick Overview</a>
-                            <a href="#" class="btn btn-light border rounded-3 px-3"><i class="bx bx-heart me-1"></i> Add to Wishlist</a>
-                            <a href="#" class="btn btn-light border rounded-3 px-3"><i class="bx bx-git-compare me-1"></i> Compare</a>
+                        <div class="sku">
+                            <p><strong>SKU:</strong> {{ $product->sku ?? 'N/A' }}</p>
+                            @if ($category)
+                                <p><strong>Category:</strong> {{ $category->name }}</p>
+                            @endif
+                            <!-- Tags could be added here if available in model -->
                         </div>
 
-                        <!-- Short Description Text -->
-                        <div class="mb-5">
-                            <p class="text-secondary" style="line-height: 1.6;">
-                                {{ $product->short_desc ?? 'Celebrate the power and simplicity of the design. This warm, brushed fleece hoodie is made with some extra room through the shoulder.' }}
-                            </p>
+                        <div class="mt-3 product-actions d-flex align-items-center justify-content-between">
+                            <button class="p-3 border-0 action-btn-warning h-30px w-30 rounded-3 add-to-wishlist"
+                                data-product-id="{{ $product->id }}">
+                                <i class='bx bx-heart'></i> Add to Wishlist
+                            </button>
+                            <button class="p-3 border-0 action-btn-primary ms-2 h-30px w-30 rounded-3" id="compareBtn">
+                                <i class='bx bx-git-compare'></i> Compare
+                            </button>
                         </div>
                     </div>
                 </div>
-            </div>
-            <div> 
-                 <ul class="nav nav-tabs mb-3" role="tablist">
-                                <li class="nav-item" role="presentation">
-                                    <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#tab-details" type="button" role="tab">Product Details</button>
-                                </li>
-                                <li class="nav-item" role="presentation">
-                                    <button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-additional" type="button" role="tab">Additional Information</button>
-                                </li>
-                                <li class="nav-item" role="presentation">
-                                    <button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-reviews" type="button" role="tab">Reviews</button>
-                                </li>
-                                <li class="nav-item" role="presentation">
-                                    <button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-faq" type="button" role="tab">FAQ</button>
-                                </li>
-                            </ul>
-                            <div class="tab-content">
-                                <div class="tab-pane fade show active" id="tab-details" role="tabpanel">
-                                    <h4 class="fw-semibold mb-3">{{ $product->title }}</h4>
-                                    <p class="text-secondary">{{ $product->description ? strip_tags($product->description) : ($product->short_desc ?? '') }}</p>
-                                    <div class="row">
-                                        <div class="col-md-6">
-                                            <ul class="list-unstyled">
-                                                <li class="mb-2"><i class="bx bx-check text-success me-2"></i> Premium fabric</li>
-                                                <li class="mb-2"><i class="bx bx-check text-success me-2"></i> Lightweight and breathable</li>
-                                                <li class="mb-2"><i class="bx bx-check text-success me-2"></i> Ideal for all seasons</li>
-                                            </ul>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <ul class="list-unstyled">
-                                                <li class="mb-2"><i class="bx bx-check text-success me-2"></i> Modern slim-fit</li>
-                                                <li class="mb-2"><i class="bx bx-check text-success me-2"></i> Button-down collar</li>
-                                                <li class="mb-2"><i class="bx bx-check text-success me-2"></i> Easy care</li>
-                                            </ul>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="tab-pane fade" id="tab-additional" role="tabpanel">
-                                    <ul class="list-unstyled mb-0">
-                                        <li class="mb-2"><strong>SKU:</strong> {{ $product->sku ?? $product->slug }}</li>
-                                        <li class="mb-2"><strong>Category:</strong> {{ $category->name ?? 'N/A' }}</li>
-                                        @if($product->brand)
-                                            <li><strong>Brand:</strong> {{ $product->brand->name }}</li>
-                                        @endif
-                                    </ul>
-                                </div>
-                                <div class="tab-pane fade" id="tab-reviews" role="tabpanel">
-                                    <p class="text-secondary mb-0">Reviews will appear here.</p>
-                                </div>
-                                <div class="tab-pane fade" id="tab-faq" role="tabpanel">
-                                    <p class="text-secondary mb-0">Frequently asked questions will appear here.</p>
-                                </div>
-                            </div>
-    
             </div>
         </div>
     </section>
 
-    <!-- Related Products Section -->
-    @if(isset($relatedProducts) && $relatedProducts->count() > 0)
-        <section class="related-products py-5">
-            <div class="container">
-                <div class="text-center mb-5">
-                    <span class="sub-title-main"><i class="fa-solid fa-link"></i> You May Also Like</span>
-                    <h2 class="title-animation">Related <span>Products</span></h2>
-                </div>
-                <div class="row">
-                    @foreach($relatedProducts as $relatedProduct)
-                        @include('frontend.partials.product-card-template', ['product' => $relatedProduct])
-                    @endforeach
-                </div>
-            </div>
-        </section>
-    @endif
-
-    <!-- Size Chart Modal -->
-    <div class="modal fade" id="sizeChartModal" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-md modal-dialog-centered">
+    <!-- Modals -->
+    <div id="sizeChartModal" class="modal fade" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Size Chart</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <img src="{{ asset('frontend/assets/images/size-chart.png') }}" alt="Size Chart" class="img-fluid">
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Quick Overview Modal -->
-    <div class="modal fade" id="quickOverviewModal" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-md modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Quick Overview</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <div class="mb-3">
-                        <strong>{{ $product->title }}</strong>
-                    </div>
-                    <ul class="list-unstyled mb-0">
-                        <li class="mb-2"><strong>Price:</strong> ৳{{ number_format($effectivePrice, 0) }}</li>
-                        <li class="mb-2"><strong>SKU:</strong> {{ $product->sku ?? $product->slug }}</li>
-                        <li class="mb-2"><strong>Category:</strong> {{ $category->name ?? 'N/A' }}</li>
-                        @if($product->brand)
-                            <li class="mb-2"><strong>Brand:</strong> {{ $product->brand->name }}</li>
-                        @endif
-                        <li class="mb-2"><strong>Status:</strong> {{ $inStock ? 'In Stock' : 'Out of Stock' }}</li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Image Zoom Modal -->
-    <div class="modal fade" id="imageZoomModal" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-xl modal-dialog-centered">
-            <div class="modal-content bg-transparent border-0">
-                <div class="modal-body text-center p-0">
-                    <button type="button" class="btn-close btn-close-white position-absolute top-0 end-0 m-3"
-                        data-bs-dismiss="modal" aria-label="Close"></button>
-                    @if($mainImage)
-                        <img src="{{ asset('storage/' . ($mainImage->path ?? $mainImage->image)) }}" alt="{{ $product->title }}"
-                            class="img-fluid rounded-3" style="max-height: 90vh;" id="zoomedImage">
-                    @endif
+                <span class="close-btn" data-bs-dismiss="modal">&times;</span>
+                <div class="size-chart-content">
+                    <h4 class="mb-3">Size Chart</h4>
+                    <img src="{{ asset('frontend/assets/images/size-chart.png') }}" alt="Size Chart Image"
+                        class="img-fluid">
                 </div>
             </div>
         </div>
@@ -466,7 +571,7 @@
                                         @if (!empty($renderDesc))
                                             {!! $renderDesc !!}
                                         @else
-                                            <p class="text-muted mb-0">No description available.</p>
+                                            <p class="mb-0 text-muted">No description available.</p>
                                         @endif
                                     </p>
                                 </div>
@@ -499,16 +604,16 @@
                                         $avgRating = $product->average_rating;
                                         $reviewsCount = $product->reviews_count;
                                     @endphp
-                                    
+
                                     <div class="row">
-                                        <div class="col-lg-4 mb-4">
+                                        <div class="mb-4 col-lg-4">
                                             <!-- Review Summary -->
-                                            <div class="review-summary p-4 bg-light rounded-3">
+                                            <div class="p-4 review-summary bg-light rounded-3">
                                                 <h4 class="mb-3">Customer Reviews</h4>
-                                                <div class="d-flex align-items-center mb-3">
+                                                <div class="mb-3 d-flex align-items-center">
                                                     <span class="display-4 fw-bold me-3">{{ number_format($avgRating, 1) }}</span>
                                                     <div>
-                                                        <div class="stars mb-1">
+                                                        <div class="mb-1 stars">
                                                             @for($i = 1; $i <= 5; $i++)
                                                                 @if($i <= round($avgRating))
                                                                     <i class="fa-solid fa-star text-warning"></i>
@@ -522,7 +627,7 @@
                                                         <small class="text-muted">{{ $reviewsCount }} {{ Str::plural('review', $reviewsCount) }}</small>
                                                     </div>
                                                 </div>
-                                                
+
                                                 @auth
                                                     <button class="btn btn-primary w-100" type="button" data-bs-toggle="collapse" data-bs-target="#reviewFormCollapse">
                                                         <i class="bx bx-edit me-1"></i> Write a Review
@@ -533,10 +638,10 @@
                                                     </a>
                                                 @endauth
                                             </div>
-                                            
+
                                             @auth
                                             <!-- Review Form -->
-                                            <div class="collapse mt-3" id="reviewFormCollapse">
+                                            <div class="mt-3 collapse" id="reviewFormCollapse">
                                                 <div class="card">
                                                     <div class="card-body">
                                                         <h6 class="mb-3">Write Your Review</h6>
@@ -544,7 +649,7 @@
                                                             @csrf
                                                             <div class="mb-3">
                                                                 <label class="form-label">Your Rating</label>
-                                                                <div class="rating-input d-flex gap-2">
+                                                                <div class="gap-2 rating-input d-flex">
                                                                     @for($i = 5; $i >= 1; $i--)
                                                                         <input type="radio" name="rating" value="{{ $i }}" id="rating{{ $i }}" {{ $i == 5 ? 'checked' : '' }} class="d-none">
                                                                         <label for="rating{{ $i }}" class="rating-star" style="cursor: pointer; font-size: 1.5rem;">
@@ -570,42 +675,42 @@
                                             </div>
                                             @endauth
                                         </div>
-                                        
+
                                         <div class="col-lg-8">
                                             <!-- Reviews List -->
                                             @if($reviews->count() > 0)
                                                 <div class="reviews-list">
                                                     @foreach($reviews as $review)
-                                                        <div class="review-item mb-4 pb-4 border-bottom">
+                                                        <div class="pb-4 mb-4 review-item border-bottom">
                                                             <div class="d-flex align-items-start">
                                                                 <div class="review-avatar me-3">
                                                                     @if($review->reviewer_image)
-                                                                        <img src="{{ asset('storage/' . $review->reviewer_image) }}" 
+                                                                        <img src="{{ asset('storage/' . $review->reviewer_image) }}"
                                                                              alt="{{ $review->reviewer_name }}"
                                                                              class="rounded-circle" style="width: 50px; height: 50px; object-fit: cover;">
                                                                     @else
-                                                                        <div class="rounded-circle bg-primary d-flex align-items-center justify-content-center text-white"
+                                                                        <div class="text-white rounded-circle bg-primary d-flex align-items-center justify-content-center"
                                                                              style="width: 50px; height: 50px; font-size: 1.2rem;">
                                                                             {{ strtoupper(substr($review->reviewer_name, 0, 1)) }}
                                                                         </div>
                                                                     @endif
                                                                 </div>
                                                                 <div class="review-content flex-grow-1">
-                                                                    <div class="d-flex justify-content-between align-items-start mb-2">
+                                                                    <div class="mb-2 d-flex justify-content-between align-items-start">
                                                                         <div>
                                                                             <strong>{{ $review->reviewer_name }}</strong>
                                                                             @if($review->verified_purchase)
                                                                                 <span class="badge bg-success ms-2"><i class="bx bx-check"></i> Verified Purchase</span>
                                                                             @endif
                                                                             <div class="stars" style="display: flex; gap: 3px; margin-top: 6px;">
-                                                                                @for($i = 1; $i <= 5; $i++)
+                                                                                @for ($i = 1; $i <= 5; $i++)
                                                                                     <i class="fa-solid fa-star {{ $i <= $review->rating ? 'text-warning' : 'text-muted' }}" style="font-size: 0.9rem; flex-shrink: 0;"></i>
                                                                                 @endfor
                                                                             </div>
                                                                         </div>
                                                                         <small class="text-muted">{{ $review->created_at->diffForHumans() }}</small>
                                                                     </div>
-                                                                    @if($review->title)
+                                                                    @if ($review->title)
                                                                         <h6 class="mb-2">"{{ $review->title }}"</h6>
                                                                     @endif
                                                                     <p class="mb-0 text-muted">{{ $review->comment }}</p>
@@ -614,14 +719,14 @@
                                                         </div>
                                                     @endforeach
                                                 </div>
-                                                
-                                                @if($reviews->hasPages())
+
+                                                @if ($reviews->hasPages())
                                                     <div class="mt-4">
                                                         {{ $reviews->links() }}
                                                     </div>
                                                 @endif
                                             @else
-                                                <div class="text-center py-5">
+                                                <div class="py-5 text-center">
                                                     <i class="bx bx-message-square-x fs-1 text-muted"></i>
                                                     <p class="mt-3 text-muted">No reviews yet. Be the first to review this product!</p>
                                                 </div>
@@ -636,7 +741,7 @@
                                     <h4 class="mb-4">Frequently Asked Questions</h4>
                                     <div class="accordion" id="faqAccordion">
                                         <!-- FAQ 1 -->
-                                        <div class="accordion-item mb-3 border rounded">
+                                        <div class="mb-3 rounded border accordion-item">
                                             <h2 class="accordion-header">
                                                 <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#faq1" aria-expanded="true" aria-controls="faq1">
                                                     <strong>Q1: What age group are these backpacks designed for?</strong>
@@ -650,7 +755,7 @@
                                         </div>
 
                                         <!-- FAQ 2 -->
-                                        <div class="accordion-item mb-3 border rounded">
+                                        <div class="mb-3 rounded border accordion-item">
                                             <h2 class="accordion-header">
                                                 <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq2" aria-expanded="false" aria-controls="faq2">
                                                     <strong>Q2: Are these bags water-resistant for outdoor use?</strong>
@@ -664,7 +769,7 @@
                                         </div>
 
                                         <!-- FAQ 3 -->
-                                        <div class="accordion-item mb-3 border rounded">
+                                        <div class="mb-3 rounded border accordion-item">
                                             <h2 class="accordion-header">
                                                 <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq3" aria-expanded="false" aria-controls="faq3">
                                                     <strong>Q3: How many compartments do these backpacks typically have?</strong>
@@ -691,8 +796,52 @@
 @push('styles')
     <style>
         :root {
-            --pd-primary: var(--home-primary, #0496ff);
-            --pd-secondary: var(--home-secondary, #1a1a2e);
+            --pd-primary: var(--primary-color, #0496ff);
+            --pd-secondary: var(--secondary-color, #1a1a2e);
+            --pd-accent: var(--accent-color, #f9c123);
+        }
+
+        /* Override button colors to use theme variables */
+        .action-btn-success {
+            background-color: var(--pd-primary) !important;
+            color: var(--button-text-color, #ffffff) !important;
+            border: none !important;
+        }
+
+        .action-btn-success:hover {
+            background-color: color-mix(in srgb, var(--pd-primary) 85%, black) !important;
+        }
+
+        .action-btn-warning {
+            background-color: var(--pd-accent) !important;
+            color: #000 !important;
+        }
+
+        .action-btn-warning:hover {
+            background-color: color-mix(in srgb, var(--pd-accent) 85%, black) !important;
+        }
+
+        .action-btn-primary {
+            background-color: var(--pd-primary) !important;
+            color: var(--secondary-button-text, #ffffff) !important;
+        }
+
+        .action-btn-primary:hover {
+            background-color: color-mix(in srgb, var(--pd-primary) 85%, black) !important;
+        }
+
+        /* Price color */
+        .product-price h6.text-danger {
+            color: var(--pd-primary) !important;
+        }
+
+        /* Quantity selector */
+        .measure button {
+            color: var(--pd-secondary) !important;
+        }
+
+        .measure button:hover {
+            color: var(--pd-primary) !important;
         }
 
         .product-tab__btns {
@@ -711,7 +860,7 @@
         .product-tab__btn {
             border: 1px solid color-mix(in srgb, var(--pd-secondary) 30%, #000 5%);
             color: var(--pd-secondary);
-            background: #fff;
+            background: var(--pd-primary);
             transition: all 0.2s ease;
             padding: 12px 18px;
             border-radius: 999px;
@@ -742,8 +891,13 @@
         }
 
         .product-tab__btn:not(.active):not(:focus) {
-            background: #fff;
+            background: var(--pd-primary);
             color: var(--pd-secondary);
+        }
+
+        .accordion-button {
+            background: var(--pd-primary);
+            color: #fff;
         }
 
         .product-tab__content {
@@ -840,6 +994,7 @@
             var max = parseInt(input.getAttribute('max'));
             if (parseInt(input.value) < max) {
                 input.value = parseInt(input.value) + 1;
+                document.querySelector('.item-quantity').textContent = input.value;
             }
         }
 
@@ -847,6 +1002,7 @@
             var input = document.getElementById('quantity');
             if (parseInt(input.value) > 1) {
                 input.value = parseInt(input.value) - 1;
+                document.querySelector('.item-quantity').textContent = input.value;
             }
         }
 
@@ -1004,7 +1160,8 @@
                         var isAvailable = false;
                         variants.forEach(function(v) {
                             // Skip variants with 0 or no stock (unless backorder allowed/inStock flag)
-                            if (v.inStock === false || (v.inStock === undefined && v.stock <= 0)) return;
+                            if (v.inStock === false || (v.inStock === undefined && v.stock <=
+                                0)) return;
                             var matches = true;
                             for (var a in testSelected) {
                                 var found = v.pairs.find(p => p.attr == a && p.term_id ==
@@ -1095,17 +1252,371 @@
         });
     </script>
 
+    <style>
+        .variant-options-container {
+            margin: 1rem 0;
+            padding: 1rem;
+            background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+            border-radius: 8px;
+            border: 1px solid #e5e7eb;
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+        }
+
+        .variant-option-group {
+            margin-bottom: 1rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .variant-option-group:last-child {
+            margin-bottom: 0;
+            padding-bottom: 0;
+            border-bottom: none;
+        }
+
+        .variant-label {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: #1f2937;
+            letter-spacing: 0.2px;
+            text-transform: capitalize;
+            display: block;
+            margin-bottom: 0.5rem !important;
+        }
+
+        /* Wrapper for each chip */
+        .variant-chip-wrapper {
+            position: relative;
+            display: inline-block;
+        }
+
+        .availability-badge {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            padding: 0.25rem 0.5rem;
+            border-radius: 50%;
+            font-size: 0.7rem;
+            font-weight: 700;
+            z-index: 10;
+        }
+
+        .availability-badge.in-stock {
+            background: #10b981;
+            color: white;
+        }
+
+        .availability-badge.out-of-stock {
+            background: #ef4444;
+            color: white;
+        }
+
+        /* Color Chips Styling */
+        .variant-colors-wrapper {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(45px, 1fr));
+            gap: 0.5rem;
+        }
+
+        .variant-color-chip {
+            position: relative;
+            width: 45px;
+            height: 45px;
+            border: 2px solid #e5e7eb;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            padding: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .variant-color-chip:hover:not(.disabled) {
+            transform: translateY(-4px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+            border-color: #d1d5db;
+        }
+
+        .variant-color-chip.active {
+            border-color: #059669;
+            border-width: 4px;
+            box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.1), 0 6px 16px rgba(5, 150, 105, 0.3);
+        }
+
+        .variant-color-chip .deselect-icon-color {
+            display: none !important;
+            opacity: 0;
+        }
+
+        .variant-color-chip.active .deselect-icon-color {
+            display: block !important;
+            opacity: 1;
+        }
+
+        .variant-color-chip.disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            background: repeating-linear-gradient(45deg,
+                    transparent,
+                    transparent 10px,
+                    rgba(0, 0, 0, 0.1) 10px,
+                    rgba(0, 0, 0, 0.1) 20px);
+        }
+
+        .variant-color-chip .color-label {
+            position: absolute;
+            bottom: -25px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #1f2937;
+            color: white;
+            padding: 0.4rem 0.8rem;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            white-space: nowrap;
+            opacity: 0;
+            transition: all 0.3s ease;
+            pointer-events: none;
+        }
+
+        .variant-color-chip:hover:not(.disabled) .color-label {
+            opacity: 1;
+            bottom: -32px;
+        }
+
+        /* Options Grid Styling */
+        .variant-options-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(70px, auto));
+            gap: 0.5rem;
+        }
+
+        .variant-option-btn {
+            padding: 0.5rem 0.75rem;
+            border: 2px solid #d1d5db;
+            border-radius: 6px;
+            background: white;
+            color: #374151;
+            font-weight: 500;
+            font-size: 0.8rem;
+            white-space: nowrap;
+            width: auto;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 36px;
+            gap: 0.25rem;
+        }
+
+        .variant-option-btn .btn-text {
+            flex-shrink: 0;
+        }
+
+        .variant-option-btn .deselect-icon {
+            font-size: 1rem;
+            margin-left: 0.25rem;
+            opacity: 0;
+            display: none !important;
+            transition: opacity 0.2s;
+        }
+
+        .variant-option-btn.active .deselect-icon {
+            opacity: 0.8;
+            display: inline-block !important;
+        }
+
+        .variant-option-btn.active .deselect-icon:hover {
+            opacity: 1;
+        }
+
+        .variant-option-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: rgba(5, 150, 105, 0.1);
+            transition: left 0.3s ease;
+            z-index: 0;
+        }
+
+        .variant-option-btn:hover:not(.disabled) {
+            border-color: #059669;
+            color: #059669;
+            box-shadow: 0 4px 12px rgba(5, 150, 105, 0.15);
+            transform: translateY(-2px);
+        }
+
+        .variant-option-btn:hover:not(.disabled)::before {
+            left: 0;
+        }
+
+        .variant-option-btn:active:not(.disabled) {
+            transform: translateY(0);
+        }
+
+        .variant-option-btn.active {
+            background: var(--qbit-success, #10b981) !important;
+            color: white !important;
+            border-color: var(--qbit-success, #10b981) !important;
+            box-shadow: 0 4px 10px rgba(16, 185, 129, 0.3);
+        }
+
+        .variant-option-btn.active::before {
+            background: transparent;
+        }
+
+        .variant-option-btn.disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            background: #f3f4f6;
+            border-color: #d1d5db;
+            color: #9ca3af;
+        }
+
+        .variant-option-btn.disabled::before {
+            background: transparent;
+        }
+
+        .variant-option-btn.disabled:hover {
+            transform: none;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+            border-color: #d1d5db;
+            color: #9ca3af;
+        }
+
+        /* Stock Info Styling */
+        #variant-stock-info {
+            border-left: 5px solid #059669;
+            background: linear-gradient(135deg, #f0fdf4 0%, #f3f4f6 100%);
+            border-radius: 12px;
+            padding: 1.25rem !important;
+            border: 1px solid #d1fae5;
+            box-shadow: 0 2px 8px rgba(5, 150, 105, 0.1);
+        }
+
+        #variant-stock-info strong {
+            color: #065f46;
+            font-weight: 600;
+        }
+
+        #stock-quantity {
+            font-size: 1rem !important;
+            padding: 0.5rem 1rem !important;
+            background: #059669;
+            border-radius: 8px;
+            font-weight: 600;
+        }
+
+        #stock-quantity.out-of-stock {
+            background: #ef4444;
+        }
+
+        #variant-sku {
+            font-weight: 500;
+            font-family: 'Courier New', monospace;
+            background: rgba(5, 150, 105, 0.1);
+            padding: 0.25rem 0.75rem;
+            border-radius: 6px;
+            color: #065f46;
+        }
+
+        /* Selection Message */
+        #variant-selection-message {
+            background: linear-gradient(135deg, #dbeafe 0%, #f3f4f6 100%);
+            border: 1px solid #bfdbfe;
+            border-left: 5px solid #3b82f6;
+            border-radius: 10px;
+            color: #1e40af;
+        }
+
+        #variant-selection-message i {
+            color: #3b82f6;
+            font-size: 1.2rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .variant-options-container {
+                padding: 1.5rem;
+                margin: 1.5rem 0;
+            }
+
+            .variant-option-group {
+                margin-bottom: 2rem;
+                padding-bottom: 2rem;
+            }
+
+            .variant-colors-wrapper {
+                grid-template-columns: repeat(auto-fill, minmax(50px, 1fr));
+                gap: 0.75rem;
+            }
+
+            .variant-color-chip {
+                width: 50px;
+                height: 50px;
+            }
+
+            .variant-options-grid {
+                grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+                gap: 0.75rem;
+            }
+
+            .variant-option-btn {
+                padding: 0.6rem 1rem;
+                font-size: 0.9rem;
+            }
+        }
+
+        /* Rating Input Styles */
+        .rating-input {
+            flex-direction: row-reverse;
+            justify-content: flex-end;
+        }
+
+        .rating-input .rating-star i {
+            transition: color 0.2s;
+        }
+
+        .rating-input input:checked ~ label i,
+        .rating-input label:hover i,
+        .rating-input label:hover ~ label i {
+            color: #fbbf24 !important;
+        }
+
+        .rating-input label:hover ~ label i {
+            color: #fbbf24 !important;
+        }
+
+        /* Review styles */
+        .review-summary {
+            border: 1px solid #e5e7eb;
+        }
+
+        .review-item:last-child {
+            border-bottom: none !important;
+        }
+    </style>
 
     <script>
         // Rating input interaction
         document.addEventListener('DOMContentLoaded', function() {
             const ratingInputs = document.querySelectorAll('.rating-input input[type="radio"]');
             const ratingLabels = document.querySelectorAll('.rating-input .rating-star');
-            
+
             function updateStars() {
                 const checked = document.querySelector('.rating-input input:checked');
                 const checkedValue = checked ? parseInt(checked.value) : 0;
-                
+
                 ratingLabels.forEach((label, index) => {
                     const starValue = 5 - index;
                     const icon = label.querySelector('i');
@@ -1118,11 +1629,11 @@
                     }
                 });
             }
-            
+
             ratingInputs.forEach(input => {
                 input.addEventListener('change', updateStars);
             });
-            
+
             // Initialize on page load
             updateStars();
         });

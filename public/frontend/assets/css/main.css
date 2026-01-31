@@ -86,10 +86,10 @@
 }
 
 
-/* ==== 
+/* ====
  --------- (1.02) variables end ---------
  ==== */
-/* ==== 
+/* ====
  --------- (2.01) reset styles start ---------
  ==== */
 * {
@@ -273,10 +273,10 @@ h6 {
   font-family: var(--nunito);
 }
 
-/* ==== 
+/* ====
  --------- (2.01) reset styles end ---------
  ==== */
-/* ==== 
+/* ====
  --------- (2.02) typography styles start ---------
  ==== */
 
@@ -372,10 +372,10 @@ p {
   margin-bottom: 20px;
 }
 
-/* ==== 
+/* ====
  --------- (2.02) typography styles end ---------
  ==== */
-/* ==== 
+/* ====
  --------- (2.03) global styles start ---------
  ==== */
 img {
@@ -1955,10 +1955,10 @@ div {
   font-size: 18px;
 }
 
-/* ==== 
+/* ====
  --------- (2.03) global styles end ---------
  ==== */
-/* ==== 
+/* ====
  --------- (3.01) buttons styles start ---------
  ==== */
 .btn--primary {
@@ -2179,10 +2179,10 @@ div {
   width: 0%;
 }
 
-/* ==== 
+/* ====
  --------- (3.01) buttons styles end ---------
  ==== */
-/* ==== 
+/* ====
  --------- (3.02) forms styles start ---------
  ==== */
 .input-group {
@@ -2624,10 +2624,10 @@ div {
   border-radius: 0px;
 }
 
-/* ==== 
+/* ====
  --------- (3.02) forms styles end ---------
  ==== */
-/* ==== 
+/* ====
  --------- (3.03) preloader styles start ---------
  ==== */
 .preloader {
@@ -2753,10 +2753,10 @@ div {
   }
 }
 
-/* ==== 
+/* ====
  --------- (3.03) preloader styles end ---------
  ==== */
-/* ==== 
+/* ====
  --------- (4.01) header styles start ---------
  ==== */
 .topbar {
@@ -4296,10 +4296,10 @@ div {
   }
 }
 
-/* ==== 
+/* ====
  --------- (4.01) header styles end ---------
  ==== */
-/* ==== 
+/* ====
  --------- (4.02) banner styles start ---------
  ==== */
 .banner {
@@ -5318,10 +5318,10 @@ div {
   }
 }
 
-/* ==== 
+/* ====
  --------- (4.02) banner styles end ---------
  ==== */
-/* ==== 
+/* ====
  --------- (4.03) footer styles start ---------
  ==== */
 .footer {
@@ -6409,10 +6409,10 @@ div {
   color: var(--white);
 }
 
-/* ==== 
+/* ====
  --------- (4.03) footer styles end ---------
  ==== */
-/* ==== 
+/* ====
  --------- (5.01) partner section styles start ---------
  ==== */
 .partner {
@@ -6424,10 +6424,10 @@ div {
   text-align: center;
 }
 
-/* ==== 
+/* ====
  --------- (5.01) partner section styles end ---------
  ==== */
-/* ==== 
+/* ====
  --------- (5.02) difference section styles start ---------
  ==== */
 .difference {
@@ -7136,10 +7136,10 @@ div {
   line-height: 1;
 }
 
-/* ==== 
+/* ====
  --------- (5.02) difference section styles end ---------
  ==== */
-/* ==== 
+/* ====
  --------- (5.03) help section styles start ---------
  ==== */
 .help {
@@ -8122,10 +8122,10 @@ div {
   }
 }
 
-/* ==== 
+/* ====
  --------- (5.03) help section styles end ---------
  ==== */
-/* ==== 
+/* ====
  --------- (5.04) cause slider section styles start ---------
  ==== */
 .cause {
@@ -8579,10 +8579,10 @@ div {
   margin-bottom: 35px !important;
 }
 
-/* ==== 
+/* ====
  --------- (5.04) cause slider section styles end ---------
  ==== */
-/* ==== 
+/* ====
  --------- (5.05) cta section styles start ---------
  ==== */
 .cta-section {
@@ -8909,10 +8909,10 @@ div {
   object-position: top;
 }
 
-/* ==== 
+/* ====
  --------- (5.05) cta section styles end ---------
  ==== */
-/* ==== 
+/* ====
  --------- (5.06) team section styles start ---------
  ==== */
 .team {
@@ -9510,10 +9510,10 @@ div {
   font-size: 18px;
 }
 
-/* ==== 
+/* ====
  --------- (5.06) team section styles end ---------
  ==== */
-/* ==== 
+/* ====
  --------- (5.07) community section styles start ---------
  ==== */
 .community {
@@ -9865,10 +9865,10 @@ div {
   animation: pulse 4s infinite ease-in-out;
 }
 
-/* ==== 
+/* ====
  --------- (5.07) community section styles end ---------
  ==== */
-/* ==== 
+/* ====
  --------- (5.08) testimonial section styles start ---------
  ==== */
 .testimonial {
@@ -10405,10 +10405,10 @@ div {
   padding: 100px 0px !important;
 }
 
-/* ==== 
+/* ====
  --------- (5.08) testimonial section styles end ---------
  ==== */
-/* ==== 
+/* ====
  --------- (5.09) blog section styles start ---------
  ==== */
 .blog {
@@ -10980,10 +10980,10 @@ div {
   color: var(--white);
 }
 
-/* ==== 
+/* ====
  --------- (5.09) blog section styles start ---------
  ==== */
-/* ==== 
+/* ====
  --------- (5.10) award section styles start ---------
  ==== */
 .award {
@@ -11281,10 +11281,10 @@ div {
   }
 }
 
-/* ==== 
+/* ====
  --------- (5.10) award section styles end ---------
  ==== */
-/* ==== 
+/* ====
  --------- (5.11) faq section styles start ---------
  ==== */
 .faq {
@@ -11457,10 +11457,10 @@ div {
   height: 100%;
 }
 
-/* ==== 
+/* ====
  --------- (5.11) faq section styles start ---------
  ==== */
-/* ==== 
+/* ====
  --------- (5.12) overview section styles start ---------
  ==== */
 .overview {
@@ -11566,10 +11566,10 @@ div {
   color: var(--white);
 }
 
-/* ==== 
+/* ====
  --------- (5.12) overview section styles end ---------
  ==== */
-/* ==== 
+/* ====
  --------- (5.13) donation section styles start ---------
  ==== */
 .donation-future {
@@ -11890,10 +11890,10 @@ div {
   margin: 16px 0px 0px !important;
 }
 
-/* ==== 
+/* ====
  --------- (5.13) donation section styles end ---------
  ==== */
-/* ==== 
+/* ====
  --------- (5.14) counter section styles start ---------
  ==== */
 .counter {
@@ -12044,10 +12044,10 @@ div {
   min-width: 50px;
 }
 
-/* ==== 
+/* ====
  --------- (5.14) counter section styles end ---------
  ==== */
-/* ==== 
+/* ====
  --------- (5.15) event section styles start ---------
  ==== */
 .event {
@@ -12853,10 +12853,10 @@ div {
   transform: rotate(0deg);
 }
 
-/* ==== 
+/* ====
  --------- (5.15) event section styles end ---------
  ==== */
-/* ==== 
+/* ====
  --------- (5.16) contact section styles start ---------
  ==== */
 .contact {
@@ -13026,10 +13026,10 @@ div {
   min-height: 250px;
 }
 
-/* ==== 
+/* ====
  --------- (5.16) contact section styles end ---------
  ==== */
-/* ==== 
+/* ====
  --------- (5.17) shop section styles start ---------
  ==== */
 .shop {
@@ -14459,10 +14459,10 @@ div {
   background-color: var(--quaternary-color);
 }
 
-/* ==== 
+/* ====
  --------- (5.17) shop section styles end ---------
  ==== */
-/* ==== 
+/* ====
  --------- (5.18) volunteer section styles start ---------
  ==== */
 .volunteer {
@@ -14612,10 +14612,10 @@ div {
   width: 0%;
 }
 
-/* ==== 
+/* ====
  --------- (5.18) volunteer section styles end ---------
  ==== */
-/* ==== 
+/* ====
  --------- (5.19) error section styles start ---------
  ==== */
 .error {
@@ -14744,10 +14744,10 @@ div {
   color: var(--white);
 }
 
-/* ==== 
+/* ====
  --------- (5.19) error section styles end ---------
  ==== */
-/* ==== 
+/* ====
  --------- (5.20) coming soon section styles start ---------
  ==== */
 .soon {
@@ -15143,7 +15143,7 @@ div {
   direction: ltr;
 }
 
-/* ==== 
+/* ====
  --------- (5.20) coming soon section styles end ---------
  ==== */
 .pg-four .pt-120 {
@@ -18918,7 +18918,7 @@ div {
   max-width: 38vw;
 }
 
-/* ==== 
+/* ====
  --------- (5.21) color switcher styles start ---------
  ==== */
 .color-palate {
@@ -23698,6 +23698,7 @@ div {
 
 .footer-eight-area .footer-two__widget .footer-two__widget-content--contact a i {
   color: var(--primary-eight);
+  margin-right: 10px;
 }
 
 .footer-eight-area .footer-two__copyright-inner p a {
@@ -23721,7 +23722,7 @@ div {
 
 
 
-/* ==== 
+/* ====
  --------- (5.21) color switcher styles start ---------
  ==== */
 

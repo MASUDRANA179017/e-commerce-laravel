@@ -67,6 +67,7 @@ Route::prefix('checkout')->name('checkout.')->group(function () {
     Route::post('/process', [CheckoutController::class, 'process'])->name('process');
     Route::get('/success/{order}', [CheckoutController::class, 'success'])->name('success');
     Route::post('/calculate-shipping', [CheckoutController::class, 'calculateShipping'])->name('calculate-shipping');
+    Route::post('/apply-scout-discount', [CheckoutController::class, 'applyScoutDiscount'])->name('apply-scout-discount');
 });
 
 use App\Http\Controllers\Frontend\PageController;
@@ -83,9 +84,8 @@ Route::get('/privacy-policy', [PageController::class, 'privacy'])->name('fronten
 Route::get('/page/{slug}', [PageController::class, 'show'])->name('frontend.page');
 
 
-Route::get('/faq', function () {
-    return view('frontend.faq');
-})->name('frontend.faq');
+use App\Http\Controllers\Frontend\FAQController as FrontendFAQController;
+Route::get('/faq', [FrontendFAQController::class, 'index'])->name('frontend.faq');
 
 // Blog Routes
 Route::prefix('blog')->name('blog.')->group(function () {

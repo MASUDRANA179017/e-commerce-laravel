@@ -3,6 +3,10 @@
 @section('title', 'Shop - ' . config('app.name', 'E-Commerce'))
 
 @section('content')
+    @php
+        $shopBanner = \App\Models\SystemSetting::get('shop_title_banner');
+        $shopBannerUrl = $shopBanner ? asset('storage/' . $shopBanner) : asset('frontend/assets/images/web-banner-4.png');
+    @endphp
     <!-- Shop Banner -->
     <section class="banner-two">
         <div class="banner-two__slider swiper">
@@ -10,7 +14,7 @@
                 <div class="swiper-slide">
                     <div class="banner-two__slider-single">
                         <div class="banner-two__slider-bg"
-                            data-background="{{ asset('frontend/assets/images/web-banner-4.png') }}"></div>
+                            data-background="{{ $shopBannerUrl }}"></div>
                         <div class="container">
                             <div class="row">
                                 <div class="col-12 col-lg-10 m-auto">

@@ -211,14 +211,14 @@
         }
     </style>
 
-    <div class="d-flex justify-content-between align-items-center mb-2">
+    <div class="mb-2 d-flex justify-content-between align-items-center">
         <div class="page-title">
             <h3 class="mb-0"><i class="bx bx-cog me-1"></i>Business Setup</h3>
             <span class="pill"><i class="bx bx-store-alt"></i> All core configurations for e-commerce</span>
         </div>
-        <div class="d-flex gap-2">
+        <div class="gap-2 d-flex">
             <button class="select-btn-info" id="btnExport"><i class="bx bx-download me-1"></i>Export JSON</button>
-            <label class="select-btn-info mb-0" for="importFile"><i class="bx bx-upload me-1"></i>Import
+            <label class="mb-0 select-btn-info" for="importFile"><i class="bx bx-upload me-1"></i>Import
                 JSON</label>
             <input id="importFile" type="file" accept="application/json" class="d-none">
             <button class="btn btn-primary" id="btnSaveAll"><i class="bx bx-save me-1"></i>Save Changes</button>
@@ -276,7 +276,7 @@
                 <div class="col-lg-12">
                     <form class="panel card-form" id="companyInfoForm" data-part="company_info">
                         <div class="panel-header d-flex justify-content-between align-items-center">
-                            <h5 class="panel-title mb-0">Company Information</h5>
+                            <h5 class="mb-0 panel-title">Company Information</h5>
                             <button type="button" class="select-btn-primary edit-card-btn">Edit</button>
                         </div>
                         <div class="panel-body">
@@ -315,9 +315,9 @@
                                 class="btn btn-secondary btn-sm cancel-card-btn me-2">Cancel</button><button type="button"
                                 class="btn btn-success btn-sm save-card-btn">Save</button></div>
                     </form>
-                    <form class="panel mt-3 card-form" id="legalNumbersForm" data-part="legal_numbers">
+                    <form class="mt-3 panel card-form" id="legalNumbersForm" data-part="legal_numbers">
                         <div class="panel-header d-flex justify-content-between align-items-center">
-                            <h6 class="panel-title mb-0">Legal & Official Numbers</h6>
+                            <h6 class="mb-0 panel-title">Legal & Official Numbers</h6>
                             <button type="button" class="select-btn-primary edit-card-btn">Edit</button>
                         </div>
                         <div class="panel-body">
@@ -343,9 +343,9 @@
                                 class="btn btn-secondary btn-sm cancel-card-btn me-2">Cancel</button><button
                                 type="button" class="btn btn-success btn-sm save-card-btn">Save</button></div>
                     </form>
-                    <form class="panel mt-3 card-form" id="addressForm" data-part="address">
+                    <form class="mt-3 panel card-form" id="addressForm" data-part="address">
                         <div class="panel-header d-flex justify-content-between align-items-center">
-                            <h6 class="panel-title mb-0">Address Information</h6>
+                            <h6 class="mb-0 panel-title">Address Information</h6>
                             <button type="button" class="select-btn-primary edit-card-btn">Edit</button>
                         </div>
                         <div class="panel-body">
@@ -382,7 +382,7 @@
         <div class="tab-pane" id="tab-contact">
             <form class="panel card-form" id="contactForm" data-part="contact_info">
                 <div class="panel-header d-flex justify-content-between align-items-center">
-                    <h5 class="panel-title mb-0">Contact Information</h5>
+                    <h5 class="mb-0 panel-title">Contact Information</h5>
                     <button type="button" class="select-btn-primary edit-card-btn">Edit</button>
                 </div>
                 <div class="panel-body">
@@ -396,7 +396,7 @@
                                         @php $vals=['']; @endphp
                                     @endif
                                     @foreach ($vals as $v)
-                                        <div class="input-group mb-2">
+                                        <div class="mb-2 input-group">
                                             <input type="text" name="official_contact_number[]" class="form-control"
                                                 value="{{ $v }}" disabled>
                                             <button type="button" class="action-btn-danger remove"
@@ -420,7 +420,7 @@
                                         }
                                     @endphp
                                     @foreach ($vals as $v)
-                                        <div class="input-group mb-2">
+                                        <div class="mb-2 input-group">
                                             <input type="text" name="whatsapp_number[]" class="form-control"
                                                 value="{{ $v }}" disabled>
                                             <button type="button" class="action-btn-danger remove"
@@ -444,7 +444,7 @@
                                         }
                                     @endphp
                                     @foreach ($vals as $v)
-                                        <div class="input-group mb-2">
+                                        <div class="mb-2 input-group">
                                             <input type="text" name="hotline_number[]" class="form-control"
                                                 value="{{ $v }}" disabled>
                                             <button type="button" class="action-btn-danger remove"
@@ -468,7 +468,7 @@
                                         }
                                     @endphp
                                     @foreach ($vals as $v)
-                                        <div class="input-group mb-2">
+                                        <div class="mb-2 input-group">
                                             <input type="email" name="email_address[]" class="form-control"
                                                 value="{{ $v }}" disabled>
                                             <button type="button" class="action-btn-danger remove"
@@ -501,16 +501,16 @@
                         class="btn btn-secondary btn-sm cancel-card-btn me-2">Cancel</button><button type="button"
                         class="btn btn-success btn-sm save-card-btn">Save</button></div>
             </form>
-            <form class="panel mt-3 card-form" id="socialForm" data-part="social_media">
+            <form class="mt-3 panel card-form" id="socialForm" data-part="social_media">
                 <div class="panel-header d-flex justify-content-between align-items-center">
-                    <h5 class="panel-title mb-0">Social Media Information</h5>
+                    <h5 class="mb-0 panel-title">Social Media Information</h5>
                     <button type="button" class="select-btn-primary edit-card-btn">Edit</button>
                 </div>
                 <div class="panel-body">
                     <div class="row g-3">
                         <div class="col-lg-6">
                             <div class="form-group"><label>Facebook</label>
-                                <div class="d-flex align-items-center gap-2 justify-content-between">
+                                <div class="gap-2 d-flex align-items-center justify-content-between">
                                     <div class="w-7"><button type="button" class="action-btn"><i
                                                 class="bx bxl-facebook"></i></button></div>
                                     <div class="w-78"><input type="text" name="facebook_url" class="form-control"
@@ -524,7 +524,7 @@
                         </div>
                         <div class="col-lg-6">
                             <div class="form-group"><label>LinkedIn</label>
-                                <div class="d-flex align-items-center gap-2 justify-content-between">
+                                <div class="gap-2 d-flex align-items-center justify-content-between">
                                     <div class="w-7"><button type="button" class="action-btn"><i
                                                 class="bx bxl-linkedin"></i></button></div>
                                     <div class="w-78"><input type="text" name="linkedin_url" class="form-control"
@@ -538,7 +538,7 @@
                         </div>
                         <div class="col-lg-6">
                             <div class="form-group"><label>Youtube</label>
-                                <div class="d-flex align-items-center gap-2 justify-content-between">
+                                <div class="gap-2 d-flex align-items-center justify-content-between">
                                     <div class="w-7"><button type="button" class="action-btn"><i
                                                 class="bx bxl-youtube"></i></button></div>
                                     <div class="w-78"><input type="text" name="youtube_url" class="form-control"
@@ -552,7 +552,7 @@
                         </div>
                         <div class="col-lg-6">
                             <div class="form-group"><label>Twitter</label>
-                                <div class="d-flex align-items-center gap-2 justify-content-between">
+                                <div class="gap-2 d-flex align-items-center justify-content-between">
                                     <div class="w-7"><button type="button" class="action-btn"><i
                                                 class="bx bxl-twitter"></i></button></div>
                                     <div class="w-78"><input type="text" name="twitter_url" class="form-control"
@@ -560,6 +560,34 @@
                                     <div class="w-15"><label class="toggle-switch"><input type="checkbox"
                                                 name="twitter_status"
                                                 {{ $business_setup->twitter_status == '1' ? 'checked' : '' }}
+                                                disabled><span class="slider"></span></label></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="form-group"><label>Instagram</label>
+                                <div class="gap-2 d-flex align-items-center justify-content-between">
+                                    <div class="w-7"><button type="button" class="action-btn"><i
+                                                class="bx bxl-instagram"></i></button></div>
+                                    <div class="w-78"><input type="text" name="instagram_url" class="form-control"
+                                            value="{{ $business_setup->instagram_url ?? '' }}" disabled></div>
+                                    <div class="w-15"><label class="toggle-switch"><input type="checkbox"
+                                                name="instagram_status"
+                                                {{ ($business_setup->instagram_status ?? 0) == '1' ? 'checked' : '' }}
+                                                disabled><span class="slider"></span></label></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="form-group"><label>TikTok</label>
+                                <div class="gap-2 d-flex align-items-center justify-content-between">
+                                    <div class="w-7"><button type="button" class="action-btn"><i
+                                                class="bx bxl-tiktok"></i></button></div>
+                                    <div class="w-78"><input type="text" name="tiktok_url" class="form-control"
+                                            value="{{ $business_setup->tiktok_url ?? '' }}" disabled></div>
+                                    <div class="w-15"><label class="toggle-switch"><input type="checkbox"
+                                                name="tiktok_status"
+                                                {{ ($business_setup->tiktok_status ?? 0) == '1' ? 'checked' : '' }}
                                                 disabled><span class="slider"></span></label></div>
                                 </div>
                             </div>
@@ -575,7 +603,7 @@
         <div class="tab-pane" id="tab-footer">
             <form class="panel card-form" id="footerSettingsForm" data-part="footer_settings">
                 <div class="panel-header d-flex justify-content-between align-items-center">
-                    <h5 class="panel-title mb-0">Footer Settings</h5>
+                    <h5 class="mb-0 panel-title">Footer Settings</h5>
                     <button type="button" class="select-btn-primary edit-card-btn">Edit</button>
                 </div>
                 <div class="panel-body">
@@ -597,7 +625,7 @@
                         <div class="col-lg-12">
                             <div class="form-group">
                                 <label class="mb-2">Payment Methods</label>
-                                <div class="d-flex flex-wrap gap-3">
+                                <div class="flex-wrap gap-3 d-flex">
                                     @php
                                         $methods = [
                                             'visa' => ['icon' => 'fab fa-cc-visa', 'label' => 'Visa', 'color' => '#1A1F71'],
@@ -612,9 +640,9 @@
                                         $selectedMethods = $business_setup->payment_methods ?? [];
                                     @endphp
                                     @foreach($methods as $key => $method)
-                            <div class="form-check form-check-inline p-2 border rounded">
+                            <div class="p-2 rounded border form-check form-check-inline">
                                 <input class="form-check-input" type="checkbox" name="payment_methods[]" value="{{ $key }}" id="pm_{{ $key }}" {{ in_array($key, $selectedMethods) ? 'checked' : '' }}>
-                                <label class="form-check-label d-flex align-items-center gap-2" for="pm_{{ $key }}">
+                                <label class="gap-2 form-check-label d-flex align-items-center" for="pm_{{ $key }}">
                                                 <i class="{{ $method['icon'] }}" style="font-size: 24px; color: {{ $method['color'] }};"></i>
                                                 {{ $method['label'] }}
                                             </label>
@@ -636,7 +664,7 @@
             {{-- Localization Settings --}}
             <form class="panel card-form" id="localizationForm" data-part="localization">
                 <div class="panel-header d-flex justify-content-between align-items-center">
-                    <h5 class="panel-title mb-0"><i class="bx bx-globe me-2"></i>Localization Settings</h5>
+                    <h5 class="mb-0 panel-title"><i class="bx bx-globe me-2"></i>Localization Settings</h5>
                     <button type="button" class="select-btn-primary edit-card-btn">Edit</button>
                 </div>
                 <div class="panel-body">
@@ -715,9 +743,9 @@
             </form>
 
             {{-- Currencies & Exchange Rates --}}
-            <form class="panel mt-3 card-form" id="currencyForm" data-part="currency">
+            <form class="mt-3 panel card-form" id="currencyForm" data-part="currency">
                 <div class="panel-header d-flex justify-content-between align-items-center">
-                    <h5 class="panel-title mb-0"><i class="bx bx-money me-2"></i>Currencies & Exchange Rates</h5>
+                    <h5 class="mb-0 panel-title"><i class="bx bx-money me-2"></i>Currencies & Exchange Rates</h5>
                     <button type="button" class="select-btn-primary edit-card-btn">Edit</button>
                 </div>
                 <div class="panel-body">
@@ -762,15 +790,15 @@
             </form>
 
             {{-- Public Holidays --}}
-            <div class="panel mt-3">
+            <div class="mt-3 panel">
                 <div class="panel-header d-flex justify-content-between align-items-center">
-                    <h5 class="panel-title mb-0"><i class="bx bx-calendar-event me-2"></i>Public Holidays</h5>
+                    <h5 class="mb-0 panel-title"><i class="bx bx-calendar-event me-2"></i>Public Holidays</h5>
                     <span class="qbit-badge-light"><i class="bx bx-calendar"></i> Year: {{ date('Y') }}</span>
                 </div>
                 <div class="panel-body">
                     <div class="row g-3 align-items-start">
                         <div class="col-12 col-lg-4">
-                            <form id="holidayForm" class="p-3 border rounded">
+                            <form id="holidayForm" class="p-3 rounded border">
                                 <h6 class="mb-3">Add Holiday</h6>
                                 <div class="row g-3">
                                     <div class="col-12">
@@ -794,7 +822,7 @@
                         <div class="col-12 col-lg-8 d-flex flex-column">
                             <h6 class="mb-2">Existing Holidays</h6>
                             <div class="table-responsive flex-grow-1">
-                                <table class="table table-striped table-bordered mb-0" id="holidaysTable">
+                                <table class="table mb-0 table-striped table-bordered" id="holidaysTable">
                                     <thead>
                                         <tr>
                                             <th>Date</th>
@@ -812,9 +840,9 @@
             </div>
 
             {{-- Operational Hours --}}
-            <form class="panel mt-3 card-form" id="opHoursForm" data-part="operational_hours">
+            <form class="mt-3 panel card-form" id="opHoursForm" data-part="operational_hours">
                 <div class="panel-header d-flex justify-content-between align-items-center">
-                    <h5 class="panel-title mb-0"><i class="bx bx-time me-2"></i>Operational Hours</h5>
+                    <h5 class="mb-0 panel-title"><i class="bx bx-time me-2"></i>Operational Hours</h5>
                     <button type="button" class="select-btn-primary edit-card-btn">Edit</button>
                 </div>
                 <div class="panel-body">
@@ -866,7 +894,7 @@
             <form class="panel card-form" id="brandingForm" data-part="branding" method="PUT"
                 enctype="multipart/form-data">
                 <div class="panel-header d-flex justify-content-between align-items-center">
-                    <h5 class="panel-title mb-0"><i class="bx bx-palette me-2"></i>Company Branding</h5>
+                    <h5 class="mb-0 panel-title"><i class="bx bx-palette me-2"></i>Company Branding</h5>
                     <button type="button" class="select-btn-primary edit-card-btn">Edit</button>
                 </div>
                 <div class="panel-body">
@@ -876,7 +904,7 @@
                                 <div class="panel-header">
                                     <h5 class="panel-title">Main Logo</h5>
                                 </div>
-                                <div class="panel-body text-center"><img alt="Main logo"
+                                <div class="text-center panel-body"><img alt="Main logo"
                                         src="{{ asset('storage/' . $business_setup->logo) }}" class="my-3"><label
                                         class="setting-button-1 w-100"><i class="bx bx-cloud-upload"></i> Choose
                                         file<input type="file" name="logo" class="d-none" accept="image/*"
@@ -888,7 +916,7 @@
                                 <div class="panel-header">
                                     <h5 class="panel-title">Alternative Logo</h5>
                                 </div>
-                                <div class="panel-body text-center"><img alt="Alt logo"
+                                <div class="text-center panel-body"><img alt="Alt logo"
                                         src="{{ asset('storage/' . $business_setup->alt_logo) }}" class="my-3"><label
                                         class="setting-button-1 w-100"><i class="bx bx-cloud-upload"></i> Choose
                                         file<input type="file" name="alt_logo" class="d-none" accept="image/*"
@@ -900,7 +928,7 @@
                                 <div class="panel-header">
                                     <h5 class="panel-title">Favicon</h5>
                                 </div>
-                                <div class="panel-body text-center"><img alt="Favicon"
+                                <div class="text-center panel-body"><img alt="Favicon"
                                         src="{{ asset('storage/' . $business_setup->favicon) }}" class="my-3"><label
                                         class="setting-button-1 w-100"><i class="bx bx-cloud-upload"></i> Choose
                                         file<input type="file" name="favicon" class="d-none" accept="image/*"
@@ -914,10 +942,10 @@
                         class="btn btn-success btn-sm save-card-btn">Save</button></div>
             </form>
 
-            <form class="panel mt-3 card-form" id="loginPageForm" data-part="login_page" method="PUT"
+            <form class="mt-3 panel card-form" id="loginPageForm" data-part="login_page" method="PUT"
                 enctype="multipart/form-data">
                 <div class="panel-header d-flex justify-content-between align-items-center">
-                    <h5 class="panel-title mb-0"><i class="bx bx-log-in me-2"></i>Login Page Customization</h5>
+                    <h5 class="mb-0 panel-title"><i class="bx bx-log-in me-2"></i>Login Page Customization</h5>
                     <button type="button" class="select-btn-primary edit-card-btn">Edit</button>
                 </div>
                 <div class="panel-body">
@@ -928,13 +956,13 @@
                                 <div class="panel-header">
                                     <h5 class="panel-title">Login Background Image</h5>
                                 </div>
-                                <div class="panel-body text-center">
+                                <div class="text-center panel-body">
                                     <img alt="Login Background" style="max-height: 120px; object-fit: cover;"
-                                        src="{{ $business_setup->login_background ? asset('storage/' . $business_setup->login_background) : asset('frontend/assets/images/page-bg.jpg') }}" class="my-3 img-fluid rounded">
+                                        src="{{ $business_setup->login_background ? asset('storage/' . $business_setup->login_background) : asset('frontend/assets/images/page-bg.jpg') }}" class="my-3 rounded img-fluid">
                                     <label class="setting-button-1 w-100"><i class="bx bx-cloud-upload"></i> Choose file
                                         <input type="file" name="login_background" class="d-none" accept="image/*" disabled>
                                     </label>
-                                    <small class="text-muted d-block mt-1">Recommended: 1920x1080px</small>
+                                    <small class="mt-1 text-muted d-block">Recommended: 1920x1080px</small>
                                 </div>
                             </div>
                         </div>
@@ -943,13 +971,13 @@
                                 <div class="panel-header">
                                     <h5 class="panel-title">Login Illustration Image</h5>
                                 </div>
-                                <div class="panel-body text-center">
+                                <div class="text-center panel-body">
                                     <img alt="Login Image" style="max-height: 120px; object-fit: cover;"
-                                        src="{{ $business_setup->login_image ? asset('storage/' . $business_setup->login_image) : 'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=400&h=300&fit=crop' }}" class="my-3 img-fluid rounded">
+                                        src="{{ $business_setup->login_image ? asset('storage/' . $business_setup->login_image) : 'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=400&h=300&fit=crop' }}" class="my-3 rounded img-fluid">
                                     <label class="setting-button-1 w-100"><i class="bx bx-cloud-upload"></i> Choose file
                                         <input type="file" name="login_image" class="d-none" accept="image/*" disabled>
                                     </label>
-                                    <small class="text-muted d-block mt-1">Recommended: 400x300px</small>
+                                    <small class="mt-1 text-muted d-block">Recommended: 400x300px</small>
                                 </div>
                             </div>
                         </div>
@@ -998,16 +1026,16 @@
                     <button type="button" class="btn btn-success btn-sm save-card-btn">Save</button>
                 </div>
             </form>
-            <div class="panel mt-3">
+            <div class="mt-3 panel">
                 <div class="panel-header">
-                    <h5 class="panel-title mb-0"><i class="bx bx-folder-open me-2"></i>Official Documents</h5>
+                    <h5 class="mb-0 panel-title"><i class="bx bx-folder-open me-2"></i>Official Documents</h5>
                 </div>
 
                 <div class="panel-body">
                     <div class="row g-3">
                         <!-- Left: Form (col-4) -->
                         <div class="col-12 col-lg-4">
-                            <div class="p-3 border rounded h-100">
+                            <div class="p-3 rounded border h-100">
                                 <h6 class="mb-3">Upload New Document</h6>
                                 <form id="documentForm" enctype="multipart/form-data">
                                     <div class="row align-items-end g-3">
@@ -1067,9 +1095,9 @@
 
         </div>
         <div class="tab-pane" id="tab-storage">
-            <form class="panel mt-3 card-form" id="systemSettingsForm" data-part="system_settings">
+            <form class="mt-3 panel card-form" id="systemSettingsForm" data-part="system_settings">
                 <div class="panel-header d-flex justify-content-between align-items-center">
-                    <h5 class="panel-title mb-0"><i class="bx bx-cog me-2"></i>General System Settings</h5>
+                    <h5 class="mb-0 panel-title"><i class="bx bx-cog me-2"></i>General System Settings</h5>
                     <button type="button" class="select-btn-primary edit-card-btn">Edit</button>
                 </div>
                 <div class="panel-body">
@@ -1088,9 +1116,9 @@
                         class="btn btn-secondary btn-sm cancel-card-btn me-2">Cancel</button><button type="button"
                         class="btn btn-success btn-sm save-card-btn">Save</button></div>
             </form>
-            <form class="panel mt-3 card-form" id="backupForm" data-part="backup">
+            <form class="mt-3 panel card-form" id="backupForm" data-part="backup">
                 <div class="panel-header d-flex justify-content-between align-items-center">
-                    <h5 class="panel-title mb-0"><i class="bx bx-data me-2"></i>Backup & Maintenance</h5>
+                    <h5 class="mb-0 panel-title"><i class="bx bx-data me-2"></i>Backup & Maintenance</h5>
                     <button type="button" class="select-btn-primary edit-card-btn">Edit</button>
                 </div>
                 <div class="panel-body">
@@ -1120,9 +1148,9 @@
                         class="btn btn-success btn-sm save-card-btn">Save</button></div>
             </form>
 
-            <div class="panel mt-3">
+            <div class="mt-3 panel">
                 <div class="panel-header">
-                    <h5 class="panel-title mb-0"><i class="bx bx-list-check me-2"></i>System Prefixes Management</h5>
+                    <h5 class="mb-0 panel-title"><i class="bx bx-list-check me-2"></i>System Prefixes Management</h5>
                 </div>
                 <div class="panel-body">
 
@@ -1177,8 +1205,8 @@
                                                 @method('PUT')
                                                 <div class="row">
                                                     <div class="col-lg-3">
-                                                        <div class="custom-border-success-1 custom-bg-success-100 rounded">
-                                                            <div class="card-body p-2">
+                                                        <div class="rounded custom-border-success-1 custom-bg-success-100">
+                                                            <div class="p-2 card-body">
                                                                 <a class="align-items-center" data-bs-toggle="collapse"
                                                                     href="#project-head" role="button"
                                                                     aria-expanded="true" aria-controls="project-head">
@@ -1218,8 +1246,8 @@
                                                     </div>
 
                                                     <div class="col-lg-9 pe-5 ps-0 position-relative">
-                                                        <div class="custom-border-success-1 pb-3 rounded">
-                                                            <div class="card-body p-2">
+                                                        <div class="pb-3 rounded custom-border-success-1">
+                                                            <div class="p-2 card-body">
                                                                 <a class="align-items-center" data-bs-toggle="collapse"
                                                                     href="#project-head" role="button"
                                                                     aria-expanded="true" aria-controls="project-head">
@@ -1277,7 +1305,7 @@
                                                                                 value="{{ $prefix->prefix_code }}">
                                                                         </div>
                                                                     </div>
-                                                                    <div class="col-sm-2 px-2">
+                                                                    <div class="px-2 col-sm-2">
                                                                         <div class="form-group">
                                                                             <label
                                                                                 for="separators_{{ $prefix->id }}">Separators</label>
@@ -1324,7 +1352,7 @@
         <div class="tab-pane" id="tab-mail">
              <form class="panel card-form" id="mailConfigForm" data-part="mail_config">
                  <div class="panel-header d-flex justify-content-between align-items-center">
-                     <h5 class="panel-title mb-0"><i class="bx bx-envelope me-2"></i>Mail Configuration</h5>
+                     <h5 class="mb-0 panel-title"><i class="bx bx-envelope me-2"></i>Mail Configuration</h5>
                      <button type="button" class="select-btn-primary edit-card-btn">Edit</button>
                  </div>
                  <div class="panel-body">
@@ -1588,12 +1616,12 @@ hydrateRepeaters(document);
                         form.find('select').each(function() {
                             $(this).trigger('change.select2');
                         });
-                        
+
                         // operational hours: re-evaluate time input disabled state after mode change
                         form.find('.operational-hours-table select').each(function () {
                             $(this).trigger('change');
                         });
-                        
+
                         // notify listeners of edit mode change
                         form.trigger('edit-mode-changed', [isEditing]);
 
@@ -1701,7 +1729,8 @@ hydrateRepeaters(document);
                                 toggleFormState(false);
                             },
                             error: function(xhr) {
-                                const msg = xhr?.responseJSON?.message || 'Error';
+                                const resp = xhr?.responseJSON || {};
+                                const msg = resp.message || (resp.errors ? Object.values(resp.errors).flat()[0] : 'Error');
                                 Swal.fire({
                                     icon: 'error',
                                     title: 'Error',

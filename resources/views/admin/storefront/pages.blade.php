@@ -41,11 +41,15 @@
                                 </td>
                                 <td>{{ $page->updated_at->format('M d, Y') }}</td>
                                 <td class="text-end pe-3">
-                                    <a href="{{ route('admin.storefront.pages.edit', $page->id) }}" class="action-btn-success">Edit</a>
+                                    <a href="{{ route('admin.storefront.pages.edit', $page->id) }}" class="action-btn-success" title="Edit">
+                                        <span class="material-symbols-outlined">edit</span>
+                                    </a>
                                     <form action="{{ route('admin.storefront.pages.destroy', $page->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Are you sure?')">
                                         @csrf
                                         @method('DELETE')
-                                        <button type="submit" class="action-btn-danger border-0">Delete</button>
+                                        <button type="submit" class="action-btn-danger border-0" title="Delete">
+                                            <span class="material-symbols-outlined">delete</span>
+                                        </button>
                                     </form>
                                 </td>
                             </tr>

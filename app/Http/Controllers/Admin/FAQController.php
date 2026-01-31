@@ -25,7 +25,7 @@ class FAQController extends Controller
             return DataTables::of($faqs)
                 ->addIndexColumn()
                 ->addColumn('type_badge', function ($row) {
-                    return $row->type === 'product' 
+                    return $row->type === 'product'
                         ? '<span class="badge bg-info">Product FAQ</span>'
                         : '<span class="badge bg-success">Website FAQ</span>';
                 })
@@ -40,7 +40,7 @@ class FAQController extends Controller
                 })
                 ->addColumn('action', function ($row) {
                     return '<div class="btn-group">
-                        <a href="' . route('admin.faqs.edit', $row->id) . '" class="btn btn-sm btn-outline-primary">
+                        <a href="' . route('admin.storefront.faqs.edit', $row->id) . '" class="btn btn-sm btn-outline-primary">
                             <i class="bx bxs-edit"></i>
                         </a>
                         <button type="button" class="btn btn-sm btn-outline-danger delete-faq" data-id="' . $row->id . '">
@@ -80,7 +80,7 @@ class FAQController extends Controller
 
         FAQ::create($validated);
 
-        return redirect()->route('admin.faqs.index')->with('success', 'FAQ created successfully');
+        return redirect()->route('admin.storefront.faqs.index')->with('success', 'FAQ created successfully');
     }
 
     /**
@@ -108,7 +108,7 @@ class FAQController extends Controller
 
         $faq->update($validated);
 
-        return redirect()->route('admin.faqs.index')->with('success', 'FAQ updated successfully');
+        return redirect()->route('admin.storefront.faqs.index')->with('success', 'FAQ updated successfully');
     }
 
     /**

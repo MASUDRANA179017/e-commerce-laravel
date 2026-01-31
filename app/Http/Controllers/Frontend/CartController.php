@@ -27,6 +27,7 @@ class CartController extends Controller
                 'rowId' => $rowId,
                 'options' => (object) ($item['options'] ?? []),
                 'price_range' => $product ? $product->formatted_price_range : null,
+                'original_price' => $item['original_price'] ?? ($product ? $product->price : ($item['price'] ?? 0)),
             ]);
         });
 
@@ -44,15 +45,8 @@ class CartController extends Controller
                 'quantity' => 'sometimes|integer|min:1',
             ]);
 
-        // Get product with image
-        $product = DB::table('products')
-            ->leftJoin('product_images', function ($join) {
-                $join->on('products.id', '=', 'product_images.product_id')
-                    ->where('product_images.is_cover', true);
-            })
-            ->where('products.id', $request->product_id)
-            ->select('products.*', 'product_images.path as cover_image')
-            ->first();
+        // Get product with image using Eloquent
+        $product = \App\Models\Product::with('coverImage')->find($request->product_id);
 
         if (!$product) {
             return response()->json(['success' => false, 'message' => 'Product not found'], 404);
@@ -64,9 +58,22 @@ class CartController extends Controller
         $rowId = 'product_' . $product->id . ($variantId ? '_v_' . $variantId : '');
 
         // Determine price (variant-aware with purchase sell price fallback)
-        $price = $product->sale_price && $product->sale_price < $product->price 
-            ? $product->sale_price 
-            : $product->price;
+        $price = $product->effective_price;
+        
+        // Fallback: If price is 0, try to find the latest purchase price for this product
+        if ($price <= 0) {
+            $lastPurchaseItem = \Illuminate\Support\Facades\DB::table('purchase_items')
+                ->join('purchases', 'purchase_items.purchase_id', '=', 'purchases.id')
+                ->where('purchase_items.product_id', $product->id)
+                ->where('purchases.status', 'received')
+                ->orderByDesc('purchases.purchase_date')
+                ->select('purchase_items.sell_price')
+                ->first();
+                
+            if ($lastPurchaseItem && $lastPurchaseItem->sell_price > 0) {
+                $price = $lastPurchaseItem->sell_price;
+            }
+        }
 
         $variantLabel = $request->variant ?? null;
         $variantSku = $product->sku ?? null;
@@ -79,30 +86,48 @@ class CartController extends Controller
                     $tn = $opt->term->name ?? '';
                     return $an . ': ' . $tn;
                 })->join(' | ');
-                $base = $v->price;
-                if ($base === null || $base <= 0) {
-                    $purchaseSell = \Illuminate\Support\Facades\DB::table('purchase_items')
+
+                $price = $v->effective_price;
+                
+                // Fallback for variant: if 0, try specific variant purchase, then product purchase
+                if ($price <= 0) {
+                     $vLastPurchase = \Illuminate\Support\Facades\DB::table('purchase_items')
                         ->join('purchases', 'purchase_items.purchase_id', '=', 'purchases.id')
                         ->where('purchase_items.variant_id', $v->id)
                         ->where('purchases.status', 'received')
                         ->orderByDesc('purchases.purchase_date')
-                        ->value('purchase_items.sell_price');
-                    $base = $purchaseSell ?? ($v->product->sale_price ?? $v->product->price);
+                        ->select('purchase_items.sell_price')
+                        ->first();
+                        
+                     if ($vLastPurchase && $vLastPurchase->sell_price > 0) {
+                         $price = $vLastPurchase->sell_price;
+                     } else {
+                         // If variant has no price, fall back to product base price (already calculated above)
+                         // But we need to recalculate if we overwrote $price above
+                         $baseProductPrice = $product->effective_price;
+                         if ($baseProductPrice <= 0 && isset($lastPurchaseItem) && $lastPurchaseItem->sell_price > 0) {
+                             $baseProductPrice = $lastPurchaseItem->sell_price;
+                         }
+                         $price = $baseProductPrice;
+                     }
                 }
-                $price = $base ?? $price;
             }
-        } else {
-            // Only fetch purchase price if manual price is not set or 0
-            if ($price <= 0) {
-                $purchPrice = \Illuminate\Support\Facades\DB::table('purchase_items')
-                    ->join('purchases', 'purchase_items.purchase_id', '=', 'purchases.id')
-                    ->where('purchase_items.product_id', $product->id)
-                    ->whereNull('purchase_items.variant_id')
-                    ->where('purchases.status', 'received')
-                    ->orderByDesc('purchases.purchase_date')
-                    ->value('purchase_items.sell_price');
-                if ($purchPrice !== null && (float) $purchPrice > 0) {
-                    $price = (float) $purchPrice;
+        }
+
+        $originalPrice = $price;
+
+        // Check for active flash sale and override price
+        if ($product->active_flash_sale) {
+            $flashSale = $product->active_flash_sale;
+            $pivot = $flashSale->pivot;
+            // Check stock limit
+            if ($pivot->stock_limit === null || $pivot->sold_count < $pivot->stock_limit) {
+                if ($pivot->flash_price !== null && $pivot->flash_price > 0) {
+                    $price = $pivot->flash_price;
+                } elseif ($flashSale->discount_percent > 0) {
+                     // Fallback calculation if pivot price is missing
+                     $price = $price - ($price * $flashSale->discount_percent / 100);
+                     $price = max(0, $price);
                 }
             }
         }
@@ -111,14 +136,16 @@ class CartController extends Controller
         if (isset($cart[$rowId])) {
             $cart[$rowId]['qty'] += $quantity;
         } else {
+            $imagePath = $product->coverImage ? $product->coverImage->path : null;
+
             $cart[$rowId] = [
                 'id' => $product->id,
                 'name' => $product->title,
                 'price' => $price ?? 0,
-                'original_price' => $product->price ?? 0,
+                'original_price' => $originalPrice ?? 0,
                 'qty' => $quantity,
                 'options' => [
-                    'image' => $product->cover_image ?? null,
+                    'image' => $imagePath,
                     'slug' => $product->slug ?? $product->id,
                     'variant' => $variantLabel,
                     'sku' => $variantSku,
@@ -255,10 +282,32 @@ class CartController extends Controller
         ]);
 
         $code = strtoupper($request->coupon_code);
-
-        $coupon = Coupon::where('code', $code)->first();
         $cart = session()->get('cart', []);
         $subtotal = $this->calculateSubtotal($cart);
+
+        // Special check for Scout Discount
+        if ($code === 'SCOUT') {
+            $discountPercent = 10;
+            $discount = round(($subtotal * $discountPercent) / 100, 2);
+            session()->put('discount', $discount);
+            session()->put('coupon_code', 'SCOUT');
+            session()->put('coupon_id', null); // No ID for special scout discount
+
+            $shipping = $subtotal >= 5000 ? 0 : 100;
+            $message = "Scout Discount applied! 10% off";
+
+            if ($request->ajax()) {
+                return response()->json([
+                    'success' => true,
+                    'message' => $message,
+                    'discount' => $discount,
+                    'total' => $subtotal - $discount + $shipping,
+                ]);
+            }
+            return back()->with('success', "Scout Discount applied! You saved ৳" . number_format($discount, 2));
+        }
+
+        $coupon = Coupon::where('code', $code)->first();
 
         if (!$coupon) {
             return $this->couponError($request, 'Invalid coupon code!');

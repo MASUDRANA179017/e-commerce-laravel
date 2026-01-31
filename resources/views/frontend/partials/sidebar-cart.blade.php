@@ -57,8 +57,13 @@
                         <small class="text-muted d-block mb-1">Variant: {{ $item['options']['variant'] }}</small>
                     @endif
                     <div class="cart-item-price">
-                        <span class="price">৳{{ number_format($item['price'], 0) }}</span>
-                        <span class="multiply">×</span>
+                        @if(isset($item['original_price']) && $item['original_price'] > $item['price'])
+                            <span class="text-dark fw-bold">৳{{ number_format($item['price'], 0) }}</span>
+                            <span class="text-decoration-line-through text-muted small ms-1">৳{{ number_format($item['original_price'], 0) }}</span>
+                        @else
+                            <span class="price">৳{{ number_format($item['price'], 0) }}</span>
+                        @endif
+                        <span class="multiply ms-2">×</span>
                         <span class="qty">{{ $item['qty'] }}</span>
                         <span class="total">= ৳{{ number_format($item['price'] * $item['qty'], 0) }}</span>
                     </div>

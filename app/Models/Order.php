@@ -33,6 +33,10 @@ class Order extends Model
         'total',
         'coupon_code',
         'status',
+        'scout_full_name',
+        'scout_bs_id',
+        'scout_unit_name',
+        'scout_leader_name',
     ];
 
     protected $casts = [

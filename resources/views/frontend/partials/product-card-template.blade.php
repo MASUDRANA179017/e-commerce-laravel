@@ -31,21 +31,32 @@
     // Get price
     $price = $product->price ?? 0;
     $salePrice = $product->sale_price ?? null;
-    
+
     // Check for active flash sale
     $flashSalePrice = null;
     $flashDiscountPercent = 0;
     $isFlashSale = false;
-    
+
     if (method_exists($product, 'getActiveFlashSaleAttribute')) {
         $activeFlashSale = $product->active_flash_sale;
         if ($activeFlashSale) {
             $flashSalePrice = $activeFlashSale->pivot->flash_price ?? null;
             $flashDiscountPercent = $activeFlashSale->pivot->flash_discount_percent ?? 0;
+
+            // Fallback to general flash sale discount if not overridden per product
+            if ($flashDiscountPercent <= 0 && (!$flashSalePrice || $flashSalePrice <= 0)) {
+                 $flashDiscountPercent = $activeFlashSale->discount_percent ?? 0;
+            }
+
+            // Calculate flash price if only percent is available
+            if ((!$flashSalePrice || $flashSalePrice <= 0) && $flashDiscountPercent > 0) {
+                $flashSalePrice = $price - ($price * ($flashDiscountPercent / 100));
+            }
+
             $isFlashSale = true;
         }
     }
-    
+
 
     // Always show the lowest price (flash, sale, or regular)
     $candidates = [$price];
@@ -57,19 +68,15 @@
     // Discount percent: from original price to final price
     $discountPercent = $isOnSale && $price > 0 ? round((($price - $finalPrice) / $price) * 100) : 0;
 
-    // Get price range if product has variants (with safety check)
+    // Get price range if product has variants
     $priceRange = null;
     $hasVariants = false;
-    if (is_object($product) && property_exists($product, 'variants')) {
-        if ($product->variants && $product->variants->count() > 0) {
-            $priceRange = $product->formatted_price_range ?? null;
-            $hasVariants = true;
-        }
-    } elseif (is_object($product) && method_exists($product, 'variants')) {
-        if ($product->variants()->count() > 0) {
-            $priceRange = $product->formatted_price_range ?? null;
-            $hasVariants = true;
-        }
+    $rawPriceRange = null;
+
+    if (isset($product->variants) && $product->variants->count() > 0) {
+        $priceRange = $product->formatted_price_range ?? null;
+        $rawPriceRange = $product->price_range ?? null;
+        $hasVariants = true;
     }
 
     // Get stock
@@ -304,13 +311,33 @@
 @endonce
 
 <div class="{{ $colClass ?? 'col-12 col-md-6 col-lg-4 mb-5' }}">
-    <div class="property-single-boxarea p-0 d-flex flex-column" data-aos="fade-up" data-aos-duration="1000">
+    <div class="p-0 property-single-boxarea d-flex flex-column" data-aos="fade-up" data-aos-duration="1000">
         <div class="property-list-img-area position-relative">
-            <div class="img1 position-relative overflow-hidden" style="aspect-ratio: 1/1;">
+            <div class="overflow-hidden img1 position-relative" style="aspect-ratio: 1/1;">
 
-                @if ($isOnSale)
-                    <span class="position-absolute top-0 start-0 m-2 px-3 py-1 rounded-pill bg-danger text-white fw-bold fs-14 z-3" style="z-index:20;">
-                        Offer ৳{{ number_format($finalPrice, 0) }}
+                @php
+                    $showOffer = $isOnSale;
+                    $offerPrice = $finalPrice;
+
+                    if ($hasVariants && $isFlashSale && $rawPriceRange) {
+                         $minP = $rawPriceRange['min'] ?? 0;
+                         $finalMinP = $minP;
+                         if ($flashDiscountPercent > 0) {
+                             $finalMinP = $minP - ($minP * $flashDiscountPercent / 100);
+                         } elseif ($flashSalePrice) {
+                             $finalMinP = $flashSalePrice;
+                         }
+
+                         if ($finalMinP < $minP) {
+                             $showOffer = true;
+                             $offerPrice = $finalMinP;
+                         }
+                    }
+                @endphp
+
+                @if ($showOffer)
+                    <span class="top-0 px-3 py-1 m-2 text-white position-absolute start-0 rounded-pill bg-danger fw-bold fs-14 z-3" style="z-index:20;">
+                        Offer ৳{{ number_format($offerPrice, 0) }}
                     </span>
                 @endif
 
@@ -383,52 +410,90 @@
                     </a>
                 @endif
                 @if ($isNew)
-                    <span class="select-btn-danger border-0 h-16px fs-12 fw-600 qb-bg-danger-50">New</span>
+                    <span class="border-0 select-btn-danger h-16px fs-12 fw-600 qb-bg-danger-50">New</span>
                 @endif
                 @if ($isFlashSale)
-                    <span class="select-btn-base border-0 h-16px fs-12 fw-600 text-white" style="background: #FF4500;">
+                    <span class="text-white border-0 select-btn-base h-16px fs-12 fw-600" style="background: #FF4500;">
                         <i class='bx bxs-bolt'></i> Flash Sale
                     </span>
                 @elseif ($isOnSale && $discountPercent > 0)
                     <span
-                        class="select-btn-success border-0 h-16px fs-12 fw-600 qb-bg-success-50">-{{ $discountPercent }}%</span>
+                        class="border-0 select-btn-success h-16px fs-12 fw-600 qb-bg-success-50">-{{ $discountPercent }}%</span>
                 @endif
                 @if ($product->featured ?? false)
-                    <span class="select-btn-base border-0 h-16px fs-12 fw-600 qb-bg-base-50">Hot</span>
+                    <span class="border-0 select-btn-base h-16px fs-12 fw-600 qb-bg-base-50">Hot</span>
                 @endif
             </div>
 
             @if (!$inStock)
-                <div class="position-absolute bottom-0 start-0 end-0 text-center py-2"
+                <div class="bottom-0 py-2 text-center position-absolute start-0 end-0"
                     style="background: rgba(220, 53, 69, 0.9); z-index: 2;">
-                    <span class="text-white fw-bold small">Out of Stock</span>
+                    <span class="text-white fw-bold small">Sold Out</span>
                 </div>
             @endif
         </div>
 
-        <div class="property-single-content flex-grow-0 ">
-            <h4 class="title-animation ">
+        <div class="flex-grow-0 property-single-content">
+            <h4>
                 <a href="{{ route('product.show', $product->slug ?? $product->id) }}" class="d-block text-truncate"
                     title="{{ $product->title ?? 'Product' }}">
-                    {{ $product->title ?? 'Product' }}
+                    {{ $product->title }}
                 </a>
-                <p class="m-0 p-0 product-category lh-sm mt-1"><i class='bx bxs-tag me-1'></i>{{ $categoryName }}</p>
+                <p class="p-0 m-0 mt-1 product-category lh-sm"><i class='bx bxs-tag me-1'></i>{{ $categoryName }}</p>
             </h4>
         </div>
 
         <div class="property-details">
             <ul class="d-flex align-items-center justify-content-between">
-                <li class="d-flex flex-column align-items-start m-0">
+                <li class="m-0 d-flex flex-column align-items-start">
                     @if ($hasVariants && $priceRange)
-                        <span class="fw-bold price-current fs-18">{{ $priceRange }}</span>
+                        @if ($isFlashSale && $rawPriceRange)
+                            @php
+                                $minPrice = $rawPriceRange['min'] ?? 0;
+                                $maxPrice = $rawPriceRange['max'] ?? 0;
+                                $finalMin = $minPrice;
+                                $finalMax = $maxPrice;
+
+                                if ($flashDiscountPercent > 0) {
+                                    $finalMin = $minPrice - ($minPrice * $flashDiscountPercent / 100);
+                                    $finalMax = $maxPrice - ($maxPrice * $flashDiscountPercent / 100);
+                                } elseif ($flashSalePrice) {
+                                    $finalMin = $flashSalePrice;
+                                    $finalMax = $flashSalePrice;
+                                }
+                            @endphp
+
+                            @if ($finalMin < $minPrice)
+                                <div class="gap-2 d-flex align-items-center">
+                                    <span class="text-dark fw-bold price-current fs-18">
+                                        @if ($finalMin == $finalMax)
+                                            ৳{{ number_format($finalMin, 0) }}
+                                        @else
+                                            ৳{{ number_format($finalMin, 0) }} - ৳{{ number_format($finalMax, 0) }}
+                                        @endif
+                                    </span>
+                                    <span class="text-decoration-line-through text-muted price-old fs-14">
+                                        @if ($minPrice == $maxPrice)
+                                            ৳{{ number_format($minPrice, 0) }}
+                                        @else
+                                            ৳{{ number_format($minPrice, 0) }} - ৳{{ number_format($maxPrice, 0) }}
+                                        @endif
+                                    </span>
+                                </div>
+                            @else
+                                <span class="fw-bold price-current fs-18">{{ $priceRange }}</span>
+                            @endif
+                        @else
+                            <span class="fw-bold price-current fs-18">{{ $priceRange }}</span>
+                        @endif
                     @elseif ($finalPrice < $originalPrice)
-                        <div class="d-flex align-items-center gap-2">
-                            <span class="text-danger fw-bold price-current fs-18">৳{{ number_format($finalPrice, 0) }}</span>
+                        <div class="gap-2 d-flex align-items-center">
+                            <span class="text-dark fw-bold price-current fs-18">৳{{ number_format($finalPrice, 0) }}</span>
                             <span class="text-decoration-line-through text-muted price-old fs-14">৳{{ number_format($originalPrice, 0) }}</span>
                         </div>
-                        <small class="text-success fw-600 mt-1">
+                        {{-- <small class="mt-1 text-success fw-600">
                             <i class='bx bx-purchase-tag'></i> Discount Price
-                        </small>
+                        </small> --}}
                     @else
                         <span class="fw-bold price-current fs-18">৳{{ number_format($price, 0) }}</span>
                     @endif
@@ -438,22 +503,33 @@
                     @if ($inStock)
                         <span class="text-success fs-15 fw-600">In Stock</span>
                     @else
-                        <span class="text-danger fs-15 fw-600">Out of Stock</span>
+                        <span class="text-danger fs-15 fw-600">Sold Out</span>
                     @endif
                 </li>
             </ul>
         </div>
 
-        <div class="mt-0 pt-0 btn-area1 text-center d-flex align-items-center justify-content-center">
-            <a href="{{ route('product.show', $product->slug ?? $product->id) }}" class="action-btn-soft-success p-3 h-30px w-auto rounded-pill">
-                <i class="bx bx-show fs-15 me-1"></i>View Details
+        <div class="p-0 px-3 m-0 text-center btn-area1 d-flex align-items-center justify-content-between">
+            <a href="{{ route('product.show', $product->slug ?? $product->id) }}"
+                class="px-3 w-40 text-white create-btn-info btn-view fs-15 fw-600 h-25px rounded-3 me-2">
+                <i class="bx bx-show fs-15 me-1"></i>View
             </a>
-            <a href="#" title="Add to Wishlist" data-id="{{ $product->id }}" class="action-btn-danger p-3 ms-2 h-30px w-30px rounded-5">
-                <i class="bx bxs-heart fs-20"></i>
+            <a type="button" title="Add to Wishlist" data-id="{{ $product->id }}"
+                class="px-3 text-white border-0 create-btn-primary btn-wishlist fs-15 fw-600 h-25px w-25px rounded-3 add-to-wishlist bg-red"
+                data-has-in-wishlist="{{ $hasInWishList ? 'true' : 'false' }}">
+                <i class="bx bxs-heart fs-20 {{ $hasInWishList ? 'text-danger' : '' }}"></i>
             </a>
-            <a href="#" title="Add to Cart" data-id="{{ $product->id }}" class="action-btn-soft-success p-3 ms-2 h-30px w-auto rounded-pill add-to-cart">
-                <i class="bx bxs-cart fs-15 me-1"></i>Add to Cart
-            </a>
+            @if (isset($hasVariants) && $hasVariants)
+                <a href="#" title="Select Options" onclick="openQuickView({{ $product->id }}); return false;"
+                    class="px-3 w-40 text-white create-btn-base btn-cart fs-15 fw-600 h-25px rounded-3 ms-2">
+                    <i class="bx bxs-cart fs-15 me-1"></i>Add Cart
+                </a>
+            @else
+                <a href="#" title="Add to Cart" data-id="{{ $product->id }}"
+                    class="px-3 w-40 text-white create-btn-base btn-cart fs-15 fw-600 h-25px rounded-3 ms-2 add-to-cart">
+                    <i class="bx bxs-cart fs-15 me-1"></i>Add Cart
+                </a>
+            @endif
         </div>
     </div>
 </div>

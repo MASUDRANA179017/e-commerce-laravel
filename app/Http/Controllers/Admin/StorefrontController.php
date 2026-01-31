@@ -10,8 +10,10 @@ use App\Models\Banner;
 use App\Models\Page;
 use App\Models\Menu;
 use App\Models\MenuItem;
+use App\Models\SystemSetting;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Auth;
 
 class StorefrontController extends Controller
 {
@@ -29,7 +31,7 @@ class StorefrontController extends Controller
                 'company_name' => 'My Company',
             ]);
         }
-        
+
         $business_setup->update($request->only([
             'theme_color_primary',
             'theme_color_secondary',
@@ -50,7 +52,7 @@ class StorefrontController extends Controller
             'theme_header_style',
             'theme_footer_style',
         ]));
-        
+
         return response()->json(['success' => true, 'message' => 'Theme settings saved']);
     }
 
@@ -94,7 +96,7 @@ class StorefrontController extends Controller
     public function updatePage(Request $request, $id)
     {
         $page = Page::findOrFail($id);
-        
+
         $request->validate([
             'title' => 'required|string|max:255',
             'slug' => 'nullable|string|max:255|unique:pages,slug,' . $id,
@@ -118,7 +120,7 @@ class StorefrontController extends Controller
         Page::findOrFail($id)->delete();
         return redirect()->back()->with('success', 'Page deleted successfully');
     }
-    
+
     public function uploadPageImage(Request $request)
     {
         $request->validate([
@@ -134,34 +136,69 @@ class StorefrontController extends Controller
 
     public function menus()
     {
-        $path = 'menus.json';
-        if (Storage::disk('local')->exists($path)) {
-            $menus = json_decode(Storage::disk('local')->get($path), true);
-        } else {
-            $menus = [
-                'main' => [
-                    ['label' => 'Home', 'url' => url('/')],
-                    ['label' => 'Shop', 'url' => route('shop.index')],
-                    ['label' => 'Blog', 'url' => route('blog.index')],
-                    ['label' => 'Contact', 'url' => route('frontend.contact')],
-                ],
-                'footer' => [
-                    ['label' => 'Shop', 'url' => route('shop.index')],
-                    ['label' => 'About', 'url' => route('frontend.about')],
-                    ['label' => 'Blog', 'url' => route('blog.index')],
-                    ['label' => 'Contact', 'url' => route('frontend.contact')],
-                ],
-                'mobile' => [
-                    ['label' => 'Home', 'url' => url('/')],
-                    ['label' => 'Shop', 'url' => route('shop.index')],
-                    ['label' => 'Categories', 'url' => route('shop.index')],
-                    ['label' => 'Contact', 'url' => route('frontend.contact')],
-                ],
-            ];
-            Storage::disk('local')->put($path, json_encode($menus));
-        }
+        $this->ensureMenusSeeded();
+
         $active = request('menu', 'main');
-        return view('admin.storefront.menus', compact('menus', 'active'));
+        $menuModels = Menu::orderBy('name')->get();
+        $activeMenu = $menuModels->firstWhere('key', $active) ?? $menuModels->first();
+        if (!$activeMenu) {
+            $activeMenu = Menu::create(['key' => 'main', 'name' => 'Main']);
+        }
+        $active = $activeMenu->key;
+
+        // Build associative array keyed by menu key to keep view compatible
+        $menus = [];
+        foreach ($menuModels as $menu) {
+            $menus[$menu->key] = $this->buildMenuTree($menu);
+        }
+
+        // Always include static pages
+        $pages = [
+            ['label' => 'Home', 'url' => '/'],
+            ['label' => 'About Us', 'url' => '/about'],
+            ['label' => 'Contact', 'url' => '/contact'],
+            ['label' => 'Terms & Conditions', 'url' => '/terms-and-conditions'],
+            ['label' => 'Privacy Policy', 'url' => '/privacy-policy'],
+        ];
+
+        // Add database pages
+        $dbPages = Page::orderBy('title')->get(['title','slug'])->map(function($p){
+            return [
+                'label' => $p->title,
+                'url' => '/page/' . $p->slug,
+            ];
+        })->values()->toArray();
+
+        // Merge both lists, avoiding duplicates
+        foreach ($dbPages as $page) {
+            if (!in_array($page, $pages)) {
+                $pages[] = $page;
+            }
+        }
+
+        $categories = \App\Models\Admin\Product\ProductCategory::with('childrenRecursive')
+            ->whereNull('parent_id')
+            ->orderByRaw('CASE WHEN `order` = 0 OR `order` IS NULL THEN 1 ELSE 0 END, `order` ASC')
+            ->get()
+            ->map(function($c){
+                $mapChild = function($child) use (&$mapChild){
+                    return [
+                        'label' => $child->name,
+                        'url' => '/shop?category=' . $child->slug,
+                        'children' => ($child->childrenRecursive ?? collect())->map(function($cc) use (&$mapChild){
+                            return $mapChild($cc);
+                        })->values()->toArray()
+                    ];
+                };
+                return [
+                    'label' => $c->name,
+                    'url' => '/shop?category=' . $c->slug,
+                    'children' => ($c->childrenRecursive ?? collect())->map(function($ch) use (&$mapChild){
+                        return $mapChild($ch);
+                    })->values()->toArray()
+                ];
+            })->values()->toArray();
+        return view('admin.storefront.menus', compact('menus', 'active', 'pages', 'categories'));
     }
 
     public function storeMenu(Request $request)
@@ -169,52 +206,171 @@ class StorefrontController extends Controller
         $request->validate([
             'name' => 'required|string|max:50',
         ]);
-        $path = 'menus.json';
-        $menus = [];
-        if (Storage::disk('local')->exists($path)) {
-            $menus = json_decode(Storage::disk('local')->get($path), true) ?: [];
-        }
+
         $key = Str::slug($request->name);
-        if (!isset($menus[$key])) {
-            $menus[$key] = [];
-            Storage::disk('local')->put($path, json_encode($menus));
-        }
+        Menu::firstOrCreate(['key' => $key], ['name' => $request->name]);
+
         return redirect()->route('admin.storefront.menus', ['menu' => $key])->with('success', 'Menu created');
     }
 
     public function updateMenu(Request $request, $menu)
     {
+        $menuModel = Menu::firstOrCreate(['key' => $menu], ['name' => ucfirst($menu)]);
+
         $labels = $request->input('label', []);
         $urls = $request->input('url', []);
-        $items = [];
+        $depths = $request->input('depth', []);
+        $existingImages = $request->input('existing_image', []);
+        $files = $request->file('image', []);
+
+        $root = [];
+        $parents = [];
         foreach ($labels as $i => $label) {
             $label = trim($label ?? '');
             $url = trim($urls[$i] ?? '');
-            if ($label !== '' && $url !== '') {
-                $items[] = ['label' => $label, 'url' => $url];
+            $depth = (int) ($depths[$i] ?? 0);
+
+            // Handle Image
+            $imagePath = $existingImages[$i] ?? null;
+            // $files can be an array where keys match the input index, or reindexed.
+            // When using name="image[]", PHP reindexes it sequentially for uploaded files.
+            // If we want correct mapping, we must assume every item sends an input, even if empty.
+            // However, browsers send empty files for empty inputs.
+            // Let's check if $files[$i] exists.
+            if (isset($files[$i]) && $files[$i]->isValid()) {
+                $imagePath = uploadFile($files[$i], 'menu_items');
+            }
+
+            if ($label === '' || $url === '') {
+                continue;
+            }
+            if ($depth < 0) $depth = 0;
+            if ($depth > 3) $depth = 3;
+            $node = ['label' => $label, 'url' => $url, 'image' => $imagePath];
+            if ($depth === 0) {
+                $root[] = $node;
+                $parents = [];
+                $parents[0] = &$root[count($root) - 1];
+            } else {
+                $parentDepth = $depth - 1;
+                if (!isset($parents[$parentDepth])) {
+                    $root[] = $node;
+                    $parents = [];
+                    $parents[0] = &$root[count($root) - 1];
+                } else {
+                    if (!isset($parents[$parentDepth]['children'])) {
+                        $parents[$parentDepth]['children'] = [];
+                    }
+                    $parents[$parentDepth]['children'][] = $node;
+                    $parents[$depth] = &$parents[$parentDepth]['children'][count($parents[$parentDepth]['children']) - 1];
+                    foreach ($parents as $k => $v) {
+                        if ($k > $depth) {
+                            unset($parents[$k]);
+                        }
+                    }
+                }
             }
         }
-        $path = 'menus.json';
-        $menus = [];
-        if (Storage::disk('local')->exists($path)) {
-            $menus = json_decode(Storage::disk('local')->get($path), true) ?: [];
-        }
-        $menus[$menu] = $items;
-        Storage::disk('local')->put($path, json_encode($menus));
-        return redirect()->route('admin.storefront.menus', ['menu' => $menu])->with('success', 'Menu saved');
+
+        // Replace menu items in DB
+        \DB::transaction(function () use ($menuModel, $root) {
+            MenuItem::where('menu_id', $menuModel->id)->delete();
+            $this->saveMenuItems($menuModel->id, $root);
+        });
+
+        return redirect()->route('admin.storefront.menus', ['menu' => $menuModel->key])->with('success', 'Menu saved');
     }
 
     public function destroyMenu($menu)
     {
-        $path = 'menus.json';
-        if (Storage::disk('local')->exists($path)) {
-            $menus = json_decode(Storage::disk('local')->get($path), true) ?: [];
-            if (isset($menus[$menu])) {
-                unset($menus[$menu]);
-                Storage::disk('local')->put($path, json_encode($menus));
-            }
+        if ($menuModel = Menu::where('key', $menu)->first()) {
+            $menuModel->delete();
         }
         return redirect()->route('admin.storefront.menus')->with('success', 'Menu deleted');
+    }
+
+    /**
+     * Ensure DB menus are seeded from existing file or defaults.
+     */
+    private function ensureMenusSeeded(): void
+    {
+        if (Menu::count() > 0) {
+            return;
+        }
+
+        $menusData = [];
+        // Prefer private/menus.json if present
+        if (Storage::disk('local')->exists('private/menus.json')) {
+            $menusData = json_decode(Storage::disk('local')->get('private/menus.json'), true) ?: [];
+        } elseif (Storage::disk('local')->exists('menus.json')) {
+            $menusData = json_decode(Storage::disk('local')->get('menus.json'), true) ?: [];
+        } else {
+            $menusData = [
+                'main' => [
+                    ['label' => 'Home', 'url' => '/'],
+                    ['label' => 'Shop', 'url' => '/shop'],
+                    ['label' => 'Blog', 'url' => '/blog'],
+                    ['label' => 'Contact', 'url' => '/contact'],
+                ],
+                'footer' => [
+                    ['label' => 'Shop', 'url' => '/shop'],
+                    ['label' => 'About', 'url' => '/about'],
+                    ['label' => 'Blog', 'url' => '/blog'],
+                    ['label' => 'Contact', 'url' => '/contact'],
+                ],
+                'mobile' => [
+                    ['label' => 'Home', 'url' => '/'],
+                    ['label' => 'Shop', 'url' => '/shop'],
+                    ['label' => 'Categories', 'url' => '/shop'],
+                    ['label' => 'Contact', 'url' => '/contact'],
+                ],
+            ];
+        }
+
+        foreach ($menusData as $key => $items) {
+            $menu = Menu::firstOrCreate(['key' => $key], ['name' => ucfirst($key)]);
+            $this->saveMenuItems($menu->id, $items);
+        }
+    }
+
+    /**
+     * Save menu items recursively for a menu.
+     */
+    private function saveMenuItems(int $menuId, array $items, ?int $parentId = null): void
+    {
+        foreach (array_values($items) as $idx => $item) {
+            $node = MenuItem::create([
+                'menu_id' => $menuId,
+                'parent_id' => $parentId,
+                'label' => $item['label'] ?? '',
+                'url' => $item['url'] ?? '',
+                'sort_order' => $idx,
+            ]);
+            if (!empty($item['children']) && is_array($item['children'])) {
+                $this->saveMenuItems($menuId, $item['children'], $node->id);
+            }
+        }
+    }
+
+    /**
+     * Build nested array of menu items for the view.
+     */
+    private function buildMenuTree(Menu $menu): array
+    {
+        $items = MenuItem::where('menu_id', $menu->id)
+            ->orderBy('sort_order')
+            ->get();
+        $byParent = $items->groupBy('parent_id');
+        $build = function($parentId) use (&$build, $byParent) {
+            return ($byParent[$parentId] ?? collect())->map(function($item) use (&$build) {
+                return [
+                    'label' => $item->label,
+                    'url' => $item->url,
+                    'children' => $build($item->id),
+                ];
+            })->values()->toArray();
+        };
+        return $build(null);
     }
 
     public function blog()
@@ -248,7 +404,7 @@ class StorefrontController extends Controller
             'content' => $validated['content'],
             'category' => isset($validated['category']) ? trim($validated['category']) : null,
             'tags' => null,
-            'author_id' => auth()->id(),
+            'author_id' => Auth::id(),
             'is_published' => (bool)($request->has('is_published')),
         ];
 
@@ -333,14 +489,21 @@ class StorefrontController extends Controller
         $hero_sliders = Banner::where('type', 'hero_slider')->orderBy('position')->get();
         $promotional_banners = Banner::where('type', 'promotional_banner')->orderBy('position')->get();
         $store_sections = Banner::where('type', 'store_section')->orderBy('position')->get();
-        return view('admin.storefront.banners', compact('hero_sliders', 'promotional_banners', 'store_sections'));
+        $ads_sections = Banner::where('type', 'ads_section')->orderBy('position')->get();
+        return view('admin.storefront.banners', compact('hero_sliders', 'promotional_banners', 'store_sections', 'ads_sections'));
+    }
+
+    public function adsSections()
+    {
+        $ads_sections = Banner::where('type', 'ads_section')->orderBy('position')->get();
+        return view('admin.storefront.ads-sections', compact('ads_sections'));
     }
 
     public function storeBanner(Request $request)
     {
         $request->validate([
             'image' => 'required|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
-            'type' => 'required|in:hero_slider,promotional_banner,store_section',
+            'type' => 'required|in:hero_slider,promotional_banner,store_section,ads_section',
         ]);
 
         if (!$request->hasFile('image')) {
@@ -382,10 +545,10 @@ class StorefrontController extends Controller
     public function updateBanner(Request $request, $id)
     {
         $banner = Banner::findOrFail($id);
-        
+
         $request->validate([
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
-            'type' => 'nullable|in:hero_slider,promotional_banner,store_section',
+            'type' => 'nullable|in:hero_slider,promotional_banner,store_section,ads_section',
         ]);
 
         $data = [
@@ -417,6 +580,67 @@ class StorefrontController extends Controller
         $banner->delete();
         return redirect()->back()->with('success', 'Banner deleted successfully');
     }
-}
 
+    public function commonImages()
+    {
+        $images = [
+            'footer_background' => SystemSetting::get('footer_background'),
+            'flash_sale_image' => SystemSetting::get('flash_sale_image'),
+            'shop_title_banner' => SystemSetting::get('shop_title_banner'),
+        ];
+        return view('admin.storefront.common_images', compact('images'));
+    }
+
+    public function updateCommonImages(Request $request)
+    {
+        $keys = [
+            'footer_background',
+            'flash_sale_image',
+            'shop_title_banner'
+        ];
+
+        foreach ($keys as $key) {
+            if ($request->hasFile($key)) {
+                $file = $request->file($key);
+
+                // Validate file upload
+                if (!$file->isValid()) {
+                    return redirect()->back()->withErrors(['image' => "Upload failed for $key."])->withInput();
+                }
+
+                try {
+                    // Manual storage to bypass getRealPath() issues on some Windows environments
+                    $filename = $file->hashName();
+                    $path = 'common_images/' . $filename;
+
+                    // Try to read content safely
+                    $content = file_get_contents($file->getPathname());
+                    if ($content === false) {
+                        throw new \Exception("Could not read uploaded file content.");
+                    }
+
+                    Storage::disk('public')->put($path, $content);
+                } catch (\Throwable $e) {
+                    return redirect()->back()->withErrors(['image' => "Failed to store image for $key: " . $e->getMessage()])->withInput();
+                }
+
+                // Delete old image if exists
+                try {
+                    $oldImage = SystemSetting::get($key);
+                    if (!empty($oldImage) && is_string($oldImage) && trim($oldImage) !== '') {
+                        if (Storage::disk('public')->exists($oldImage)) {
+                            Storage::disk('public')->delete($oldImage);
+                        }
+                    }
+                } catch (\Throwable $e) {
+                    // Ignore deletion errors to prevent blocking the upload
+                }
+
+                SystemSetting::set($key, $path);
+            }
+        }
+
+        return redirect()->back()->with('success', 'Images updated successfully');
+    }
+}
 

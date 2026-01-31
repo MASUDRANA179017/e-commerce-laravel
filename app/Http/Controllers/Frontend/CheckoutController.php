@@ -127,6 +127,9 @@ class CheckoutController extends Controller
             // Generate unique order number
             $orderNumber = 'ORD-' . date('Ymd') . '-' . strtoupper(Str::random(6));
 
+            // Get scout info from session if available
+            $scoutInfo = session()->get('scout_info', []);
+
             // Create the order
             $order = Order::create([
                 'user_id' => $userId,
@@ -151,6 +154,10 @@ class CheckoutController extends Controller
                 'total' => $total,
                 'coupon_code' => session()->get('coupon_code'),
                 'status' => 'pending',
+                'scout_full_name' => $scoutInfo['scout_full_name'] ?? null,
+                'scout_bs_id' => $scoutInfo['scout_bs_id'] ?? null,
+                'scout_unit_name' => $scoutInfo['scout_unit_name'] ?? null,
+                'scout_leader_name' => $scoutInfo['scout_leader_name'] ?? null,
             ]);
 
             // Create order items
@@ -204,6 +211,7 @@ class CheckoutController extends Controller
             session()->forget('cart');
             session()->forget('discount');
             session()->forget('coupon_code');
+            session()->forget('scout_info');
 
             // Store order info for success page
             session()->put('last_order', [
@@ -262,6 +270,52 @@ class CheckoutController extends Controller
             'success' => true,
             'shipping' => $shipping,
             'formatted' => ShippingHelper::getShippingCostText($subtotal, ShippingHelper::isAddressInDhaka($address)),
+        ]);
+    }
+
+    /**
+     * Apply Scout Member Discount
+     */
+    public function applyScoutDiscount(Request $request)
+    {
+        $request->validate([
+            'scout_full_name' => 'required|string|max:255',
+            'scout_bs_id' => 'required|string|max:255',
+            'scout_unit_name' => 'required|string|max:255',
+            'scout_leader_name' => 'required|string|max:255',
+        ]);
+
+        $cartItems = session()->get('cart', []);
+        if (empty($cartItems)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Cart is empty!'
+            ]);
+        }
+
+        $subtotal = $this->calculateSubtotal($cartItems);
+        $discountPercent = \App\Models\SystemSetting::scoutDiscountPercent() ?? 10;
+        $discountAmount = ($subtotal * $discountPercent) / 100;
+
+        session()->put('discount', $discountAmount);
+        session()->put('scout_info', [
+            'scout_full_name' => $request->scout_full_name,
+            'scout_bs_id' => $request->scout_bs_id,
+            'scout_unit_name' => $request->scout_unit_name,
+            'scout_leader_name' => $request->scout_leader_name,
+        ]);
+        session()->put('coupon_code', 'SCOUT'); // Optional, to mark as coupon used
+
+        // Recalculate total for response
+        $shipping = 0; // Can't calculate accurately without address here, but client handles it
+        // Or fetch current shipping if available in session? No.
+        // We return subtotal and discount, client updates total.
+        
+        return response()->json([
+            'success' => true,
+            'message' => 'Scout Discount Applied Successfully!',
+            'discount' => $discountAmount,
+            'total' => $subtotal - $discountAmount // Excluding shipping for now
         ]);
     }
 

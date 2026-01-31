@@ -8,7 +8,7 @@
         $themePrimary = $business_setup->theme_color_primary ?? '#0496ff';
         $themeSecondary = $business_setup->theme_color_secondary ?? '#1a1a2e';
         $themeAccent = $business_setup->theme_color_accent ?? '#f9c123';
-        $themeButtonTextColor = $business_setup->theme_button_text_color ?? '#ffffff';
+        $themeButtonTextColor = '#ffffff';
         $themeSecondaryButtonBg = $business_setup->theme_secondary_button_bg ?? '#f5f5f5';
         $themeSecondaryButtonText = $business_setup->theme_secondary_button_text ?? '#333333';
         $themeLinkColor = $business_setup->theme_color_link ?? '#0496ff';
@@ -81,12 +81,25 @@
         .home-section h5,
         .home-section h6,
         .section-eight-title,
-        .section-eight-subtitle,
         .sub-title-main,
         .title-animation,
         .char-animation {
             font-family: var(--home-font) !important;
             color: var(--home-secondary) !important;
+        }
+
+        .title-animation {
+            white-space: nowrap !important;
+        }
+
+        .title-animation span {
+            display: inline-block !important;
+            vertical-align: baseline !important;
+        }
+
+        .title-animation div {
+            display: inline-block !important;
+            vertical-align: baseline !important;
         }
 
         /* Home-only: use customizer primary color for subtitles */
@@ -145,11 +158,13 @@
         .home-section h4,
         .home-section h5,
         .home-section h6 {
-            color: var(--home-heading-color) !important;
+            color: var(--home-primary) !important;
         }
 
         /* Body text color */
-        .section-eight-subtitle,
+        .section-eight-subtitle {
+            color: var(--home-button-text) !important;
+        };
         .product-description,
         .product-text {
             color: var(--home-text-color) !important;
@@ -194,6 +209,15 @@
             color: var(--home-primary) !important;
         }
 
+        /* faq section color  */
+        .faq-eight-accordion-button {
+            color: var(--home-primary) !important;
+        }
+        .faq-eight-accordion-button:hover {
+            color: color-mix(in srgb, var(--home-secondary) 85%, black) !important;
+        }
+
+
         /* Category card button - use primary color and button text color */
         .ministrie-eight-button a {
             background: var(--home-primary) !important;
@@ -208,17 +232,18 @@
 
         /* Tab buttons - primary color active state */
         .difference-two__tab-btn.active {
-            color: var(--home-primary) !important;
+            color: var(--home-button-text) !important;
             border-bottom-color: var(--home-primary) !important;
         }
 
         .difference-two__tab-btn:hover {
-            color: var(--home-primary) !important;
+           color: var(--home-button-text) !important;
         }
 
         /* Flash sale badge */
         .badge.bg-danger {
-            background: var(--home-accent) !important;
+            background: var(--home-primary) !important;
+            color: rgba(var(--home-primary), 0.3) !important;
         }
 
         /* Countdown timer text */
@@ -244,19 +269,64 @@
             height: 700px;
         }
 
+        /* Fix header overlap - ensure banner starts below header */
+        .header-area, .header-two, .header-six-area {
+            position: relative !important;
+            background: white !important;
+            width: 100% !important;
+            z-index: 999 !important;
+        }
+
+        /* Adjust main content spacing if needed */
+        body {
+            padding-top: 0 !important;
+        }
+
         .banner-two__slider-single {
             display: flex;
             align-items: center;
         }
 
         .banner-two__slider-bg {
-            background-size: cover;
+            background-size: cover !important; /* Show full image with aspect ratio */
+            background-repeat: no-repeat;
             background-position: center;
+            background-color: var(--home-secondary);
         }
 
         /* Banner content text uses theme font */
         .banner-two__slider-content {
             font-family: var(--home-font) !important;
+        }
+
+        /* Ecosystem store section - make images circular and centered */
+        .ecosystem-card {
+            height: auto !important;
+            padding: 16px 0 !important;
+            background: transparent !important;
+            box-shadow: none !important;
+            border-radius: 0 !important;
+            overflow: visible !important;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        .ecosystem-image {
+            width: clamp(140px, 12vw, 240px) !important;
+            height: clamp(140px, 12vw, 240px) !important;
+            border-radius: 50% !important;
+            background-size: cover !important;
+            background-position: center !important;
+            margin: 0 auto !important;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+        }
+        .ecosystem-card-title {
+            position: static !important;
+            margin-top: 12px !important;
+            text-align: center !important;
+            color: var(--home-primary) !important;
+            font-weight: 600 !important;
         }
 
         .banner-two__slider-content h1 {
@@ -291,20 +361,20 @@
                                         @if ($hasContent)
                                             <div class="banner-two__slider-content">
                                                 @if (!empty($slider->sub_title))
-                                                    <span class="sub-title-main text-white"><i class='bx bxs-tag'></i>
+                                                    <span class="text-white sub-title-main"><i class='bx bxs-tag'></i>
                                                         {{ $slider->sub_title }}</span>
                                                 @endif
                                                 @if (!empty($slider->title))
-                                                    <h1 class="title-animation text-white mb-0">{{ $slider->title }}</h1>
+                                                    <h1 class="mb-0 text-white title-animation">{{ $slider->title }}</h1>
                                                 @endif
                                                 @if (!empty($slider->description))
-                                                    <p class="text-white mt-0 fs-13 text-white-50 mb-5">
+                                                    <p class="mt-0 mb-5 text-white fs-13 text-white-50">
                                                         {{ $slider->description }}
                                                     </p>
                                                 @endif
                                                 @if (!empty($slider->link))
-                                                    <div class="d-flex gap-2 mt-4">
-                                                        <a href="{{ $slider->link }}" class="btn--primary p-2 px-5">Shop
+                                                    <div class="gap-2 mt-4 d-flex">
+                                                        <a href="{{ $slider->link }}" class="p-2 px-5 btn--primary">Shop
                                                             Now <i class="fa-solid fa-arrow-right"></i></a>
                                                     </div>
                                                 @endif
@@ -325,12 +395,12 @@
                                     <div class="col-12 col-md-6 col-lg-7">
                                         <div class="banner-two__slider-content">
                                             <!-- subtitle intentionally removed per request -->
-                                            <h1 class="title-animation text-white mb-0">Trendy Fashion Collection</h1>
-                                            <p class="text-white mt-0 fs-13 text-white-50 mb-5">Discover the latest trends
+                                            <h1 class="mb-0 text-white title-animation">Trendy Fashion Collection</h1>
+                                            <p class="mt-0 mb-5 text-white fs-13 text-white-50">Discover the latest trends
                                                 in
                                                 clothing, accessories, and more. Shop now for exclusive deals!</p>
-                                            <div class="d-flex gap-2 mt-4">
-                                                <a href="{{ route('shop.index') }}" class="btn--primary p-2 px-5">Shop Now
+                                            <div class="gap-2 mt-4 d-flex">
+                                                <a href="{{ route('shop.index') }}" class="p-2 px-5 btn--primary">Shop Now
                                                     <i class="fa-solid fa-arrow-right"></i></a>
                                             </div>
                                         </div>
@@ -344,6 +414,23 @@
         </div>
         <div class="banner-six-slide-dot swiper-pagination"></div>
     </section>
+
+    <!-- Ads Section -->
+    @if($ads_sections->isNotEmpty())
+    <section class="py-4 bg-white">
+        <div class="container">
+            <div class="row g-3">
+                @foreach($ads_sections as $banner)
+                <div class="col-12 col-md-4">
+                    <a href="{{ $banner->link ?? '#' }}" class="overflow-hidden rounded d-block">
+                        <img src="{{ asset('storage/' . $banner->image) }}" class="img-fluid w-100" style="transition: transform 0.3s ease;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'" alt="{{ $banner->title ?? 'Ad Banner' }}">
+                    </a>
+                </div>
+                @endforeach
+            </div>
+        </div>
+    </section>
+    @endif
 
     <!-- Category Section -->
     <section class="ministrie-eight-area">
@@ -370,13 +457,13 @@
         </style>
         <div class="container-fluid">
             <div class="d-flex align-items-center justify-content-between">
-                <div class="section-eight-wrapper mb-0 text-center text-sm-center text-md-start text-lg-start"
+                <div class="mb-0 text-center section-eight-wrapper text-sm-center text-md-start text-lg-start"
                     data-aos="fade-up" data-aos-duration="1000" data-aos-delay="200">
                     <h6 class="sub-title-main"><i class="fa-solid fa-cart-shopping"></i> Our Top Picks</h6>
                     <h2 class="title-animation">Explore Our <span>Product Categories</span></h2>
                 </div>
                 <a href="{{ route('shop.index') }}" aria-label="all products" title="all products"
-                    class="btn--primary p-2 px-5 d-none d-md-inline-block">
+                    class="p-2 px-5 btn--primary d-none d-md-inline-block">
                     View All Products<i class="fa-solid fa-arrow-right ms-2"></i>
                 </a>
             </div>
@@ -384,7 +471,7 @@
                 <div class="col-xxl-12">
                     <div class="ministrie-eight-slide p-relative" data-aos="fade-up" data-aos-duration="1000"
                         data-aos-delay="200">
-                        <div class="ministrie-eight-active swiper-container swiper mySwiper">
+                        <div class="ministrie-eight-active swiper-container swiper">
                             <div class="ministrie-eight-swiper-wrapper swiper-wrapper">
                                 @foreach ($categories as $index => $category)
                                     @php
@@ -427,10 +514,10 @@
                                                     <p class="ministrie-eight-paragraph">
                                                         {{ Str::limit($category->description ?? 'Explore Our Amazing Collection Of Products In This Category.', 100) }}
                                                     </p>
-                                                    <div class="d-flex align-items-center justify-content-between pt-2">
+                                                    <div class="pt-2 d-flex align-items-center justify-content-between">
                                                         <span
-                                                            class="fw-700 title-lg text-white d-inline-flex align-items-center">Products</span>
-                                                        <p class="title-lg fw-500 text-white w-60">
+                                                            class="text-white fw-700 title-lg d-inline-flex align-items-center">Products</span>
+                                                        <p class="w-60 text-white title-lg fw-500">
                                                             {{ $totalProducts }} Items</p>
                                                     </div>
                                                 </div>
@@ -443,10 +530,10 @@
                     </div>
                 </div>
             </div>
-            <div class="ministrie-eight-dot text-center m-auto mt-4"></div>
-            <div class="text-center mt-4 d-md-none">
+            <div class="m-auto mt-4 text-center ministrie-eight-dot"></div>
+            <div class="mt-4 text-center d-md-none">
                 <a href="{{ route('shop.index') }}" aria-label="all products" title="all products"
-                    class="btn--primary p-2 px-5 d-md-none">
+                    class="p-2 px-5 btn--primary d-md-none">
                     View All Products<i class="fa-solid fa-arrow-right ms-2"></i>
                 </a>
             </div>
@@ -456,27 +543,27 @@
     <!-- Featured Products Section -->
     <section class="team ff-team difference-two">
         <div class="container-fluid">
-            <div class="d-flex flex-column flex-md-row align-items-center justify-content-between gap-3 gap-md-0">
+            <div class="gap-3 d-flex flex-column flex-md-row align-items-center justify-content-between gap-md-0">
 
-                <div class="section-eight-wrapper mb-0 text-center text-md-start" data-aos="fade-up"
+                <div class="mb-0 text-center section-eight-wrapper text-md-start" data-aos="fade-up"
                     data-aos-duration="1000" data-aos-delay="200">
                     <h6 class="sub-title-main"><i class="fa-solid fa-building"></i> Explore by Category</h6>
                     <h2 class="title-animation">Browse Our <span>Featured Products</span></h2>
                 </div>
-                <div class="difference-two__inner cta mt-0">
+                <div class="mt-0 difference-two__inner cta">
                     <div class="difference-two__inner-content">
                         <div class="difference-two__tab">
                             <!-- Desktop: show all buttons in a row -->
-                            <div class="difference-two__tab-btns border-0 d-none d-md-flex">
-                                <button class="difference-two__tab-btn fs-15 fw-600 p-2 px-4 active" data-target="#all"
+                            <div class="border-0 difference-two__tab-btns d-none d-md-flex">
+                                <button class="p-2 px-4 text-white difference-two__tab-btn fs-15 fw-600 active" data-target="#all"
                                     aria-label="all" title="all">
                                     <i class='bx bx-fullscreen bx-tada fs-15'></i> New Arrivals
                                 </button>
-                                <button class="difference-two__tab-btn fs-15 fw-600 p-2 px-4" data-target="#trending"
+                                <button class="p-2 px-4 text-white difference-two__tab-btn fs-15 fw-600" data-target="#trending"
                                     aria-label="trending" title="trending">
                                     <i class='bx bxs-hot bx-flashing fs-15'></i> Trending
                                 </button>
-                                <button class="difference-two__tab-btn fs-15 fw-600 p-2 px-4" data-target="#topselling"
+                                <button class="p-2 px-4 text-white difference-two__tab-btn fs-15 fw-600" data-target="#topselling"
                                     aria-label="topselling" title="topselling">
                                     <i class='bx bxs-star bx-flashing fs-15'></i> Top Selling
                                 </button>
@@ -484,16 +571,16 @@
 
                             <!-- Mobile: remove dropdown, keep buttons stacked -->
                             <div class="d-md-none w-100">
-                                <div class="difference-two__tab-btns border-0 d-flex flex-column gap-2">
-                                    <button class="difference-two__tab-btn fs-15 fw-600 p-3 px-4 active w-100"
+                                <div class="gap-2 border-0 difference-two__tab-btns d-flex flex-column">
+                                    <button class="p-3 px-4 difference-two__tab-btn fs-15 fw-600 active w-100"
                                         data-target="#all" aria-label="all" title="all">
                                         <i class='bx bx-fullscreen bx-tada fs-15'></i> New Arrivals
                                     </button>
-                                    <button class="difference-two__tab-btn fs-15 fw-600 p-3 px-4 w-100"
+                                    <button class="p-3 px-4 difference-two__tab-btn fs-15 fw-600 w-100"
                                         data-target="#trending" aria-label="trending" title="trending">
                                         <i class='bx bxs-hot bx-flashing fs-15'></i> Trending
                                     </button>
-                                    <button class="difference-two__tab-btn fs-15 fw-600 p-3 px-4 w-100"
+                                    <button class="p-3 px-4 difference-two__tab-btn fs-15 fw-600 w-100"
                                         data-target="#topselling" aria-label="topselling" title="topselling">
                                         <i class='bx bxs-star bx-flashing fs-15'></i> Top Selling
                                     </button>
@@ -544,9 +631,9 @@
             </div>
             <div class="row">
                 <div class="col-12">
-                    <div class="text-center mt-4">
+                    <div class="mt-4 text-center">
                         <a href="{{ route('shop.index') }}" aria-label="view more products" title="view more products"
-                            class="btn--primary p-2 px-5 d-none d-md-inline-block">
+                            class="p-2 px-5 btn--primary d-none d-md-inline-block">
                             View More<i class="fa-solid fa-arrow-right ms-2"></i>
                         </a>
 
@@ -562,7 +649,7 @@
             $isActiveFlash = $flashSale->status === 'active';
         @endphp
         <section class="countdown-eight-area"
-            data-background="{{ $flashSale->banner_image ? asset('storage/' . $flashSale->banner_image) : asset('frontend/assets/images/shop/Ad-1.jpg') }}">
+            data-background="{{ \App\Models\SystemSetting::get('flash_sale_image') ? asset('storage/' . \App\Models\SystemSetting::get('flash_sale_image')) : ($flashSale->banner_image ? asset('storage/' . $flashSale->banner_image) : asset('frontend/assets/images/shop/Ad-1.jpg')) }}">
             <div class="container">
                 <div class="row align-items-center justify-content-between">
                     <div class="col-12 col-sm-12 col-lg-8 col-xl-6">
@@ -572,24 +659,24 @@
                                 <h6 class="section-eight-subtitle d-inline-block">
                                     {{ $flashSale->status === 'active' ? 'Limited Time Offer' : 'Coming Soon' }}
                                 </h6>
-                                <h2 class="section-eight-title char-animation text-white">
+                                <h2 class="text-white section-eight-title char-animation">
                                     {{ $flashSale->status === 'active' ? $flashSale->title : $flashSale->title . ' Starts Soon!' }}
                                 </h2>
                                 @if ($flashSale->description)
-                                    <p class="text-white opacity-75 mt-2">{{ $flashSale->description }}</p>
+                                    <p class="mt-2 text-white opacity-75">{{ $flashSale->description }}</p>
                                 @endif
                                 @if ($flashSale->discount_percent > 0)
                                     <div class="mt-3">
-                                        <span class="badge bg-danger fs-1 p-2 px-3">Up to
+                                        <span class="p-2 px-3 badge bg-danger fs-1">Up to
                                             {{ $flashSale->discount_percent }}%
                                             OFF</span>
                                     </div>
                                 @endif
                             </div>
                             <!-- Mobile: centered single-row countdown -->
-                            <div class="countdown-eight-timer text-center d-md-none" id="flashSaleCountdown"
+                            <div class="text-center countdown-eight-timer d-md-none" id="flashSaleCountdown"
                                 data-end-time="{{ $flashSale->end_time->timestamp * 1000 }}">
-                                <ul class="list-inline mb-0 d-flex flex-nowrap justify-content-center small fs-6">
+                                <ul class="flex-nowrap mb-0 list-inline d-flex justify-content-center small fs-6">
                                     <li class="list-inline-item"><span id="fs-days" class="fs-2">00</span>D</li>
                                     <li class="list-inline-item"><span id="fs-hours" class="fs-2">00</span>H</li>
                                     <li class="list-inline-item"><span id="fs-minutes" class="fs-2">00</span>M</li>
@@ -606,6 +693,11 @@
                                     <li><span id="fs-seconds-desktop">00</span>Seconds</li>
                                 </ul>
                             </div>
+                            <div class="mt-4">
+                                <a href="{{ route('flash-sale.index') }}" class="p-2 px-5 btn--primary d-inline-block">
+                                    View Offers <i class="fa-solid fa-arrow-right ms-2"></i>
+                                </a>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -617,14 +709,14 @@
             data-background="{{ asset('frontend/assets/images/shop/Ad-1.jpg') }}">
             <div class="container">
                 <div class="row align-items-center justify-content-center">
-                    <div class="col-12 col-sm-12 col-lg-8 col-xl-6 text-center px-3">
+                    <div class="px-3 text-center col-12 col-sm-12 col-lg-8 col-xl-6">
                         <div class="countdown-eight-wrapper" data-aos="fade-up" data-aos-duration="1000"
                             data-aos-delay="200">
                             <div class="section-eight-wrapper">
-                                <h6 class="text-white ">Special Offers</h6>
+                                <h6 class="text-white">Special Offers</h6>
                                 <h2 class="title-animation"><span> Our Latest Deals!</span></h2>
                             </div>
-                            <a href="{{ route('shop.index') }}" class="btn--primary d-inline-block p-2 px-4 mt-3">Shop
+                            <a href="{{ route('shop.index') }}" class="p-2 px-4 mt-3 btn--primary d-inline-block">Shop
                                 Now</a>
                         </div>
                     </div>
@@ -647,30 +739,35 @@
     @endphp
     <section class="testimonial-six-area">
         <div class="container">
-                <div class="col-xl-6 col-lg-6 d-block d-lg-none text-center">
-                    <div class="testimonial-six-right" data-aos="fade-up">
-                        <div class="section-six-wrapper mb-4">
-                            <h6 class="sub-title-main">Testimonials</h6>
-                            <h2 class="title-animation">Real Reviews from Our Customers</h2>
-                            <p class="section-six-paragraph">
-                                We pride ourselves on providing high-quality products and an exceptional shopping
-                                experience. Hear directly from our satisfied customers about their purchases, fast
-                                delivery, and excellent customer service.
-                            </p>
-                        </div>
-                        <div class="text-center">
-                            <div class="testimonial-six-rating">
-                                <h6>4.9/5 Rating</h6>
-                                <p class="text-center">Based on verified purchases & feedback.</p>
-                            </div>
+            <div class="text-center col-xl-6 col-lg-6 d-block d-lg-none">
+                <div class="testimonial-six-right" data-aos="fade-up">
+                    <div class="mb-0 text-center section-eight-wrapper text-md-start" data-aos="fade-up"
+                        data-aos-duration="1000" data-aos-delay="200">
+                        <h6 class="sub-title-main"><i class="fa-solid fa-building"></i> Explore by Category</h6>
+                        <h2 class="title-animation">Browse Our <span>Featured Products</span></h2>
+                    </div>
+                    <div class="mb-4 section-six-wrapper">
+                        <h6 class="sub-title-main">Testimonials</h6>
+                        <h2 class="title-animation">Real Reviews<span>from Our Customers</span></h2>
+                        <p class="section-six-paragraph">
+                            We pride ourselves on providing high-quality products and an exceptional shopping
+                            experience. Hear directly from our satisfied customers about their purchases, fast
+                            delivery, and excellent customer service.
+                        </p>
+                    </div>
+                    <div class="text-center">
+                        <div class="testimonial-six-rating">
+                            <h6>{{ number_format($avgRating, 1) }}/5 Rating</h6>
+                            <p class="text-center">Based on {{ $totalReviews }} verified purchases & feedback.</p>
                         </div>
                     </div>
                 </div>
+            </div>
             <div class="row align-items-center testimonial-six-frist-row">
                 <div class="col-xl-6 col-lg-6">
                     <div class="row justify-content-center">
                         <div class="col-xl-12">
-                            <div class="testimonial-six-slide position-relative overflow-hidden" data-aos="fade-up">
+                            <div class="overflow-hidden testimonial-six-slide position-relative" data-aos="fade-up">
                                 <div class="testimonial-six-active swiper-container">
                                     <div class="swiper-wrapper">
                                         @forelse($featuredReviews as $review)
@@ -696,7 +793,7 @@
                                                                 <img src="{{ asset('storage/' . $review->reviewer_image) }}"
                                                                     alt="{{ $review->reviewer_name }}">
                                                             @else
-                                                                <div class="d-flex align-items-center justify-content-center bg-primary text-white rounded-circle"
+                                                                <div class="text-white d-flex align-items-center justify-content-center bg-primary rounded-circle"
                                                                     style="width: 60px; height: 60px; font-size: 1.5rem;">
                                                                     {{ strtoupper(substr($review->reviewer_name, 0, 1)) }}
                                                                 </div>
@@ -786,7 +883,7 @@
                 </div>
                 <div class="col-xl-6 col-lg-6 d-none d-lg-block">
                     <div class="testimonial-six-right" data-aos="fade-up">
-                        <div class="section-six-wrapper mb-4">
+                        <div class="mb-4 section-six-wrapper">
                             <h6 class="sub-title-main">Testimonials</h6>
                             <h2 class="title-animation">Real Reviews from Our Customers</h2>
                             <p class="section-six-paragraph">
@@ -807,7 +904,7 @@
             <div class="row">
                 <div class="col-xl-12">
                     @if (!empty($promotional_banners) && $promotional_banners->count() > 0)
-                        <div class="testimonial-six-down-content text-center">
+                        <div class="text-center testimonial-six-down-content">
                             <h3 class="testimonial-six-down-title">
                                 Trusted by 10,000+ Happy Customers
                             </h3>
@@ -816,8 +913,8 @@
                 </div>
                 <div class="col-xl-12">
                     @if (isset($promotional_banners) && $promotional_banners->count() > 0)
-                        <div id="partnersSlider" class="swiper partners-slider mt-4">
-                            <div class="swiper-wrapper mb-4">
+                        <div id="partnersSlider" class="mt-4 swiper partners-slider">
+                            <div class="mb-4 swiper-wrapper">
                                 @foreach ($promotional_banners as $banner)
                                     @if (!empty($banner->image))
                                         <div class="swiper-slide">
@@ -828,20 +925,20 @@
                                                 <a href="{{ $banner->link }}" target="_blank" class="d-block">
                                                     <img src="{{ asset('storage/' . $banner->image) }}"
                                                         @if($hasTitle) alt="{{ $banner->title }}" title="{{ $banner->title }}" @else alt="Partner" @endif
-                                                        class="img-fluid rounded shadow-sm mx-auto"
+                                                        class="mx-auto rounded shadow-sm img-fluid"
                                                         style="width: auto; object-fit: contain;">
                                                 </a>
                                             @else
                                                 <img src="{{ asset('storage/' . $banner->image) }}"
                                                     @if($hasTitle) alt="{{ $banner->title }}" title="{{ $banner->title }}" @else alt="Partner" @endif
-                                                    class="img-fluid rounded shadow-sm mx-auto"
+                                                    class="mx-auto rounded shadow-sm img-fluid"
                                                     style="width: auto; object-fit: contain;">
                                             @endif
                                         </div>
                                     @endif
                                 @endforeach
                             </div>
-                            <div class="swiper-pagination partners-pagination mt-20 mb-8"></div>
+                            <div class="mt-20 mb-8 swiper-pagination partners-pagination"></div>
                         </div>
                     @endif
                 </div>
@@ -849,25 +946,66 @@
         </div>
     </section>
 
+    @if (isset($store_sections) && $store_sections->count() > 0)
+        <section class="py-5 ecosystem-section">
+            <div class="container">
+                <div class="mb-4 row justify-content-center">
+                    <div class="text-center col-lg-8">
+                        <h6 class="sub-title-main"><i class="fa-solid fa-layer-group"></i> Partners</h6>
+                        <h2 class="title-animation">
+                            Part Of <span>{{ config('app.name', 'E-Commerce') }}</span>
+                        </h2>
+                    </div>
+                </div>
+                <div class="position-relative">
+                    <div id="storeSectionSlider" class="swiper ecosystem-slider">
+                        <div class="swiper-wrapper">
+                            @foreach ($store_sections as $section)
+                                <div class="swiper-slide">
+                                    <div class="ecosystem-card">
+                                        @if ($section->link)
+                                            <a href="{{ $section->link }}" class="stretched-link"></a>
+                                        @endif
+                                        <div class="ecosystem-image"
+                                            style="background-image: url('{{ asset('storage/' . $section->image) }}');">
+                                        </div>
+                                        @if ($section->title)
+                                            <div class="ecosystem-card-title">{{ $section->title }}</div>
+                                        @endif
+                                    </div>
+                                </div>
+                            @endforeach
+                        </div>
+                    </div>
+                    <div class="ecosystem-nav ecosystem-prev" aria-label="Previous">
+                        <i class="fa-solid fa-chevron-left"></i>
+                    </div>
+                    <div class="ecosystem-nav ecosystem-next" aria-label="Next">
+                        <i class="fa-solid fa-chevron-right"></i>
+                    </div>
+                </div>
+            </div>
+        </section>
+    @endif
 
 
     <!-- FAQ Section -->
     <section class="faq-eight-area">
         <div class="container">
-                <div class="col-xl-6 col-lg-10 d-block d-xl-none text-center">
-                    <div class="faq-eight-right" data-aos="fade-up" data-aos-duration="1000" data-aos-delay="300">
-                        <div class="section-eight-wrapper mb-0">
-                            <h6 class="sub-title-main">Question & Answer</h6>
-                            <h2 class="title-animation">Frequently Asked Questions</h2>
-                            <p class="section-eight-paragraph mb-2">
-                                Have questions about shopping with us? Find answers to common queries about ordering,
-                                shipping, payments, and returns. If you need more help, our customer support team
-                                is always ready to assist you.
-                            </p>
-                           
-                        </div>
+            <div class="text-center col-xl-6 col-lg-10 d-block d-xl-none">
+                <div class="faq-eight-right" data-aos="fade-up" data-aos-duration="1000" data-aos-delay="300">
+                    <div class="mb-0 section-eight-wrapper">
+                        <h6 class="sub-title-main">Question & Answer</h6>
+                        <h2 class="title-animation">Frequently Asked Questions</h2>
+                        <p class="mb-2 section-eight-paragraph">
+                            Have questions about shopping with us? Find answers to common queries about ordering,
+                            shipping, payments, and returns. If you need more help, our customer support team
+                            is always ready to assist you.
+                        </p>
+
                     </div>
                 </div>
+            </div>
             <div class="row align-items-center">
                 <div class="col-xl-6">
                     <div class="faq-eight-wrapper" data-aos="fade-up" data-aos-duration="1000" data-aos-delay="200">
@@ -942,17 +1080,19 @@
                 </div>
                 <div class="col-xl-6 col-lg-10 d-none d-xl-block">
                     <div class="faq-eight-right" data-aos="fade-up" data-aos-duration="1000" data-aos-delay="300">
-                        <div class="section-eight-wrapper mb-0">
+                        <div class="mb-0 section-eight-wrapper">
                             <h6 class="sub-title-main">Question & Answer</h6>
                             <h2 class="title-animation">Frequently Asked Questions</h2>
-                            <p class="section-eight-paragraph mb-2">
+                            <p class="mb-2 section-eight-paragraph">
                                 Have questions about shopping with us? Find answers to common queries about ordering,
                                 shipping, payments, and returns. If you need more help, our customer support team
                                 is always ready to assist you.
                             </p>
-                            <div class="about-eight-button event-eight-btn d-block d-inline-block mt-3 mb-4">
-                                <a href="{{ route('frontend.contact') }}" class="btn--primary">Contact with Us <i
-                                        class="bx bx-right-arrow-alt"></i></a>
+                            <div class="mt-3 mb-4 d-inline-block">
+                                <a href="{{ route('frontend.contact') }}"
+                                    class="p-2 px-5 btn--primary d-none d-md-inline-block">Contact with Us <i
+                                        class="bx bx-right-arrow-alt"></i>
+                                </a>
                             </div>
 
 
@@ -965,76 +1105,61 @@
     </section>
 
     <!-- Latest Blog Posts Section -->
-    @if($latestBlogs && $latestBlogs->count() > 0)
-    <section class="blog fc-blog py-5 bg-light">
-        <div class="container">
-            <div class="row justify-content-center">
-                <div class="col-xl-6">
-                    <div class="section-six-wrapper text-center" data-aos="fade-up" data-aos-duration="1000" data-aos-delay="200">
-                        <h6 class="sub-title-main"><i class="fa-solid fa-user-graduate"></i>News &amp; Blog</h6>
-                        <h2 class="title-animation mb-5">
-                            <div style="position:relative;display:inline-block;">
-                                <div style="position: relative; display: inline-block; translate: none; rotate: none; scale: none; opacity: 1; visibility: inherit; transform: translate(0px, 0px);">L</div>
-                                <div style="position: relative; display: inline-block; translate: none; rotate: none; scale: none; opacity: 1; visibility: inherit; transform: translate(0px, 0px);">a</div>
-                                <div style="position: relative; display: inline-block; translate: none; rotate: none; scale: none; opacity: 1; visibility: inherit; transform: translate(0px, 0px);">t</div>
-                                <div style="position: relative; display: inline-block; translate: none; rotate: none; scale: none; opacity: 1; visibility: inherit; transform: translate(0px, 0px);">e</div>
-                                <div style="position: relative; display: inline-block; translate: none; rotate: none; scale: none; opacity: 1; visibility: inherit; transform: translate(0px, 0px);">s</div>
-                                <div style="position: relative; display: inline-block; translate: none; rotate: none; scale: none; opacity: 1; visibility: inherit; transform: translate(0px, 0px);">t</div>
-                            </div>
-                            <div style="position:relative;display:inline-block;">
-                                <div style="position: relative; display: inline-block; translate: none; rotate: none; scale: none; opacity: 1; visibility: inherit; transform: translate(0px, 0px);">N</div>
-                                <div style="position: relative; display: inline-block; translate: none; rotate: none; scale: none; opacity: 1; visibility: inherit; transform: translate(0px, 0px);">e</div>
-                                <div style="position: relative; display: inline-block; translate: none; rotate: none; scale: none; opacity: 1; visibility: inherit; transform: translate(0px, 0px);">w</div>
-                                <div style="position: relative; display: inline-block; translate: none; rotate: none; scale: none; opacity: 1; visibility: inherit; transform: translate(0px, 0px);">s</div>
-                            </div>
-                            <div style="position:relative;display:inline-block;">
-                                <div style="position: relative; display: inline-block; translate: none; rotate: none; scale: none; opacity: 1; visibility: inherit; transform: translate(0px, 0px);">&amp;</div>
-                            </div>
-                            <div style="position:relative;display:inline-block;">
-                                <div style="position: relative; display: inline-block; translate: none; rotate: none; scale: none; opacity: 1; visibility: inherit; transform: translate(0px, 0px);">B</div>
-                                <div style="position: relative; display: inline-block; translate: none; rotate: none; scale: none; opacity: 1; visibility: inherit; transform: translate(0px, 0px);">l</div>
-                                <div style="position: relative; display: inline-block; translate: none; rotate: none; scale: none; opacity: 1; visibility: inherit; transform: translate(0px, 0px);">o</div>
-                                <div style="position: relative; display: inline-block; translate: none; rotate: none; scale: none; opacity: 1; visibility: inherit; transform: translate(0px, 0px);">g</div>
-                            </div>
-                        </h2>
+    @if ($latestBlogs && $latestBlogs->count() > 0)
+        <section class="py-5 blog fc-blog bg-light">
+            <div class="container">
+                <div class="row justify-content-center">
+                    <div class="col-xl-6">
+                        <div class="text-center section-six-wrapper" data-aos="fade-up" data-aos-duration="1000"
+                            data-aos-delay="200">
+                            <h6 class="sub-title-main"><i class="fa-solid fa-user-graduate"></i>News &amp; Blog</h6>
+                            <h2 class="mb-5 title-animation">
+                                Latest Articles &amp; News
+                            </h2>
+                        </div>
                     </div>
                 </div>
-            </div>
-            <div class="row">
-                @foreach($latestBlogs as $blog)
-                    <div class="col-12 col-lg-6 col-xl-4">
-                        <div class="blog__single-wrapper" data-aos="fade-up" data-aos-duration="1000">
-                            <div class="blog__single van-tilt">
-                                <div class="blog__single-thumb">
-                                    <a href="{{ route('blog.show', $blog->slug) }}">
-                                        @if($blog->featured_image)
-                                            <img src="{{ asset('storage/' . $blog->featured_image) }}" alt="{{ $blog->title }}">
-                                        @else
-                                            <img src="assets/images/event-1.jpg" alt="{{ $blog->title }}">
-                                        @endif
-                                    </a>
-                                    <div class="tag">
-                                        <span>{{ \Carbon\Carbon::parse($blog->created_at)->format('M') }}</span>
-                                        <span>{{ \Carbon\Carbon::parse($blog->created_at)->format('d') }} / {{ \Carbon\Carbon::parse($blog->created_at)->format('y') }}</span>
-                                    </div>
-                                </div>
-                                <div class="blog__single-inner px-3 py-4">
-                                    <div class="blog__single-content">
-                                        <div class="blog__single-meta mb-0">
-                                            <p><i class="icon-user"></i> {{ $blog->author->name ?? 'Admin' }}</p>
+                <div class="row">
+                    @foreach ($latestBlogs as $blog)
+                        <div class="col-12 col-lg-6 col-xl-4">
+                            <div class="m-3 blog__single-wrapper" data-aos="fade-up" data-aos-duration="1000">
+                                <div class="blog__single van-tilt">
+                                    <div class="blog__single-thumb">
+                                        <a href="{{ route('blog.show', $blog->slug) }}">
+                                            @if ($blog->featured_image)
+                                                <img src="{{ asset('storage/' . $blog->featured_image) }}"
+                                                    alt="{{ $blog->title }}" class="rounded img-fluid w-100"
+                                                    style="height: 220px; object-fit: cover;" loading="lazy">
+                                            @else
+                                                <img src="{{ asset('frontend/assets/images/event-1.jpg') }}"
+                                                    alt="{{ $blog->title }}" class="rounded img-fluid w-100"
+                                                    style="height: 220px; object-fit: cover;" loading="lazy">
+                                            @endif
+                                        </a>
+                                        <div class="tag flex-column" style="color: var(--home-text-color);">
+                                            <span>{{ \Carbon\Carbon::parse($blog->created_at)->format('M') }}</span>
+                                            <span>{{ \Carbon\Carbon::parse($blog->created_at)->format('d') }} </span>
+                                            <span> {{ \Carbon\Carbon::parse($blog->created_at)->format('y') }}</span>
                                         </div>
-                                        <h6 class="blog-title">
-                                            <a href="{{ route('blog.show', $blog->slug) }}">{{ Str::limit($blog->title, 60) }}</a>
-                                        </h6>
+                                    </div>
+                                    <div class="px-3 py-4 blog__single-inner">
+                                        <div class="blog__single-content">
+                                            <div class="mb-0 blog__single-meta">
+                                                <p><i class="icon-user"></i> {{ $blog->author->name ?? 'Admin' }}</p>
+                                            </div>
+                                            <h6 class="blog-title">
+                                                <a
+                                                    href="{{ route('blog.show', $blog->slug) }}">{{ Str::limit($blog->title, 60) }}</a>
+                                            </h6>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                @endforeach
+                    @endforeach
+                </div>
             </div>
-        </div>
-    </section>
+        </section>
     @endif
 @endsection
 
@@ -1162,29 +1287,29 @@
         // Store Sections Slider
         @if (isset($store_sections) && $store_sections->count() > 0)
             document.addEventListener('DOMContentLoaded', function() {
+                const slidesCount = document.querySelectorAll('#storeSectionSlider .swiper-slide').length;
+                const perView576 = Math.min(3, slidesCount);
+                const perView768 = Math.min(4, slidesCount);
+                const perView1024 = Math.min(5, slidesCount);
+                const loopEnabled = slidesCount > 1;
+
                 const storeSectionSlider = new Swiper('#storeSectionSlider', {
-                    loop: true,
+                    loop: loopEnabled,
                     autoplay: {
-                        delay: 3500,
+                        delay: 2500,
                         disableOnInteraction: false,
                     },
                     slidesPerView: 1.2,
                     spaceBetween: 20,
-                    centeredSlides: true,
+                    centeredSlides: false,
                     navigation: {
                         nextEl: '.ecosystem-next',
                         prevEl: '.ecosystem-prev',
                     },
                     breakpoints: {
-                        576: {
-                            slidesPerView: 3
-                        },
-                        768: {
-                            slidesPerView: 4
-                        },
-                        1024: {
-                            slidesPerView: 4
-                        }
+                        576: { slidesPerView: perView576 },
+                        768: { slidesPerView: perView768 },
+                        1024: { slidesPerView: perView1024 }
                     }
                 });
             });

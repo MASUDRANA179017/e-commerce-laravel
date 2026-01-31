@@ -591,114 +591,13 @@
 @endsection
 
 @push('scripts')
-<script>
-document.addEventListener("DOMContentLoaded", function() {
-    // Check if jQuery is loaded
-    if (typeof jQuery === 'undefined') {
-        console.error('jQuery is not loaded!');
-        alert('Critical Error: jQuery is missing. The product table cannot load.');
-        return;
-    }
-
-    // Check if DataTables is loaded
-    if (!$.fn.DataTable) {
-        console.error('DataTables is not loaded!');
-        alert('Critical Error: DataTables library is missing.');
-        return;
-    }
-
-    console.log('Initializing Server-Side DataTable...');
-    
-    // Global error handler for DataTables to prevent alerts
-    $.fn.dataTable.ext.errMode = 'none';
-    $('#productsTable').on('error.dt', function(e, settings, techNote, message) {
-        console.error('DataTables Error:', message);
-        toastr.error('Failed to load product data. Please check console for details.');
-    });
-    
-    // Log the URL we are trying to hit
-    const ajaxUrl = "{{ route('admin.product.all.data') }}";
-    console.log('DataTables AJAX URL:', ajaxUrl);
-
-    var table = $('#productsTable')
-        .DataTable({
-            processing: true,
-            serverSide: true,
-            ajax: {
-                url: ajaxUrl,
-                type: 'GET',
-                data: function(d) {
-                    d.type = 'datatable';
-                },
-                headers: {
-                    'X-Requested-With': 'XMLHttpRequest'
-                },
-                error: function(xhr, error, thrown) {
-                    console.error('DataTables Ajax Error Response:', xhr.responseText);
-                    console.error('DataTables Ajax Error Status:', xhr.status);
-                    console.error('DataTables Ajax Error:', error);
-                    toastr.error('Server error loading products: ' + (xhr.statusText || error));
-                }
-            },
-            responsive: true,
-            width: "100%",
-            language: {
-                search: "",
-                searchPlaceholder: "Search products...",
-                emptyTable: "No products found",
-                zeroRecords: "No matching products found",
-                processing: '<div class="spinner-border text-primary" role="status"><span class="visually-hidden">Loading...</span></div>'
-            },
-            columns: [
-                { data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false },
-                { data: 'product_info', name: 'title' },
-                { data: 'price', name: 'price' },
-                { data: 'brand_name', name: 'brand.name', orderable: false },
-                { data: 'category_name', name: 'category_name', orderable: false, searchable: false },
-                { data: 'status', name: 'status', orderable: false, searchable: false },
-                { data: 'media', name: 'media', orderable: false, searchable: false },
-                { data: 'action', name: 'action', orderable: false, searchable: false }
-            ],
-            dom: '<"top"l>rt<"bottom d-flex justify-content-between align-items-center"ip><"clear">',
-            order: [[1, 'asc']]
-        });
-
-    // Custom search
-    $('#productTitleSearch').on('keyup', function() {
-        table.search(this.value).draw();
-    });
-
-    // Status Toggle Handler
-    $(document).on('change', '.toggle-status', function() {
-        let isChecked = $(this).is(':checked');
-        let status = isChecked ? 'active' : 'inactive';
-        let productId = $(this).data('id');
-        let $toggle = $(this);
-        
-        // Disable to prevent multiple clicks
-        $toggle.prop('disabled', true);
-
-        $.ajax({
-            url: `/admin/product/${productId}/update-status`,
-            type: 'POST',
-            data: {
-                status: status,
-                _token: $('meta[name="csrf-token"]').attr('content')
-            },
-            success: function(response) {
-                $toggle.prop('disabled', false);
-                if (response.ok) {
-                    toastr.success(response.message);
-                } else {
-                    toastr.error(response.message || 'Update failed');
-                    $toggle.prop('checked', !isChecked); // Revert
-                }
-            },
-            error: function(xhr) {
-                $toggle.prop('disabled', false);
-                console.error('Status Update Error:', xhr);
-                toastr.error('Connection error. Please try again.');
-                $toggle.prop('checked', !isChecked); // Revert
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            // Check if jQuery is loaded
+            if (typeof jQuery === 'undefined') {
+                console.error('jQuery is not loaded!');
+                alert('Critical Error: jQuery is missing. The product table cannot load.');
+                return;
             }
 
             // Check if DataTables is loaded
@@ -1149,12 +1048,14 @@ document.addEventListener("DOMContentLoaded", function() {
                                                                                                                                                                                                                                                             `).join('')}
                             </div>
                         `;
-                    }
-                    
-                    let priceHtml = '';
-                    if (p.sale_price && p.sale_price < p.price) {
-                        const discountPercent = Math.round((1 - p.sale_price / p.price) * 100);
-                        priceHtml = `
+                            }
+
+                            let priceHtml = '';
+                            if (p.sale_price && p.sale_price < p.price) {
+                                const discountPercent = Math.round((1 - p.sale_price / p
+                                        .price) *
+                                    100);
+                                priceHtml = `
                             <span class="product-price-current">৳${parseFloat(p.sale_price).toLocaleString()}</span>
                             <span class="product-price-original">৳${parseFloat(p.price).toLocaleString()}</span>
                             <span class="product-price-discount">${discountPercent}% OFF</span>

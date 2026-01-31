@@ -15,11 +15,11 @@ class WishlistController extends Controller
     public function index()
     {
         $wishlistItems = session()->get('wishlist', []);
-        
+
         // Get product details for wishlist items
         $productIds = array_keys($wishlistItems);
         $products = collect();
-        
+
         if (!empty($productIds)) {
             $products = Product::whereIn('id', $productIds)
                 ->with(['images', 'brand', 'variants'])
@@ -46,7 +46,7 @@ class WishlistController extends Controller
             // Remove from wishlist
             unset($wishlist[$productId]);
             session()->put('wishlist', $wishlist);
-            
+
             if ($request->ajax() || $request->expectsJson()) {
                 return response()->json([
                     'success' => true,
@@ -55,7 +55,7 @@ class WishlistController extends Controller
                     'wishlistCount' => count($wishlist),
                 ]);
             }
-            
+
             return back()->with('success', 'Product removed from wishlist!');
         }
 
@@ -128,15 +128,8 @@ class WishlistController extends Controller
      */
     public function moveToCart(Request $request, $productId)
     {
-        // Get product
-        $product = DB::table('products')
-            ->leftJoin('product_images', function ($join) {
-                $join->on('products.id', '=', 'product_images.product_id')
-                    ->where('product_images.is_cover', true);
-            })
-            ->where('products.id', $productId)
-            ->select('products.*', 'product_images.path as cover_image')
-            ->first();
+        // Get product using Eloquent
+        $product = \App\Models\Product::with('coverImage')->find($productId);
 
         if (!$product) {
             return response()->json(['success' => false, 'message' => 'Product not found'], 404);
@@ -145,13 +138,30 @@ class WishlistController extends Controller
         // Add to cart
         $cart = session()->get('cart', []);
         $rowId = 'product_' . $product->id;
-        $price = $product->sale_price && $product->sale_price < $product->price 
-            ? $product->sale_price 
-            : $product->price;
+
+        // Determine price
+        $price = $product->effective_price;
+
+        // Check for active flash sale
+        if ($product->active_flash_sale) {
+             $flashSale = $product->active_flash_sale;
+             $pivot = $flashSale->pivot;
+             if ($pivot->stock_limit === null || $pivot->sold_count < $pivot->stock_limit) {
+                 if ($pivot->flash_price !== null && $pivot->flash_price > 0) {
+                     $price = $pivot->flash_price;
+                 } elseif ($flashSale->discount_percent > 0) {
+                      // Fallback calculation
+                      $price = $product->price - ($product->price * $flashSale->discount_percent / 100);
+                      $price = max(0, $price);
+                 }
+             }
+        }
 
         if (isset($cart[$rowId])) {
             $cart[$rowId]['qty'] += 1;
         } else {
+            $imagePath = $product->coverImage ? $product->coverImage->path : null;
+
             $cart[$rowId] = [
                 'id' => $product->id,
                 'name' => $product->title,
@@ -159,7 +169,7 @@ class WishlistController extends Controller
                 'original_price' => $product->price ?? 0,
                 'qty' => 1,
                 'options' => [
-                    'image' => $product->cover_image ?? null,
+                    'image' => $imagePath,
                     'slug' => $product->slug ?? $product->id,
                     'variant' => null,
                     'sku' => $product->sku ?? null,

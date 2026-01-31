@@ -26,6 +26,14 @@
                 <span class="menu-title-text">Core Business</span>
             </li>
 
+            <!-- POS System -->
+            <li class="menu-item {{ request()->routeIs('admin.pos.*') ? 'active' : '' }}">
+                <a href="{{ route('admin.pos.index') }}" class="menu-link">
+                    <span class="material-symbols-outlined menu-icon">point_of_sale</span>
+                    <span class="title">POS System</span>
+                </a>
+            </li>
+
             <!-- Orders -->
             <li class="menu-item {{ request()->routeIs('admin.orders.*') ? 'open active' : '' }}">
                 <a href="javascript:void(0);" class="menu-link menu-toggle">
@@ -123,7 +131,7 @@
                     <li class="menu-item {{ request()->routeIs('admin.customers.index') ? 'active' : '' }}">
                         <a href="{{ route('admin.customers.index') }}" class="menu-link">All Customers</a>
                     </li>
-                   
+
                 </ul>
             </li>
 
@@ -166,11 +174,20 @@
                     <li class="menu-item {{ request()->routeIs('admin.storefront.menus') ? 'active' : '' }}">
                         <a href="{{ route('admin.storefront.menus') }}" class="menu-link">Navigation Menus</a>
                     </li>
+                    <li class="menu-item {{ request()->routeIs('admin.storefront.common-images') ? 'active' : '' }}">
+                        <a href="{{ route('admin.storefront.common-images') }}" class="menu-link">Common Images</a>
+                    </li>
                     <li class="menu-item {{ request()->routeIs('admin.blogs.index') ? 'active' : '' }}">
                         <a href="{{ route('admin.blogs.index') }}" class="menu-link">Blog Management</a>
                     </li>
                     <li class="menu-item {{ request()->routeIs('admin.storefront.banners') ? 'active' : '' }}">
                         <a href="{{ route('admin.storefront.banners') }}" class="menu-link">Banners & Sliders</a>
+                    </li>
+                    <li class="menu-item {{ request()->routeIs('admin.storefront.ads-sections') ? 'active' : '' }}">
+                        <a href="{{ route('admin.storefront.ads-sections') }}" class="menu-link">Ads Sections</a>
+                    </li>
+                    <li class="menu-item {{ request()->routeIs('admin.storefront.faqs.*') ? 'active' : '' }}">
+                        <a href="{{ route('admin.storefront.faqs.index') }}" class="menu-link">FAQ Management</a>
                     </li>
                     <li class="menu-item">
                         <a href="{{ route('admin.settings.index') }}#seo" class="menu-link">SEO Setup</a>

@@ -38,74 +38,127 @@
                 <h5 class="mb-0 fw-bold">{{ ucfirst($active ?? 'main') }} Menu Items</h5>
                 <span class="text-muted small">Editing: {{ $active ?? 'main' }}</span>
             </div>
-            <form action="{{ route('admin.storefront.menus.update', $active ?? 'main') }}" method="POST">
+            <form action="{{ route('admin.storefront.menus.update', $active ?? 'main') }}" method="POST" enctype="multipart/form-data">
                 @csrf
                 @method('PUT')
                 <div class="card-body">
-                    <div class="menu-items">
-                        @php $items = $menus[$active ?? 'main'] ?? []; @endphp
-                        @foreach($items as $i => $item)
-                        <div class="p-3 bg-light rounded mb-2">
-                            <div class="row g-2 align-items-center">
-                                <div class="col-md-5">
-                                    <input type="text" class="form-control" name="label[]" value="{{ $item['label'] ?? '' }}" placeholder="Label">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <h6 class="mb-2">Menu Items</h6>
+                                    <button type="button" class="create-btn-white btn-sm" id="btnAddItem">Add New Item</button>
                                 </div>
-                                <div class="col-md-7">
-                                    <input type="text" class="form-control" name="url[]" value="{{ $item['url'] ?? '' }}" placeholder="URL or route-generated link">
+                                <div class="menu-items">
+                                    @php
+                                        $itemsTree = $menus[$active ?? 'main'] ?? [];
+                                        $flat = [];
+                                        $flatten = function($list, $d = 0) use (&$flat, &$flatten) {
+                                            foreach ($list as $it) {
+                                                $flat[] = [
+                                                    'label' => $it['label'] ?? '',
+                                                    'url' => $it['url'] ?? '',
+                                                    'image' => $it['image'] ?? null,
+                                                    'depth' => $d
+                                                ];
+                                                if (isset($it['children']) && is_array($it['children'])) {
+                                                    $flatten($it['children'], $d + 1);
+                                                }
+                                            }
+                                        };
+                                        $flatten($itemsTree, 0);
+                                    @endphp
+                                    @foreach($flat as $i => $item)
+                                    <div class="p-3 bg-light rounded mb-2 menu-item-row" style="margin-left: {{ (int)($item['depth'] ?? 0) * 24 }}px; border-left: 2px solid #e5e7eb;">
+                                        <div class="row g-2 align-items-center">
+                                            <div class="col-auto">
+                                                <button type="button" class="btn btn-sm drag-handle" title="Drag" style="cursor:grab">
+                                                    <span class="material-symbols-outlined fs-14">drag_indicator</span>
+                                                </button>
+                                            </div>
+                                            <div class="col-4">
+                                                <input type="text" class="form-control" name="label[]" value="{{ $item['label'] ?? '' }}" placeholder="Label">
+                                            </div>
+                                            <div class="col-6">
+                                                <input type="text" class="form-control" name="url[]" value="{{ $item['url'] ?? '' }}" placeholder="URL">
+                                                <input type="hidden" name="depth[]" value="{{ (int)($item['depth'] ?? 0) }}" class="depth-input">
+                                            </div>
+                                        </div>
+                                        <div class="d-flex justify-content-end mt-2 gap-2">
+                                            <button type="button" class="btn btn-sm btn-outline-secondary btnOutdent" title="Outdent">
+                                                <span class="material-symbols-outlined fs-14">chevron_left</span>
+                                            </button>
+                                            <button type="button" class="btn btn-sm btn-outline-secondary btnIndent" title="Indent">
+                                                <span class="material-symbols-outlined fs-14">chevron_right</span>
+                                            </button>
+                                            <button type="button" class="action-btn-danger btn-sm btnRemoveItem" title="Remove">
+                                                <span class="material-symbols-outlined fs-14">delete</span>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    @endforeach
                                 </div>
                             </div>
                         </div>
-                        @endforeach
-                        @for($j=0;$j<3;$j++)
-                        <div class="p-3 bg-light rounded mb-2">
-                            <div class="row g-2 align-items-center">
-                                <div class="col-md-5">
-                                    <input type="text" class="form-control" name="label[]" value="" placeholder="Label">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <h6 class="mb-2">Available Pages</h6>
+                                    <button type="button" class="create-btn-white btn-sm" id="btnAddAllPages">Add All</button>
                                 </div>
-                                <div class="col-md-7">
-                                    <input type="text" class="form-control" name="url[]" value="" placeholder="URL or route-generated link">
+                                <div class="list-group small">
+                                    @foreach(($pages ?? []) as $pg)
+                                    <button type="button" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center btnAddPage" data-label="{{ $pg['label'] }}" data-url="{{ $pg['url'] }}">
+                                        <span>{{ $pg['label'] }}</span>
+                                        <span class="text-muted">{{ $pg['url'] }}</span>
+                                    </button>
+                                    @endforeach
+                                    @if(empty($pages) || count($pages) === 0)
+                                    <div class="small-muted">No pages found. Create pages in Page Builder.</div>
+                                    @endif
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <h6 class="mb-2">Product Categories</h6>
+                                    <button type="button" class="create-btn-white btn-sm" id="btnAddAllCats">Add All</button>
+                                </div>
+                                <div class="list-group small">
+                                    @php
+                                        $renderCats = function($cats, $indent = 0) use (&$renderCats) {
+                                            foreach($cats as $c){
+                                                echo '<button type="button" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center btnAddCat" data-label="'.e($c['label']).'" data-url="'.e($c['url']).'">';
+                                                echo '<span style="padding-left:'.(12*$indent).'px">'.e($c['label']).'</span>';
+                                                echo '<span class="text-muted">'.e($c['url']).'</span>';
+                                                echo '</button>';
+                                                if (!empty($c['children'])) {
+                                                    $renderCats($c['children'], $indent + 1);
+                                                }
+                                            }
+                                        };
+                                    @endphp
+                                    @if(!empty($categories) && count($categories) > 0)
+                                        @php $renderCats($categories, 0); @endphp
+                                    @else
+                                        <div class="small-muted">No categories found.</div>
+                                    @endif
                                 </div>
                             </div>
                         </div>
-                        @endfor
                     </div>
                 </div>
                 <div class="card-footer bg-white d-flex justify-content-between">
                     <button type="submit" class="create-btn-base">Save Menu</button>
-                    <form action="{{ route('admin.storefront.menus.destroy', $active ?? 'main') }}" method="POST" onsubmit="return confirm('Delete this menu?')">
-                        @csrf
-                        @method('DELETE')
-                        <button type="submit" class="action-btn-danger">Delete Menu</button>
-                    </form>
+                    <button type="button" class="action-btn-danger" onclick="if(confirm('Delete this menu?')) document.getElementById('deleteMenuForm').submit();">Delete Menu</button>
                 </div>
+            </form>
+            <form id="deleteMenuForm" action="{{ route('admin.storefront.menus.destroy', $active ?? 'main') }}" method="POST" style="display:none;">
+                @csrf
+                @method('DELETE')
             </form>
         </div>
     </div>
 </div>
-
-<div class="modal fade" id="createMenuModal" tabindex="-1" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title">Create Menu</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <form action="{{ route('admin.storefront.menus.store') }}" method="POST">
-        @csrf
-        <div class="modal-body">
-          <div class="mb-3">
-            <label class="form-label">Menu Name</label>
-            <input type="text" name="name" class="form-control" placeholder="e.g. Main, Footer, Mobile" required>
-          </div>
-        </div>
-        <div class="modal-footer">
-          <button type="submit" class="create-btn-base">Create</button>
-        </div>
-      </form>
-    </div>
-  </div>
-  </div>
-@endsection
 
 <div class="modal fade" id="createMenuModal" tabindex="-1" aria-hidden="true">
   <div class="modal-dialog">
@@ -141,7 +194,36 @@
             const wrap = document.querySelector('.menu-items');
             const div = document.createElement('div');
             div.className = 'p-3 bg-light rounded mb-2 menu-item-row';
-            div.innerHTML = '<div class="row g-2 align-items-center"><div class="col-auto"><button type="button" class="btn btn-sm drag-handle" title="Drag" style="cursor:grab"><span class="material-symbols-outlined fs-14">drag_indicator</span></button></div><div class="col-5"><input type="text" class="form-control" name="label[]" value="'+(label||'')+'" placeholder="Label"></div><div class="col-7"><input type="text" class="form-control" name="url[]" value="'+(url||'')+'" placeholder="URL"><input type="hidden" name="depth[]" value="0" class="depth-input"></div></div><div class="d-flex justify-content-end mt-2 gap-2"><button type="button" class="btn btn-sm btn-outline-secondary btnOutdent" title="Outdent"><span class="material-symbols-outlined fs-14">chevron_left</span></button><button type="button" class="btn btn-sm btn-outline-secondary btnIndent" title="Indent"><span class="material-symbols-outlined fs-14">chevron_right</span></button><button type="button" class="action-btn-danger btn-sm btnRemoveItem" title="Remove"><span class="material-symbols-outlined fs-14">delete</span></button></div>';
+            div.innerHTML = `
+                <div class="row g-2 align-items-center">
+                    <div class="col-auto">
+                        <button type="button" class="btn btn-sm drag-handle" title="Drag" style="cursor:grab">
+                            <span class="material-symbols-outlined fs-14">drag_indicator</span>
+                        </button>
+                    </div>
+                    <div class="col-4">
+                        <input type="text" class="form-control" name="label[]" value="${label||''}" placeholder="Label">
+                    </div>
+                    <div class="col-4">
+                        <input type="text" class="form-control" name="url[]" value="${url||''}" placeholder="URL">
+                        <input type="hidden" name="depth[]" value="0" class="depth-input">
+                    </div>
+                    <div class="col-3">
+                        <input type="hidden" name="existing_image[]" value="">
+                        <input type="file" class="form-control form-control-sm" name="image[]" accept="image/*">
+                    </div>
+                </div>
+                <div class="d-flex justify-content-end mt-2 gap-2">
+                    <button type="button" class="btn btn-sm btn-outline-secondary btnOutdent" title="Outdent">
+                        <span class="material-symbols-outlined fs-14">chevron_left</span>
+                    </button>
+                    <button type="button" class="btn btn-sm btn-outline-secondary btnIndent" title="Indent">
+                        <span class="material-symbols-outlined fs-14">chevron_right</span>
+                    </button>
+                    <button type="button" class="action-btn-danger btn-sm btnRemoveItem" title="Remove">
+                        <span class="material-symbols-outlined fs-14">delete</span>
+                    </button>
+                </div>`;
             wrap.appendChild(div);
             bindRemoveButtons();
             bindIndentControls();

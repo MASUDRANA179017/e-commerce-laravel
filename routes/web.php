@@ -95,7 +95,6 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::put('units/update/{id}', [UnitController::class, 'update'])->name('units.update');
     Route::delete('units/delete/{id}', [UnitController::class, 'destroy'])->name('units.delete');
     Route::post('units/toggle-status/{id}', [UnitController::class, 'toggleStatus'])->name('units.toggleStatus');
-<<<<<<< HEAD
 });
 
 // Product Reviews Management
@@ -106,8 +105,6 @@ Route::prefix('admin')->name('admin.')->middleware(['auth'])->group(function () 
     Route::post('reviews/{id}/toggle-featured', [\App\Http\Controllers\Admin\ReviewController::class, 'toggleFeatured'])->name('reviews.toggleFeatured');
     Route::post('reviews/{id}/update-image', [\App\Http\Controllers\Admin\ReviewController::class, 'updateImage'])->name('reviews.updateImage');
     Route::delete('reviews/{id}', [\App\Http\Controllers\Admin\ReviewController::class, 'destroy'])->name('reviews.destroy');
-=======
->>>>>>> f431259c65586d75c73ed04433c01a2b81381b9d
 });
 
 require __DIR__.'/auth.php';

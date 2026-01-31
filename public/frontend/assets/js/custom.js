@@ -1021,39 +1021,41 @@
       setClock();
 
       const countdownElement = document.querySelector(".time-countdown");
-      const dayElement = countdownElement.querySelector(".day");
-      const hourElement = countdownElement.querySelector(".hour");
-      const minuteElement = countdownElement.querySelector(".minute");
-      const secondElement = countdownElement.querySelector(".second");
+      if (countdownElement) {
+          const dayElement = countdownElement.querySelector(".day");
+          const hourElement = countdownElement.querySelector(".hour");
+          const minuteElement = countdownElement.querySelector(".minute");
+          const secondElement = countdownElement.querySelector(".second");
 
-      const endDate = new Date();
-      endDate.setDate(endDate.getDate() + 100);
-
-      function updateCountdown() {
-        const now = new Date();
-        const timeRemaining = endDate - now;
-
-        if (timeRemaining <= 0) {
+          const endDate = new Date();
           endDate.setDate(endDate.getDate() + 100);
-        }
 
-        const days = Math.floor(timeRemaining / (1000 * 60 * 60 * 24));
-        const hours = Math.floor(
-          (timeRemaining % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
-        );
-        const minutes = Math.floor(
-          (timeRemaining % (1000 * 60 * 60)) / (1000 * 60)
-        );
-        const seconds = Math.floor((timeRemaining % (1000 * 60)) / 1000);
+          function updateCountdown() {
+            const now = new Date();
+            const timeRemaining = endDate - now;
 
-        dayElement.textContent = days;
-        hourElement.textContent = hours < 10 ? `0${hours}` : hours;
-        minuteElement.textContent = minutes < 10 ? `0${minutes}` : minutes;
-        secondElement.textContent = seconds < 10 ? `0${seconds}` : seconds;
+            if (timeRemaining <= 0) {
+              endDate.setDate(endDate.getDate() + 100);
+            }
+
+            const days = Math.floor(timeRemaining / (1000 * 60 * 60 * 24));
+            const hours = Math.floor(
+              (timeRemaining % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
+            );
+            const minutes = Math.floor(
+              (timeRemaining % (1000 * 60 * 60)) / (1000 * 60)
+            );
+            const seconds = Math.floor((timeRemaining % (1000 * 60)) / 1000);
+
+            if(dayElement) dayElement.textContent = days;
+            if(hourElement) hourElement.textContent = hours < 10 ? `0${hours}` : hours;
+            if(minuteElement) minuteElement.textContent = minutes < 10 ? `0${minutes}` : minutes;
+            if(secondElement) secondElement.textContent = seconds < 10 ? `0${seconds}` : seconds;
+          }
+
+          setInterval(updateCountdown, 1000);
+          updateCountdown();
       }
-
-      setInterval(updateCountdown, 1000);
-      updateCountdown();
     }
 
     /**
@@ -1563,7 +1565,7 @@
         slidesPerView: 1,
         centeredSlides: true,
         spaceBetween: 24,
-  
+
         autoplay: {
           delay: 2000,
           disableOnInteraction: false,
@@ -1662,7 +1664,7 @@
       });
     }
 
-	  //  Home 8  Maquee 
+	  //  Home 8  Maquee
     var slider = new Swiper('.maquee-eight-active', {
       slidesPerView: "auto",
       spaceBetween: 65,
@@ -1690,25 +1692,101 @@
     });
   });
 
+    /**
+     * ======================================
+     * 43. Flash Sale Countdown
+     * ======================================
+     */
+    $(document).ready(function() {
+        // Run immediately if elements exist
+        if ($("#flashSaleCountdown, #flashSaleCountdownDesktop, .flash-sale-countdown").length > 0) {
+            function updateFlashSaleTimer() {
+                const now = new Date().getTime();
+                const pad = (n) => (n < 10 ? "0" + n : n);
+
+                // Generic Class (Product Details, etc.)
+                $(".flash-sale-countdown").each(function() {
+                    let container = $(this);
+                    let endTimeAttr = container.attr("data-end-time");
+
+                    if (endTimeAttr) {
+                        let endTime = parseInt(endTimeAttr);
+                        let distance = endTime - now;
+
+                        if (distance >= 0) {
+                            container.find(".fs-days").text(pad(Math.floor(distance / (1000 * 60 * 60 * 24))));
+                            container.find(".fs-hours").text(pad(Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))));
+                            container.find(".fs-minutes").text(pad(Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60))));
+                            container.find(".fs-seconds").text(pad(Math.floor((distance % (1000 * 60)) / 1000)));
+                        } else {
+                            container.html('<span class="text-danger fw-bold">Ended</span>');
+                        }
+                    }
+                });
+
+                // Home Page Mobile
+                const mobileContainer = $("#flashSaleCountdown");
+                if (mobileContainer.length > 0) {
+                    let endTime = parseInt(mobileContainer.attr("data-end-time"));
+                    let distance = endTime - now;
+                    if (distance >= 0) {
+                        mobileContainer.find("#fs-days").text(pad(Math.floor(distance / (1000 * 60 * 60 * 24))));
+                        mobileContainer.find("#fs-hours").text(pad(Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))));
+                        mobileContainer.find("#fs-minutes").text(pad(Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60))));
+                        mobileContainer.find("#fs-seconds").text(pad(Math.floor((distance % (1000 * 60)) / 1000)));
+                    } else {
+                         mobileContainer.html('<div class="text-center text-white"><h5>Ended</h5></div>');
+                    }
+                }
+
+                // Home Page Desktop
+                const desktopContainer = $("#flashSaleCountdownDesktop");
+                if (desktopContainer.length > 0) {
+                    let endTime = parseInt(desktopContainer.attr("data-end-time"));
+                    let distance = endTime - now;
+                    if (distance >= 0) {
+                        desktopContainer.find("#fs-days-desktop").text(pad(Math.floor(distance / (1000 * 60 * 60 * 24))));
+                        desktopContainer.find("#fs-hours-desktop").text(pad(Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))));
+                        desktopContainer.find("#fs-minutes-desktop").text(pad(Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60))));
+                        desktopContainer.find("#fs-seconds-desktop").text(pad(Math.floor((distance % (1000 * 60)) / 1000)));
+                    } else {
+                         desktopContainer.html('<div class="text-center text-white"><h5>Ended</h5></div>');
+                    }
+                }
+            }
+
+            // Start interval
+            setInterval(updateFlashSaleTimer, 1000);
+            // Initial call
+            updateFlashSaleTimer();
+        }
+    });
+
+
+
+
+
 
   // Home 8  Countdown
   (function () {
-    const second = 1000, minute = second * 60, hour = minute * 60, day = hour * 24;
-    let now = new Date(), year = now.getFullYear(), birthday = new Date(`09/30/${year}`);
-    if (now > birthday) birthday = new Date(`09/30/${year + 1}`);
-    const x = setInterval(() => {
-      const distance = birthday - new Date();
-      if (distance < 0) {
-        document.getElementById("headline").innerText = "It's my birthday!";
-        document.getElementById("countdown").style.display = "none";
-        document.getElementById("content").style.display = "block";
-        return clearInterval(x);
-      }
-      document.getElementById("days").innerText = Math.floor(distance / day);
-      document.getElementById("hours").innerText = Math.floor((distance % day) / hour);
-      document.getElementById("minutes").innerText = Math.floor((distance % hour) / minute);
-      document.getElementById("seconds").innerText = Math.floor((distance % minute) / second);
-    }, 1000);
+    if (document.getElementById("headline") && document.getElementById("countdown")) {
+        const second = 1000, minute = second * 60, hour = minute * 60, day = hour * 24;
+        let now = new Date(), year = now.getFullYear(), birthday = new Date(`09/30/${year}`);
+        if (now > birthday) birthday = new Date(`09/30/${year + 1}`);
+        const x = setInterval(() => {
+        const distance = birthday - new Date();
+        if (distance < 0) {
+            document.getElementById("headline").innerText = "It's my birthday!";
+            document.getElementById("countdown").style.display = "none";
+            document.getElementById("content").style.display = "block";
+            return clearInterval(x);
+        }
+        if(document.getElementById("days")) document.getElementById("days").innerText = Math.floor(distance / day);
+        if(document.getElementById("hours")) document.getElementById("hours").innerText = Math.floor((distance % day) / hour);
+        if(document.getElementById("minutes")) document.getElementById("minutes").innerText = Math.floor((distance % hour) / minute);
+        if(document.getElementById("seconds")) document.getElementById("seconds").innerText = Math.floor((distance % minute) / second);
+        }, 1000);
+    }
   })();
 
 
@@ -1747,33 +1825,24 @@
 
   // Home 8 team js
   var slider = new Swiper('.ministrie-eight-active', {
-		slidesPerView: "auto",
+		slidesPerView: 2,
 		spaceBetween: 30,
 		loop: true,
 		speed: 2500,
 		autoplay: true,
-		centeredSlides: true,
+		centeredSlides: false,
 		breakpoints: {
-			'1600': {
-				slidesPerView: 2.9,
-			},
-			'1400': {
-				slidesPerView: 2.3,
-			},
 			'1200': {
-				slidesPerView: 2.1,
+				slidesPerView: 4,
 			},
 			'992': {
-				slidesPerView: 1.8,
+				slidesPerView: 3,
 			},
 			'768': {
-				slidesPerView: 1.6,
-			},
-			'576': {
-				slidesPerView: 1.2,
+				slidesPerView: 3,
 			},
 			'0': {
-				slidesPerView: 1,
+				slidesPerView: 2,
 			},
 		},
 		// pagination
@@ -1813,7 +1882,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 </div>
             </div>
         </div>
-        <div class="row justify-content-center mt-3">
+        <div class="mt-3 row justify-content-center">
             <div class="col-md-6">
                 <div class="form-check">
                     <input class="form-check-input" type="checkbox" value="" required>
@@ -1862,7 +1931,7 @@ document.addEventListener('DOMContentLoaded', function () {
     // Set initial spam question for all forms
     document.querySelectorAll('#payment-tab-content form').forEach(form => {
         setSpamQuestion(form);
-        
+
         // Add submit validation
         form.addEventListener('submit', function(e) {
             const spamAnswer = parseInt(this.dataset.spamAnswer, 10);
@@ -1917,7 +1986,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 </div>
             </div>
         </div>
-        <div class="row justify-content-center mt-3">
+        <div class="mt-3 row justify-content-center">
             <div class="col-md-6">
                 <div class="form-check">
                     <input class="form-check-input" type="checkbox" value="" required>
@@ -1925,7 +1994,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 </div>
             </div>
         </div>
-        <div class="mt-4 text-center border-top pt-2 gap-3">
+        <div class="gap-3 pt-2 mt-4 text-center border-top">
             <button type="button" class="w-30 qbit-btn qbit-btn-light-warning btn-lg" data-bs-dismiss="modal"><i class="bx bx-x-circle me-2"></i>Cancel</button>
             <button type="submit" class="w-30 qbit-btn qbit-btn-light-success btn-lg"><i class='bx bx-dollar-circle me-2'></i>Proceed to Payment</button>
         </div>

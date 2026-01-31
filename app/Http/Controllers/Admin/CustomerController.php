@@ -4,16 +4,26 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Customer;
+use App\Models\Order;
+use App\Models\Admin\Brand\Brand;
+use App\Models\User;
+use Illuminate\Support\Facades\DB;
+use Carbon\Carbon;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 use Yajra\DataTables\Facades\DataTables;
 
 class CustomerController extends Controller
 {
     public function index()
     {
-        // Get all customers
         $customers = Customer::orderBy('created_at', 'desc')->paginate(20);
-        return view('admin.customers.index', compact('customers'));
+        $newThisMonth = Customer::whereMonth('created_at', Carbon::now()->month)->whereYear('created_at', Carbon::now()->year)->count();
+        $withOrders = Order::whereNotNull('user_id')->distinct('user_id')->count();
+        $brandsCount = Brand::count();
+        return view('admin.customers.index', compact('customers', 'newThisMonth', 'withOrders', 'brandsCount'));
     }
 
     public function getData(Request $request)
@@ -33,7 +43,7 @@ class CustomerController extends Controller
             ->addColumn('actions', function ($c) {
                 $view = '<a href="' . route('admin.customers.show', $c->id) . '" class="action-btn-info" title="View Details"><i class="fas fa-eye"></i></a> ';
                 $view .= '<a href="#" class="action-btn-success btn-edit" data-id="' . $c->id . '" title="Edit"><i class="fas fa-edit"></i></a> ';
-                $view .= '<form action="' . route('admin.customers.destroy', $c->id) . '" method="POST" class="delete-customer-form" style="display:inline-block;">' . csrf_field() . method_field('DELETE') . '<button type="submit" class="action-btn-danger btn-delete btn btn-link p-0" title="Delete"><i class="fas fa-trash"></i></button></form>';
+                $view .= '<form action="' . route('admin.customers.destroy', $c->id) . '" method="POST" class="delete-customer-form" style="display:inline-block;">' . csrf_field() . method_field('DELETE') . '<button type="submit" class="p-0 action-btn-danger btn-delete btn btn-link" title="Delete"><i class="fas fa-trash"></i></button></form>';
                 return $view;
             })
             ->rawColumns(['actions'])
@@ -73,7 +83,7 @@ class CustomerController extends Controller
         ];
 
         if ($request->filled('password')) {
-            $data['password'] = \Hash::make($request->password);
+            $data['password'] = Hash::make($request->password);
         }
 
         Customer::create($data);
@@ -86,7 +96,7 @@ class CustomerController extends Controller
 
     public function show($customer)
     {
-        $customer = User::findOrFail($customer);
+        $customer = Customer::findOrFail($customer);
         if (request()->wantsJson() || request()->ajax()) {
             return response()->json(['customer' => $customer]);
         }
@@ -117,7 +127,7 @@ class CustomerController extends Controller
         $data['is_active'] = $request->has('is_active') ? 1 : 0;
 
         if ($request->filled('password')) {
-            $data['password'] = \Hash::make($request->password);
+            $data['password'] = Hash::make($request->password);
         }
 
         $cust->update($data);
@@ -167,7 +177,7 @@ class CustomerController extends Controller
     }
        public function login(Request $request)
     {
-        log::info('Customer login attempt', ['email' => $request->input('email')]);
+        Log::info('Customer login attempt', ['email' => $request->input('email')]);
         $credentials = $request->validate([
             'email' => 'required|email',
             'password' => 'required'

@@ -9,6 +9,7 @@ use App\Models\Catalog\Category;
 use App\Models\Catalog\AttributeSet;
 use App\Models\Catalog\AttributeSetItem;
 use App\Models\Product;
+use Throwable;
 
 class AttributeSetController extends Controller
 {

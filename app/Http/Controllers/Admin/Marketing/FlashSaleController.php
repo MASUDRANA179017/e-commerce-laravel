@@ -18,19 +18,19 @@ class FlashSaleController extends Controller
     {
         // Update statuses based on time
         $this->updateFlashSaleStatuses();
-        
+
         $flashSales = FlashSale::withCount('products')
             ->orderByDesc('created_at')
             ->get();
-        
+
         $activeFlashSale = FlashSale::active()->featured()->with('products')->first()
             ?? FlashSale::active()->with('products')->first();
-        
+
         $products = Product::whereIn('status', ['active', 'Active'])
             ->select('id', 'title', 'price', 'sale_price')
             ->orderBy('title')
             ->get();
-        
+
         return view('admin.marketing.flash-sales', compact('flashSales', 'activeFlashSale', 'products'));
     }
 
@@ -57,7 +57,7 @@ class FlashSaleController extends Controller
             $now = now();
             $startTime = \Carbon\Carbon::parse($request->start_time);
             $endTime = \Carbon\Carbon::parse($request->end_time);
-            
+
             if ($startTime <= $now && $endTime >= $now) {
                 $status = 'active';
             } elseif ($startTime > $now) {
@@ -83,7 +83,19 @@ class FlashSaleController extends Controller
 
             // Attach products
             if ($request->has('products') && is_array($request->products)) {
-                $flashSale->products()->attach($request->products);
+                $productsToAttach = [];
+                $productModels = Product::whereIn('id', $request->products)->get();
+                $discount = $request->discount_percent ?? 0;
+
+                foreach ($productModels as $p) {
+                    $basePrice = $p->price;
+                    $flashPrice = $basePrice - ($basePrice * $discount / 100);
+                    $productsToAttach[$p->id] = [
+                        'flash_price' => max(0, $flashPrice),
+                        'flash_discount_percent' => $discount,
+                    ];
+                }
+                $flashSale->products()->attach($productsToAttach);
             }
 
             DB::commit();
@@ -128,7 +140,7 @@ class FlashSaleController extends Controller
             $now = now();
             $startTime = \Carbon\Carbon::parse($request->start_time);
             $endTime = \Carbon\Carbon::parse($request->end_time);
-            
+
             if ($startTime <= $now && $endTime >= $now) {
                 $status = 'active';
             } elseif ($startTime > $now) {
@@ -154,7 +166,21 @@ class FlashSaleController extends Controller
 
             // Sync products
             if ($request->has('products')) {
-                $flashSale->products()->sync($request->products ?? []);
+                $productsToSync = [];
+                if (!empty($request->products)) {
+                    $productModels = Product::whereIn('id', $request->products)->get();
+                    $discount = $request->discount_percent ?? 0;
+
+                    foreach ($productModels as $p) {
+                        $basePrice = $p->price;
+                        $flashPrice = $basePrice - ($basePrice * $discount / 100);
+                        $productsToSync[$p->id] = [
+                            'flash_price' => max(0, $flashPrice),
+                            'flash_discount_percent' => $discount,
+                        ];
+                    }
+                }
+                $flashSale->products()->sync($productsToSync);
             }
 
             DB::commit();
@@ -202,7 +228,7 @@ class FlashSaleController extends Controller
     {
         try {
             $flashSale = FlashSale::findOrFail($id);
-            
+
             if ($flashSale->status === 'active') {
                 $flashSale->status = 'draft';
             } elseif (in_array($flashSale->status, ['draft', 'scheduled'])) {
@@ -213,7 +239,7 @@ class FlashSaleController extends Controller
                     $flashSale->status = 'scheduled';
                 }
             }
-            
+
             $flashSale->save();
 
             return response()->json([
@@ -235,7 +261,7 @@ class FlashSaleController extends Controller
     public function getActive()
     {
         $this->updateFlashSaleStatuses();
-        
+
         $flashSale = FlashSale::active()
             ->orderByDesc('is_featured')
             ->with(['products' => function($q) {
@@ -263,7 +289,7 @@ class FlashSaleController extends Controller
                 'discount_percent' => $flashSale->discount_percent,
                 'products_count' => $flashSale->products->count(),
                 'products' => $flashSale->products->map(function($product) {
-                    $image = $product->images->where('is_cover', true)->first() 
+                    $image = $product->images->where('is_cover', true)->first()
                         ?? $product->images->first();
                     return [
                         'id' => $product->id,
@@ -285,13 +311,13 @@ class FlashSaleController extends Controller
     private function updateFlashSaleStatuses()
     {
         $now = now();
-        
+
         // Activate scheduled sales that have started
         FlashSale::where('status', 'scheduled')
             ->where('start_time', '<=', $now)
             ->where('end_time', '>=', $now)
             ->update(['status' => 'active']);
-        
+
         // End active sales that have passed end time
         FlashSale::where('status', 'active')
             ->where('end_time', '<', $now)

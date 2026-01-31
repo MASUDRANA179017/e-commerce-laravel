@@ -4,10 +4,10 @@
 
 @section('content')
 <div class="row">
-    <div class="col-12 mb-4">
-        <div class="d-flex align-items-center justify-content-between flex-wrap gap-3">
-            <h3 class="fw-bold mb-0">Purchase Orders</h3>
-            <div class="d-flex gap-2">
+    <div class="mb-4 col-12">
+        <div class="flex-wrap gap-3 d-flex align-items-center justify-content-between">
+            <h3 class="mb-0 fw-bold">Purchase Orders</h3>
+            <div class="gap-2 d-flex">
                 <a href="{{ route('admin.inventory.purchases.trash') }}" class="btn btn-warning text-decoration-none">
                     <i class="fas fa-trash me-2"></i> Trash
                 </a>
@@ -19,10 +19,10 @@
     </div>
 
     <div class="col-12">
-        <div class="card border-0">
-            <div class="card-body p-0">
+        <div class="border-0 card">
+            <div class="p-0 card-body">
                 <div class="table-responsive">
-                    <table class="table table-hover mb-0">
+                    <table class="table mb-0 table-hover">
                         <thead class="bg-light">
                             <tr>
                                 <th class="ps-3">PO Number</th>
@@ -48,9 +48,9 @@
                                 </td>
                                 <td>{{ $purchase->expected_delivery_date ? $purchase->expected_delivery_date->format('d M, Y') : 'N/A' }}</td>
                                  <td class="text-end pe-3">
-                                    <div class="d-inline-flex align-items-center gap-1">
-                                        <a href="{{ route('admin.inventory.purchases.show', $purchase->id) }}" class="action-btn-success" title="Edit">
-                                            <i class="fas fa-edit"></i>
+                                    <div class="gap-1 d-inline-flex align-items-center">
+                                        <a href="{{ route('admin.inventory.purchases.show', $purchase->id) }}" class="action-btn-success" title="View">
+                                            <i class="fas fa-eye"></i>
                                         </a>
                                         @if($purchase->status !== 'received' && $purchase->status !== 'cancelled')
                                         <form action="{{ route('admin.inventory.purchases.update', $purchase->id) }}" method="POST" class="d-inline-block">
@@ -74,9 +74,9 @@
                             </tr>
                             @if($purchase->items->count())
                             <tr>
-                                <td colspan="7" class="bg-light bg-opacity-25">
+                                <td colspan="7" class="bg-opacity-25 bg-light">
                                     <div class="p-2">
-                                        <table class="table table-sm mb-0">
+                                        <table class="table mb-0 table-sm">
                                             <thead>
                                                 <tr>
                                                     <th>Product</th>
@@ -117,9 +117,9 @@
                             @endif
                             @empty
                             <tr>
-                                <td colspan="7" class="text-center py-5">
+                                <td colspan="7" class="py-5 text-center">
                                     <div class="text-muted">
-                                        <span class="material-symbols-outlined fs-1 d-block mb-2">receipt_long</span>
+                                        <span class="mb-2 material-symbols-outlined fs-1 d-block">receipt_long</span>
                                         <p class="mb-0">No purchase orders found</p>
                                     </div>
                                 </td>
@@ -136,41 +136,53 @@
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     var csrf = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
-    document.querySelectorAll('form[action*="inventory/purchases/"][method="post"]').forEach(function(form) {
+
+    // Handle delete forms specifically
+    document.querySelectorAll('.delete-purchase-form').forEach(function(form) {
         form.addEventListener('submit', function(e) {
             e.preventDefault();
-            var action = form.getAttribute('action');
-            var methodInput = form.querySelector('input[name="_method"]');
-            var method = methodInput ? methodInput.value.toUpperCase() : 'POST';
+            var action = form.action; // Use property for full URL
+
             if (typeof Swal === 'undefined') {
                 if (confirm('Are you sure?')) form.submit();
                 return;
             }
+
             Swal.fire({
                 title: 'Are you sure?',
                 text: 'This action cannot be undone.',
                 icon: 'warning',
                 showCancelButton: true,
-                confirmButtonText: 'Yes, proceed',
-                cancelButtonText: 'Cancel'
+                confirmButtonText: 'Yes, delete it',
+                cancelButtonText: 'Cancel',
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6'
             }).then(function(res) {
                 if (!res.isConfirmed) return;
+
                 fetch(action, {
-                    method: method === 'DELETE' ? 'DELETE' : 'POST',
+                    method: 'DELETE',
                     headers: {
                         'X-CSRF-TOKEN': csrf,
-                        'Accept': 'application/json'
-                    },
-                    body: method === 'DELETE' ? null : new FormData(form)
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
+                    }
                 }).then(function(resp) {
                     if (resp.ok) {
-                        Swal.fire({icon:'success', title:'Done', text:'Operation completed', timer:1500, showConfirmButton:false})
-                            .then(function(){ window.location.reload(); });
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Deleted!',
+                            text: 'Purchase order has been deleted.',
+                            timer: 1500,
+                            showConfirmButton: false
+                        }).then(function(){
+                            window.location.reload();
+                        });
                     } else {
                         resp.json().then(function(j){
-                            Swal.fire('Error', j.message || 'Failed to perform action', 'error');
+                            Swal.fire('Error', j.message || 'Failed to delete', 'error');
                         }).catch(function(){
-                            Swal.fire('Error', 'Failed to perform action', 'error');
+                            Swal.fire('Error', 'Failed to delete', 'error');
                         });
                     }
                 }).catch(function(){
@@ -179,6 +191,10 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         });
     });
+
+    // Handle other post forms if necessary (excluding delete forms)
+    document.querySelectorAll('form[action*="inventory/purchases/"][method="post"]:not(.delete-purchase-form)').forEach(function(form) {
+
 });
 </script>
 @endpush

@@ -121,27 +121,39 @@
     <!-- Orders Table -->
     <div class="col-12">
         <div class="card border-0">
-            <div class="card-header bg-white d-flex align-items-center justify-content-between flex-wrap gap-3">
-                <h5 class="mb-0 fw-bold qb-card-header-title-14-600">Order List</h5>
-                <form action="{{ route('admin.orders.index') }}" method="GET" class="d-flex gap-2 flex-wrap">
-                    <select class="form-select form-select-sm" style="width: auto;" name="status" onchange="this.form.submit()">
-                        <option value="">All Status</option>
-                        <option value="pending" {{ request('status') == 'pending' ? 'selected' : '' }}>Pending</option>
-                        <option value="processing" {{ request('status') == 'processing' ? 'selected' : '' }}>Processing</option>
-                        <option value="shipped" {{ request('status') == 'shipped' ? 'selected' : '' }}>Shipped</option>
-                        <option value="delivered" {{ request('status') == 'delivered' ? 'selected' : '' }}>Delivered</option>
-                        <option value="cancelled" {{ request('status') == 'cancelled' ? 'selected' : '' }}>Cancelled</option>
-                    </select>
-                    <div class="input-group input-group-sm" style="width: 250px;">
-                        <input type="text" class="form-control" name="search" value="{{ request('search') }}" placeholder="Search orders...">
-                        <button class="btn btn-outline-secondary" type="submit">
-                            <i class="bx bx-search"></i>
-                        </button>
+            <div class="card-header bg-white">
+                <div class="d-flex align-items-center justify-content-between flex-wrap gap-3">
+                    <h5 class="mb-0 fw-bold qb-card-header-title-14-600">Order List</h5>
+                    <div class="d-flex gap-2">
+                        <a href="{{ route('admin.orders.index') }}" class="btn btn-sm {{ !request('source') ? 'btn-primary' : 'btn-outline-secondary' }}">All</a>
+                        <a href="{{ route('admin.orders.index', ['source' => 'pos']) }}" class="btn btn-sm {{ request('source') == 'pos' ? 'btn-primary' : 'btn-outline-secondary' }}">POS Orders</a>
+                        <a href="{{ route('admin.orders.index', ['source' => 'web']) }}" class="btn btn-sm {{ request('source') == 'web' ? 'btn-primary' : 'btn-outline-secondary' }}">Web Orders</a>
                     </div>
-                    <button type="button" class="create-btn-white" id="exportBtn">
-                        <i class="bx bx-download me-1"></i> Export
-                    </button>
-                </form>
+                </div>
+                <div class="d-flex align-items-center justify-content-end mt-3 flex-wrap gap-2">
+                    <form action="{{ route('admin.orders.index') }}" method="GET" class="d-flex gap-2 flex-wrap">
+                        @if(request('source'))
+                            <input type="hidden" name="source" value="{{ request('source') }}">
+                        @endif
+                        <select class="form-select form-select-sm" style="width: auto;" name="status" onchange="this.form.submit()">
+                            <option value="">All Status</option>
+                            <option value="pending" {{ request('status') == 'pending' ? 'selected' : '' }}>Pending</option>
+                            <option value="processing" {{ request('status') == 'processing' ? 'selected' : '' }}>Processing</option>
+                            <option value="shipped" {{ request('status') == 'shipped' ? 'selected' : '' }}>Shipped</option>
+                            <option value="delivered" {{ request('status') == 'delivered' ? 'selected' : '' }}>Delivered</option>
+                            <option value="cancelled" {{ request('status') == 'cancelled' ? 'selected' : '' }}>Cancelled</option>
+                        </select>
+                        <div class="input-group input-group-sm" style="width: 250px;">
+                            <input type="text" class="form-control" name="search" value="{{ request('search') }}" placeholder="Search orders...">
+                            <button class="btn btn-outline-secondary" type="submit">
+                                <i class="bx bx-search"></i>
+                            </button>
+                        </div>
+                        <button type="button" class="create-btn-white" id="exportBtn">
+                            <i class="bx bx-download me-1"></i> Export
+                        </button>
+                    </form>
+                </div>
             </div>
             <div class="card-body p-0">
                 <div class="table-responsive">
@@ -152,6 +164,7 @@
                                     <input type="checkbox" class="form-check-input" id="selectAll">
                                 </th>
                                 <th>Order ID</th>
+                                <th>Source</th>
                                 <th>Customer</th>
                                 <th>Products</th>
                                 <th>Total</th>
@@ -171,6 +184,13 @@
                                     <a href="{{ route('admin.orders.show', $order->id) }}" class="order-id">
                                         #{{ $order->order_number }}
                                     </a>
+                                </td>
+                                <td>
+                                    @if($order->order_source == 'pos')
+                                        <span class="badge bg-primary rounded-pill"><i class="bx bx-store-alt"></i> POS</span>
+                                    @else
+                                        <span class="badge bg-info rounded-pill"><i class="bx bx-globe"></i> Web</span>
+                                    @endif
                                 </td>
                                 <td>
                                     <div class="d-flex align-items-center gap-2">
@@ -320,12 +340,12 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         });
     }
-    
+
     // Delete order
     document.querySelectorAll('.btn-delete').forEach(btn => {
         btn.addEventListener('click', function() {
             const orderId = this.dataset.id;
-            
+
             Swal.fire({
                 title: 'Delete Order?',
                 text: 'This action cannot be undone!',
@@ -363,7 +383,7 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         });
     });
-    
+
     // Filter by status and Search are handled by form submission
 });
 </script>

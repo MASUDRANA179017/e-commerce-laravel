@@ -31,7 +31,11 @@
                     <div class="card border-0 shadow-sm rounded-4">
                         <div class="card-body p-4 p-lg-5">
                             <div class="content-body">
-                                @include('frontend.pages.terms-content')
+                                @if(isset($term) && $term->content)
+                                    {!! $term->content !!}
+                                @else
+                                    @include('frontend.pages.terms-content')
+                                @endif
                             </div>
                         </div>
                     </div>

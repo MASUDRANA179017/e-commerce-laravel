@@ -341,15 +341,19 @@
             btnApply.disabled = true;
             btnApply.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Applying...';
             try {
-                const scoutCode = '{{ $scoutDiscountCode ?? "SCOUT" }}';
-                let res = await fetch('{{ route("cart.coupon") }}', {
+                let res = await fetch('{{ route("checkout.apply-scout-discount") }}', {
                     method: 'POST',
                     headers: {
                         'Accept': 'application/json',
                         'Content-Type': 'application/json',
                         'X-CSRF-TOKEN': csrf
                     },
-                    body: JSON.stringify({ coupon_code: scoutCode })
+                    body: JSON.stringify({ 
+                        scout_full_name: name,
+                        scout_bs_id: bsid,
+                        scout_unit_name: unit,
+                        scout_leader_name: leader
+                    })
                 });
                 const data = await res.json();
                 if (data && data.success) {
@@ -359,20 +363,21 @@
                         const amt = data.discount ? Number(data.discount) : 0;
                         discountAmount.textContent = ('-৳' + amt.toFixed(2));
                         show(discountRow);
+                        discount = amt;
                     }
-                    if (totalAmount) {
-                        totalAmount.textContent = fmtBDT(data.total ?? 0);
-                    }
+                    // Update subtotal + shipping - discount
+                    updateShipping();
                 } else {
                     msg.className = 'small mt-2 text-danger';
                     msg.textContent = (data && data.message) ? data.message : 'Eligibility failed or discount unavailable.';
                 }
             } catch (e) {
+                console.error(e);
                 msg.className = 'small mt-2 text-danger';
                 msg.textContent = 'Network error while applying discount.';
             } finally {
                 btnApply.disabled = false;
-                btnApply.textContent = 'Apply {{ $scoutDiscountPercent ?? 10 }}% Discount';
+                btnApply.innerHTML = 'Apply {{ $scoutDiscountPercent ?? 10 }}% Discount';
             }
         });
 
@@ -381,7 +386,7 @@
         const addressInput = document.querySelector('input[name="address"]');
         const shippingAmount = document.getElementById('shippingAmount');
         const subtotal = parseFloat('{{ $subtotal ?? 0 }}');
-        const discount = parseFloat('{{ $discount ?? 0 }}');
+        let discount = parseFloat('{{ $discount ?? 0 }}');
 
         function updateShipping() {
             const city = (cityInput?.value || '') + ' ' + (addressInput?.value || '');

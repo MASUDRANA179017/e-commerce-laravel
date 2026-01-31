@@ -469,10 +469,10 @@
       slidesPerView: 1,
       slidesPerGroup: 1,
       spaceBetween: 0,
-      effect: "fade",
-      fadeEffect: {
-        crossFade: true,
-      },
+      // effect: "fade",
+      // fadeEffect: {
+      //   crossFade: true,
+      // },
       autoplay: {
         delay: 6000,
         disableOnInteraction: false,
@@ -481,6 +481,10 @@
       navigation: {
         nextEl: ".next-banner",
         prevEl: ".prev-banner",
+      },
+      pagination: {
+        el: ".banner-six-slide-dot",
+        clickable: true,
       },
     });
 
@@ -1563,7 +1567,7 @@
         slidesPerView: 1,
         centeredSlides: true,
         spaceBetween: 24,
-  
+
         autoplay: {
           delay: 2000,
           disableOnInteraction: false,
@@ -1662,7 +1666,7 @@
       });
     }
 
-	  //  Home 8  Maquee 
+	  //  Home 8  Maquee
     var slider = new Swiper('.maquee-eight-active', {
       slidesPerView: "auto",
       spaceBetween: 65,
@@ -1747,33 +1751,24 @@
 
   // Home 8 team js
   var slider = new Swiper('.ministrie-eight-active', {
-		slidesPerView: "auto",
+		slidesPerView: 2,
 		spaceBetween: 30,
 		loop: true,
 		speed: 2500,
 		autoplay: true,
 		centeredSlides: true,
 		breakpoints: {
-			'1600': {
-				slidesPerView: 2.9,
-			},
-			'1400': {
-				slidesPerView: 2.3,
-			},
 			'1200': {
-				slidesPerView: 2.1,
+				slidesPerView: 4,
 			},
 			'992': {
-				slidesPerView: 1.8,
+				slidesPerView: 3,
 			},
 			'768': {
-				slidesPerView: 1.6,
-			},
-			'576': {
-				slidesPerView: 1.2,
+				slidesPerView: 3,
 			},
 			'0': {
-				slidesPerView: 1,
+				slidesPerView: 2,
 			},
 		},
 		// pagination
@@ -1813,7 +1808,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 </div>
             </div>
         </div>
-        <div class="row justify-content-center mt-3">
+        <div class="mt-3 row justify-content-center">
             <div class="col-md-6">
                 <div class="form-check">
                     <input class="form-check-input" type="checkbox" value="" required>
@@ -1862,7 +1857,7 @@ document.addEventListener('DOMContentLoaded', function () {
     // Set initial spam question for all forms
     document.querySelectorAll('#payment-tab-content form').forEach(form => {
         setSpamQuestion(form);
-        
+
         // Add submit validation
         form.addEventListener('submit', function(e) {
             const spamAnswer = parseInt(this.dataset.spamAnswer, 10);
@@ -1917,7 +1912,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 </div>
             </div>
         </div>
-        <div class="row justify-content-center mt-3">
+        <div class="mt-3 row justify-content-center">
             <div class="col-md-6">
                 <div class="form-check">
                     <input class="form-check-input" type="checkbox" value="" required>
@@ -1925,7 +1920,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 </div>
             </div>
         </div>
-        <div class="mt-4 text-center border-top pt-2 gap-3">
+        <div class="gap-3 pt-2 mt-4 text-center border-top">
             <button type="button" class="w-30 qbit-btn qbit-btn-light-warning btn-lg" data-bs-dismiss="modal"><i class="bx bx-x-circle me-2"></i>Cancel</button>
             <button type="submit" class="w-30 qbit-btn qbit-btn-light-success btn-lg"><i class='bx bx-dollar-circle me-2'></i>Proceed to Payment</button>
         </div>

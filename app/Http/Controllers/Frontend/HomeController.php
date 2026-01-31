@@ -30,6 +30,17 @@ class HomeController extends Controller
             // Use empty collection
         }
 
+        // Get ads sections
+        $ads_sections = collect();
+        try {
+            $ads_sections = Banner::where('type', 'ads_section')
+                ->where('status', true)
+                ->orderBy('position')
+                ->get();
+        } catch (\Exception $e) {
+            // Use empty collection
+        }
+
         // Get ALL parent categories with children relationship (for product count including child categories)
         $categories = collect();
         try {
@@ -192,7 +203,7 @@ class HomeController extends Controller
         } catch (\Exception $e) {
             // Use empty collection
         }
-        
+
             // Get store sections
             $store_sections = collect();
             try {
@@ -215,7 +226,8 @@ class HomeController extends Controller
             'flashSaleProducts',
             'latestBlogs',
                 'promotional_banners',
-                'store_sections'
+                'store_sections',
+                'ads_sections'
         ));
     }
 }

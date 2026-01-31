@@ -14,6 +14,7 @@ use App\Http\Controllers\Admin\NewsletterController;
 use App\Http\Controllers\Admin\Marketing\DiscountController;
 use App\Http\Controllers\Admin\Settings\ShippingController;
 use App\Http\Controllers\Admin\Settings\PaymentSettingsController;
+use App\Http\Controllers\Admin\PosController;
 
 /*
 |--------------------------------------------------------------------------
@@ -33,6 +34,17 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
     */
     Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard.index');
+
+    /*
+    |--------------------------------------------------------------------------
+    | POS System
+    |--------------------------------------------------------------------------
+    */
+    Route::prefix('pos')->name('pos.')->group(function () {
+        Route::get('/', [PosController::class, 'index'])->name('index');
+        Route::get('/search', [PosController::class, 'searchProducts'])->name('search');
+        Route::post('/store', [PosController::class, 'store'])->name('store');
+    });
 
     /*
     |--------------------------------------------------------------------------
@@ -111,10 +123,22 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
         Route::post('/menus', [StorefrontController::class, 'storeMenu'])->name('menus.store');
         Route::put('/menus/{menu}', [StorefrontController::class, 'updateMenu'])->name('menus.update');
         Route::delete('/menus/{menu}', [StorefrontController::class, 'destroyMenu'])->name('menus.destroy');
+        Route::get('/common-images', [StorefrontController::class, 'commonImages'])->name('common-images');
+        Route::post('/common-images', [StorefrontController::class, 'updateCommonImages'])->name('common-images.update');
         Route::get('/banners', [StorefrontController::class, 'banners'])->name('banners');
+        Route::get('/ads-sections', [StorefrontController::class, 'adsSections'])->name('ads-sections');
         Route::post('/banners', [StorefrontController::class, 'storeBanner'])->name('banners.store');
         Route::put('/banners/{banner}', [StorefrontController::class, 'updateBanner'])->name('banners.update');
         Route::delete('/banners/{banner}', [StorefrontController::class, 'destroyBanner'])->name('banners.destroy');
+
+        // FAQ Management (Moved to Storefront)
+        Route::get('/faqs', [FAQController::class, 'index'])->name('faqs.index');
+        Route::get('/faqs/create', [FAQController::class, 'create'])->name('faqs.create');
+        Route::post('/faqs', [FAQController::class, 'store'])->name('faqs.store');
+        Route::get('/faqs/{faq}/edit', [FAQController::class, 'edit'])->name('faqs.edit');
+        Route::put('/faqs/{faq}', [FAQController::class, 'update'])->name('faqs.update');
+        Route::delete('/faqs/{faq}', [FAQController::class, 'destroy'])->name('faqs.destroy');
+        Route::post('/faqs/{faq}/toggle', [FAQController::class, 'toggleStatus'])->name('faqs.toggle-status');
     });
 
     /*
@@ -153,20 +177,20 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
         Route::post('/stock/adjust', [InventoryController::class, 'adjustStock'])->name('stock.adjust');
         Route::post('/stock/adjust-variant', [InventoryController::class, 'adjustVariantStock'])->name('stock.adjustVariant');
         Route::get('/stock/low', [InventoryController::class, 'lowStock'])->name('stock.low');
-        
+
         // Purchases - Order matters! Specific routes must come BEFORE {purchase} parameter
         Route::get('/purchases', [InventoryController::class, 'purchases'])->name('purchases');
         Route::get('/purchases/trash', [InventoryController::class, 'trashedPurchases'])->name('purchases.trash');
         Route::get('/purchases/create', [InventoryController::class, 'createPurchase'])->name('purchases.create');
         Route::post('/purchases', [InventoryController::class, 'storePurchase'])->name('purchases.store');
-        
+
         // Parameterized routes for single purchase
         Route::delete('/purchases/{purchase}/force', [InventoryController::class, 'forceDeletePurchase'])->name('purchases.force-delete');
         Route::post('/purchases/{purchase}/restore', [InventoryController::class, 'restorePurchase'])->name('purchases.restore');
         Route::delete('/purchases/{purchase}', [InventoryController::class, 'destroyPurchase'])->name('purchases.destroy');
         Route::put('/purchases/{purchase}', [InventoryController::class, 'updatePurchase'])->name('purchases.update');
         Route::get('/purchases/{purchase}', [InventoryController::class, 'showPurchase'])->name('purchases.show');
-        
+
         Route::get('/vendors', [InventoryController::class, 'vendors'])->name('vendors');
         Route::post('/vendors', [InventoryController::class, 'storeVendor'])->name('vendors.store');
         Route::get('/vendors/{vendor}', [InventoryController::class, 'showVendor'])->name('vendors.show');
@@ -205,21 +229,6 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
         Route::get('/{blog}/edit', [\App\Http\Controllers\Admin\BlogController::class, 'edit'])->name('edit');
         Route::put('/{blog}', [\App\Http\Controllers\Admin\BlogController::class, 'update'])->name('update');
         Route::delete('/{blog}', [\App\Http\Controllers\Admin\BlogController::class, 'destroy'])->name('destroy');
-    });
-
-    /*
-    |--------------------------------------------------------------------------
-    | FAQ Management
-    |--------------------------------------------------------------------------
-    */
-    Route::prefix('faqs')->name('faqs.')->group(function () {
-        Route::get('/', [FAQController::class, 'index'])->name('index');
-        Route::get('/create', [FAQController::class, 'create'])->name('create');
-        Route::post('/', [FAQController::class, 'store'])->name('store');
-        Route::get('/{faq}/edit', [FAQController::class, 'edit'])->name('edit');
-        Route::put('/{faq}', [FAQController::class, 'update'])->name('update');
-        Route::delete('/{faq}', [FAQController::class, 'destroy'])->name('destroy');
-        Route::post('/{faq}/toggle', [FAQController::class, 'toggleStatus'])->name('toggle-status');
     });
 
     /*

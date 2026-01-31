@@ -72,8 +72,8 @@ a:hover { color: var(--hover-color); }
 .navbar__sub-menu,
 .navbar__sub-menu .navbar__sub-menu {
   background-color: #f3f4f6 !important; /* light surface */
-  color: #0b1220 !important;
+  color: var(--secondary-color) !important;
   border: 1px solid #e5e7eb !important;
 }
-.navbar__sub-menu a { color: #0b1220 !important; }
-.navbar__sub-menu a:hover { background-color: #e6f2ff !important; color: #0b1220 !important; }
+.navbar__sub-menu a { color: var(--secondary-color) !important; }
+.navbar__sub-menu a:hover { background-color: #e6f2ff !important; color: var(--secondary-color) !important; }

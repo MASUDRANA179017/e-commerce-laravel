@@ -49,11 +49,11 @@
 
 @section('content')
 <div class="row">
-    <div class="col-12 mb-4">
-        <div class="d-flex align-items-center justify-content-between flex-wrap gap-3">
-            <h3 class="fw-bold mb-0">Theme Customizer</h3>
+    <div class="mb-4 col-12">
+        <div class="flex-wrap gap-3 d-flex align-items-center justify-content-between">
+            <h3 class="mb-0 fw-bold">Theme Customizer</h3>
             <nav style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb">
-                <ol class="breadcrumb mb-0">
+                <ol class="mb-0 breadcrumb">
                     <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">Dashboard</a></li>
                     <li class="breadcrumb-item active">Theme Customizer</li>
                 </ol>
@@ -64,8 +64,8 @@
     <div class="col-lg-4">
         <form id="themeSettingsForm">
             @csrf
-            <div class="card border-0 mb-4">
-                <div class="card-header bg-white">
+            <div class="mb-4 border-0 card">
+                <div class="bg-white card-header">
                     <h5 class="mb-0 fw-bold">Colors</h5>
                 </div>
                 <div class="card-body">
@@ -93,99 +93,11 @@
                         </div>
                         <div class="color-hex-value"><strong>Value:</strong> <span class="hex-accent">{{ $business_setup->theme_color_accent ?? '#f9c123' }}</span></div>
                     </div>
-                    <div class="mb-4">
-                        <label class="form-label fw-bold">Button Text Color</label>
-                        <div class="color-input-wrapper">
-                            <input type="color" name="theme_button_text_color" class="form-control form-control-color color-picker-button-text" value="{{ $business_setup->theme_button_text_color ?? '#ffffff' }}">
-                            <div class="color-display color-display-button-text" style="background-color: {{ $business_setup->theme_button_text_color ?? '#ffffff' }}"></div>
-                        </div>
-                        <div class="color-hex-value"><strong>Value:</strong> <span class="hex-button-text">{{ $business_setup->theme_button_text_color ?? '#ffffff' }}</span></div>
-                    </div>
-                    <div class="mb-4">
-                        <label class="form-label fw-bold">Secondary Button Background</label>
-                        <div class="color-input-wrapper">
-                            <input type="color" name="theme_secondary_button_bg" class="form-control form-control-color color-picker-secondary-btn-bg" value="{{ $business_setup->theme_secondary_button_bg ?? '#f5f5f5' }}">
-                            <div class="color-display color-display-secondary-btn-bg" style="background-color: {{ $business_setup->theme_secondary_button_bg ?? '#f5f5f5' }}"></div>
-                        </div>
-                        <div class="color-hex-value"><strong>Value:</strong> <span class="hex-secondary-btn-bg">{{ $business_setup->theme_secondary_button_bg ?? '#f5f5f5' }}</span></div>
-                    </div>
-                    <div class="mb-4">
-                        <label class="form-label fw-bold">Secondary Button Text Color</label>
-                        <div class="color-input-wrapper">
-                            <input type="color" name="theme_secondary_button_text" class="form-control form-control-color color-picker-secondary-btn-text" value="{{ $business_setup->theme_secondary_button_text ?? '#333333' }}">
-                            <div class="color-display color-display-secondary-btn-text" style="background-color: {{ $business_setup->theme_secondary_button_text ?? '#333333' }}"></div>
-                        </div>
-                        <div class="color-hex-value"><strong>Value:</strong> <span class="hex-secondary-btn-text">{{ $business_setup->theme_secondary_button_text ?? '#333333' }}</span></div>
-                    </div>
-                    <div class="mb-4">
-                        <label class="form-label fw-bold">Link Color</label>
-                        <div class="color-input-wrapper">
-                            <input type="color" name="theme_color_link" class="form-control form-control-color color-picker-link" value="{{ $business_setup->theme_color_link ?? '#0496ff' }}">
-                            <div class="color-display color-display-link" style="background-color: {{ $business_setup->theme_color_link ?? '#0496ff' }}"></div>
-                        </div>
-                        <div class="color-hex-value"><strong>Value:</strong> <span class="hex-link">{{ $business_setup->theme_color_link ?? '#0496ff' }}</span></div>
-                    </div>
-                    <div class="mb-4">
-                        <label class="form-label fw-bold">Text Color</label>
-                        <div class="color-input-wrapper">
-                            <input type="color" name="theme_color_text" class="form-control form-control-color color-picker-text" value="{{ $business_setup->theme_color_text ?? '#333333' }}">
-                            <div class="color-display color-display-text" style="background-color: {{ $business_setup->theme_color_text ?? '#333333' }}"></div>
-                        </div>
-                        <div class="color-hex-value"><strong>Value:</strong> <span class="hex-text">{{ $business_setup->theme_color_text ?? '#333333' }}</span></div>
-                    </div>
-                    <div class="mb-4">
-                        <label class="form-label fw-bold">Heading Color</label>
-                        <div class="color-input-wrapper">
-                            <input type="color" name="theme_color_heading" class="form-control form-control-color color-picker-heading" value="{{ $business_setup->theme_color_heading ?? '#1a1a2e' }}">
-                            <div class="color-display color-display-heading" style="background-color: {{ $business_setup->theme_color_heading ?? '#1a1a2e' }}"></div>
-                        </div>
-                        <div class="color-hex-value"><strong>Value:</strong> <span class="hex-heading">{{ $business_setup->theme_color_heading ?? '#1a1a2e' }}</span></div>
-                    </div>
-                    <div class="mb-4">
-                        <label class="form-label fw-bold">Badge/Highlight Color</label>
-                        <div class="color-input-wrapper">
-                            <input type="color" name="theme_color_badge" class="form-control form-control-color color-picker-badge" value="{{ $business_setup->theme_color_badge ?? '#f9c123' }}">
-                            <div class="color-display color-display-badge" style="background-color: {{ $business_setup->theme_color_badge ?? '#f9c123' }}"></div>
-                        </div>
-                        <div class="color-hex-value"><strong>Value:</strong> <span class="hex-badge">{{ $business_setup->theme_color_badge ?? '#f9c123' }}</span></div>
-                    </div>
-                    <div class="mb-4">
-                        <label class="form-label fw-bold">Border Color</label>
-                        <div class="color-input-wrapper">
-                            <input type="color" name="theme_color_border" class="form-control form-control-color color-picker-border" value="{{ $business_setup->theme_color_border ?? '#e0e0e0' }}">
-                            <div class="color-display color-display-border" style="background-color: {{ $business_setup->theme_color_border ?? '#e0e0e0' }}"></div>
-                        </div>
-                        <div class="color-hex-value"><strong>Value:</strong> <span class="hex-border">{{ $business_setup->theme_color_border ?? '#e0e0e0' }}</span></div>
-                    </div>
-                    <div class="mb-4">
-                        <label class="form-label fw-bold">Input Focus Color</label>
-                        <div class="color-input-wrapper">
-                            <input type="color" name="theme_color_input_focus" class="form-control form-control-color color-picker-input-focus" value="{{ $business_setup->theme_color_input_focus ?? '#0496ff' }}">
-                            <div class="color-display color-display-input-focus" style="background-color: {{ $business_setup->theme_color_input_focus ?? '#0496ff' }}"></div>
-                        </div>
-                        <div class="color-hex-value"><strong>Value:</strong> <span class="hex-input-focus">{{ $business_setup->theme_color_input_focus ?? '#0496ff' }}</span></div>
-                    </div>
-                    <div class="mb-4">
-                        <label class="form-label fw-bold">Success Color (Alerts/Badges)</label>
-                        <div class="color-input-wrapper">
-                            <input type="color" name="theme_color_success" class="form-control form-control-color color-picker-success" value="{{ $business_setup->theme_color_success ?? '#28a745' }}">
-                            <div class="color-display color-display-success" style="background-color: {{ $business_setup->theme_color_success ?? '#28a745' }}"></div>
-                        </div>
-                        <div class="color-hex-value"><strong>Value:</strong> <span class="hex-success">{{ $business_setup->theme_color_success ?? '#28a745' }}</span></div>
-                    </div>
-                    <div class="mb-4">
-                        <label class="form-label fw-bold">Danger Color (Alerts/Badges)</label>
-                        <div class="color-input-wrapper">
-                            <input type="color" name="theme_color_danger" class="form-control form-control-color color-picker-danger" value="{{ $business_setup->theme_color_danger ?? '#dc3545' }}">
-                            <div class="color-display color-display-danger" style="background-color: {{ $business_setup->theme_color_danger ?? '#dc3545' }}"></div>
-                        </div>
-                        <div class="color-hex-value"><strong>Value:</strong> <span class="hex-danger">{{ $business_setup->theme_color_danger ?? '#dc3545' }}</span></div>
-                    </div>
                 </div>
             </div>
 
-            <div class="card border-0 mb-4">
-                <div class="card-header bg-white">
+            <div class="mb-4 border-0 card">
+                <div class="bg-white card-header">
                     <h5 class="mb-0 fw-bold">Typography</h5>
                 </div>
                 <div class="card-body">
@@ -209,8 +121,8 @@
                 </div>
             </div>
 
-            <div class="card border-0 mb-4">
-                <div class="card-header bg-white">
+            <div class="mb-4 border-0 card">
+                <div class="bg-white card-header">
                     <h5 class="mb-0 fw-bold">Layout</h5>
                 </div>
                 <div class="card-body">
@@ -259,72 +171,6 @@
                 $('.hex-accent').text(color.toUpperCase());
             });
 
-            $('.color-picker-button-text').on('input', function() {
-                let color = $(this).val();
-                $('.color-display-button-text').css('background-color', color);
-                $('.hex-button-text').text(color.toUpperCase());
-            });
-
-            $('.color-picker-secondary-btn-bg').on('input', function() {
-                let color = $(this).val();
-                $('.color-display-secondary-btn-bg').css('background-color', color);
-                $('.hex-secondary-btn-bg').text(color.toUpperCase());
-            });
-
-            $('.color-picker-secondary-btn-text').on('input', function() {
-                let color = $(this).val();
-                $('.color-display-secondary-btn-text').css('background-color', color);
-                $('.hex-secondary-btn-text').text(color.toUpperCase());
-            });
-
-            $('.color-picker-link').on('input', function() {
-                let color = $(this).val();
-                $('.color-display-link').css('background-color', color);
-                $('.hex-link').text(color.toUpperCase());
-            });
-
-            $('.color-picker-text').on('input', function() {
-                let color = $(this).val();
-                $('.color-display-text').css('background-color', color);
-                $('.hex-text').text(color.toUpperCase());
-            });
-
-            $('.color-picker-heading').on('input', function() {
-                let color = $(this).val();
-                $('.color-display-heading').css('background-color', color);
-                $('.hex-heading').text(color.toUpperCase());
-            });
-
-            $('.color-picker-badge').on('input', function() {
-                let color = $(this).val();
-                $('.color-display-badge').css('background-color', color);
-                $('.hex-badge').text(color.toUpperCase());
-            });
-
-            $('.color-picker-border').on('input', function() {
-                let color = $(this).val();
-                $('.color-display-border').css('background-color', color);
-                $('.hex-border').text(color.toUpperCase());
-            });
-
-            $('.color-picker-input-focus').on('input', function() {
-                let color = $(this).val();
-                $('.color-display-input-focus').css('background-color', color);
-                $('.hex-input-focus').text(color.toUpperCase());
-            });
-
-            $('.color-picker-success').on('input', function() {
-                let color = $(this).val();
-                $('.color-display-success').css('background-color', color);
-                $('.hex-success').text(color.toUpperCase());
-            });
-
-            $('.color-picker-danger').on('input', function() {
-                let color = $(this).val();
-                $('.color-display-danger').css('background-color', color);
-                $('.hex-danger').text(color.toUpperCase());
-            });
-
             $('#saveThemeSettings').click(function() {
                 var btn = $(this);
                 var originalText = btn.text();
@@ -356,16 +202,16 @@
     @endpush
 
     <div class="col-lg-8">
-        <div class="card border-0">
-            <div class="card-header bg-white d-flex align-items-center justify-content-between">
+        <div class="border-0 card">
+            <div class="bg-white card-header d-flex align-items-center justify-content-between">
                 <h5 class="mb-0 fw-bold">Preview</h5>
-                <div class="d-flex gap-1">
+                <div class="gap-1 d-flex">
                     <button class="select-btn-base active">Desktop</button>
                     <button class="select-btn-white">Tablet</button>
                     <button class="select-btn-white">Mobile</button>
                 </div>
             </div>
-            <div class="card-body p-0">
+            <div class="p-0 card-body">
                 <iframe src="{{ route('home') }}" style="width: 100%; height: 600px; border: none;"></iframe>
             </div>
         </div>

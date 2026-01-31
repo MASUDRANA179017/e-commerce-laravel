@@ -131,7 +131,18 @@ class Product extends Model
     public function getFlashSalePriceAttribute()
     {
         $flashSale = $this->active_flash_sale;
-        return $flashSale ? $flashSale->pivot->flash_price : null;
+        if (!$flashSale) return null;
+        
+        if ($flashSale->pivot->flash_price !== null && $flashSale->pivot->flash_price > 0) {
+            return $flashSale->pivot->flash_price;
+        }
+        
+        // Fallback calculation
+        if ($flashSale->discount_percent > 0) {
+             return max(0, $this->price - ($this->price * $flashSale->discount_percent / 100));
+        }
+        
+        return $this->price;
     }
 
     /**
@@ -140,7 +151,13 @@ class Product extends Model
     public function getFlashDiscountPercentAttribute()
     {
         $flashSale = $this->active_flash_sale;
-        return $flashSale ? $flashSale->pivot->flash_discount_percent : 0;
+        if (!$flashSale) return 0;
+
+        if ($flashSale->pivot->flash_discount_percent !== null && $flashSale->pivot->flash_discount_percent > 0) {
+            return $flashSale->pivot->flash_discount_percent;
+        }
+        
+        return $flashSale->discount_percent ?? 0;
     }
     
     public function getAverageRatingAttribute() {
@@ -192,7 +209,7 @@ class Product extends Model
                 $variant->setRelation('product', $this);
                 return $variant->effective_price;
             })
-            ->filter() // Filter out nulls/zeros if any, though effective_price handles fallback
+            // ->filter() // Filter out nulls/zeros if any, though effective_price handles fallback
             ->toArray();
 
         if (empty($variantPrices)) {

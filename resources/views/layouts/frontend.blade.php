@@ -83,20 +83,38 @@
 
     <style>
         :root {
+            /* Core 3-Color System */
             --primary-color: {{ $themePrimary }};
             --secondary-color: {{ $themeSecondary }};
             --accent-color: {{ $themeAccent }};
-            --button-text-color: {{ $themeButtonTextColor }};
-            --secondary-button-bg: {{ $themeSecondaryButtonBg }};
-            --secondary-button-text: {{ $themeSecondaryButtonText }};
-            --link-color: {{ $themeLinkColor }};
-            --text-color: {{ $themeTextColor }};
-            --heading-color: {{ $themeHeadingColor }};
-            --badge-color: {{ $themeBadgeColor }};
-            --border-color: {{ $themeBorderColor }};
-            --input-focus-color: {{ $themeInputFocusColor }};
-            --success-color: {{ $themeSuccessColor }};
-            --danger-color: {{ $themeDangerColor }};
+
+            /* Derived Colors & Mappings */
+            --tertiary-color: {{ $themeAccent }};
+            --quaternary-color: {{ $themeSecondary }};
+            --hover-color: {{ $themeSecondary }};
+
+            /* UI Elements mapped to 3-Color System */
+            --button-text-color: #ffffff;
+            --secondary-button-bg: #f5f5f5;
+            --secondary-button-text: {{ $themeSecondary }};
+            --link-color: {{ $themePrimary }};
+            --text-color: #333333;
+            --heading-color: {{ $themeSecondary }};
+            --badge-color: {{ $themeAccent }};
+            --border-color: #e0e0e0;
+            --input-focus-color: {{ $themePrimary }};
+
+            /* Status Colors (Standard) */
+            --success-color: #28a745;
+            --danger-color: #dc3545;
+
+            /* Section Palettes mapped to 3-color system */
+            --primary-six: {{ $themeSecondary }};
+            --primary-six-title: {{ $themeSecondary }};
+            --primary-six-light: {{ $themeAccent }};
+            --primary-seven-heading: {{ $themeSecondary }};
+            --primary-eight: {{ $themeAccent }};
+
             --base-font-size: {{ $themeBaseSize }};
             /* Legacy color variables for compatibility */
             --apece-primary: {{ $themePrimary }};
@@ -172,10 +190,14 @@
         .select-btn-base:hover,
         .btn--dark:hover,
         a.btn--primary:hover,
-        a.create-btn-base:hover {
+        a.create-btn-base:hover,
+        .btn--primary:active,
+        .btn-primary:active,
+        .btn--primary.active,
+        .btn-primary.active {
             background-color: color-mix(in srgb, var(--primary-color) 85%, black) !important;
             border-color: color-mix(in srgb, var(--primary-color) 85%, black) !important;
-            color: var(--button-text-color) !important;
+            color: #ffffff !important;
         }
 
         /* ALL BUTTON VARIANTS - text color */
@@ -253,26 +275,6 @@
         [class*="border-"] {
             border-color: var(--border-color) !important;
         }
-        .action-btn-soft-success {
-            background: rgba(10, 185, 105, 0.12);
-            color: #0ab969 !important;
-            border: 1px solid #0ab969;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            text-decoration: none;
-            transition: all 0.3s;
-            font-size: 13px;
-            font-weight: 600;
-            box-shadow: 0 6px 16px rgba(10, 185, 105, 0.15);
-        }
-        .action-btn-soft-success:hover {
-            background: linear-gradient(135deg, #089d56 0%, #078048 100%);
-            color: #fff !important;
-            border-color: transparent;
-            transform: translateY(-2px);
-            box-shadow: 0 10px 22px rgba(10, 185, 105, 0.25);
-        }
 
         /* Input focus states */
         .form-control:focus,
@@ -307,6 +309,19 @@
             border-color: var(--danger-color) !important;
         }
 
+        /* Featured Products Tabs (User Request) */
+        .difference-two__tab-btn {
+            background-color: var(--primary-color) !important;
+            color: var(--secondary-color) !important;
+            border: 1px solid var(--primary-color) !important;
+        }
+
+        .difference-two__tab-btn:hover,
+        .difference-two__tab-btn.active {
+            color: #ffffff !important;
+            filter: brightness(0.9);
+        }
+
         /* Navigation active states */
         .navbar__list li a:hover,
         .navbar__list li a.active,
@@ -315,6 +330,11 @@
         }
 
         .navbar__item:hover {
+            color: var(--primary-color) !important;
+        }
+
+        /* FAQ Section Title (User Request) */
+        .faq-eight-area .title-animation {
             color: var(--primary-color) !important;
         }
 
@@ -1149,10 +1169,10 @@
                                                 };
                                             @endphp
                                             {!! $renderMenu($mainMenu) !!}
-                                                
-                                                
-                                                    
-                                                
+
+
+
+
                                             </ul>
                                         </nav>
                                     </div>
@@ -1517,7 +1537,7 @@
     </script>
 
     <script src="{{ asset('frontend/js/main.js') }}"></script>
-    <script src="{{ asset('frontend/js/custom.js') }}"></script>
+    <script src="{{ asset('frontend/js/custom.js') }}?v={{ time() }}"></script>
 
     <script>
         (function bootstrapCart() {
@@ -1536,20 +1556,32 @@
 
         function showToast(type, message) {
             if (typeof toastr !== 'undefined') {
-                var map = { success: 'success', error: 'error', warning: 'warning', info: 'info' };
+                var map = {
+                    success: 'success',
+                    error: 'error',
+                    warning: 'warning',
+                    info: 'info'
+                };
                 var fn = map[type] || 'info';
                 toastr[fn](String(message || ''));
                 return;
             }
-            document.querySelectorAll('.toast-notification').forEach(function (t) { t.remove(); });
+            document.querySelectorAll('.toast-notification').forEach(function(t) {
+                t.remove();
+            });
             var toast = document.createElement('div');
             toast.className = 'toast-notification toast-' + type;
-            toast.innerHTML = '<i class="fa-solid fa-' + (type === 'success' ? 'check-circle' : 'exclamation-circle') + ' me-2"></i><span>' + String(message || '') + '</span>';
+            toast.innerHTML = '<i class="fa-solid fa-' + (type === 'success' ? 'check-circle' : 'exclamation-circle') +
+                ' me-2"></i><span>' + String(message || '') + '</span>';
             document.body.appendChild(toast);
-            setTimeout(function () { toast.classList.add('show'); }, 100);
-            setTimeout(function () {
+            setTimeout(function() {
+                toast.classList.add('show');
+            }, 100);
+            setTimeout(function() {
                 toast.classList.remove('show');
-                setTimeout(function () { toast.remove(); }, 300);
+                setTimeout(function() {
+                    toast.remove();
+                }, 300);
             }, 3000);
         }
 
@@ -1856,7 +1888,7 @@
     </script>
 
     <script>
-        (function () {
+        (function() {
             function proceed(target) {
                 if (target.tagName === 'A' && target.href) {
                     window.location.href = target.href;
@@ -1869,7 +1901,7 @@
                 }
                 target.click();
             }
-            document.addEventListener('click', function (e) {
+            document.addEventListener('click', function(e) {
                 var el = e.target.closest('[data-confirm]');
                 if (!el) return;
                 e.preventDefault();
@@ -1883,14 +1915,14 @@
                         confirmButtonColor: '#3085d6',
                         cancelButtonColor: '#d33',
                         confirmButtonText: 'Yes'
-                    }).then(function (result) {
+                    }).then(function(result) {
                         if (result.isConfirmed) proceed(el);
                     });
                 } else {
                     if (window.confirm(msg)) proceed(el);
                 }
             });
-            document.addEventListener('submit', function (e) {
+            document.addEventListener('submit', function(e) {
                 var form = e.target;
                 var msg = form.getAttribute('data-confirm');
                 if (!msg) return;
@@ -1904,7 +1936,7 @@
                         confirmButtonColor: '#3085d6',
                         cancelButtonColor: '#d33',
                         confirmButtonText: 'Yes'
-                    }).then(function (result) {
+                    }).then(function(result) {
                         if (result.isConfirmed) form.submit();
                     });
                 } else {

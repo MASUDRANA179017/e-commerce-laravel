@@ -211,6 +211,23 @@
             </div>
         </div>
 
+        @if($order->scout_full_name)
+        <!-- Scout Member Info -->
+        <div class="card border-0 mb-4">
+            <div class="card-header bg-white">
+                <h5 class="mb-0 fw-bold qb-card-header-title-14-600">
+                    <i class="bx bxs-award me-2"></i>Scout Member Info
+                </h5>
+            </div>
+            <div class="card-body">
+                <p class="mb-1"><strong>Full Name:</strong> {{ $order->scout_full_name }}</p>
+                <p class="mb-1"><strong>BS ID:</strong> {{ $order->scout_bs_id }}</p>
+                <p class="mb-1"><strong>Unit Name:</strong> {{ $order->scout_unit_name }}</p>
+                <p class="mb-0"><strong>Leader Name:</strong> {{ $order->scout_leader_name }}</p>
+            </div>
+        </div>
+        @endif
+
         <!-- Update Order Status -->
         <div class="card border-0 mb-4">
             <div class="card-header bg-white">

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Frontend;
 
 use App\Http\Controllers\Controller;
 use App\Models\Page;
+use App\Models\TermsCondition;
 use Illuminate\Http\Request;
 
 class PageController extends Controller
@@ -11,7 +12,7 @@ class PageController extends Controller
     public function show($slug)
     {
             $page = Page::where('slug', $slug)->where('status', true)->first();
-        
+
             if (!$page) {
                 // Return a generic page if not found (no 404)
                 return view('frontend.page', ['page' => (object)[
@@ -21,7 +22,7 @@ class PageController extends Controller
                     'meta_description' => 'Page coming soon'
                 ]]);
             }
-        
+
             return view('frontend.page', compact('page'));
     }
 
@@ -33,7 +34,7 @@ class PageController extends Controller
             if (view()->exists('frontend.about')) {
                 return view('frontend.about');
             }
-            
+
             // Fallback object
             return view('frontend.page', ['page' => (object)[
                 'title' => 'About Us',
@@ -51,7 +52,8 @@ class PageController extends Controller
 
     public function terms()
     {
-        return view('frontend.pages.terms-and-conditions');
+        $term = TermsCondition::where('status', 'active')->latest()->first();
+        return view('frontend.pages.terms-and-conditions', compact('term'));
     }
 
     public function privacy()
