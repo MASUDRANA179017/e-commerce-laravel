@@ -90,20 +90,6 @@
                             @endif
                         </a>
                     </li>
-                </ul>
-            </li>
-
-            <!-- Business Setup -->
-            <li class="menu-item {{ request()->routeIs('admin.users.business-setup.*') ? 'open active' : '' }}">
-                <a href="javascript:void(0);" class="menu-link menu-toggle">
-                    <span class="material-symbols-outlined menu-icon">settings</span>
-                    <span class="title">Business Setup</span>
-                </a>
-                <ul class="menu-sub">
-                    <li class="menu-item {{ request()->routeIs('admin.users.business-setup.index') ? 'active' : '' }}">
-                        <a href="{{ route('admin.users.business-setup.index') }}" class="menu-link">Business
-                            Settings</a>
-                    </li>
 
                     @if (Route::has('catalog.size_charts.view'))
                         <li class="menu-item {{ request()->routeIs('catalog.size_charts.view') ? 'active' : '' }}">

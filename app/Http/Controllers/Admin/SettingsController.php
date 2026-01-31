@@ -4,15 +4,45 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 
 use App\Models\Admin\Business_SetUp\BusinessSetup;
+use App\Models\Admin\Business_SetUp\OperationalHours;
+use App\Models\Admin\Business_SetUp\Prefix;
+use App\Models\Admin\Business_SetUp\PublicHoliday;
+use App\Models\Admin\Business_SetUp\OfficeDocument;
+use App\Models\SystemLocalization;
+use App\Models\SystemCurrency;
+use App\Models\SystemSetting;
 
 class SettingsController extends Controller
 {
     public function index()
     {
         $settings = BusinessSetup::first();
-        return view('admin.settings.index', compact('settings'));
+        $operational_hours = OperationalHours::all();
+        $prefixes          = Prefix::all();
+        $public_holidays   = PublicHoliday::orderBy('date')->get();
+        $documents         = OfficeDocument::orderBy('created_at', 'desc')->get();
+
+        // singletons with sane defaults for the Blade
+        $localization = SystemLocalization::first() ?? new SystemLocalization([
+            'system_language'   => 'bn',
+            'timezone'          => 'Asia/Dhaka',
+            'default_currency'  => 'BDT',
+            'date_format'       => 'd-m-Y',
+            'time_format'       => '12',
+            'currency_decimals' => 2,
+        ]);
+
+        $currency = SystemCurrency::first() ?? new SystemCurrency([
+            'default_currency'  => 'BDT',
+            'fiscal_year_start' => 'July',
+            'usd_to_bdt_rate'   => 118.50,
+        ]);
+
+        return view('admin.settings.index', compact('settings', 'operational_hours', 'prefixes', 'localization', 'currency', 'public_holidays', 'documents'));
     }
 
     public function updateGeneral(Request $request)
@@ -43,10 +73,24 @@ class SettingsController extends Controller
     {
         $request->validate([
             'company_name' => 'nullable|string|max:255',
+            'company_type' => 'nullable|string|max:255',
+            'industry' => 'nullable|string|max:255',
+            'establishment_date' => 'nullable|date',
             'street_address' => 'nullable|string',
-            'official_contact_number' => 'nullable|string',
-            'whatsapp_number' => 'nullable|string',
-            'email_address' => 'nullable|string|email',
+            'city_thana' => 'nullable|string|max:255',
+            'district' => 'nullable|string|max:255',
+            'zip_code' => 'nullable|string|max:20',
+            'official_contact_number' => 'nullable|array',
+            'official_contact_number.*' => 'nullable|string',
+            'whatsapp_number' => 'nullable|array',
+            'whatsapp_number.*' => 'nullable|string',
+            'hotline_number' => 'nullable|array',
+            'hotline_number.*' => 'nullable|string',
+            'email_address' => 'nullable|array',
+            'email_address.*' => 'nullable|string|email',
+            'company_registration_number' => 'nullable|string|max:255',
+            'trade_license_number' => 'nullable|string|max:255',
+            'bin_vat_number' => 'nullable|string|max:255',
             'logo' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
             'favicon' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ]);
@@ -58,23 +102,46 @@ class SettingsController extends Controller
 
         $data = $request->only([
             'company_name',
+            'company_type',
+            'industry',
+            'establishment_date',
             'street_address',
+            'city_thana',
+            'district',
+            'zip_code',
             'official_contact_number',
             'whatsapp_number',
+            'hotline_number',
             'email_address',
+            'company_registration_number',
+            'trade_license_number',
+            'bin_vat_number',
         ]);
+
+        // Clean array fields
+        $clean = function ($arr) {
+            return array_values(array_unique(array_filter(
+                array_map(fn($v) => trim((string)$v), $arr ?? []),
+                fn($v) => $v !== ''
+            )));
+        };
+
+        if (isset($data['official_contact_number'])) $data['official_contact_number'] = $clean($data['official_contact_number']);
+        if (isset($data['whatsapp_number'])) $data['whatsapp_number'] = $clean($data['whatsapp_number']);
+        if (isset($data['hotline_number'])) $data['hotline_number'] = $clean($data['hotline_number']);
+        if (isset($data['email_address'])) $data['email_address'] = $clean($data['email_address']);
 
         // Handle File Uploads
         if ($request->hasFile('logo')) {
-            if ($settings->logo && \Storage::disk('public')->exists($settings->logo)) {
-                \Storage::disk('public')->delete($settings->logo);
+            if ($settings->logo && Storage::disk('public')->exists($settings->logo)) {
+                Storage::disk('public')->delete($settings->logo);
             }
             $data['logo'] = $request->file('logo')->store('business_setup', 'public');
         }
 
         if ($request->hasFile('favicon')) {
-            if ($settings->favicon && \Storage::disk('public')->exists($settings->favicon)) {
-                \Storage::disk('public')->delete($settings->favicon);
+            if ($settings->favicon && Storage::disk('public')->exists($settings->favicon)) {
+                Storage::disk('public')->delete($settings->favicon);
             }
             $data['favicon'] = $request->file('favicon')->store('business_setup', 'public');
         }
@@ -82,6 +149,116 @@ class SettingsController extends Controller
         $settings->update($data);
 
         return response()->json(['success' => true, 'message' => 'Store information updated']);
+    }
+
+    public function updateLocalization(Request $request)
+    {
+        $validated = $request->validate([
+            'system_language'   => 'required|string|in:en,bn',
+            'timezone'          => 'required|string|max:191',
+            'default_currency'  => 'required|string|in:BDT,USD,INR',
+            'date_format'       => 'required|string|in:d-m-Y,m/d/Y,Y-m-d',
+            'time_format'       => 'required|string|in:12,24',
+            'currency_decimals' => 'required|integer|min:0|max:4',
+        ]);
+
+        SystemLocalization::updateOrCreate(
+            ['id' => SystemLocalization::query()->value('id') ?? 1],
+            $validated
+        );
+
+        return response()->json(['success' => true, 'message' => 'Localization updated successfully']);
+    }
+
+    public function updateCurrency(Request $request)
+    {
+        $validated = $request->validate([
+            'default_currency'  => 'required|string|in:BDT,USD,INR',
+            'fiscal_year_start' => 'required|string|in:January,April,July,October',
+            'usd_to_bdt_rate'   => 'required|numeric|min:0',
+        ]);
+
+        SystemCurrency::updateOrCreate(
+            ['id' => SystemCurrency::query()->value('id') ?? 1],
+            $validated
+        );
+
+        return response()->json(['success' => true, 'message' => 'Currency settings updated successfully']);
+    }
+
+    public function updateOperationalHours(Request $request)
+    {
+        $hours = json_decode($request->input('hours'), true) ?? [];
+        foreach ($hours as $day => $hour) {
+            OperationalHours::updateOrCreate(
+                ['day' => $day],
+                [
+                    'status'     => $hour['status']     ?? 'Working Day',
+                    'start_time' => $hour['start_time'] ?? null,
+                    'end_time'   => $hour['end_time']   ?? null,
+                    'updated_by' => Auth::id(),
+                ]
+            );
+        }
+
+        return response()->json(['success' => true, 'message' => 'Operational hours updated successfully']);
+    }
+
+    public function publicHolidaysStore(Request $request)
+    {
+        $request->validate([
+            'date'     => 'required|date',
+            'occasion' => 'required|string|max:255',
+        ]);
+
+        PublicHoliday::create([
+            'date'       => $request->date,
+            'occasion'   => $request->occasion,
+            'updated_by' => Auth::id()
+        ]);
+
+        return response()->json(['success' => true, 'message' => 'Holiday added successfully']);
+    }
+
+    public function publicHolidaysDelete($id)
+    {
+        PublicHoliday::findOrFail($id)->delete();
+        return response()->json(['success' => true, 'message' => 'Holiday deleted successfully']);
+    }
+
+    public function documentsStore(Request $request)
+    {
+        $request->validate([
+            'type' => 'required|string|max:255',
+            'file' => 'required|file|mimes:pdf,jpg,jpeg,png|max:2048'
+        ]);
+
+        $path = null;
+        if ($request->hasFile('file')) {
+            $path = $request->file('file')->store('office_documents', 'public');
+            if (!$path) {
+                return response()->json(['message' => 'File upload failed or file is invalid.'], 422);
+            }
+        }
+
+        $document = OfficeDocument::create([
+            'type'       => $request->type,
+            'file_path'  => $path,
+            'updated_by' => Auth::id()
+        ]);
+
+        return response()->json($document);
+    }
+
+    public function documentsDelete($id)
+    {
+        $document = OfficeDocument::findOrFail($id);
+        if ($document->file_path && Storage::disk('public')->exists($document->file_path)) {
+            Storage::disk('public')->delete($document->file_path);
+        }
+        $document->delete();
+
+        return response()->json(['success' => true]);
     }
 
     public function updateEmail(Request $request)
@@ -167,12 +344,6 @@ class SettingsController extends Controller
         return response()->json(['success' => true, 'message' => 'Scout discount settings updated successfully']);
     }
 
-    public function updateCurrency(Request $request)
-    {
-        // Update currency settings
-        return response()->json(['success' => true, 'message' => 'Currency settings updated']);
-    }
-
     public function updateSocial(Request $request)
     {
         $request->validate([
@@ -221,4 +392,3 @@ class SettingsController extends Controller
         return response()->json(['success' => true, 'message' => 'SEO settings updated']);
     }
 }
-

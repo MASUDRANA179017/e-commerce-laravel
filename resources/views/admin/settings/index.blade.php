@@ -25,6 +25,12 @@
                 <a href="#store" class="list-group-item list-group-item-action" data-bs-toggle="list">
                     <i class="material-symbols-outlined fs-14 me-2">store</i> Store Info
                 </a>
+                <a href="#holidays" class="list-group-item list-group-item-action" data-bs-toggle="list">
+                    <i class="material-symbols-outlined fs-14 me-2">calendar_month</i> Public Holidays
+                </a>
+                <a href="#documents" class="list-group-item list-group-item-action" data-bs-toggle="list">
+                    <i class="material-symbols-outlined fs-14 me-2">folder</i> Documents
+                </a>
                 <a href="#email" class="list-group-item list-group-item-action" data-bs-toggle="list">
                     <i class="material-symbols-outlined fs-14 me-2">mail</i> Email
                 </a>
@@ -54,7 +60,7 @@
         <div class="tab-content">
             <!-- General Settings -->
             <div class="tab-pane fade show active" id="general">
-                <div class="card border-0">
+                <div class="card border-0 mb-4">
                     <div class="card-header bg-white">
                         <h5 class="mb-0 fw-bold">General Settings</h5>
                     </div>
@@ -79,28 +85,92 @@
                                 <label class="form-label">Copyright Text</label>
                                 <input type="text" class="form-control" name="copyright_text" value="{{ $settings->copyright_text ?? '' }}">
                             </div>
+                            <button type="submit" class="create-btn-base">Save Changes</button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Localization Settings -->
+                <div class="card border-0 mb-4">
+                    <div class="card-header bg-white">
+                        <h5 class="mb-0 fw-bold">Localization</h5>
+                    </div>
+                    <div class="card-body">
+                        <form id="localizationForm">
+                            @csrf
                             <div class="row">
                                 <div class="col-md-6 mb-3">
                                     <label class="form-label">Timezone</label>
-                                    <select class="form-select">
-                                        <option>Asia/Dhaka (UTC+6)</option>
+                                    <select class="form-select" name="timezone">
+                                        @foreach(DateTimeZone::listIdentifiers() as $timezone)
+                                            <option value="{{ $timezone }}" {{ $localization->timezone == $timezone ? 'selected' : '' }}>{{ $timezone }}</option>
+                                        @endforeach
                                     </select>
                                 </div>
                                 <div class="col-md-6 mb-3">
-                                    <label class="form-label">Currency</label>
-                                    <select class="form-select">
-                                        <option>BDT (৳)</option>
-                                        <option>USD ($)</option>
+                                    <label class="form-label">System Language</label>
+                                    <select class="form-select" name="system_language">
+                                        <option value="en" {{ $localization->system_language == 'en' ? 'selected' : '' }}>English</option>
+                                        <option value="bn" {{ $localization->system_language == 'bn' ? 'selected' : '' }}>Bangla</option>
                                     </select>
                                 </div>
                             </div>
-                            <div class="mb-3">
-                                <label class="form-label">Date Format</label>
-                                <select class="form-select">
-                                    <option>M d, Y (Dec 01, 2025)</option>
-                                    <option>d/m/Y (01/12/2025)</option>
-                                    <option>Y-m-d (2025-12-01)</option>
-                                </select>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">Date Format</label>
+                                    <select class="form-select" name="date_format">
+                                        <option value="M d, Y" {{ $localization->date_format == 'M d, Y' ? 'selected' : '' }}>M d, Y (Dec 01, 2025)</option>
+                                        <option value="d-m-Y" {{ $localization->date_format == 'd-m-Y' ? 'selected' : '' }}>d-m-Y (01-12-2025)</option>
+                                        <option value="Y-m-d" {{ $localization->date_format == 'Y-m-d' ? 'selected' : '' }}>Y-m-d (2025-12-01)</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">Time Format</label>
+                                    <select class="form-select" name="time_format">
+                                        <option value="12" {{ $localization->time_format == '12' ? 'selected' : '' }}>12 Hour</option>
+                                        <option value="24" {{ $localization->time_format == '24' ? 'selected' : '' }}>24 Hour</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <button type="submit" class="create-btn-base">Save Changes</button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Currency Settings -->
+                <div class="card border-0">
+                    <div class="card-header bg-white">
+                        <h5 class="mb-0 fw-bold">Currency</h5>
+                    </div>
+                    <div class="card-body">
+                        <form id="currencyForm">
+                            @csrf
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">Default Currency</label>
+                                    <select class="form-select" name="default_currency">
+                                        <option value="BDT" {{ $currency->default_currency == 'BDT' ? 'selected' : '' }}>BDT (৳)</option>
+                                        <option value="USD" {{ $currency->default_currency == 'USD' ? 'selected' : '' }}>USD ($)</option>
+                                        <option value="INR" {{ $currency->default_currency == 'INR' ? 'selected' : '' }}>INR (₹)</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">Currency Decimals</label>
+                                    <input type="number" class="form-control" name="currency_decimals" value="{{ $localization->currency_decimals ?? 2 }}">
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">Fiscal Year Start</label>
+                                    <select class="form-select" name="fiscal_year_start">
+                                        <option value="January" {{ $currency->fiscal_year_start == 'January' ? 'selected' : '' }}>January</option>
+                                        <option value="April" {{ $currency->fiscal_year_start == 'April' ? 'selected' : '' }}>April</option>
+                                        <option value="July" {{ $currency->fiscal_year_start == 'July' ? 'selected' : '' }}>July</option>
+                                        <option value="October" {{ $currency->fiscal_year_start == 'October' ? 'selected' : '' }}>October</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">USD to BDT Rate</label>
+                                    <input type="number" class="form-control" name="usd_to_bdt_rate" value="{{ $currency->usd_to_bdt_rate }}" step="0.01">
+                                </div>
                             </div>
                             <button type="submit" class="create-btn-base">Save Changes</button>
                         </form>
@@ -137,32 +207,208 @@
                                     @endif
                                 </div>
                             </div>
+
+                            <h6 class="mb-3 fw-bold text-muted">Company Information</h6>
                             <div class="row mb-3">
-                                <div class="col-md-12">
+                                <div class="col-md-6">
                                      <label class="form-label">Company Name</label>
                                      <input type="text" class="form-control" name="company_name" value="{{ $settings->company_name ?? '' }}">
                                 </div>
+                                <div class="col-md-6">
+                                     <label class="form-label">Company Type</label>
+                                     <select class="form-select" name="company_type">
+                                         <option value="Private Limited Company" {{ ($settings->company_type ?? '') == 'Private Limited Company' ? 'selected' : '' }}>Private Limited Company</option>
+                                         <option value="Public Limited Company" {{ ($settings->company_type ?? '') == 'Public Limited Company' ? 'selected' : '' }}>Public Limited Company</option>
+                                         <option value="Partnership" {{ ($settings->company_type ?? '') == 'Partnership' ? 'selected' : '' }}>Partnership</option>
+                                         <option value="Proprietorship" {{ ($settings->company_type ?? '') == 'Proprietorship' ? 'selected' : '' }}>Proprietorship</option>
+                                     </select>
+                                </div>
+                                <div class="col-md-6 mt-3">
+                                     <label class="form-label">Industry</label>
+                                     <input type="text" class="form-control" name="industry" value="{{ $settings->industry ?? '' }}">
+                                </div>
+                                <div class="col-md-6 mt-3">
+                                     <label class="form-label">Establishment Date</label>
+                                     <input type="date" class="form-control" name="establishment_date" value="{{ $settings->establishment_date ?? '' }}">
+                                </div>
                             </div>
+
+                            <h6 class="mb-3 fw-bold text-muted">Legal Numbers</h6>
+                            <div class="row mb-3">
+                                <div class="col-md-4">
+                                     <label class="form-label">Registration No.</label>
+                                     <input type="text" class="form-control" name="company_registration_number" value="{{ $settings->company_registration_number ?? '' }}">
+                                </div>
+                                <div class="col-md-4">
+                                     <label class="form-label">Trade License</label>
+                                     <input type="text" class="form-control" name="trade_license_number" value="{{ $settings->trade_license_number ?? '' }}">
+                                </div>
+                                <div class="col-md-4">
+                                     <label class="form-label">BIN/VAT</label>
+                                     <input type="text" class="form-control" name="bin_vat_number" value="{{ $settings->bin_vat_number ?? '' }}">
+                                </div>
+                            </div>
+
+                            <h6 class="mb-3 fw-bold text-muted">Address</h6>
                             <div class="mb-3">
-                                <label class="form-label">Store Address</label>
+                                <label class="form-label">Street Address</label>
                                 <textarea class="form-control" name="street_address" rows="2">{{ $settings->street_address ?? '' }}</textarea>
                             </div>
-                            <div class="row">
-                                <div class="col-md-6 mb-3">
-                                    <label class="form-label">Phone</label>
-                                    <input type="text" class="form-control" name="official_contact_number" value="{{ is_array($settings->official_contact_number) ? ($settings->official_contact_number[0] ?? '') : ($settings->official_contact_number ?? '') }}">
+                            <div class="row mb-3">
+                                <div class="col-md-4">
+                                    <label class="form-label">City/Thana</label>
+                                    <input type="text" class="form-control" name="city_thana" value="{{ $settings->city_thana ?? '' }}">
                                 </div>
-                                <div class="col-md-6 mb-3">
-                                    <label class="form-label">WhatsApp</label>
-                                    <input type="text" class="form-control" name="whatsapp_number" value="{{ is_array($settings->whatsapp_number) ? ($settings->whatsapp_number[0] ?? '') : ($settings->whatsapp_number ?? '') }}">
+                                <div class="col-md-4">
+                                    <label class="form-label">District</label>
+                                    <input type="text" class="form-control" name="district" value="{{ $settings->district ?? '' }}">
                                 </div>
-                                <div class="col-md-6 mb-3">
-                                    <label class="form-label">Email</label>
-                                    <input type="email" class="form-control" name="email_address" value="{{ is_array($settings->email_address) ? ($settings->email_address[0] ?? '') : ($settings->email_address ?? '') }}">
+                                <div class="col-md-4">
+                                    <label class="form-label">Zip Code</label>
+                                    <input type="text" class="form-control" name="zip_code" value="{{ $settings->zip_code ?? '' }}">
                                 </div>
                             </div>
-                            <button type="submit" class="create-btn-base">Save Changes</button>
+
+                            <h6 class="mb-3 fw-bold text-muted">Contact Info</h6>
+                            <div class="row">
+                                <!-- Official Phone -->
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">Phone (Official)</label>
+                                    <div class="repeater-container" data-name="official_contact_number[]">
+                                        @php $phones = is_array($settings->official_contact_number) ? $settings->official_contact_number : (json_decode($settings->official_contact_number, true) ?? []); @endphp
+                                        @if(empty($phones)) @php $phones = ['']; @endphp @endif
+                                        @foreach($phones as $phone)
+                                            <div class="input-group mb-2">
+                                                <input type="text" class="form-control" name="official_contact_number[]" value="{{ $phone }}">
+                                                <button type="button" class="btn btn-outline-danger remove-field"><i class="material-symbols-outlined fs-16">delete</i></button>
+                                            </div>
+                                        @endforeach
+                                    </div>
+                                    <button type="button" class="btn btn-sm btn-outline-primary add-field" data-target="official_contact_number[]"><i class="material-symbols-outlined fs-14">add</i> Add Number</button>
+                                </div>
+
+                                <!-- WhatsApp -->
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">WhatsApp</label>
+                                    <div class="repeater-container" data-name="whatsapp_number[]">
+                                        @php $whatsapps = is_array($settings->whatsapp_number) ? $settings->whatsapp_number : (json_decode($settings->whatsapp_number, true) ?? []); @endphp
+                                        @if(empty($whatsapps)) @php $whatsapps = ['']; @endphp @endif
+                                        @foreach($whatsapps as $wa)
+                                            <div class="input-group mb-2">
+                                                <input type="text" class="form-control" name="whatsapp_number[]" value="{{ $wa }}">
+                                                <button type="button" class="btn btn-outline-danger remove-field"><i class="material-symbols-outlined fs-16">delete</i></button>
+                                            </div>
+                                        @endforeach
+                                    </div>
+                                    <button type="button" class="btn btn-sm btn-outline-primary add-field" data-target="whatsapp_number[]"><i class="material-symbols-outlined fs-14">add</i> Add WhatsApp</button>
+                                </div>
+
+                                <!-- Hotline -->
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">Hotline</label>
+                                    <div class="repeater-container" data-name="hotline_number[]">
+                                        @php $hotlines = is_array($settings->hotline_number) ? $settings->hotline_number : (json_decode($settings->hotline_number, true) ?? []); @endphp
+                                        @if(empty($hotlines)) @php $hotlines = ['']; @endphp @endif
+                                        @foreach($hotlines as $hl)
+                                            <div class="input-group mb-2">
+                                                <input type="text" class="form-control" name="hotline_number[]" value="{{ $hl }}">
+                                                <button type="button" class="btn btn-outline-danger remove-field"><i class="material-symbols-outlined fs-16">delete</i></button>
+                                            </div>
+                                        @endforeach
+                                    </div>
+                                    <button type="button" class="btn btn-sm btn-outline-primary add-field" data-target="hotline_number[]"><i class="material-symbols-outlined fs-14">add</i> Add Hotline</button>
+                                </div>
+
+                                <!-- Email -->
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">Email</label>
+                                    <div class="repeater-container" data-name="email_address[]">
+                                        @php $emails = is_array($settings->email_address) ? $settings->email_address : (json_decode($settings->email_address, true) ?? []); @endphp
+                                        @if(empty($emails)) @php $emails = ['']; @endphp @endif
+                                        @foreach($emails as $email)
+                                            <div class="input-group mb-2">
+                                                <input type="email" class="form-control" name="email_address[]" value="{{ $email }}">
+                                                <button type="button" class="btn btn-outline-danger remove-field"><i class="material-symbols-outlined fs-16">delete</i></button>
+                                            </div>
+                                        @endforeach
+                                    </div>
+                                    <button type="button" class="btn btn-sm btn-outline-primary add-field" data-target="email_address[]"><i class="material-symbols-outlined fs-14">add</i> Add Email</button>
+                                </div>
+                            </div>
+                            <button type="submit" class="create-btn-base mt-3">Save Changes</button>
                         </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Public Holidays -->
+            <div class="tab-pane fade" id="holidays">
+                <div class="card border-0">
+                    <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0 fw-bold">Public Holidays</h5>
+                        <button class="create-btn-base border-0" data-bs-toggle="modal" data-bs-target="#addHolidayModal">Add Holiday</button>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th>Date</th>
+                                        <th>Occasion</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach($public_holidays as $holiday)
+                                        <tr>
+                                            <td>{{ \Carbon\Carbon::parse($holiday->date)->format('d M, Y') }}</td>
+                                            <td>{{ $holiday->occasion }}</td>
+                                            <td>
+                                                <button class="btn btn-sm btn-outline-danger delete-holiday" data-id="{{ $holiday->id }}"><i class="material-symbols-outlined fs-16">delete</i></button>
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Documents -->
+            <div class="tab-pane fade" id="documents">
+                <div class="card border-0">
+                    <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0 fw-bold">Documents</h5>
+                        <button class="create-btn-base border-0" data-bs-toggle="modal" data-bs-target="#addDocumentModal">Upload Document</button>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th>Type</th>
+                                        <th>File</th>
+                                        <th>Uploaded At</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach($documents as $doc)
+                                        <tr>
+                                            <td>{{ $doc->type }}</td>
+                                            <td>
+                                                <a href="{{ asset('storage/' . $doc->file_path) }}" target="_blank" class="text-primary">View File</a>
+                                            </td>
+                                            <td>{{ $doc->created_at->format('d M, Y') }}</td>
+                                            <td>
+                                                <button class="btn btn-sm btn-outline-danger delete-document" data-id="{{ $doc->id }}"><i class="material-symbols-outlined fs-16">delete</i></button>
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -426,19 +672,19 @@
                             @csrf
                             <div class="mb-3">
                                 <label class="form-label">Meta Title</label>
-                                <input type="text" class="form-control" name="meta_title" value="{{ $settings->meta_title ?? '' }}" placeholder="{{ config('app.name', 'GrowUp E-Commerce') }} - Your Ultimate Shopping Destination">
+                                <input type="text" class="form-control" name="meta_title" value="{{ $settings->meta_title ?? '' }}" placeholder="SEO Title">
                             </div>
                             <div class="mb-3">
                                 <label class="form-label">Meta Description</label>
-                                <textarea class="form-control" name="meta_description" rows="3" placeholder="Shop the latest products at the best prices. {{ config('app.name', 'GrowUp E-Commerce') }} offers quality products with fast delivery across Bangladesh.">{{ $settings->meta_description ?? '' }}</textarea>
+                                <textarea class="form-control" name="meta_description" rows="3">{{ $settings->meta_description ?? '' }}</textarea>
                             </div>
                             <div class="mb-3">
                                 <label class="form-label">Meta Keywords</label>
-                                <input type="text" class="form-control" name="meta_keywords" value="{{ $settings->meta_keywords ?? '' }}" placeholder="e-commerce, online shopping, bangladesh">
+                                <input type="text" class="form-control" name="meta_keywords" value="{{ $settings->meta_keywords ?? '' }}" placeholder="ecommerce, shop, best deals">
                             </div>
                             <div class="mb-3">
                                 <label class="form-label">Google Analytics ID</label>
-                                <input type="text" class="form-control" name="google_analytics_id" value="{{ $settings->google_analytics_id ?? '' }}" placeholder="UA-XXXXXXXXX-X">
+                                <input type="text" class="form-control" name="google_analytics_id" value="{{ $settings->google_analytics_id ?? '' }}" placeholder="UA-XXXXX-Y">
                             </div>
                             <button type="submit" class="create-btn-base">Save Changes</button>
                         </form>
@@ -448,236 +694,194 @@
         </div>
     </div>
 </div>
+
+<!-- Add Holiday Modal -->
+<div class="modal fade" id="addHolidayModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <form id="addHolidayForm">
+            @csrf
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Add Holiday</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label">Date</label>
+                        <input type="date" class="form-control" name="date" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Occasion</label>
+                        <input type="text" class="form-control" name="occasion" required>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="create-btn-base">Save</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Add Document Modal -->
+<div class="modal fade" id="addDocumentModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <form id="addDocumentForm" enctype="multipart/form-data">
+            @csrf
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Upload Document</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label">Document Type</label>
+                        <input type="text" class="form-control" name="type" placeholder="e.g. Trade License" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">File (PDF/Image)</label>
+                        <input type="file" class="form-control" name="file" required>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="create-btn-base">Upload</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
 @endsection
 
 @push('scripts')
 <script>
-    function handleFormSubmit(formId, route) {
-        document.getElementById(formId)?.addEventListener('submit', function(e) {
+    $(document).ready(function() {
+        // Generic Form Submit
+        function submitForm(formId, url, successMsg) {
+            $('#' + formId).on('submit', function(e) {
+                e.preventDefault();
+                let formData = new FormData(this);
+
+                $.ajax({
+                    url: url,
+                    type: 'POST',
+                    data: formData,
+                    contentType: false,
+                    processData: false,
+                    success: function(response) {
+                        toastr.success(response.message || successMsg);
+                        if (response.redirect) window.location.href = response.redirect;
+                    },
+                    error: function(xhr) {
+                        let errors = xhr.responseJSON.errors;
+                        if (errors) {
+                            $.each(errors, function(key, value) {
+                                toastr.error(value[0]);
+                            });
+                        } else {
+                            toastr.error('Something went wrong');
+                        }
+                    }
+                });
+            });
+        }
+
+        submitForm('generalSettingsForm', '{{ route("admin.settings.update-general") }}', 'General settings updated');
+        submitForm('localizationForm', '{{ route("admin.settings.update-localization") }}', 'Localization updated');
+        submitForm('currencyForm', '{{ route("admin.settings.update-currency") }}', 'Currency updated');
+        submitForm('storeSettingsForm', '{{ route("admin.settings.update-store-info") }}', 'Store info updated');
+        submitForm('emailSettingsForm', '{{ route("admin.settings.update-email") }}', 'Email settings updated');
+        submitForm('shippingSettingsForm', '{{ route("admin.settings.update-shipping") }}', 'Shipping settings updated');
+        submitForm('scoutDiscountForm', '{{ route("admin.settings.update-scout") }}', 'Scout discount updated');
+        submitForm('socialSettingsForm', '{{ route("admin.settings.update-social") }}', 'Social settings updated');
+        submitForm('seoSettingsForm', '{{ route("admin.settings.update-seo") }}', 'SEO settings updated');
+
+        // Dynamic Fields for Store Info
+        $('.add-field').on('click', function() {
+            let target = $(this).data('target');
+            let container = $(this).siblings('.repeater-container');
+            let inputType = target.includes('email') ? 'email' : 'text';
+            let fieldHtml = `
+                <div class="input-group mb-2">
+                    <input type="${inputType}" class="form-control" name="${target}" placeholder="Enter value">
+                    <button type="button" class="btn btn-outline-danger remove-field"><i class="material-symbols-outlined fs-16">delete</i></button>
+                </div>`;
+            container.append(fieldHtml);
+        });
+
+        $(document).on('click', '.remove-field', function() {
+            $(this).closest('.input-group').remove();
+        });
+
+        // Holidays
+        $('#addHolidayForm').on('submit', function(e) {
             e.preventDefault();
-            const formData = new FormData(this);
-            fetch(route, {
-                method: 'POST',
-                headers: {
-                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                    'Accept': 'application/json'
+            let formData = new FormData(this);
+            $.ajax({
+                url: '{{ route("admin.settings.holidays.store") }}',
+                type: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function(response) {
+                    toastr.success(response.message);
+                    location.reload();
                 },
-                body: formData
-            })
-            .then(res => res.json())
-            .then(data => {
-                if(data.success) {
-                    if(typeof toastr !== 'undefined') {
-                        toastr.success(data.message);
-                    } else {
-                        alert(data.message);
-                    }
-                    // Reload page if logo/favicon updated to show changes immediately if needed, 
-                    // or just rely on the user refreshing. 
-                    // For store settings which might change logo, a reload might be nice but let's stick to toastr for now.
-                } else {
-                    if(typeof toastr !== 'undefined') {
-                        toastr.error(data.message || 'Something went wrong');
-                    } else {
-                        alert(data.message || 'Something went wrong');
-                    }
-                }
-            })
-            .catch(err => {
-                console.error(err);
-                if(typeof toastr !== 'undefined') {
-                    toastr.error('Server Error');
-                } else {
-                    alert('Server Error');
+                error: function(xhr) {
+                    toastr.error('Error adding holiday');
                 }
             });
         });
-    }
 
-    handleFormSubmit('generalSettingsForm', '{{ route("admin.settings.general") }}');
-    handleFormSubmit('storeSettingsForm', '{{ route("admin.settings.store") }}');
-    handleFormSubmit('emailSettingsForm', '{{ route("admin.settings.email") }}');
-    handleFormSubmit('socialSettingsForm', '{{ route("admin.settings.social") }}');
-    handleFormSubmit('seoSettingsForm', '{{ route("admin.settings.seo") }}');
-
-    // Activate tab based on hash
-    document.addEventListener("DOMContentLoaded", function() {
-        var hash = window.location.hash;
-        if (hash) {
-            var triggerEl = document.querySelector('a[href="' + hash + '"]');
-            if (triggerEl) {
-                // Remove active class from all tabs
-                document.querySelectorAll('.list-group-item').forEach(el => el.classList.remove('active'));
-                document.querySelectorAll('.tab-pane').forEach(el => el.classList.remove('show', 'active'));
-                
-                // Activate the target tab
-                triggerEl.classList.add('active');
-                var targetPane = document.querySelector(hash);
-                if(targetPane) {
-                    targetPane.classList.add('show', 'active');
-                }
-            }
-        }
-    });
-
-    // Handle Shipping Settings Form Submission
-    document.getElementById('shippingSettingsForm')?.addEventListener('submit', function(e) {
-        e.preventDefault();
-        let formData = new FormData(this);
-        
-        fetch('{{ route("admin.settings.shipping") }}', {
-            method: 'POST',
-            body: formData,
-            headers: {
-                'X-CSRF-TOKEN': document.querySelector('[name="_token"]').value
-            }
-        })
-        .then(response => response.json())
-        .then(data => {
-            if(data.success) {
-                showCustomToast('success', 'Shipping settings saved successfully!', '✓');
-                setTimeout(() => {
+        $('.delete-holiday').on('click', function() {
+            if(!confirm('Are you sure?')) return;
+            let id = $(this).data('id');
+            $.ajax({
+                url: '{{ url("admin/settings/holidays") }}/' + id,
+                type: 'DELETE',
+                data: { _token: '{{ csrf_token() }}' },
+                success: function(response) {
+                    toastr.success(response.message);
                     location.reload();
-                }, 1500);
-            } else {
-                showCustomToast('error', 'Error: ' + (data.message || 'Failed to save'), '✕');
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            showCustomToast('error', 'An error occurred while saving.', '✕');
+                }
+            });
         });
-    });
 
-    // Custom Toast Notification
-    function showCustomToast(type, message, icon) {
-        // Remove existing toasts
-        const existingToasts = document.querySelectorAll('.custom-toast');
-        existingToasts.forEach(toast => toast.remove());
-
-        const toast = document.createElement('div');
-        toast.className = `custom-toast custom-toast-${type}`;
-        
-        const colors = {
-            success: { bg: '#10b981', icon: '✓' },
-            error: { bg: '#ef4444', icon: '✕' },
-            warning: { bg: '#f59e0b', icon: '⚠' },
-            info: { bg: '#3b82f6', icon: 'ℹ' }
-        };
-
-        const color = colors[type] || colors.info;
-
-        toast.innerHTML = `
-            <div style="
-                position: fixed;
-                top: 20px;
-                right: 20px;
-                background: ${color.bg};
-                color: white;
-                padding: 16px 24px;
-                border-radius: 8px;
-                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-                display: flex;
-                align-items: center;
-                gap: 12px;
-                font-weight: 500;
-                font-size: 14px;
-                z-index: 9999;
-                animation: slideInRight 0.3s ease-out;
-                max-width: 400px;
-                word-wrap: break-word;
-            ">
-                <span style="
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                    width: 24px;
-                    height: 24px;
-                    border-radius: 50%;
-                    background: rgba(255, 255, 255, 0.2);
-                    font-weight: bold;
-                    flex-shrink: 0;
-                ">${icon}</span>
-                <span>${message}</span>
-            </div>
-        `;
-
-        document.body.appendChild(toast);
-
-        // Auto remove after 4 seconds
-        setTimeout(() => {
-            toast.style.animation = 'slideOutRight 0.3s ease-out';
-            setTimeout(() => toast.remove(), 300);
-        }, 4000);
-    }
-
-    // Add animation styles if not already present
-    if (!document.getElementById('toast-styles')) {
-        const style = document.createElement('style');
-        style.id = 'toast-styles';
-        style.textContent = `
-            @keyframes slideInRight {
-                from {
-                    transform: translateX(400px);
-                    opacity: 0;
-                }
-                to {
-                    transform: translateX(0);
-                    opacity: 1;
-                }
-            }
-
-            @keyframes slideOutRight {
-                from {
-                    transform: translateX(0);
-                    opacity: 1;
-                }
-                to {
-                    transform: translateX(400px);
-                    opacity: 0;
-                }
-            }
-
-            .custom-toast {
-                animation: slideInRight 0.3s ease-out !important;
-            }
-        `;
-        document.head.appendChild(style);
-    }
-
-    // Handle Scout Discount Settings Form Submission
-    document.getElementById('scoutDiscountForm')?.addEventListener('submit', function(e) {
-        e.preventDefault();
-        let formData = new FormData(this);
-        
-        // Add checkbox value even if unchecked
-        if (!formData.has('scout_discount_enabled')) {
-            formData.append('scout_discount_enabled', '0');
-        }
-        
-        fetch('{{ route("admin.settings.scout") }}', {
-            method: 'POST',
-            body: formData,
-            headers: {
-                'X-CSRF-TOKEN': document.querySelector('[name="_token"]').value
-            }
-        })
-        .then(response => response.json())
-        .then(data => {
-            if(data.success) {
-                showCustomToast('success', 'Scout discount settings saved successfully!', '✓');
-                setTimeout(() => {
+        // Documents
+        $('#addDocumentForm').on('submit', function(e) {
+            e.preventDefault();
+            let formData = new FormData(this);
+            $.ajax({
+                url: '{{ route("admin.settings.documents.store") }}',
+                type: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function(response) {
+                    toastr.success('Document uploaded successfully');
                     location.reload();
-                }, 1500);
-            } else {
-                showCustomToast('error', 'Error: ' + (data.message || 'Failed to save'), '✕');
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            showCustomToast('error', 'An error occurred while saving.', '✕');
+                },
+                error: function(xhr) {
+                    toastr.error('Error uploading document');
+                }
+            });
+        });
+
+        $('.delete-document').on('click', function() {
+            if(!confirm('Are you sure?')) return;
+            let id = $(this).data('id');
+            $.ajax({
+                url: '{{ url("admin/settings/documents") }}/' + id,
+                type: 'DELETE',
+                data: { _token: '{{ csrf_token() }}' },
+                success: function(response) {
+                    toastr.success('Document deleted successfully');
+                    location.reload();
+                }
+            });
         });
     });
 </script>
 @endpush
-

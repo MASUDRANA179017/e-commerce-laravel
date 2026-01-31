@@ -205,16 +205,25 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
     */
     Route::prefix('settings')->name('settings.')->group(function () {
         Route::get('/', [SettingsController::class, 'index'])->name('index');
-        Route::post('/general', [SettingsController::class, 'updateGeneral'])->name('general');
-        Route::post('/store', [SettingsController::class, 'updateStoreInfo'])->name('store');
-        Route::post('/email', [SettingsController::class, 'updateEmail'])->name('email');
-        Route::post('/payment', [SettingsController::class, 'updatePayment'])->name('payment');
-        Route::post('/shipping-settings', [SettingsController::class, 'updateShipping'])->name('shipping');
-        Route::post('/scout-discount', [SettingsController::class, 'updateScout'])->name('scout');
-        Route::post('/tax', [SettingsController::class, 'updateTax'])->name('tax');
-        Route::post('/currency', [SettingsController::class, 'updateCurrency'])->name('currency');
-        Route::post('/social', [SettingsController::class, 'updateSocial'])->name('social');
-        Route::post('/seo', [SettingsController::class, 'updateSeo'])->name('seo');
+        Route::post('/general', [SettingsController::class, 'updateGeneral'])->name('update-general');
+        Route::post('/localization', [SettingsController::class, 'updateLocalization'])->name('update-localization');
+        Route::post('/store-info', [SettingsController::class, 'updateStoreInfo'])->name('update-store-info');
+        Route::post('/email', [SettingsController::class, 'updateEmail'])->name('update-email');
+        Route::post('/payment', [SettingsController::class, 'updatePayment'])->name('update-payment');
+        Route::post('/shipping-settings', [SettingsController::class, 'updateShipping'])->name('update-shipping');
+        Route::post('/scout-discount', [SettingsController::class, 'updateScout'])->name('update-scout');
+        Route::post('/tax', [SettingsController::class, 'updateTax'])->name('update-tax');
+        Route::post('/currency', [SettingsController::class, 'updateCurrency'])->name('update-currency');
+        Route::post('/social', [SettingsController::class, 'updateSocial'])->name('update-social');
+        Route::post('/seo', [SettingsController::class, 'updateSeo'])->name('update-seo');
+
+        // Holidays
+        Route::post('/holidays', [SettingsController::class, 'publicHolidaysStore'])->name('holidays.store');
+        Route::delete('/holidays/{id}', [SettingsController::class, 'publicHolidaysDelete'])->name('holidays.delete');
+
+        // Documents
+        Route::post('/documents', [SettingsController::class, 'documentsStore'])->name('documents.store');
+        Route::delete('/documents/{id}', [SettingsController::class, 'documentsDelete'])->name('documents.delete');
     });
 
     /*

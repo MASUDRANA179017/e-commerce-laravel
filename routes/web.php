@@ -68,7 +68,7 @@ Route::get('/storage-link', function() {
     return redirect()->back();
 });
 route::get('/business-catalog', [BusinessCatalogController::class, 'index'])->name('business-catalog.view');
-route::get('/business-setup', [BusinessCatalogController::class, 'business_setup_index'])->name('business-setup.view');
+
 // route::get('/all-attributes', [BusinessCatalogController::class, 'all_attributes_index'])->name('all-attributes.view');
 
 // Show the contact us page
