@@ -7,4 +7,5 @@ return [
     Barryvdh\DomPDF\ServiceProvider::class,
     Spatie\Permission\PermissionServiceProvider::class,
     Barryvdh\Debugbar\ServiceProvider::class,
+    App\Providers\ThemeServiceProvider::class,
 ];

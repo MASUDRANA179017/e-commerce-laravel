@@ -9,6 +9,7 @@ class BusinessSetup extends Model
 {
     protected $fillable = [
         'company_name',
+        'active_theme',
         'company_type',
         'industry',
         'establishment_date',

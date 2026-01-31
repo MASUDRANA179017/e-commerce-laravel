@@ -12,6 +12,7 @@ use App\Models\Menu;
 use App\Models\MenuItem;
 use App\Models\SystemSetting;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Auth;
 
@@ -20,7 +21,18 @@ class StorefrontController extends Controller
     public function customizer()
     {
         $business_setup = BusinessSetup::first();
-        return view('admin.storefront.customizer', compact('business_setup'));
+        
+        // Scan themes directory
+        $themesPath = resource_path('views/themes');
+        $themes = [];
+        if (File::exists($themesPath)) {
+            $themes = array_map('basename', File::directories($themesPath));
+        } else {
+            // Fallback if directory doesn't exist yet
+            $themes = ['theme1']; 
+        }
+
+        return view('admin.storefront.customizer', compact('business_setup', 'themes'));
     }
 
     public function saveCustomizer(Request $request)
@@ -33,6 +45,7 @@ class StorefrontController extends Controller
         }
 
         $business_setup->update($request->only([
+            'active_theme',
             'theme_color_primary',
             'theme_color_secondary',
             'theme_color_accent',

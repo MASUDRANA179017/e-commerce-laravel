@@ -64,6 +64,26 @@
     <div class="col-lg-4">
         <form id="themeSettingsForm">
             @csrf
+            
+            <div class="mb-4 border-0 card">
+                <div class="bg-white card-header">
+                    <h5 class="mb-0 fw-bold">Active Theme</h5>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <label class="form-label">Select Theme</label>
+                        <select class="form-select" name="active_theme">
+                            @foreach($themes as $theme)
+                                <option value="{{ $theme }}" {{ ($business_setup->active_theme ?? 'theme1') == $theme ? 'selected' : '' }}>
+                                    {{ ucfirst($theme) }}
+                                </option>
+                            @endforeach
+                        </select>
+                        <small class="text-muted">Switching themes will change the storefront layout.</small>
+                    </div>
+                </div>
+            </div>
+
             <div class="mb-4 border-0 card">
                 <div class="bg-white card-header">
                     <h5 class="mb-0 fw-bold">Colors</h5>
