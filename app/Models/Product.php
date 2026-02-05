@@ -118,6 +118,15 @@ class Product extends Model
      */
     public function getActiveFlashSaleAttribute()
     {
+        if ($this->relationLoaded('flashSales')) {
+            $now = now();
+            return $this->flashSales->first(function ($sale) use ($now) {
+                return $sale->status === 'active' && 
+                       $sale->start_time <= $now && 
+                       $sale->end_time >= $now;
+            });
+        }
+
         return $this->flashSales()
             ->where('status', 'active')
             ->where('start_time', '<=', now())
@@ -161,10 +170,16 @@ class Product extends Model
     }
     
     public function getAverageRatingAttribute() {
+        if ($this->relationLoaded('approvedReviews')) {
+            return $this->approvedReviews->avg('rating') ?? 0;
+        }
         return $this->approvedReviews()->avg('rating') ?? 0;
     }
     
     public function getReviewsCountAttribute() {
+        if ($this->relationLoaded('approvedReviews')) {
+            return $this->approvedReviews->count();
+        }
         return $this->approvedReviews()->count();
     }
 

@@ -51,7 +51,7 @@ Route::middleware('auth')->group(function () {
 
 
 
-    
+
 Route::get('/terms-conditions', [TermsConditionController::class, 'index'])->name('terms.index');
 Route::get('/terms-conditions/data', [TermsConditionController::class, 'getData'])->name('terms.data');
 Route::post('/terms-conditions', [TermsConditionController::class, 'store'])->name('terms.store');

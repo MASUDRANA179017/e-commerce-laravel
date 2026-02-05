@@ -11,6 +11,7 @@ use App\Models\Blog;
 use App\Models\Banner;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Cache;
 
 class HomeController extends Controller
 {
@@ -19,201 +20,234 @@ class HomeController extends Controller
      */
     public function index()
     {
+        // Cache Duration Constants
+        $LONG_CACHE = 3600; // 1 hour
+        $SHORT_CACHE = 1800; // 30 minutes
+        $TINY_CACHE = 300;   // 5 minutes
+
+        // Common eager loads for products to prevent N+1 queries
+        $productEagerLoads = [
+            'images',
+            'brand',
+            'categories',
+            'flashSales' => function($q) {
+                $q->where('status', 'active')
+                  ->where('start_time', '<=', now())
+                  ->where('end_time', '>=', now());
+            },
+            'approvedReviews'
+        ];
+
+        // Determine active theme (for filtering banners)
+        $activeTheme = 'theme1';
+        if (request()->has('theme_preview')) {
+            $activeTheme = request()->get('theme_preview');
+        } else {
+            $settings = Cache::remember('theme_settings_active_theme', 3600, function() {
+                return DB::table('business_setups')->select('active_theme')->first();
+            });
+            $activeTheme = $settings->active_theme ?? 'theme1';
+        }
+
         // Get active hero sliders
-        $sliders = collect();
-        try {
-            $sliders = Banner::where('type', 'hero_slider')
-                ->where('status', true)
-                ->orderBy('position')
-                ->get();
-        } catch (\Exception $e) {
-            // Use empty collection
-        }
-
-        // Get ads sections
-        $ads_sections = collect();
-        try {
-            $ads_sections = Banner::where('type', 'ads_section')
-                ->where('status', true)
-                ->orderBy('position')
-                ->get();
-        } catch (\Exception $e) {
-            // Use empty collection
-        }
-
-        // Get ALL parent categories with children relationship (for product count including child categories)
-        $categories = collect();
-        try {
-            $categories = ProductCategory::whereNull('parent_id')
-                ->with('children') // Load children for product counting
-                ->orderBy('order')
-                ->get();
-        } catch (\Exception $e) {
-            // Fallback
+        $sliders = Cache::remember('home_sliders_' . $activeTheme, $LONG_CACHE, function () use ($activeTheme) {
             try {
-                $categories = ProductCategory::whereNull('parent_id')
-                    ->orderBy('order')
-                    ->get();
-            } catch (\Exception $e2) {
-                // Use empty collection
-            }
-        }
-
-        // Get featured products
-        $featuredProducts = collect();
-        try {
-            $featuredProducts = Product::where('status', 'Active')
-                ->where('featured', true)
-                ->with(['images', 'brand', 'categories'])
-                ->latest()
-                ->limit(8)
-                ->get();
-        } catch (\Exception $e) {
-            // Try alternative query
-            try {
-                $featuredProducts = DB::table('products')
-                    ->leftJoin('product_images', function ($join) {
-                        $join->on('products.id', '=', 'product_images.product_id')
-                            ->where('product_images.is_cover', true);
-                    })
-                    ->leftJoin('brands', 'products.brand_id', '=', 'brands.id')
-                    ->where('products.status', 'Active')
-                    ->where('products.featured', true)
-                    ->select(
-                        'products.*',
-                        'product_images.path as cover_image',
-                        'brands.name as brand_name'
-                    )
-                    ->orderBy('products.created_at', 'desc')
-                    ->limit(8)
-                    ->get();
-            } catch (\Exception $e2) {
-                // Use empty collection
-            }
-        }
-
-        // Get new arrivals (products created in last 30 days)
-        $newArrivals = collect();
-        try {
-            $newArrivals = Product::where('status', 'Active')
-                ->where('created_at', '>=', now()->subDays(30))
-                ->with(['images', 'brand', 'categories'])
-                ->latest()
-                ->limit(8)
-                ->get();
-        } catch (\Exception $e) {
-            // Try alternative query
-            try {
-                $newArrivals = DB::table('products')
-                    ->leftJoin('product_images', function ($join) {
-                        $join->on('products.id', '=', 'product_images.product_id')
-                            ->where('product_images.is_cover', true);
-                    })
-                    ->leftJoin('brands', 'products.brand_id', '=', 'brands.id')
-                    ->where('products.status', 'Active')
-                    ->where('products.created_at', '>=', now()->subDays(30))
-                    ->select(
-                        'products.*',
-                        'product_images.path as cover_image',
-                        'brands.name as brand_name'
-                    )
-                    ->orderBy('products.created_at', 'desc')
-                    ->limit(8)
-                    ->get();
-            } catch (\Exception $e2) {
-                // Use empty collection
-            }
-        }
-
-        // Get best selling / popular products (for now, just active products)
-        $bestSellers = collect();
-        try {
-            $bestSellers = Product::where('status', 'Active')
-                ->with(['images', 'brand', 'categories'])
-                ->inRandomOrder()
-                ->limit(8)
-                ->get();
-        } catch (\Exception $e) {
-            // Use empty collection
-        }
-
-        // Get brands for display
-        $brands = collect();
-        try {
-            $brands = Brand::where('status', 'active')
-                ->orderBy('name')
-                ->limit(12)
-                ->get();
-        } catch (\Exception $e) {
-            // Use empty collection
-        }
-
-        // Get active or upcoming flash sale
-        $flashSale = null;
-        $flashSaleProducts = collect();
-        try {
-            // Update statuses first
-            $now = now();
-            FlashSale::where('status', 'scheduled')
-                ->where('start_time', '<=', $now)
-                ->where('end_time', '>=', $now)
-                ->update(['status' => 'active']);
-            FlashSale::where('status', 'active')
-                ->where('end_time', '<', $now)
-                ->update(['status' => 'ended']);
-
-            // Prefer an active flash sale; if none, use the next scheduled one
-            $flashSale = FlashSale::whereIn('status', ['active', 'scheduled'])
-                ->where('end_time', '>=', $now)
-                ->orderByRaw("FIELD(status, 'active', 'scheduled', 'draft', 'ended')")
-                ->orderByDesc('is_featured')
-                ->orderBy('start_time')
-                ->first();
-
-            if ($flashSale) {
-                $flashSaleProducts = $flashSale->products()
-                    ->whereIn('status', ['active', 'Active'])
-                    ->with('images')
-                    ->limit(8)
-                    ->get();
-            }
-        } catch (\Exception $e) {
-            // Flash sale table might not exist yet
-        }
-
-        // Get latest 3 published blogs
-        $latestBlogs = collect();
-        try {
-            $latestBlogs = Blog::published()
-                ->with('author')
-                ->latest()
-                ->limit(3)
-                ->get();
-        } catch (\Exception $e) {
-            // Blog table might not exist yet or error occurred
-        }
-
-        // Get promotional banners
-        $promotional_banners = collect();
-        try {
-            $promotional_banners = Banner::where('type', 'promotional_banner')
-                ->where('status', true)
-                ->orderBy('position')
-                ->get();
-        } catch (\Exception $e) {
-            // Use empty collection
-        }
-
-            // Get store sections
-            $store_sections = collect();
-            try {
-                $store_sections = Banner::where('type', 'store_section')
+                return Banner::where('type', 'hero_slider')
                     ->where('status', true)
+                    ->where(function($q) use ($activeTheme) {
+                        $q->where('theme', 'all')
+                          ->orWhere('theme', $activeTheme)
+                          ->orWhereNull('theme');
+                    })
                     ->orderBy('position')
                     ->get();
             } catch (\Exception $e) {
-                // Use empty collection
+                return collect();
             }
+        });
+
+        // Get ads sections
+        $ads_sections = Cache::remember('home_ads_sections_' . $activeTheme, $LONG_CACHE, function () use ($activeTheme) {
+            try {
+                return Banner::where('type', 'ads_section')
+                    ->where('status', true)
+                    ->where(function($q) use ($activeTheme) {
+                        $q->where('theme', 'all')
+                          ->orWhere('theme', $activeTheme)
+                          ->orWhereNull('theme');
+                    })
+                    ->orderBy('position')
+                    ->get();
+            } catch (\Exception $e) {
+                return collect();
+            }
+        });
+
+        // Get ALL parent categories with children relationship
+        $categories = Cache::remember('home_categories', $LONG_CACHE, function () {
+            try {
+                return ProductCategory::whereNull('parent_id')
+                    ->with('children')
+                    ->orderBy('order')
+                    ->get();
+            } catch (\Exception $e) {
+                try {
+                    return ProductCategory::whereNull('parent_id')
+                        ->orderBy('order')
+                        ->get();
+                } catch (\Exception $e2) {
+                    return collect();
+                }
+            }
+        });
+
+        // Get featured products
+        $featuredProducts = Cache::remember('home_featured_products', $SHORT_CACHE, function () use ($productEagerLoads) {
+            try {
+                return Product::where('status', 'Active')
+                    ->where('featured', true)
+                    ->with($productEagerLoads)
+                    ->latest()
+                    ->limit(8)
+                    ->get();
+            } catch (\Exception $e) {
+                return collect();
+            }
+        });
+
+        // Get new arrivals (products created in last 30 days)
+        $newArrivals = Cache::remember('home_new_arrivals', $SHORT_CACHE, function () use ($productEagerLoads) {
+            try {
+                return Product::where('status', 'Active')
+                    ->where('created_at', '>=', now()->subDays(30))
+                    ->with($productEagerLoads)
+                    ->latest()
+                    ->limit(8)
+                    ->get();
+            } catch (\Exception $e) {
+                return collect();
+            }
+        });
+
+        // Get best selling / popular products
+        // Using inRandomOrder is heavy, caching it makes it efficient while still "random" per cache cycle
+        $bestSellers = Cache::remember('home_best_sellers', $SHORT_CACHE, function () use ($productEagerLoads) {
+            try {
+                return Product::where('status', 'Active')
+                    ->with($productEagerLoads)
+                    ->inRandomOrder()
+                    ->limit(8)
+                    ->get();
+            } catch (\Exception $e) {
+                return collect();
+            }
+        });
+
+        // Get brands for display
+        $brands = Cache::remember('home_brands', $LONG_CACHE, function () {
+            try {
+                return Brand::where('status', 'active')
+                    ->orderBy('name')
+                    ->limit(12)
+                    ->get();
+            } catch (\Exception $e) {
+                return collect();
+            }
+        });
+
+        // Update Flash Sale Status (Only once every 5 minutes to reduce DB writes on GET request)
+        if (!Cache::has('flash_sale_status_updated_recently')) {
+            try {
+                $now = now();
+                FlashSale::where('status', 'scheduled')
+                    ->where('start_time', '<=', $now)
+                    ->where('end_time', '>=', $now)
+                    ->update(['status' => 'active']);
+
+                FlashSale::where('status', 'active')
+                    ->where('end_time', '<', $now)
+                    ->update(['status' => 'ended']);
+
+                Cache::put('flash_sale_status_updated_recently', true, $TINY_CACHE);
+            } catch (\Exception $e) {
+                // Ignore table missing errors
+            }
+        }
+
+        // Get active or upcoming flash sale
+        $flashSaleData = Cache::remember('home_flash_sale_data', $TINY_CACHE, function () use ($productEagerLoads) {
+            try {
+                $now = now();
+                $flashSale = FlashSale::whereIn('status', ['active', 'scheduled'])
+                    ->where('end_time', '>=', $now)
+                    ->orderByRaw("FIELD(status, 'active', 'scheduled', 'draft', 'ended')")
+                    ->orderByDesc('is_featured')
+                    ->orderBy('start_time')
+                    ->first();
+
+                $products = collect();
+                if ($flashSale) {
+                    $products = $flashSale->products()
+                        ->whereIn('status', ['active', 'Active'])
+                        ->with($productEagerLoads)
+                        ->limit(8)
+                        ->get();
+                }
+                return ['flashSale' => $flashSale, 'products' => $products];
+            } catch (\Exception $e) {
+                return ['flashSale' => null, 'products' => collect()];
+            }
+        });
+
+        $flashSale = $flashSaleData['flashSale'];
+        $flashSaleProducts = $flashSaleData['products'];
+
+        // Get latest 3 published blogs
+        $latestBlogs = Cache::remember('home_latest_blogs', $LONG_CACHE, function () {
+            try {
+                return Blog::published()
+                    ->with('author')
+                    ->latest()
+                    ->limit(3)
+                    ->get();
+            } catch (\Exception $e) {
+                return collect();
+            }
+        });
+
+        // Get promotional banners
+        $promotional_banners = Cache::remember('home_promotional_banners_' . $activeTheme, $LONG_CACHE, function () use ($activeTheme) {
+            try {
+                return Banner::where('type', 'promotional_banner')
+                    ->where('status', true)
+                    ->where(function($q) use ($activeTheme) {
+                        $q->where('theme', 'all')
+                          ->orWhere('theme', $activeTheme)
+                          ->orWhereNull('theme');
+                    })
+                    ->orderBy('position')
+                    ->get();
+            } catch (\Exception $e) {
+                return collect();
+            }
+        });
+
+        // Get store sections
+        $store_sections = Cache::remember('home_store_sections_' . $activeTheme, $LONG_CACHE, function () use ($activeTheme) {
+            try {
+                return Banner::where('type', 'store_section')
+                    ->where('status', true)
+                    ->where(function($q) use ($activeTheme) {
+                        $q->where('theme', 'all')
+                          ->orWhere('theme', $activeTheme)
+                          ->orWhereNull('theme');
+                    })
+                    ->orderBy('position')
+                    ->get();
+            } catch (\Exception $e) {
+                return collect();
+            }
+        });
 
         return view('frontend.home', compact(
             'sliders',
@@ -225,9 +259,9 @@ class HomeController extends Controller
             'flashSale',
             'flashSaleProducts',
             'latestBlogs',
-                'promotional_banners',
-                'store_sections',
-                'ads_sections'
+            'promotional_banners',
+            'store_sections',
+            'ads_sections'
         ));
     }
 }

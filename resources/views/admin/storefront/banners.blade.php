@@ -25,6 +25,9 @@
                     <div class="col-md-4">
                         <div class="border rounded p-2 position-relative group-action">
                             <img src="{{ asset('storage/' . $slider->image) }}" class="img-fluid rounded" alt="Slider">
+                            <div class="position-absolute top-0 start-0 p-2">
+                                <span class="badge bg-dark opacity-75">{{ ucfirst($slider->theme ?? 'all') }}</span>
+                            </div>
                             <div class="position-absolute top-0 end-0 p-2 d-none group-action-show">
                                 <button class="btn btn-sm btn-light rounded-circle shadow-sm" onclick='editBanner(@json($slider))'><i class="bx bx-edit"></i></button>
                                 <form action="{{ route('admin.storefront.banners.destroy', $slider->id) }}" method="POST" class="d-inline">
@@ -60,6 +63,9 @@
                     <div class="col-md-4">
                         <div class="border rounded p-2 position-relative group-action">
                             <img src="{{ asset('storage/' . $banner->image) }}" class="img-fluid rounded" alt="Ads Banner">
+                            <div class="position-absolute top-0 start-0 p-2">
+                                <span class="badge bg-dark opacity-75">{{ ucfirst($banner->theme ?? 'all') }}</span>
+                            </div>
                             <div class="position-absolute top-0 end-0 p-2 d-none group-action-show">
                                 <button class="btn btn-sm btn-light rounded-circle shadow-sm" onclick='editBanner(@json($banner))'><i class="bx bx-edit"></i></button>
                                 <form action="{{ route('admin.storefront.banners.destroy', $banner->id) }}" method="POST" class="d-inline">
@@ -99,6 +105,7 @@
                             <tr>
                                 <th class="ps-3">Preview</th>
                                 <th>Title</th>
+                                <th>Theme</th>
                                 <th>Position</th>
                                 <th>Status</th>
                                 <th>Clicks</th>
@@ -112,6 +119,7 @@
                                     <img src="{{ asset('storage/' . $banner->image) }}" alt="Banner" style="height: 50px; width: auto;" class="rounded">
                                 </td>
                                 <td>{{ $banner->title ?? 'N/A' }}</td>
+                                <td><span class="badge bg-info text-dark">{{ ucfirst($banner->theme ?? 'all') }}</span></td>
                                 <td>{{ $banner->position }}</td>
                                 <td>
                                     @if($banner->status)
@@ -161,6 +169,7 @@
                                 <th class="ps-3">Preview</th>
                                 <th>Title</th>
                                 <th>Link</th>
+                                <th>Theme</th>
                                 <th>Position</th>
                                 <th>Status</th>
                                 <th class="text-end pe-3">Actions</th>
@@ -180,6 +189,7 @@
                                         <small class="text-danger">No link</small>
                                     @endif
                                 </td>
+                                <td><span class="badge bg-info text-dark">{{ ucfirst($section->theme ?? 'all') }}</span></td>
                                 <td>{{ $section->position }}</td>
                                 <td>
                                     @if($section->status)
@@ -249,6 +259,15 @@
                         <label class="form-check-label" for="bannerStatus">Active</label>
                     </div>
                     <div class="mb-3">
+                        <label class="form-label">Theme</label>
+                        <select name="theme" id="bannerTheme" class="form-select">
+                            <option value="all">All Themes</option>
+                            <option value="theme1">Theme 1 (Default)</option>
+                            <option value="theme2">Theme 2 (Red/Gold)</option>
+                        </select>
+                        <small class="text-muted">Select which theme this banner should appear on</small>
+                    </div>
+                    <div class="mb-3">
                         <label class="form-label">Position</label>
                         <input type="number" name="position" id="bannerPosition" class="form-control" value="0">
                                             <small class="text-muted">Lower numbers appear first</small>
@@ -285,18 +304,19 @@
         $('#bannerType').val(banner.type);
         $('#bannerTitle').val(banner.title);
         $('#bannerLink').val(banner.link);
+        $('#bannerTheme').val(banner.theme || 'all');
         $('#bannerPosition').val(banner.position);
-        
+
         // Handle Status
         if (banner.status) {
             $('#bannerStatus').prop('checked', true);
         } else {
             $('#bannerStatus').prop('checked', false);
         }
-        
+
         // Image is optional on update
         $('#bannerImage').removeAttr('required');
-        
+
         $('#addBannerModal').modal('show');
         updateImageRecommendation();
     }
@@ -314,7 +334,7 @@
     function updateImageRecommendation() {
         const type = $('#bannerType').val();
         let recommendation = '';
-        
+
         if (type === 'hero_slider') {
             recommendation = 'Recommended size: 1920x600px';
         } else if (type === 'promotional_banner') {
@@ -322,7 +342,7 @@
         } else if (type === 'store_section') {
             recommendation = 'Recommended size: 600x400px (Square or nearly square images work best)';
         }
-        
+
         $('#imageRecommendation').text(recommendation);
     }
 </script>

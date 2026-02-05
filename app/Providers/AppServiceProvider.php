@@ -5,10 +5,12 @@ namespace App\Providers;
 use App\Models\Admin\Business_SetUp\BusinessSetup;
 use App\Models\Purchase;
 use App\Observers\PurchaseObserver;
+use App\Observers\BusinessSetupObserver;
 use Illuminate\Foundation\AliasLoader;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Cache;
 use Barryvdh\Debugbar\Facades\Debugbar;
 use Illuminate\Support\ServiceProvider;
 
@@ -30,7 +32,8 @@ class AppServiceProvider extends ServiceProvider
     {
         // Register Model Observers
         Purchase::observe(PurchaseObserver::class);
-        
+        BusinessSetup::observe(BusinessSetupObserver::class);
+
         try {
             try {
                 $publicStorage = public_path('storage');
@@ -44,7 +47,9 @@ class AppServiceProvider extends ServiceProvider
 
             if (Schema::hasTable('business_setups') && Schema::hasTable('products')) {
                 // Use first() to avoid throwing during migrations when no BusinessSetup row exists yet.
-                $business_setup = BusinessSetup::first();
+                $business_setup = Cache::remember('global_business_setup', 3600, function() {
+                    return BusinessSetup::first();
+                });
                 view()->share('business_setup', $business_setup ?? null);
 
                 // Set Mail Configuration at Runtime

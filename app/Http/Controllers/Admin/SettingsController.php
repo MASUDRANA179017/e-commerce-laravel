@@ -15,6 +15,7 @@ use App\Models\Admin\Business_SetUp\OfficeDocument;
 use App\Models\SystemLocalization;
 use App\Models\SystemCurrency;
 use App\Models\SystemSetting;
+use Illuminate\Support\Facades\Cache;
 
 class SettingsController extends Controller
 {
@@ -65,6 +66,9 @@ class SettingsController extends Controller
             'footer_text',
             'copyright_text',
         ]));
+
+        Cache::forget('global_business_setup');
+        Cache::forget('theme_settings_active_theme');
 
         return response()->json(['success' => true, 'message' => 'General settings updated']);
     }
@@ -147,6 +151,9 @@ class SettingsController extends Controller
         }
 
         $settings->update($data);
+
+        Cache::forget('global_business_setup');
+        Cache::forget('theme_settings_active_theme');
 
         return response()->json(['success' => true, 'message' => 'Store information updated']);
     }
@@ -289,6 +296,8 @@ class SettingsController extends Controller
             'mail_from_address',
             'mail_from_name',
         ]));
+
+        Cache::forget('global_business_setup');
 
         return response()->json(['success' => true, 'message' => 'Email settings updated successfully']);
     }

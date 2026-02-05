@@ -15,13 +15,15 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\DB;
 
 class StorefrontController extends Controller
 {
     public function customizer()
     {
         $business_setup = BusinessSetup::first();
-        
+
         // Scan themes directory
         $themesPath = resource_path('views/themes');
         $themes = [];
@@ -29,7 +31,7 @@ class StorefrontController extends Controller
             $themes = array_map('basename', File::directories($themesPath));
         } else {
             // Fallback if directory doesn't exist yet
-            $themes = ['theme1']; 
+            $themes = ['theme1'];
         }
 
         return view('admin.storefront.customizer', compact('business_setup', 'themes'));
@@ -65,6 +67,10 @@ class StorefrontController extends Controller
             'theme_header_style',
             'theme_footer_style',
         ]));
+
+        // Clear cache
+        Cache::forget('global_business_setup');
+        Cache::forget('theme_settings_active_theme');
 
         return response()->json(['success' => true, 'message' => 'Theme settings saved']);
     }
@@ -286,7 +292,7 @@ class StorefrontController extends Controller
         }
 
         // Replace menu items in DB
-        \DB::transaction(function () use ($menuModel, $root) {
+        DB::transaction(function () use ($menuModel, $root) {
             MenuItem::where('menu_id', $menuModel->id)->delete();
             $this->saveMenuItems($menuModel->id, $root);
         });
@@ -517,6 +523,7 @@ class StorefrontController extends Controller
         $request->validate([
             'image' => 'required|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
             'type' => 'required|in:hero_slider,promotional_banner,store_section,ads_section',
+            'theme' => 'nullable|string',
         ]);
 
         if (!$request->hasFile('image')) {
@@ -548,6 +555,7 @@ class StorefrontController extends Controller
             'image' => $path,
             'link' => $request->link,
             'type' => $request->type,
+            'theme' => $request->theme ?? 'all',
             'position' => $request->position ?? 0,
             'status' => $request->has('status'),
         ]);
@@ -562,12 +570,14 @@ class StorefrontController extends Controller
         $request->validate([
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
             'type' => 'nullable|in:hero_slider,promotional_banner,store_section,ads_section',
+            'theme' => 'nullable|string',
         ]);
 
         $data = [
             'title' => $request->title,
             'link' => $request->link,
             'type' => $request->type ?? $banner->type,
+            'theme' => $request->theme ?? $banner->theme ?? 'all',
             'position' => $request->position ?? $banner->position,
             'status' => $request->has('status'),
         ];

@@ -172,6 +172,14 @@
     @push('scripts')
     <script>
         $(document).ready(function() {
+            // Theme preview logic
+            $('select[name="active_theme"]').change(function() {
+                var theme = $(this).val();
+                var homeUrl = "{{ route('home') }}";
+                $('iframe').attr('src', homeUrl + '?theme_preview=' + theme);
+                toastr.info('Previewing ' + theme + ' theme');
+            });
+
             // Update color display when user changes color
             $('.color-picker-primary').on('input', function() {
                 let color = $(this).val();
