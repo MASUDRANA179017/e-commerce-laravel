@@ -6,12 +6,17 @@
 @push('styles')
     <link rel="stylesheet" href="{{ asset('frontend/css/swiper-slider.css') }}">
     <style>
-        /* Ensure banner text is visible on top of images */
-        .banner-two__slider-content h1,
-        .banner-two__slider-content p,
-        .banner-two__slider-content span {
-            color: #fff !important;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+        .banner-two__slider,
+        .banner-two__slider .swiper-slide,
+        .banner-two__slider-single,
+        .banner-two__slider-bg {
+            min-height: 700px;
+            height: 700px;
+        }
+        .banner-two__slider-single {
+            position: relative;
+            display: flex;
+            align-items: center;
         }
         .banner-two__slider-bg {
             background-size: cover;
@@ -23,11 +28,11 @@
             left: 0;
             z-index: -1;
         }
-        .banner-two__slider-single {
-            position: relative;
-            height: 600px; /* Adjust height as needed */
-            display: flex;
-            align-items: center;
+        .banner-two__slider-content h1,
+        .banner-two__slider-content p,
+        .banner-two__slider-content span {
+            color: #fff !important;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
         }
     </style>
 @endpush
@@ -109,28 +114,28 @@
 @push('scripts')
     <script src="{{ asset('frontend/js/swiper-slider.js') }}"></script>
     <script>
-        document.addEventListener("DOMContentLoaded", function () {
+        if (typeof Swiper !== 'undefined') {
             var bannerOne = new Swiper(".banner-two__slider", {
                 loop: true,
                 speed: 2000,
                 slidesPerView: 1,
                 slidesPerGroup: 1,
                 spaceBetween: 0,
-                effect: "fade",
-                fadeEffect: {
-                  crossFade: true,
-                },
                 autoplay: {
                     delay: 6000,
                     disableOnInteraction: false,
                     pauseOnMouseEnter: true,
+                },
+                navigation: {
+                    nextEl: ".next-banner",
+                    prevEl: ".prev-banner",
                 },
                 pagination: {
                     el: ".banner-six-slide-dot",
                     clickable: true,
                 },
             });
-        });
+        }
     </script>
 @endpush
 

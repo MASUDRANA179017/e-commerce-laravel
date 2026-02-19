@@ -49,11 +49,12 @@ class HomeController extends Controller
             $activeTheme = $settings->active_theme ?? 'theme1';
         }
 
-        // Get active hero sliders
         $sliders = Cache::remember('home_sliders_' . $activeTheme, $LONG_CACHE, function () use ($activeTheme) {
             try {
-                return Banner::where('type', 'hero_slider')
-                    ->where('status', true)
+                $baseQuery = Banner::where('type', 'hero_slider')
+                    ->where('status', true);
+
+                $sliders = (clone $baseQuery)
                     ->where(function($q) use ($activeTheme) {
                         $q->where('theme', 'all')
                           ->orWhere('theme', $activeTheme)
@@ -61,6 +62,14 @@ class HomeController extends Controller
                     })
                     ->orderBy('position')
                     ->get();
+
+                if ($sliders->isEmpty()) {
+                    $sliders = $baseQuery
+                        ->orderBy('position')
+                        ->get();
+                }
+
+                return $sliders;
             } catch (\Exception $e) {
                 return collect();
             }
