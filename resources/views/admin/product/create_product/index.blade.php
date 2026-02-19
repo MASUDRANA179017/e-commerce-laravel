@@ -38,7 +38,6 @@
                     <h6 class="mb-0">Media</h6><span class="small-muted">gallery, rule</span>
                 </div>
             </div>
-            @if (!isset($isEdit) || !$isEdit)
             <div class="qb-wizard-tab" data-target="#tab-attrs">
                 <div class="qb-wizard-tab-icon"><i class="bx bx-grid-alt"></i></div>
                 <div>
@@ -51,7 +50,6 @@
                     <h6 class="mb-0">Variants</h6><span class="small-muted">rule, SKU</span>
                 </div>
             </div>
-            @endif
         </div>
 
         <form id="productForm">
@@ -117,7 +115,7 @@
                                         </div>
                                     </div>
 
-                                    <div class="col-md-6">
+                                    <div class="col-md-6 d-none">
                                         <label class="form-label">Variant Rule</label>
                                         <div class="input-group">
                                             <select id="variantRule" class="form-select">
@@ -1457,6 +1455,8 @@
                     // Get product_id if editing
                     const productIdEl = $('#productId');
                     const productId = productIdEl ? productIdEl.value : null;
+                    const rawVarRule = $('#variantRule')?.value || '';
+                    const variantRuleId = rawVarRule && /^\d+$/.test(String(rawVarRule)) ? parseInt(rawVarRule, 10) : null;
 
                     return {
                         product_id: productId, // Include for update
@@ -1468,7 +1468,7 @@
                         primary_category: primaryCat || '',
                         attribute_set_id: $('#attrSet')?.value || null,
                         mediaRule: $('#mediaRule')?.value || null,
-                        variant_rule_id: $('#variantRule')?.value || null,
+                        variant_rule_id: variantRuleId,
                         attributes: attrsPayload,
                         variant_wise_image: $('#variantWiseImage')?.checked || false,
                         // deleted_images: [...STATE.DELETED_IMAGES], // Removed since images are deleted immediately

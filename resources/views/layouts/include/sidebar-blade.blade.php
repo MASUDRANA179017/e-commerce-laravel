@@ -55,7 +55,7 @@
 
             <!-- Products -->
             <li
-                class="menu-item {{ request()->routeIs('admin.users.products.*') || request()->routeIs('admin.product-create.*') || request()->routeIs('admin.product.all') || request()->routeIs('admin.product.category.*') || request()->routeIs('admin.product.barcode.*') || request()->routeIs('admin.all-attributes.*') || request()->routeIs('admin.users.varient-build.*') ? 'open active' : '' }}">
+                class="menu-item {{ request()->routeIs('admin.users.products.*') || request()->routeIs('admin.product-create.*') || request()->routeIs('admin.product.all') || request()->routeIs('admin.product.category.*') || request()->routeIs('admin.product.barcode.*') || request()->routeIs('admin.all-attributes.*') ? 'open active' : '' }}">
                 <a href="javascript:void(0);" class="menu-link menu-toggle">
                     <span class="material-symbols-outlined menu-icon">inventory_2</span>
                     <span class="title">Products</span>
@@ -67,9 +67,6 @@
                     <li class="menu-item {{ request()->routeIs('admin.all-attributes.*') ? 'active' : '' }}">
                         <a href="{{ route('admin.all-attributes.all-attributes.index') }}" class="menu-link">All
                             Attributes</a>
-                    </li>
-                    <li class="menu-item {{ request()->routeIs('admin.users.varient-build.index') ? 'active' : '' }}">
-                        <a href="{{ route('admin.users.varient-build.index') }}" class="menu-link">Variant Build</a>
                     </li>
                     <li class="menu-item {{ request()->routeIs('admin.product-create.index') ? 'active' : '' }}">
                         <a href="{{ route('admin.product-create.index') }}" class="menu-link">Create Product</a>

@@ -140,6 +140,50 @@
             });
         });
 
+        // Cart quantity update (Theme 2)
+        document.addEventListener('click', function(e) {
+            const btn = e.target.closest('.update-qty');
+            if (!btn) return;
+
+            e.preventDefault();
+
+            const rowId = btn.dataset.rowid;
+            const action = btn.dataset.action;
+            if (!rowId || !action) return;
+
+            const row = btn.closest('tr');
+            const qtyEl = row ? row.querySelector('.item-quantity') : null;
+            let currentQty = qtyEl ? parseInt(qtyEl.textContent) || 1 : 1;
+
+            if (action === 'decrease' && currentQty <= 1) return;
+
+            const newQty = action === 'increase' ? currentQty + 1 : currentQty - 1;
+
+            fetch(`/cart/update/${encodeURIComponent(rowId)}`, {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                    'Accept': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                body: JSON.stringify({ quantity: newQty })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data && data.success) {
+                    window.location.reload();
+                } else if (window.toastr && data && data.message) {
+                    toastr.error(data.message);
+                }
+            })
+            .catch(() => {
+                if (window.toastr) {
+                    toastr.error('Failed to update cart quantity');
+                }
+            });
+        });
+
         // Global Toast
         @if (Session::has('success')) toastr.success("{{ Session::get('success') }}"); @endif
         @if (Session::has('error')) toastr.error("{{ Session::get('error') }}"); @endif

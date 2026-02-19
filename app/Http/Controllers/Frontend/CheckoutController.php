@@ -72,7 +72,6 @@ class CheckoutController extends Controller
             'city' => 'required|string|max:100',
             'zip_code' => 'required|string|max:20',
             'payment_method' => 'required|in:cod,bank_transfer,card,bkash,nagad,rocket',
-            'terms' => 'required|accepted',
         ];
 
         if (!auth()->check()) {

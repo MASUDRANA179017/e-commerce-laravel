@@ -22,11 +22,12 @@ class CartController extends Controller
 
         // Convert cart items to collection for easier handling with product details
         $cartItems = collect($cartItems)->map(function ($item, $rowId) {
-            $product = \App\Models\Product::find($item['id']);
+            $product = \App\Models\Product::find($item['id'] ?? null);
             return (object) array_merge($item, [
                 'rowId' => $rowId,
                 'options' => (object) ($item['options'] ?? []),
                 'price_range' => $product ? $product->formatted_price_range : null,
+                'price' => $item['price'] ?? ($product ? $product->price : 0),
                 'original_price' => $item['original_price'] ?? ($product ? $product->price : ($item['price'] ?? 0)),
             ]);
         });
@@ -59,7 +60,7 @@ class CartController extends Controller
 
         // Determine price (variant-aware with purchase sell price fallback)
         $price = $product->effective_price;
-        
+
         // Fallback: If price is 0, try to find the latest purchase price for this product
         if ($price <= 0) {
             $lastPurchaseItem = \Illuminate\Support\Facades\DB::table('purchase_items')
@@ -69,7 +70,7 @@ class CartController extends Controller
                 ->orderByDesc('purchases.purchase_date')
                 ->select('purchase_items.sell_price')
                 ->first();
-                
+
             if ($lastPurchaseItem && $lastPurchaseItem->sell_price > 0) {
                 $price = $lastPurchaseItem->sell_price;
             }
@@ -88,7 +89,7 @@ class CartController extends Controller
                 })->join(' | ');
 
                 $price = $v->effective_price;
-                
+
                 // Fallback for variant: if 0, try specific variant purchase, then product purchase
                 if ($price <= 0) {
                      $vLastPurchase = \Illuminate\Support\Facades\DB::table('purchase_items')
@@ -98,7 +99,7 @@ class CartController extends Controller
                         ->orderByDesc('purchases.purchase_date')
                         ->select('purchase_items.sell_price')
                         ->first();
-                        
+
                      if ($vLastPurchase && $vLastPurchase->sell_price > 0) {
                          $price = $vLastPurchase->sell_price;
                      } else {

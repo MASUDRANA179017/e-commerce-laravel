@@ -101,37 +101,70 @@
     </style>
     @endonce
 
+    @php
+        $image = $product->cover_image;
+        if (!$image && isset($product->images) && $product->images->count() > 0) {
+            $firstImage = $product->images->first();
+            $image = $firstImage->path ?? $firstImage->image ?? null;
+        }
+        $imageUrl = $image ? asset('storage/' . $image) : asset('frontend/assets/images/no-image.png');
+
+        $price = $product->effective_price ?? ($product->price ?? 0);
+        $salePrice = $product->sale_price ?? null;
+
+        $flashSalePrice = null;
+        $flashDiscountPercent = 0;
+        $isFlashSale = false;
+
+        if (method_exists($product, 'getActiveFlashSaleAttribute')) {
+            $activeFlashSale = $product->active_flash_sale;
+            if ($activeFlashSale) {
+                $flashSalePrice = $activeFlashSale->pivot->flash_price ?? null;
+                $flashDiscountPercent = $activeFlashSale->pivot->flash_discount_percent ?? 0;
+
+                if ($flashDiscountPercent <= 0 && (!$flashSalePrice || $flashSalePrice <= 0)) {
+                    $flashDiscountPercent = $activeFlashSale->discount_percent ?? 0;
+                }
+
+                if ((!$flashSalePrice || $flashSalePrice <= 0) && $flashDiscountPercent > 0) {
+                    $flashSalePrice = $price - ($price * ($flashDiscountPercent / 100));
+                }
+
+                $isFlashSale = true;
+            }
+        }
+
+        $candidates = [$price];
+        if ($salePrice && $salePrice < $price) $candidates[] = $salePrice;
+        if ($isFlashSale && $flashSalePrice && $flashSalePrice < $price) $candidates[] = $flashSalePrice;
+        $finalPrice = min($candidates);
+        $originalPrice = $price;
+        $isOnSale = $finalPrice < $price;
+        $discountPercent = $isOnSale && $price > 0 ? round((($price - $finalPrice) / $price) * 100) : 0;
+
+        $priceRange = null;
+        $hasVariants = false;
+        $rawPriceRange = null;
+
+        if (isset($product->variants) && $product->variants->count() > 0) {
+            $priceRange = $product->formatted_price_range ?? null;
+            $rawPriceRange = $product->price_range ?? null;
+            $hasVariants = true;
+        }
+
+        $wishlistItems = session()->get('wishlist', []);
+        $wishlistProductIds = array_keys($wishlistItems);
+        $hasInWishList = in_array($product->id, $wishlistProductIds);
+    @endphp
+
     <div class="img-wrapper position-relative">
         <a href="{{ route('product.show', $product->slug) }}">
-            @php
-                $image = $product->cover_image;
-                if (!$image && $product->images->count() > 0) {
-                    $image = $product->images->first()->path ?? $product->images->first()->image;
-                }
-                $imageUrl = $image ? asset('storage/' . $image) : asset('frontend/assets/images/no-image.png');
-
-                // Calculate discount price
-                $sellingPrice = $product->price;
-                if($product->discount_price > 0) {
-                    if($product->discount_type == 'percent') {
-                        $sellingPrice = $product->price - ($product->price * $product->discount_price / 100);
-                    } else {
-                        $sellingPrice = $product->price - $product->discount_price;
-                    }
-                }
-
-                // Wishlist check
-                $wishlistItems = session()->get('wishlist', []);
-                $wishlistProductIds = array_keys($wishlistItems);
-                $hasInWishList = in_array($product->id, $wishlistProductIds);
-            @endphp
             <img src="{{ $imageUrl }}" alt="{{ $product->title }}">
         </a>
 
-        <!-- Discount Badge -->
-        @if($product->discount_price > 0)
+        @if($isOnSale)
             <div class="top-0 px-3 m-2 position-absolute start-0 badge bg-danger rounded-pill">
-                -{{ $product->discount_type == 'percent' ? $product->discount_price . '%' : '৳' . $product->discount_price }}
+                -{{ $discountPercent }}%
             </div>
         @endif
     </div>
@@ -143,11 +176,42 @@
 
         <div class="mb-2 d-flex justify-content-between align-items-center">
             <div class="price-box">
-                @if($product->discount_price > 0)
-                    <span class="text-decoration-line-through text-muted fs-13">৳{{ $product->price }}</span>
-                    <span class="text-danger fw-bold ms-1 fs-16">৳{{ number_format($sellingPrice, 2) }}</span>
+                @if($hasVariants && $priceRange)
+                    @if($isFlashSale && $rawPriceRange)
+                        @php
+                            $minPrice = $rawPriceRange['min'] ?? 0;
+                            $maxPrice = $rawPriceRange['max'] ?? 0;
+                            $finalMin = $minPrice;
+                            $finalMax = $maxPrice;
+
+                            if ($flashDiscountPercent > 0) {
+                                $finalMin = $minPrice - ($minPrice * $flashDiscountPercent / 100);
+                                $finalMax = $maxPrice - ($maxPrice * $flashDiscountPercent / 100);
+                            } elseif ($flashSalePrice) {
+                                $finalMin = $flashSalePrice;
+                                $finalMax = $flashSalePrice;
+                            }
+                        @endphp
+
+                        @if ($finalMin < $minPrice)
+                            <span class="text-danger fw-bold fs-16">
+                                @if ($finalMin == $finalMax)
+                                    ৳{{ number_format($finalMin, 0) }}
+                                @else
+                                    ৳{{ number_format($finalMin, 0) }} - ৳{{ number_format($finalMax, 0) }}
+                                @endif
+                            </span>
+                        @else
+                            <span class="text-danger fw-bold fs-16">{{ $priceRange }}</span>
+                        @endif
+                    @else
+                        <span class="text-danger fw-bold fs-16">{{ $priceRange }}</span>
+                    @endif
+                @elseif($isOnSale)
+                    <span class="text-decoration-line-through text-muted fs-13">৳{{ number_format($originalPrice, 0) }}</span>
+                    <span class="text-danger fw-bold ms-1 fs-16">৳{{ number_format($finalPrice, 0) }}</span>
                 @else
-                    <span class="text-danger fw-bold fs-16">৳{{ $product->price }}</span>
+                    <span class="text-danger fw-bold fs-16">৳{{ number_format($price, 0) }}</span>
                 @endif
             </div>
         </div>
@@ -157,12 +221,18 @@
                 <i class="fa-solid fa-eye me-1"></i> View
             </a>
 
-            <button type="button" class="btn-cart add-to-cart" data-id="{{ $product->id }}">
-                 <i class="fa-solid fa-cart-shopping me-1"></i> Add
-            </button>
+            @if($hasVariants)
+                <button type="button" class="btn-cart" onclick="openQuickView({{ $product->id }}); return false;">
+                    <i class="fa-solid fa-cart-shopping me-1"></i> Add
+                </button>
+            @else
+                <button type="button" class="btn-cart add-to-cart" data-id="{{ $product->id }}">
+                    <i class="fa-solid fa-cart-shopping me-1"></i> Add
+                </button>
+            @endif
 
             <a href="javascript:void(0)" class="btn-wishlist add-to-wishlist" data-id="{{ $product->id }}" data-has-in-wishlist="{{ $hasInWishList ? 'true' : 'false' }}">
-                 <i class="{{ $hasInWishList ? 'fa-solid' : 'fa-regular' }} fa-heart"></i>
+                <i class="{{ $hasInWishList ? 'fa-solid' : 'fa-regular' }} fa-heart"></i>
             </a>
         </div>
     </div>

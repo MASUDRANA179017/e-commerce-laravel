@@ -9,10 +9,10 @@
         <div class="container">
             <div class="row">
                 <div class="col-12">
-                    <div class="breadcrumb-content text-center">
+                    <div class="text-center breadcrumb-content">
                         <h2 class="mb-2 fw-bold" style="color: var(--secondary-color);">{{ $page->title }}</h2>
                         <nav aria-label="breadcrumb">
-                            <ol class="breadcrumb justify-content-center mb-0">
+                            <ol class="mb-0 breadcrumb justify-content-center">
                                 <li class="breadcrumb-item"><a href="{{ route('home') }}" class="text-decoration-none" style="color: var(--primary-color);">Home</a></li>
                                 <li class="breadcrumb-item active" aria-current="page">{{ $page->title }}</li>
                             </ol>
@@ -24,14 +24,14 @@
     </div>
 
     <!-- Page Content -->
-    <section class="page-content-area py-5">
+    <section class="py-5 page-content-area">
         <div class="container">
             <div class="row justify-content-center">
                 <div class="col-lg-10">
-                    <div class="card border-0 shadow-sm rounded-4">
-                        <div class="card-body p-4 p-lg-5">
+                    <div class="border-0 shadow-sm card rounded-4">
+                        <div class="p-4 card-body p-lg-5">
                             <div class="content-body">
-                                @if($page->slug === 'terms-and-conditions' && (!$page->content || empty(trim(strip_tags($page->content)))) )
+                                @if(isset($page->slug) && $page->slug === 'terms-and-conditions' && (!$page->content || empty(trim(strip_tags($page->content)))) )
                                     @include('frontend.pages.terms-content')
                                 @elseif($page->content && !empty(trim(strip_tags($page->content))))
                                     {!! $page->content !!}

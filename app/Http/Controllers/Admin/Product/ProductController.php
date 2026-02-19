@@ -363,10 +363,13 @@ class ProductController extends Controller
                     default    => ($inStatus ?: 'Draft'),
                 };
 
+                $rawVariantRuleId = $payload['variant_rule_id'] ?? null;
+                $variantRuleId = is_numeric($rawVariantRuleId) ? (int) $rawVariantRuleId : null;
+
                 $productData = [
                     'brand_id' => $payload['brand_id'] ?? null,
                     'attribute_set_id' => $payload['attribute_set_id'] ?? null,
-                    'variant_rule_id' => $payload['variant_rule_id'] ?? null,
+                    'variant_rule_id' => $variantRuleId,
                     'title' => $payload['title'] ?? '',
                     'slug' => $slug,
                     'sku' => $payload['sku'] ?? 'SKU-' . strtoupper(Str::random(8)),

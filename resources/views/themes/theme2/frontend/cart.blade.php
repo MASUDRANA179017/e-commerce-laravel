@@ -23,12 +23,14 @@
                 'rowId' => $rowId,
                 'options' => (object) ($item['options'] ?? []),
                 'price_range' => $product ? $product->formatted_price_range : null,
+                'price' => $item['price'] ?? ($product ? $product->price : 0),
                 'original_price' => $item['original_price'] ?? ($product ? $product->price : ($item['price'] ?? 0)),
             ]);
         });
 
         $subtotal = $cartItems->sum(function ($item) {
-            return ($item->price ?? 0) * ($item->qty ?? 0);
+            $unit = $item->price ?? $item->original_price ?? 0;
+            return $unit * ($item->qty ?? 0);
         });
 
         if (!isset($discount)) {
@@ -180,10 +182,6 @@
                                     <span>-৳{{ number_format($discount, 0) }}</span>
                                 </div>
                             @endif
-                            <div class="mb-2 d-flex justify-content-between">
-                                <span class="text-muted">Shipping</span>
-                                <span>{{ ($shipping ?? 0) > 0 ? '৳' . number_format($shipping, 2) : 'Free' }}</span>
-                            </div>
                             <hr>
                             <div class="mb-3 d-flex justify-content-between align-items-center">
                                 <span class="fw-bold">Total</span>

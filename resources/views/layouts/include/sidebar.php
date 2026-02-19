@@ -64,7 +64,6 @@
                     <li class="menu-item"><a href="/admin/all-attributes" class="menu-link">All Attributes</a></li>
                     <li class="menu-item"><a href="size-chart.php" class="menu-link">Size Charts</a></li>
                     <li class="menu-item"><a href="brands.php" class="menu-link">Brands</a></li>
-                    <li class="menu-item"><a href="/admin/varient-build" class="menu-link">Varient Build</a></li>
                 </ul>
             </li>
 
