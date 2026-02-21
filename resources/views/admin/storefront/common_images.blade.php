@@ -7,8 +7,9 @@
     <div class="col-12 mb-4">
         <div class="d-flex align-items-center justify-content-between flex-wrap gap-3">
             <h3 class="fw-bold mb-0">Website Common Images</h3>
+            <span class="badge bg-primary">Theme: {{ $activeTheme ?? 'theme1' }}</span>
         </div>
-        <p class="text-muted">Manage global images for your storefront.</p>
+        <p class="text-muted">Manage images per theme. These images apply to the selected theme.</p>
     </div>
 
     <div class="col-lg-12">
@@ -19,6 +20,7 @@
             <div class="card-body">
                 <form action="{{ route('admin.storefront.common-images.update') }}" method="POST" enctype="multipart/form-data">
                     @csrf
+                    <input type="hidden" name="theme" value="{{ $activeTheme ?? 'theme1' }}">
 
                     <div class="row g-4">
                         <!-- Footer Background -->

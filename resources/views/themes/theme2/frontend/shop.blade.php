@@ -1,10 +1,11 @@
-@extends('layouts.frontend')
+@extends('themes.theme2.layouts.frontend')
 
 @section('title', 'Shop - ' . config('app.name', 'E-Commerce'))
 
 @section('content')
     @php
-        $shopBanner = \App\Models\SystemSetting::get('shop_title_banner');
+        $activeTheme = request()->get('theme_preview') ?? ($business_setup->active_theme ?? 'theme1');
+        $shopBanner = \App\Models\SystemSetting::get('shop_title_banner_' . $activeTheme) ?: \App\Models\SystemSetting::get('shop_title_banner');
         $shopBannerUrl = $shopBanner ? asset('storage/' . $shopBanner) : asset('frontend/assets/images/web-banner-4.png');
 
         // Check if we are in "Default Mode" (no filters) or "Search/Filter Mode"
@@ -18,6 +19,12 @@
             $displayCategories = \App\Models\Admin\Product\ProductCategory::whereNull('parent_id')
                 ->orderBy('order', 'asc')
                 ->get();
+        }
+
+        // Resolve selected category (for header in filtered mode)
+        $activeCategory = null;
+        if (request()->filled('category')) {
+            $activeCategory = \App\Models\Admin\Product\ProductCategory::where('slug', request('category'))->first();
         }
     @endphp
 
@@ -102,22 +109,56 @@
 
     <!-- Shop Section -->
     <section class="shop">
-        <div class="container-fluid">
-            <div class="row">
-                <!-- Sidebar -->
-                <div class="col-12 col-md-4 col-lg-3">
-                    <div class="shop__sidebar">
-                        <!-- Search Widget -->
-                        <div class="shop-sidebar-widget" data-aos="fade-up" data-aos-duration="1000" data-aos-delay="100">
-                            <div class="intro">
-                                <h5>Search Here</h5>
+        <div class="container">
+            @if(!$isDefaultShop)
+                <div class="row">
+                    <div class="col-12">
+                        <div class="p-4 p-md-5 rounded-3 mb-4" style="background: linear-gradient(90deg, var(--primary-red) 0%, var(--dark-red) 100%);">
+                            <div class="d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-2">
+                                <div>
+                                    <h2 class="text-white mb-1" style="font-family: 'Hind Siliguri', sans-serif;">
+                                        {{ $activeCategory->name ?? (request('search') ? "Search: '".e(request('search'))."'" : 'Products') }}
+                                    </h2>
+                                    @if($activeCategory && $activeCategory->description)
+                                        <p class="mb-0 text-white-50">{{ \Illuminate\Support\Str::limit(strip_tags($activeCategory->description), 120) }}</p>
+                                    @endif
+                                </div>
+                                <div class="text-white-50 small">
+                                    <span><a href="{{ url('/') }}" class="text-white text-decoration-none">Home</a></span>
+                                    <span class="mx-2">/</span>
+                                    <span>{{ $activeCategory->name ?? 'Shop' }}</span>
+                                </div>
                             </div>
-                            <form action="{{ route('shop.index') }}" method="get">
-                                <input type="text" name="search" id="searchProduct" placeholder="Search products..."
-                                    value="{{ request('search') }}">
-                                <button type="submit"><i class="fa-solid fa-magnifying-glass"></i></button>
-                            </form>
                         </div>
+                    </div>
+                </div>
+            @endif
+            <div class="row align-items-start g-4 shop-grid-row">
+                <!-- Sidebar -->
+                <div class="col-12 col-sm-4 col-lg-3 order-sm-1">
+                    <div class="shop__sidebar">
+                        <div class="mb-3 d-flex align-items-center justify-content-between">
+                            <div class="fw-semibold">Filters</div>
+                            <a href="{{ route('shop.index') }}" class="text-decoration-none small">Clear all</a>
+                        </div>
+                        <!-- Search Widget -->
+                        <div class="shop-sidebar-widget widget-collapsible" data-aos="fade-up" data-aos-duration="1000" data-aos-delay="100">
+                            <div class="intro widget-toggle d-flex align-items-center justify-content-between">
+                                <h5 class="mb-0">Search</h5>
+                                <span class="toggle-icon"><i class="fa-solid fa-chevron-down"></i></span>
+                            </div>
+                            <div class="widget-body pt-3">
+                                <form action="{{ route('shop.index') }}" method="get">
+                                    @foreach (request()->except(['search','page']) as $key => $value)
+                                        <input type="hidden" name="{{ $key }}" value="{{ $value }}">
+                                    @endforeach
+                                    <div class="input-group">
+                                        <input type="text" name="search" id="searchProduct" class="form-control" placeholder="Search products" value="{{ request('search') }}">
+                                        <button type="submit" class="btn btn-outline-secondary"><i class="fa-solid fa-magnifying-glass"></i></button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div> <!-- end .shop-sidebar-widget (Search) -->
 
                         @php
                             $cart = session()->get('cart', []);
@@ -174,30 +215,34 @@
                         @endif
 
                         <!-- Categories Widget -->
-                        <div class="shop-sidebar-widget" data-aos="fade-up" data-aos-duration="1000" data-aos-delay="100">
-                            <div class="intro">
-                                <h5>Categories</h5>
+                        <div class="shop-sidebar-widget widget-collapsible" data-aos="fade-up" data-aos-duration="1000" data-aos-delay="100">
+                            <div class="intro widget-toggle d-flex align-items-center justify-content-between">
+                                <h5 class="mb-0">Categories</h5>
+                                <span class="toggle-icon"><i class="fa-solid fa-chevron-down"></i></span>
                             </div>
-                            <div class="sidebar-list">
-                                <ul>
+                            <div class="widget-body pt-2">
+                                <div class="sidebar-list">
+                                <ul class="category-tree">
                                     @php
-                                        $categories = \App\Models\Admin\Product\ProductCategory::withCount(
-                                            'products',
-                                        )->get();
+                                        $categories = \App\Models\Admin\Product\ProductCategory::with('childrenRecursive')
+                                            ->withCount(['activeProducts as products_count'])
+                                            ->orderByRaw('CASE WHEN `order` = 0 OR `order` IS NULL THEN 1 ELSE 0 END, `order` ASC')
+                                            ->get();
                                     @endphp
                                     @php
-                                        // Helper function to render categories recursively
                                         function renderCategoryTree($category, $selectedSlug, $level = 0) {
                                             $isActive = request('category') == $category->slug ? 'active' : '';
-                                            $hasChildren = $category->children && $category->children->count() > 0;
-                                            echo '<li class="' . $isActive . ($level > 0 ? ' subcategory' : '') . '" style="padding-left: ' . (18 + $level * 18) . 'px;">';
+                                            $children = $category->childrenRecursive ?? collect();
+                                            $hasChildren = $children && $children->count() > 0;
+                                            echo '<li class="category-item ' . $isActive . ($hasChildren ? ' has-children' : '') . ($level > 0 ? ' subcategory' : '') . '" style="padding-left: ' . (18 + $level * 18) . 'px;">';
                                             echo '<a href="' . route('shop.index', array_merge(request()->except('category', 'page'), ['category' => $category->slug])) . '">';
-                                            echo '<i class="fa-solid fa-angle-right"></i>' . $category->name;
+                                            echo ($hasChildren ? '<i class="fa-solid fa-caret-right me-1"></i>' : '<i class="fa-solid fa-angle-right me-1"></i>');
+                                            echo $category->name;
                                             echo '<span class="badge bg-light text-dark float-end">' . $category->products_count . '</span>';
                                             echo '</a>';
                                             if ($hasChildren) {
                                                 echo '<ul style="list-style:none; margin:0; padding:0;">';
-                                                foreach ($category->children as $child) {
+                                                foreach ($children as $child) {
                                                     renderCategoryTree($child, $selectedSlug, $level + 1);
                                                 }
                                                 echo '</ul>';
@@ -211,17 +256,18 @@
                                         @endif
                                     @endforeach
                                 </ul>
+                                </div>
                             </div>
                         </div>
 
                         <!-- Price Filter Widget -->
-                        <div class="shop-sidebar-widget" data-aos="fade-up" data-aos-duration="1000" data-aos-delay="100">
-                            <div class="intro">
-                                <h5>Filter By Price</h5>
+                        <div class="shop-sidebar-widget widget-collapsible" data-aos="fade-up" data-aos-duration="1000" data-aos-delay="100">
+                            <div class="intro widget-toggle d-flex align-items-center justify-content-between">
+                                <h5 class="mb-0">Filter By Price</h5>
+                                <span class="toggle-icon"><i class="fa-solid fa-chevron-down"></i></span>
                             </div>
-
-                            <div class="filter-wrapper">
-                                <form action="{{ route('shop.index') }}" method="get" style="display: block">
+                            <div class="widget-body pt-2">
+                                <form action="{{ route('shop.index') }}" method="get">
 
                                     @foreach (request()->except(['min_price', 'max_price', 'page']) as $key => $value)
                                         <input type="hidden" name="{{ $key }}" value="{{ $value }}">
@@ -242,9 +288,10 @@
                                             <span>৳ <span id="minPrice">0</span></span>
                                             <span>৳ <span id="maxPrice">10000</span></span>
                                         </div>
-
-
-
+                                        <div class="d-flex gap-2 mt-3">
+                                            <input type="number" min="0" max="10000" class="form-control" id="minPriceInputText" placeholder="Min">
+                                            <input type="number" min="0" max="10000" class="form-control" id="maxPriceInputText" placeholder="Max">
+                                        </div>
                                         <button type="submit" class="btn--primary w-100 mt-3">
                                             Filter
                                         </button>
@@ -252,11 +299,13 @@
 
                                 </form>
                             </div>
-                        </div>
 
+                        </div> <!-- end .shop-sidebar-widget (Price Filter) -->
 
                         <!-- Brands Widget -->
                         {{-- @php
+                            $brands = \App\Models\Admin\Brand\Brand::where('active', 1)->take(10)->get();
+                        @endphp
                             $brands = \App\Models\Admin\Brand\Brand::where('active', 1)->take(10)->get();
                         @endphp
                         @if ($brands->count() > 0)
@@ -281,27 +330,30 @@
                         @endif --}}
 
                         <!-- Tags Widget -->
-                        <div class="shop-sidebar-widget" data-aos="fade-up" data-aos-duration="1000"
+                        <div class="shop-sidebar-widget widget-collapsible" data-aos="fade-up" data-aos-duration="1000"
                             data-aos-delay="100">
-                            <div class="intro">
-                                <h5>Quick Filters</h5>
+                            <div class="intro widget-toggle d-flex align-items-center justify-content-between">
+                                <h5 class="mb-0">Quick Filters</h5>
+                                <span class="toggle-icon"><i class="fa-solid fa-chevron-down"></i></span>
                             </div>
-                            <div class="tag-wrapper">
-                                <a href="{{ route('shop.index', ['on_sale' => 1]) }}"
-                                    class="{{ request('on_sale') ? 'active' : '' }}">On Sale</a>
-                                <a href="{{ route('shop.index', ['featured' => 1]) }}"
-                                    class="{{ request('featured') ? 'active' : '' }}">Featured</a>
-                                <a href="{{ route('shop.index', ['new_arrivals' => 1]) }}"
-                                    class="{{ request('new_arrivals') ? 'active' : '' }}">New Arrivals</a>
-                                <a href="{{ route('shop.index') }}">All Products</a>
+                            <div class="widget-body pt-2">
+                                <div class="tag-wrapper">
+                                    <a href="{{ route('shop.index', ['on_sale' => 1]) }}"
+                                        class="{{ request('on_sale') ? 'active' : '' }}">On Sale</a>
+                                    <a href="{{ route('shop.index', ['featured' => 1]) }}"
+                                        class="{{ request('featured') ? 'active' : '' }}">Featured</a>
+                                    <a href="{{ route('shop.index', ['new_arrivals' => 1]) }}"
+                                        class="{{ request('new_arrivals') ? 'active' : '' }}">New Arrivals</a>
+                                    <a href="{{ route('shop.index') }}">All Products</a>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
 
                 <!-- Products Grid -->
-                <div class="col-12 col-md-8 col-lg-9">
-                    <div class="shop__content">
+                <div class="col-12 col-sm-8 col-lg-9 order-sm-2">
+                        <div class="shop__content h-100 d-flex flex-column">
                         <!-- Results Header -->
                         <div class="shop__content-intro">
                             <div class="shop-intro__left">
@@ -341,9 +393,9 @@
                         </div>
 
                         <!-- Products Grid -->
-                        <div class="row">
+                        <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-3 g-4 mt-3 mt-sm-0">
                             @forelse($products as $product)
-                                <div class="col-12 col-md-4 col-lg-4 mb-5">
+                                <div class="col">
                                     @include('themes.theme2.frontend.partials.product-card', ['product' => $product])
                                 </div>
                             @empty
@@ -352,8 +404,7 @@
                                         <i class="bx bx-package" style="font-size: 80px; color: #ddd;"></i>
                                         <h4 class="mt-3">No Products Found</h4>
                                         <p class="text-muted">Try adjusting your search or filter criteria</p>
-                                        <a href="{{ route('shop.index') }}" class="btn--primary mt-3">View All
-                                            Products</a>
+                                        <a href="{{ route('shop.index') }}" class="btn--primary mt-3">View All Products</a>
                                     </div>
                                 </div>
                             @endforelse
@@ -409,6 +460,46 @@
     .swiper-wrapper{
         height: auto !important;
     }
+.shop-grid-row{
+    display:flex !important;
+    flex-wrap: wrap;
+}
+.shop__sidebar {
+    position: sticky;
+    top: 90px;
+}
+@media (max-width: 991.98px) {
+    .shop__sidebar {
+        position: static;
+        top: auto;
+    }
+}
+.shop-sidebar-widget {
+    background: #fff;
+    border: 1px solid #eee;
+    border-radius: 12px;
+    padding: 16px;
+    margin-bottom: 16px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+}
+.shop-sidebar-widget .intro h5 {
+    font-size: 1.05rem;
+}
+.widget-collapsible .widget-body {
+    display: block;
+}
+.widget-collapsible.collapsed .widget-body {
+    display: none;
+}
+.widget-toggle {
+    cursor: pointer;
+}
+.category-tree {
+    max-height: 320px;
+    overflow: auto;
+    padding: 0;
+    margin: 0;
+}
     .price-range-container {
         position: relative;
         width: 100%;
@@ -514,6 +605,10 @@
 
 
         $(document).ready(function() {
+            $('.widget-toggle').on('click', function() {
+                $(this).closest('.widget-collapsible').toggleClass('collapsed');
+            });
+
             const minRange = $('#minRange');
             const maxRange = $('#maxRange');
             const minPrice = $('#minPrice');
@@ -529,6 +624,8 @@
 
             const minPriceInput = $('#minPriceInput');
             const maxPriceInput = $('#maxPriceInput');
+            const minPriceInputText = $('#minPriceInputText');
+            const maxPriceInputText = $('#maxPriceInputText');
 
             // Set initial values from URL if present
             const urlParams = new URLSearchParams(window.location.search);
@@ -537,6 +634,8 @@
 
             minRange.val(initialMin);
             maxRange.val(initialMax);
+            minPriceInputText.val(initialMin);
+            maxPriceInputText.val(initialMax);
 
             function updateSlider() {
                 let minVal = parseInt(minRange.val());
@@ -559,6 +658,8 @@
                 // Update hidden inputs
                 minPriceInput.val(minVal);
                 maxPriceInput.val(maxVal);
+                minPriceInputText.val(minVal);
+                maxPriceInputText.val(maxVal);
 
                 // Update track fill
                 const minPercent = (minVal / 10000) * 100;
@@ -571,6 +672,16 @@
 
             minRange.on('input', updateSlider);
             maxRange.on('input', updateSlider);
+            minPriceInputText.on('change', function() {
+                const v = Math.max(0, Math.min(10000, parseInt($(this).val() || 0)));
+                minRange.val(v);
+                updateSlider();
+            });
+            maxPriceInputText.on('change', function() {
+                const v = Math.max(0, Math.min(10000, parseInt($(this).val() || 0)));
+                maxRange.val(v);
+                updateSlider();
+            });
 
             updateSlider(); // initial call
         });

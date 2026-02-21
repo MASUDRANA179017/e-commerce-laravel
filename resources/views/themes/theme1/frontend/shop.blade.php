@@ -4,7 +4,8 @@
 
 @section('content')
     @php
-        $shopBanner = \App\Models\SystemSetting::get('shop_title_banner');
+        $activeTheme = request()->get('theme_preview') ?? ($business_setup->active_theme ?? 'theme1');
+        $shopBanner = \App\Models\SystemSetting::get('shop_title_banner_' . $activeTheme) ?: \App\Models\SystemSetting::get('shop_title_banner');
         $shopBannerUrl = $shopBanner ? asset('storage/' . $shopBanner) : asset('frontend/assets/images/web-banner-4.png');
     @endphp
     <!-- Shop Banner -->

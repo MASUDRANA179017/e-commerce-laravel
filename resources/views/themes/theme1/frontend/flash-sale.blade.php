@@ -4,8 +4,13 @@
 
 @section('content')
     <!-- Flash Sale Banner / Countdown -->
+    @php
+        $activeTheme = request()->get('theme_preview') ?? ($business_setup->active_theme ?? 'theme1');
+        $flashSaleImg = \App\Models\SystemSetting::get('flash_sale_image_' . $activeTheme) ?: \App\Models\SystemSetting::get('flash_sale_image');
+        $flashSaleBg = $flashSaleImg ? asset('storage/' . $flashSaleImg) : ($flashSale->banner_image ? asset('storage/' . $flashSale->banner_image) : asset('frontend/assets/images/shop/Ad-1.jpg'));
+    @endphp
     <section class="countdown-eight-area"
-            data-background="{{ \App\Models\SystemSetting::get('flash_sale_image') ? asset('storage/' . \App\Models\SystemSetting::get('flash_sale_image')) : ($flashSale->banner_image ? asset('storage/' . $flashSale->banner_image) : asset('frontend/assets/images/shop/Ad-1.jpg')) }}">
+            data-background="{{ $flashSaleBg }}">
             <div class="container">
                 <div class="row align-items-center justify-content-between">
                     <div class="col-12 col-sm-12 col-lg-8 col-xl-6">

@@ -606,16 +606,39 @@ class StorefrontController extends Controller
 
     public function commonImages()
     {
+        // Determine active theme (allow preview override)
+        $activeTheme = request()->get('theme_preview');
+        if (empty($activeTheme)) {
+            $settings = \Illuminate\Support\Facades\Cache::remember('theme_settings_active_theme', 3600, function() {
+                return \Illuminate\Support\Facades\DB::table('business_setups')->select('active_theme')->first();
+            });
+            $activeTheme = $settings->active_theme ?? 'theme1';
+        }
+
+        $themed = function ($key) use ($activeTheme) {
+            return SystemSetting::get($key . '_' . $activeTheme) ?: SystemSetting::get($key);
+        };
+
         $images = [
-            'footer_background' => SystemSetting::get('footer_background'),
-            'flash_sale_image' => SystemSetting::get('flash_sale_image'),
-            'shop_title_banner' => SystemSetting::get('shop_title_banner'),
+            'footer_background' => $themed('footer_background'),
+            'flash_sale_image' => $themed('flash_sale_image'),
+            'shop_title_banner' => $themed('shop_title_banner'),
         ];
-        return view('admin.storefront.common_images', compact('images'));
+
+        return view('admin.storefront.common_images', compact('images', 'activeTheme'));
     }
 
     public function updateCommonImages(Request $request)
     {
+        // Determine target theme (hidden field or active theme)
+        $targetTheme = $request->get('theme');
+        if (empty($targetTheme)) {
+            $settings = \Illuminate\Support\Facades\Cache::remember('theme_settings_active_theme', 3600, function() {
+                return \Illuminate\Support\Facades\DB::table('business_setups')->select('active_theme')->first();
+            });
+            $targetTheme = $settings->active_theme ?? 'theme1';
+        }
+
         $keys = [
             'footer_background',
             'flash_sale_image',
@@ -647,9 +670,9 @@ class StorefrontController extends Controller
                     return redirect()->back()->withErrors(['image' => "Failed to store image for $key: " . $e->getMessage()])->withInput();
                 }
 
-                // Delete old image if exists
+                // Delete old image if exists (theme-specific)
                 try {
-                    $oldImage = SystemSetting::get($key);
+                    $oldImage = SystemSetting::get($key . '_' . $targetTheme);
                     if (!empty($oldImage) && is_string($oldImage) && trim($oldImage) !== '') {
                         if (Storage::disk('public')->exists($oldImage)) {
                             Storage::disk('public')->delete($oldImage);
@@ -659,11 +682,11 @@ class StorefrontController extends Controller
                     // Ignore deletion errors to prevent blocking the upload
                 }
 
-                SystemSetting::set($key, $path);
+                // Save as theme-specific key
+                SystemSetting::set($key . '_' . $targetTheme, $path);
             }
         }
 
         return redirect()->back()->with('success', 'Images updated successfully');
     }
 }
-
